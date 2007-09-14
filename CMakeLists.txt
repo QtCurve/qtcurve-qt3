@@ -1,0 +1,31 @@
+project(QtCurve-KDE3)
+cmake_minimum_required(VERSION 2.4.0)
+
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
+set(CPACK_GENERATOR "TBZ2")
+set(CPACK_SOURCE_GENERATOR "TBZ2")
+set(CPACK_PACKAGE_VERSION_MAJOR "0")
+set(CPACK_PACKAGE_VERSION_MINOR "53")
+set(CPACK_PACKAGE_VERSION_PATCH "1")
+set(QTCURVE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
+set(QTCURVE_VERSION_FULL "${QTCURVE_VERSION}.${CPACK_PACKAGE_VERSION_PATCH}")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${QTCURVE_VERSION_FULL}")
+include(CPack)
+
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
+
+find_package(KDE3 REQUIRED)
+include(KDE3Macros)
+
+exec_program(kde-config
+             ARGS --prefix
+             OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX)
+
+configure_file (config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
+add_definitions(${QT_DEFINITIONS} ${KDE3_DEFINITIONS})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE3_INCLUDES})
+
+add_subdirectory(style)
+add_subdirectory(config)
+add_subdirectory(themes)
+

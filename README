@@ -1,0 +1,17 @@
+Installation
+------------
+To build and install:
+
+1. mkdir build
+2. cd build
+3. cmake ..
+4. make
+5. make install
+
+
+pixmaps.h
+---------
+
+To regenerate this, run the following:
+
+    qembed radio_frame.png radio_light.png radio_on.png check_on.png slider.png slider_light.png slider_v.png slider_light_v.png > pixmaps.h
