@@ -982,11 +982,15 @@ void QtCurveStyle::polish(QWidget *widget)
         connect(widget, SIGNAL(sliderMoved(int)), this, SLOT(sliderThumbMoved(int)));
         connect(widget, SIGNAL(valueChanged(int)), this, SLOT(sliderThumbMoved(int)));
     }
-    else if (::qt_cast<QLineEdit*>(widget) || ::qt_cast<QTextEdit*>(widget))
+    else if (::qt_cast<QLineEdit *>(widget) || ::qt_cast<QTextEdit *>(widget))
     {
         widget->installEventFilter(this);
         if(onToolBar(widget))
             widget->setName(kdeToolbarWidget);
+        if(widget && widget->parentWidget() &&
+           widget->inherits("KLineEdit") && widget->parentWidget()->inherits("KIO::DefaultProgress") &&
+           ::qt_cast<QFrame *>(widget))
+            ((QFrame *)widget)->setLineWidth(0);
     }
     else if (widget->inherits("QSplitterHandle") || widget->inherits("QDockWindowHandle"))
     {

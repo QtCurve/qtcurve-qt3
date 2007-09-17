@@ -1,6 +1,7 @@
 0.53.1
 ------
 1. Converted buildsystem to CMake.
+2. Remove frames from source/destination labels of kio progress dialogs.
 
 0.53
 ----
