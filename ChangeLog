@@ -1,7 +1,13 @@
-0.53.1
-------
+0.54
+----
 1. Converted buildsystem to CMake.
-2. Remove frames from source/destination labels of kio progress dialogs.
+2. New option 'inactiveHighlight', if set then use a mix of highlight and background
+   colour as highlight for inactive windows/elements.
+3. Set KDE3 colours from Qt4 settings if running under KDE4.
+4. Read in Qt3's inactive palette settings for highlight and highlightedText.
+5. If an inactive palette is set (e.g. via qtconfig), ensure that progress
+   bar text is unaffected.
+6. Remove frames from source/destination labels of kio progress dialogs.
 
 0.53
 ----

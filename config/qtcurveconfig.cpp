@@ -273,6 +273,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(mapKdeIcons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(passwordChar, SIGNAL(clicked()), SLOT(passwordCharClicked()));
     connect(framelessGroupBoxes, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(inactiveHighlight, SIGNAL(toggled(bool)), SLOT(updateChanged()));
 
     defaultSettings(&defaultStyle);
     if(!readConfig(NULL, &currentStyle, &defaultStyle))
@@ -520,6 +521,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.mapKdeIcons=mapKdeIcons->isChecked();
     opts.passwordChar=toInt(passwordChar->text());
     opts.framelessGroupBoxes=framelessGroupBoxes->isChecked();
+    opts.inactiveHighlight=inactiveHighlight->isChecked();
 }
 
 void QtCurveConfig::setWidgetOptions(const Options &opts)
@@ -590,6 +592,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     mapKdeIcons->setChecked(opts.mapKdeIcons);
     setPasswordChar(opts.passwordChar);
     framelessGroupBoxes->setChecked(opts.framelessGroupBoxes);
+    inactiveHighlight->setChecked(opts.inactiveHighlight);
 }
 
 bool QtCurveConfig::settingsChanged()
@@ -643,6 +646,7 @@ bool QtCurveConfig::settingsChanged()
          gtkButtonOrder->isChecked()!=currentStyle.gtkButtonOrder ||
          mapKdeIcons->isChecked()!=currentStyle.mapKdeIcons ||
          framelessGroupBoxes->isChecked()!=currentStyle.framelessGroupBoxes ||
+         inactiveHighlight->isChecked()!=currentStyle.inactiveHighlight ||
 
          toInt(passwordChar->text())!=currentStyle.passwordChar ||
 

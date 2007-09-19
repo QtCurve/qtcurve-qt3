@@ -602,17 +602,6 @@ QtCurveStyle::QtCurveStyle()
     }
 
     setSbType();
-
-    // Set palette from Qt4 settings. NOTE: This will only affect Qt-only apps. KApplication, sets the applications
-    // palette after style is constructed...
-    QPalette pal;
-    QFont    font;
-
-    if(readQt4(pal, font))
-    {
-        QApplication::setPalette(pal);
-        QApplication::setFont(font);
-    }
 }
 
 QtCurveStyle::~QtCurveStyle()
@@ -708,7 +697,49 @@ void QtCurveStyle::polish(QPalette &pal)
        pal.active().background()!=itsMactorPal->active().background())
         return;
 
-    int  c(QSettings().readNumEntry("/Qt/KDE/contrast", 7));
+    QPalette  pal4;
+    QFont     font;
+    QSettings settings;
+
+    if(readQt4(pal4, font))
+    {
+        pal=pal4;
+        QApplication::setFont(font);
+    }
+    else if(!opts.inactiveHighlight)// Read in Qt3 palette... Required for the inactive settings...
+    {
+        QStringList active(settings.readListEntry("/Qt/Palette/active")),
+                    inactive(settings.readListEntry("/Qt/Palette/inactive"));
+
+        // Only set if: the active highlight is the same, and the inactive highlight is different.
+        // If the user has no ~/.qt/qtrc, then QSettings will return a default palette. However, the palette
+        // passed in to this ::polish function will be the KDE one - which maybe different. Hence, we need to
+        // check that Qt active == KDE active, before reading inactive...
+        if (QColorGroup::NColorRoles==active.count() &&
+            QColorGroup::NColorRoles==inactive.count() &&
+            QColor(active[QColorGroup::Highlight])==pal.color(QPalette::Active, QColorGroup::Highlight) &&
+            QColor(active[QColorGroup::HighlightedText])==pal.color(QPalette::Active, QColorGroup::HighlightedText))
+        {
+            QColor h(inactive[QColorGroup::Highlight]),
+                   t(inactive[QColorGroup::HighlightedText]);
+
+            if(h!=pal.color(QPalette::Inactive, QColorGroup::Highlight) || t!=QPalette::Inactive, QColorGroup::HighlightedText)
+            {
+                pal.setColor(QPalette::Inactive, QColorGroup::Highlight, h);
+                pal.setColor(QPalette::Inactive, QColorGroup::HighlightedText, t);
+            }
+        }
+    }
+
+    if(opts.inactiveHighlight)
+    {
+        pal.setColor(QPalette::Inactive, QColorGroup::Highlight,
+                     midColor(pal.color(QPalette::Active, QColorGroup::Background),
+                              pal.color(QPalette::Active, QColorGroup::Highlight), INACTIVE_HIGHLIGHT_FACTOR));
+        pal.setColor(QPalette::Inactive, QColorGroup::HighlightedText, pal.color(QPalette::Active, QColorGroup::Foreground));
+    }
+
+    int  c(settings.readNumEntry("/Qt/KDE/contrast", 7));
     bool newContrast(false);
 
     if(c<0 || c>10)
@@ -1025,13 +1056,23 @@ void QtCurveStyle::polish(QWidget *widget)
         widget->installEventFilter(this);
         widget->setBackgroundMode(NoBackground);  // We paint the whole background.
     }
-    else if(opts.animatedProgress && ::qt_cast<QProgressBar*>(widget))
+    else if(::qt_cast<QProgressBar *>(widget))
     {
-        widget->installEventFilter(this);
-        itsProgAnimWidgets[widget] = 0;
-        connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(progressBarDestroyed(QObject *)));
-        if (!itsAnimationTimer->isActive())
-            itsAnimationTimer->start(PROGRESS_ANIMATION, false);
+        if(widget->palette().inactive().highlightedText()!=widget->palette().active().highlightedText())
+        {
+            QPalette pal(widget->palette());
+            pal.setInactive(widget->palette().active());
+            widget->setPalette(pal);
+        }
+
+        if(opts.animatedProgress)
+        {
+            widget->installEventFilter(this);
+            itsProgAnimWidgets[widget] = 0;
+            connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(progressBarDestroyed(QObject *)));
+            if (!itsAnimationTimer->isActive())
+                itsAnimationTimer->start(PROGRESS_ANIMATION, false);
+        }
     }
 #ifdef QTC_HIGHLIGHT_SCROLVIEWS
     else if(::qt_cast<QScrollView*>(widget))
