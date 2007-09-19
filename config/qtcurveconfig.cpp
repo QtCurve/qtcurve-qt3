@@ -174,14 +174,12 @@ static void insertEffectEntries(QComboBox *combo)
     combo->insertItem(i18n("Shadowed"));
 }
 
-#if 0
 static void insertShadingEntries(QComboBox *combo)
 {
     combo->insertItem(i18n("Simple"));
     combo->insertItem(i18n("Use HSL color space"));
     combo->insertItem(i18n("Use HSV color space"));
 }
-#endif
 
 QtCurveConfig::QtCurveConfig(QWidget *parent)
              : QtCurveConfigBase(parent)
@@ -208,7 +206,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertMouseOverEntries(coloredMouseOver);
     insertToolbarBorderEntries(toolbarBorders);
     insertEffectEntries(buttonEffect);
-    //insertShadingEntries(shading);
+    insertShadingEntries(shading);
 
     highlightFactor->setMinValue(MIN_HIGHLIGHT_FACTOR);
     highlightFactor->setMaxValue(MAX_HIGHLIGHT_FACTOR);
@@ -266,7 +264,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(shadeMenubars, SIGNAL(activated(int)), SLOT(shadeMenubarsChanged()));
     connect(highlightFactor, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(scrollbarType, SIGNAL(activated(int)), SLOT(updateChanged()));
-    //connect(shading, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(shading, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(gtkScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gtkComboMenus, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gtkButtonOrder, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -514,7 +512,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.menuitemAppearance=(EAppearance)menuitemAppearance->currentItem();
     opts.shadeCheckRadio=(EShade)shadeCheckRadio->currentItem();
     opts.customCheckRadioColor=customCheckRadioColor->color();
-    //opts.shading=(EShading)shading->currentItem();
+    opts.shading=(EShading)shading->currentItem();
     opts.gtkScrollViews=gtkScrollViews->isChecked();
     opts.gtkComboMenus=gtkComboMenus->isChecked();
     opts.gtkButtonOrder=gtkButtonOrder->isChecked();
@@ -585,7 +583,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     shadeCheckRadio->setCurrentItem(opts.shadeCheckRadio);
     customCheckRadioColor->setColor(opts.customCheckRadioColor);
 
-    //shading->setCurrentItem(opts.shading);
+    shading->setCurrentItem(opts.shading);
     gtkScrollViews->setChecked(opts.gtkScrollViews);
     gtkComboMenus->setChecked(opts.gtkComboMenus);
     gtkButtonOrder->setChecked(opts.gtkButtonOrder);
@@ -640,7 +638,7 @@ bool QtCurveConfig::settingsChanged()
          toolbarSeparators->currentItem()!=currentStyle.toolbarSeparators ||
          splitters->currentItem()!=currentStyle.splitters ||
 
-//         shading->currentItem()!=(int)currentStyle.shading ||
+         shading->currentItem()!=(int)currentStyle.shading ||
          gtkScrollViews->isChecked()!=currentStyle.gtkScrollViews ||
          gtkComboMenus->isChecked()!=currentStyle.gtkComboMenus ||
          gtkButtonOrder->isChecked()!=currentStyle.gtkButtonOrder ||

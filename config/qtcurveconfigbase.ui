@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>610</width>
-            <height>596</height>
+            <width>544</width>
+            <height>556</height>
         </rect>
     </property>
     <property name="caption">
@@ -763,7 +763,7 @@
                             <string>Gtk button order</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>mapKdeIcons</cstring>
                         </property>
@@ -771,23 +771,44 @@
                             <string>Map KDE icons (Gtk2 only)</string>
                         </property>
                     </widget>
-                    <spacer row="7" column="2">
+                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
                         <property name="name">
-                            <cstring>spacer7</cstring>
+                            <cstring>fixParentlessDialogs</cstring>
                         </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
+                        <property name="text">
+                            <string>'Fix' parentless dialogs</string>
                         </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
+                        <property name="whatsThis" stdset="0">
+                            <string>&lt;h2&gt;&lt;font color="#ff0000"&gt;Warning: Experimental!&lt;/font&gt;&lt;/h1&gt;&lt;p&gt;&lt;p&gt;Some applications - such as Kate, Kaffeine, and GIMP - produce dialogs that have no 'parent'. This causes the dialog to recieve an entry in the taskbar, and allows the dialog to be minimised independantly of the main application window.&lt;/p&gt;
+
+&lt;p&gt;If you enable this option, QtCurve will try to 'fix' this by assigning the dialogs a parent.&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; This may brake some applications, as it wiill alter the behaviour of dialogs in a way the application has not intended. Therefore, please use with care.&lt;/p&gt;</string>
                         </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>207</height>
-                            </size>
+                    </widget>
+                    <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>inactiveHighlight</cstring>
                         </property>
-                    </spacer>
+                        <property name="text">
+                            <string>Use blended background/highlight colour for highlight of inactive elements</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>&lt;h2&gt;&lt;font color="#ff0000"&gt;Warning: Experimental!&lt;/font&gt;&lt;/h1&gt;&lt;p&gt;&lt;p&gt;Some applications - such as Kate, Kaffeine, and GIMP - produce dialogs that have no 'parent'. This causes the dialog to recieve an entry in the taskbar, and allows the dialog to be minimised independantly of the main application window.&lt;/p&gt;
+
+&lt;p&gt;If you enable this option, QtCurve will try to 'fix' this by assigning the dialogs a parent.&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; This may brake some applications, as it wiill alter the behaviour of dialogs in a way the application has not intended. Therefore, please use with care.&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="6" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Character to use for password entries:</string>
+                        </property>
+                    </widget>
                     <widget class="QPushButton" row="6" column="1">
                         <property name="name">
                             <cstring>passwordChar</cstring>
@@ -804,44 +825,53 @@
                             <string></string>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="6" column="0">
+                    <spacer row="6" column="2">
                         <property name="name">
-                            <cstring>textLabel1_2</cstring>
+                            <cstring>spacer8</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>133</width>
+                                <height>6</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLabel" row="7" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_5</cstring>
                         </property>
                         <property name="text">
-                            <string>Character to use for password entries:</string>
+                            <string>Shading routine:</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+                    <widget class="QComboBox" row="7" column="1" rowspan="1" colspan="2">
                         <property name="name">
-                            <cstring>fixParentlessDialogs</cstring>
-                        </property>
-                        <property name="text">
-                            <string>'Fix' parentless dialogs</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>&lt;h2&gt;&lt;font color="#ff0000"&gt;Warning: Experimental!&lt;/font&gt;&lt;/h1&gt;&lt;p&gt;&lt;p&gt;Some applications - such as Kate, Kaffeine, and GIMP - produce dialogs that have no 'parent'. This causes the dialog to recieve an entry in the taskbar, and allows the dialog to be minimised independantly of the main application window.&lt;/p&gt;
-
-&lt;p&gt;If you enable this option, QtCurve will try to 'fix' this by assigning the dialogs a parent.&lt;/p&gt;
-
-&lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; This may brake some applications, as it wiill alter the behaviour of dialogs in a way the application has not intended. Therefore, please use with care.&lt;/p&gt;</string>
+                            <cstring>shading</cstring>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
+                    <spacer row="8" column="2">
                         <property name="name">
-                            <cstring>inactiveHighlight</cstring>
+                            <cstring>spacer7</cstring>
                         </property>
-                        <property name="text">
-                            <string>Use blended background/highlight colour for highlight of inactive elements</string>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
                         </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>&lt;h2&gt;&lt;font color="#ff0000"&gt;Warning: Experimental!&lt;/font&gt;&lt;/h1&gt;&lt;p&gt;&lt;p&gt;Some applications - such as Kate, Kaffeine, and GIMP - produce dialogs that have no 'parent'. This causes the dialog to recieve an entry in the taskbar, and allows the dialog to be minimised independantly of the main application window.&lt;/p&gt;
-
-&lt;p&gt;If you enable this option, QtCurve will try to 'fix' this by assigning the dialogs a parent.&lt;/p&gt;
-
-&lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; This may brake some applications, as it wiill alter the behaviour of dialogs in a way the application has not intended. Therefore, please use with care.&lt;/p&gt;</string>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
                         </property>
-                    </widget>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>203</height>
+                            </size>
+                        </property>
+                    </spacer>
                 </grid>
             </widget>
         </widget>
@@ -928,6 +958,7 @@
     <tabstop>fixParentlessDialogs</tabstop>
     <tabstop>inactiveHighlight</tabstop>
     <tabstop>passwordChar</tabstop>
+    <tabstop>shading</tabstop>
     <tabstop>optionBtn</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>

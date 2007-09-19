@@ -8,6 +8,7 @@
 5. If an inactive palette is set (e.g. via qtconfig), ensure that progress
    bar text is unaffected.
 6. Remove frames from source/destination labels of kio progress dialogs.
+7. Add gui to set shading option.
 
 0.53
 ----
