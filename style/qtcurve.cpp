@@ -3379,6 +3379,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 {
                     p->setPen(itsMenuitemCols[0]);
                     p->drawLine(tr.left(), tr.top()+1, tr.right(), tr.top()+1);
+                    p->setPen(midColor(fill, itsMenuitemCols[0], IS_FLAT(opts.tabAppearance) ? 1.0 : 1.2));
                     p->drawLine(tr.left(), tr.top()+2, tr.right(), tr.top()+2);
 
                     p->setClipRect(QRect(tr.x(), tr.y(), tr.width(), 3), QPainter::CoordPainter);
@@ -3433,6 +3434,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 {
                     p->setPen(itsMenuitemCols[0]);
                     p->drawLine(tr.left(), tr.bottom()-1, tr.right(), tr.bottom()-1);
+                    p->setPen(midColor(fill, itsMenuitemCols[0]));
                     p->drawLine(tr.left(), tr.bottom()-2, tr.right(), tr.bottom()-2);
                     p->setClipRect(QRect(tr.x(), tr.y()+r.height()-3, tr.width(), 3), QPainter::CoordPainter);
                     drawBorder(cg.background(), p, tr, cg, flags|Style_Horizontal|Style_Enabled,

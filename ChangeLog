@@ -9,6 +9,7 @@
    bar text is unaffected.
 6. Remove frames from source/destination labels of kio progress dialogs.
 7. Add gui to set shading option.
+8. Nicer look for selected tab highlight.
 
 0.53
 ----
