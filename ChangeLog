@@ -1,3 +1,7 @@
+0.54.1
+------
+1. Supply a simple 'mkpkg' script to create packages with checkinstall.
+
 0.54
 ----
 1. Converted buildsystem to CMake.
