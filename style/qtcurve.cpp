@@ -802,7 +802,7 @@ void QtCurveStyle::polish(QPalette &pal)
                            &inactGroup(pal.inactive()),
                            &disGroup(pal.disabled());
     const QColor           *use(backgroundColors(actGroup));
-    QColorGroup            newAct(actGroup.foreground(), actGroup.button(), use[0], use[5],
+    QColorGroup            newAct(actGroup.foreground(), actGroup.button(), use[0], use[QT_STD_BORDER],
                                   actGroup.mid(), actGroup.text(), actGroup.brightText(),
                                   actGroup.base(), actGroup.background());
     QColorGroup::ColorRole roles[]={QColorGroup::Midlight, QColorGroup::ButtonText,
@@ -817,7 +817,7 @@ void QtCurveStyle::polish(QPalette &pal)
 
     use=backgroundColors(inactGroup);
 
-    QColorGroup newInact(inactGroup.foreground(), inactGroup.button(), use[0], use[5],
+    QColorGroup newInact(inactGroup.foreground(), inactGroup.button(), use[0], use[QT_STD_BORDER],
                          inactGroup.mid(), inactGroup.text(), inactGroup.brightText(),
                          inactGroup.base(), inactGroup.background());
 
@@ -827,7 +827,7 @@ void QtCurveStyle::polish(QPalette &pal)
 
     use=backgroundColors(disGroup);
 
-    QColorGroup newDis(disGroup.foreground(), disGroup.button(), use[0], use[5],
+    QColorGroup newDis(disGroup.foreground(), disGroup.button(), use[0], use[QT_STD_BORDER],
                        disGroup.mid(), disGroup.text(), disGroup.brightText(),
                        disGroup.base(), disGroup.background());
 
@@ -2108,7 +2108,7 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
 
     if(highlight && isSpin)
     {
-        p->setPen(use[5]);
+        p->setPen(use[QT_STD_BORDER]);
         p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-2, r.y()+r.height()-1);
     }
 
@@ -2294,7 +2294,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                     if(!isFirst)
                     {
-                        p->setPen(itsBackgroundCols[5]);
+                        p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                         p->drawLine(r.x(), r.y()+5, r.x(), r.y()+r.height()-6);
                         p->setPen(itsBackgroundCols[0]);
                         p->drawLine(r.x()+1, r.y()+5, r.x()+1, r.y()+r.height()-6);
@@ -2314,7 +2314,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                     if(!isLast)
                     {
-                        p->setPen(itsBackgroundCols[5]);
+                        p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                         p->drawLine(r.x()+5, r.y()+r.height()-2, r.x()+r.width()-6,
                                     r.y()+r.height()-2);
                         p->setPen(itsBackgroundCols[0]);
@@ -2759,7 +2759,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         {
             const QColor *use(backgroundColors(cg));
 
-            p->setPen(use[5]);
+            p->setPen(use[QT_STD_BORDER]);
             p->setBrush(NoBrush);
             p->drawRect(r);
             if(opts.lighterPopupMenuBgnd)
@@ -2785,7 +2785,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
             if(data.isDefault() || data.lineWidth()>1)
             {
-                p->setPen(use[5]);
+                p->setPen(use[QT_STD_BORDER]);
                 p->setBrush(NoBrush);
                 p->drawRect(r);
                 qDrawShadePanel(p, r.x()+1, r.y()+1, r.width()-2, r.height()-2,
@@ -3660,7 +3660,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             if(mi->isSeparator())
             {
                 y=r.y()+((r.height()/2)-1);
-                p->setPen(itsBackgroundCols[5]);
+                p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                 p->drawLine(r.x()+4, y, r.x()+r.width()-5, y);
 //                 p->setPen(itsBackgroundCols[0]);
 //                 p->drawLine(r.x()+4, y+1, r.x()+r.width()-5, y+1);
@@ -4606,7 +4606,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 #ifndef QTC_SIMPLE_SCROLLBARS
                 if(noButtons && (!atMin || !atMax))
                 {
-                    p->setPen(backgroundColors(cg)[5]);
+                    p->setPen(backgroundColors(cg)[QT_STD_BORDER]);
 
                     if(horiz)
                     {
@@ -5253,13 +5253,13 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &r, const QColorGroup &
     }
     else
     {
-        p->setPen(itsMenuitemCols[5]);
+        p->setPen(itsMenuitemCols[QT_STD_BORDER]);
         p->setBrush(itsMenuitemCols[ORIGINAL_SHADE]);
         p->drawRect(r);
     }
     if(QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
     {
-        p->setPen(midColor(cg.background(), itsMenuitemCols[5]));
+        p->setPen(midColor(cg.background(), itsMenuitemCols[QT_STD_BORDER]));
         if(!(round&CORNER_TL) || !drawFull)
             p->drawPoint(r.x(), r.y());
         if(!(round&CORNER_BL) || !drawFull)
