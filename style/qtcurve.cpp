@@ -107,38 +107,81 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <qdialog.h>
 #include <qprogressdialog.h>
 #include <qstyleplugin.h>
-#include <qgroupbox.h>                      
+#include <qgroupbox.h>
+#include <qdir.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <fixx11h.h>
+
+static QString readEnvPath(const char *env)
+{
+   QCString path=getenv(env);
+
+   return path.isEmpty() ? QString::null : QFile::decodeName(path);
+}
+
+static QString kdeHome()
+{
+    QString env(readEnvPath(getuid() ? "KDEHOME" : "KDEROOTHOME"));
+
+    return env.isEmpty()
+                ? QDir::homeDirPath()+"/.kde"
+                : env;
+}
+
+static void getStyles(const QString &dir, QStringList &styles)
+{
+    QDir d(dir+QTC_THEME_DIR);
+
+    d.setNameFilter(QTC_THEME_PREFIX"*"QTC_THEME_SUFFIX);
+
+    QStringList                entries(d.entryList());
+    QStringList::ConstIterator it(entries.begin()),
+                               end(entries.end());
+
+    for(; it!=end; ++it)
+    {
+        QString style((*it).left((*it).findRev(QTC_THEME_SUFFIX)));
+
+        if(!styles.contains(style))
+            styles.append(style);
+    }
+}
+
+static QString themeFile(const QString &dir, const QString &n)
+{
+    QString name(dir+QTC_THEME_DIR+n+QTC_THEME_SUFFIX);
+
+    return QFile(name).exists() ? name : QString();
+}
 
 class QtCurveStylePlugin : public QStylePlugin
 {
     public:
 
-    QtCurveStylePlugin();
+    QtCurveStylePlugin() : QStylePlugin() { }
 
-    QStringList   keys() const;
-    QStyle      * create(const QString &);
+    QStringList keys() const
+    {
+        QStringList list;
+        list << "QtCurve";
+
+        getStyles(kdeHome(), list);
+        getStyles(KDE_PREFIX(3), list);
+        getStyles(KDE_PREFIX(4), list);
+
+        return list;
+    }
+
+    QStyle * create(const QString &s)
+    {
+        return "qtcurve"==s.lower()
+                    ? new QtCurveStyle
+                    : 0==s.find(QTC_THEME_PREFIX)
+                        ? new QtCurveStyle(s)
+                        : 0;
+    }
 };
-
-QtCurveStylePlugin::QtCurveStylePlugin()
-                  : QStylePlugin()
-{
-}
-
-QStringList QtCurveStylePlugin::keys() const
-{
-    QStringList list;
-    list << "QtCurve";
-
-    return list;
-}
-
-QStyle * QtCurveStylePlugin::create(const QString &s)
-{
-    return (s.lower() == "qtcurve") ? new QtCurveStyle : 0;
-}
 
 Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 
@@ -146,7 +189,6 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 
 #if KDE_VERSION >= 0x30200
 #include <qfile.h>
-#include <qdir.h>
 #endif
 
 #define QTC_NO_SECT -1
@@ -162,18 +204,9 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 #if KDE_VERSION >= 0x30200
 // Try to read $KDEHOME/share/config/kickerrc to find out if kicker is transparent...
 
-static QString readEnvPath(const char *env)
-{
-   QCString path=getenv(env);
-
-   return path.isEmpty() ? QString::null : QFile::decodeName(path);
-}
-
 static bool kickerIsTrans()
 {
-    QString kdeHome(readEnvPath(getuid() ? "KDEHOME" : "KDEROOTHOME")),
-            cfgFileName(kdeHome.isEmpty() ? QDir::homeDirPath()+"/.kde/share/config/kickerrc"
-                                          : kdeHome+"/share/config/kickerrc");
+    QString cfgFileName(kdeHome()+"/share/config/kickerrc");
     bool    trans(false);
     QFile   cfgFile(cfgFileName);
 
@@ -508,7 +541,7 @@ HighContrastStyle::HighContrastStyle()
 {
 }
 
-QtCurveStyle::QtCurveStyle()
+QtCurveStyle::QtCurveStyle(const QString &name)
             : itsSliderCols(NULL),
               itsDefBtnCols(NULL),
               itsMouseOverCols(NULL),
@@ -528,8 +561,22 @@ QtCurveStyle::QtCurveStyle()
               itsActive(true),
               itsIsSpecialHover(false)
 {
+    QString rcFile;
+
     defaultSettings(&opts);
-    readConfig(NULL, &opts, &opts);
+    if(!name.isEmpty())
+    {
+        rcFile=themeFile(kdeHome(), name);
+
+        if(rcFile.isEmpty())
+        {
+            rcFile=themeFile(KDE_PREFIX(useQt4Settings() ? 4 : 3), name);
+            if(rcFile.isEmpty())
+                rcFile=themeFile(KDE_PREFIX(useQt4Settings() ? 3 : 4), name);
+        }
+    }
+
+    readConfig(rcFile, &opts, &opts);
     opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
     if(opts.contrast<0 || opts.contrast>10)
         opts.contrast=7;
@@ -1013,7 +1060,7 @@ void QtCurveStyle::polish(QWidget *widget)
         connect(widget, SIGNAL(sliderMoved(int)), this, SLOT(sliderThumbMoved(int)));
         connect(widget, SIGNAL(valueChanged(int)), this, SLOT(sliderThumbMoved(int)));
     }
-    else if (::qt_cast<QLineEdit *>(widget) || ::qt_cast<QTextEdit *>(widget))
+    else if (::qt_cast<QLineEdit*>(widget) || ::qt_cast<QTextEdit*>(widget))
     {
         widget->installEventFilter(this);
         if(onToolBar(widget))
@@ -1066,13 +1113,13 @@ void QtCurveStyle::polish(QWidget *widget)
         }
 
         if(opts.animatedProgress)
-        {
-            widget->installEventFilter(this);
-            itsProgAnimWidgets[widget] = 0;
-            connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(progressBarDestroyed(QObject *)));
-            if (!itsAnimationTimer->isActive())
-                itsAnimationTimer->start(PROGRESS_ANIMATION, false);
-        }
+    {
+        widget->installEventFilter(this);
+        itsProgAnimWidgets[widget] = 0;
+        connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(progressBarDestroyed(QObject *)));
+        if (!itsAnimationTimer->isActive())
+            itsAnimationTimer->start(PROGRESS_ANIMATION, false);
+    }
     }
 #ifdef QTC_HIGHLIGHT_SCROLVIEWS
     else if(::qt_cast<QScrollView*>(widget))

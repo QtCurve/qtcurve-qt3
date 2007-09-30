@@ -114,7 +114,7 @@ class QtCurveStyle : public HighContrastStyle
         HOVER_CB_ARROW
     };
 
-    QtCurveStyle();
+    QtCurveStyle(const QString &name=QString());
     virtual ~QtCurveStyle();
 
     void polish(QApplication *app);

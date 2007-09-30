@@ -7,8 +7,8 @@ set(DEBIAN_PACKAGE_DESCRIPTION "QtCurve for Qt3/KDE3")
 set(DEBIAN_PACKAGE_SECTION "kde")
 set(CPACK_SOURCE_GENERATOR "TBZ2")
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
-set(CPACK_PACKAGE_VERSION_MINOR "54")
-set(CPACK_PACKAGE_VERSION_PATCH "1")
+set(CPACK_PACKAGE_VERSION_MINOR "55")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
 set(CPACK_PACKAGE_CONTACT "Craig Drummond <Craig.Drummond@lycos.co.uk>")
 set(QTCURVE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
 set(QTCURVE_VERSION_FULL "${QTCURVE_VERSION}.${CPACK_PACKAGE_VERSION_PATCH}")
@@ -24,6 +24,27 @@ include(KDE3Macros)
 exec_program(kde-config
              ARGS --prefix
              OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX)
+
+file(TO_CMAKE_PATH "$ENV{KDEDIRS}" _KDEDIRS)
+
+# For KDE4 kde-config has been renamed to kde4-config
+find_program(KDE4_KDECONFIG_EXECUTABLE
+             NAMES kde4-config
+             PATHS ${CMAKE_INSTALL_PREFIX}/bin ${_KDEDIRS} /usr/local/bin /usr/bin /opt/kde4/bin NO_DEFAULT_PATH)
+
+if (NOT KDE4_KDECONFIG_EXECUTABLE)
+   find_program(KDE4_KDECONFIG_EXECUTABLE NAMES kde4-config )
+endif (NOT KDE4_KDECONFIG_EXECUTABLE)
+
+if(KDE4_KDECONFIG_EXECUTABLE)
+    exec_program(${KDE4_KDECONFIG_EXECUTABLE}
+                 ARGS --prefix
+                 OUTPUT_VARIABLE KDE4PREFIX)
+endif(KDE4_KDECONFIG_EXECUTABLE)
+
+if(NOT KDE4PREFIX)
+    set(KDE4PREFIX ${KDE3PREFIX})
+endif(NOT KDE4PREFIX)
 
 configure_file (config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 add_definitions(${QT_DEFINITIONS} ${KDE3_DEFINITIONS})
