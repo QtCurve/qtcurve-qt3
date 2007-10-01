@@ -293,10 +293,11 @@ QColor shade(const QColor &a, float k)
 }
 
 static void drawLines(QPainter *p, const QRect &r, bool horiz, int nLines, int offset,
-                      const QColor *cols, int startOffset, int dark, int etchedDisp=1)
+                      const QColor *cols, int startOffset, int dark, int etchedDisp=1,
+                      bool light=true)
 {
-    int space((nLines*2)+(etchedDisp ? (nLines-1) : 0)),
-        step(etchedDisp ? 3 : 2),
+    int space((nLines*2)+(etchedDisp || !light ? (nLines-1) : 0)),
+        step(etchedDisp || !light ? 3 : 2),
         x(horiz ? r.x(): r.x()+((r.width()-space)>>1)),
         y(horiz ? r.y()+((r.height()-space)>>1): r.y()),
         x2(r.x()+r.width()-1),
@@ -312,9 +313,12 @@ static void drawLines(QPainter *p, const QRect &r, bool horiz, int nLines, int o
         for(i=0; i<space; i+=step)
             p->drawLine(x+offset, y+i, x2-(offset+etchedDisp), y+i);
 
-        p->setPen(cols[0]);
-        for(i=1; i<space; i+=step)
-            p->drawLine(x+offset+etchedDisp, y+i, x2-offset, y+i);
+        if(light)
+        {
+            p->setPen(cols[0]);
+            for(i=1; i<space; i+=step)
+                p->drawLine(x+offset+etchedDisp, y+i, x2-offset, y+i);
+        }
     }
     else
     {
@@ -325,9 +329,12 @@ static void drawLines(QPainter *p, const QRect &r, bool horiz, int nLines, int o
         for(i=0; i<space; i+=step)
             p->drawLine(x+i, y+offset, x+i, y2-(offset+etchedDisp));
 
-        p->setPen(cols[0]);
-        for(i=1; i<space; i+=step)
-            p->drawLine(x+i, y+offset+etchedDisp, x+i, y2-offset);
+        if(light)
+        {
+            p->setPen(cols[0]);
+            for(i=1; i<space; i+=step)
+                p->drawLine(x+i, y+offset+etchedDisp, x+i, y2-offset);
+        }
     }
 }
 
@@ -2719,6 +2726,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                         p->drawLine(r.x()+6, y+1, r.x()+r.width()-7, y+1);
                     }
                     break;
+                default:
                 case LINE_DOTS:
                     drawDots(p, r, !(flags & Style_Horizontal), 1, 5, itsBackgroundCols, 0, 5);
             }
@@ -3363,7 +3371,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                         : SHADE_BOTTOM_TAB_SEL_DARK,
                                     top ? SHADE_TAB_SEL_DARK
                                         : SHADE_BOTTOM_TAB_SEL_LIGHT,
-                                  false, active ? QTC_SEL_TAB_APP : QTC_NORM_TAB_APP, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT);
+                                  active, active ? QTC_SEL_TAB_APP : QTC_NORM_TAB_APP, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT);
 
             drawBorder(cg.background(), p, tr, cg, flags|Style_Horizontal|Style_Enabled,
                            active
@@ -5330,6 +5338,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
                             ? bevApp
                             : APPEARANCE_GRADIENT);
 
+        bool    selected(opts.colorSelTab && (WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w) ? false : sel);
         QRect   r(0, 0, horiz ? QTC_PIXMAP_DIMENSION : origRect.width(),
                         horiz ? origRect.height() : QTC_PIXMAP_DIMENSION);
         QString key(createKey(horiz ? r.height() : r.width(), base.rgb(), horiz, increase,
@@ -5342,7 +5351,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
 
             QPainter pixPainter(pix);
 
-            if(!sel && IS_GLASS(app))
+            if(!selected && IS_GLASS(app))
             {
                 if(WIDGET_TAB_BOT==w)
                 {
@@ -5377,7 +5386,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
                 drawGradient(topA, topB, increase, &pixPainter, r1, horiz);
                 drawGradient(botA, botB, increase, &pixPainter, r2, horiz);
             }
-            else if(!sel && APPEARANCE_BEVELLED==app &&
+            else if(!selected && APPEARANCE_BEVELLED==app &&
                     ((horiz ? r.height()
                             : r.width()) > (((WIDGET_BUTTON(w) ? 2 : 1)*BEVEL_BORDER(w))+4)))
             {
@@ -5435,12 +5444,15 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
             }
             else
             {
-                QColor top, bot;
+                QColor top,
+                       bot,
+                       baseTopCol(opts.colorSelTab && sel && (WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w)
+                                      ? midColor(base, itsMenuitemCols[0], QTC_COLOR_SEL_TAB_FACTOR) : base);
 
                 if(equal(1.0, shadeTop))
-                    top=base;
+                    top=baseTopCol;
                 else
-                    shade(base, &top, shadeTop);
+                    shade(baseTopCol, &top, shadeTop);
                 if(equal(1.0, shadeBot))
                     bot=base;
                 else
@@ -5556,6 +5568,9 @@ void QtCurveStyle::drawSbSliderHandle(QPainter *p, const QRect &orig, const QCol
     if(LINE_NONE!=opts.sliderThumbs && ((flags & Style_Horizontal && r.width()>=min)|| r.height()>=min))
         switch(opts.sliderThumbs)
         {
+            case LINE_FLAT:
+                drawLines(p, r, !(flags & Style_Horizontal), 3, 5, markers, 0, 5, 0, false);
+                break;
             case LINE_SUNKEN:
                 drawLines(p, r, !(flags & Style_Horizontal), 4, 3, markers, 0, 3);
                 break;
@@ -6152,7 +6167,7 @@ QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) con
                 img.loadFromData(qembed_findData("radio_on.png"));
                 break;
             case PIX_CHECK:
-                img.loadFromData(qembed_findData("check_on.png"));
+                img.loadFromData(qembed_findData(opts.xCheck ? "check_x_on.png" : "check_on.png"));
                 break;
             case PIX_SLIDER:
                 img.loadFromData(qembed_findData("slider.png"));

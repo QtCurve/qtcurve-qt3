@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>544</width>
-            <height>556</height>
+            <width>563</width>
+            <height>565</height>
         </rect>
     </property>
     <property name="caption">
@@ -261,23 +261,6 @@
                             <string>Frameless groupboxes</string>
                         </property>
                     </widget>
-                    <spacer row="13" column="0">
-                        <property name="name">
-                            <cstring>spacer6</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>27</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <widget class="QComboBox" row="2" column="2" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>shadeSliders</cstring>
@@ -374,17 +357,6 @@
                             <string>The setting here affects the general appearance - and will be applied to buttons, scrollbars, sliders, combo boxes, and spin buttons.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="8" column="2" rowspan="1" colspan="4">
-                        <property name="name">
-                            <cstring>highlightTab</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Highlight selected</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>This will cause a coloured stripe to be drawn over the current tab.</string>
-                        </property>
-                    </widget>
                     <widget class="QCheckBox" row="11" column="2" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>stdSidebarButtons</cstring>
@@ -449,6 +421,50 @@
                     <widget class="QComboBox" row="1" column="1">
                         <property name="name">
                             <cstring>splitters</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="13" column="0">
+                        <property name="name">
+                            <cstring>spacer6</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="9" column="4" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>xCheck</cstring>
+                        </property>
+                        <property name="text">
+                            <string>'X' style checkmarks</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="8" column="2" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>highlightTab</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Highlight selected</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This will cause a coloured stripe to be drawn over the current tab.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="8" column="4" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>colorSelTab</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Color selected</string>
                         </property>
                     </widget>
                 </grid>
@@ -926,8 +942,10 @@
     <tabstop>lvLines</tabstop>
     <tabstop>tabAppearance</tabstop>
     <tabstop>highlightTab</tabstop>
+    <tabstop>colorSelTab</tabstop>
     <tabstop>shadeCheckRadio</tabstop>
     <tabstop>customCheckRadioColor</tabstop>
+    <tabstop>xCheck</tabstop>
     <tabstop>stdFocus</tabstop>
     <tabstop>vArrows</tabstop>
     <tabstop>drawStatusBarFrames</tabstop>

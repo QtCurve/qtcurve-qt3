@@ -19,6 +19,7 @@
 */
 
 #include "qtcurveconfig.h"
+#include "exportthemedialog.h"
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
@@ -120,11 +121,13 @@ static void insertAppearanceEntries(QComboBox *combo, bool raised, bool bev)
     }
 }
 
-static void insertLineEntries(QComboBox *combo, bool none)
+static void insertLineEntries(QComboBox *combo, bool none, bool flat=false)
 {
     combo->insertItem(i18n("Sunken lines"));
     combo->insertItem(i18n("Dots"));
     combo->insertItem(none ? i18n("None") : i18n("Dashes"));
+    if(flat)
+        combo->insertItem(i18n("Flat"));
 }
 
 static void insertDefBtnEntries(QComboBox *combo)
@@ -182,7 +185,8 @@ static void insertShadingEntries(QComboBox *combo)
 }
 
 QtCurveConfig::QtCurveConfig(QWidget *parent)
-             : QtCurveConfigBase(parent)
+             : QtCurveConfigBase(parent),
+               exportDialog(NULL)
 {
     titleLabel->setText("QtCurve " VERSION " - (C) Craig Drummond, 2003-2007");
     insertShadeEntries(shadeSliders, false);
@@ -197,7 +201,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(progressAppearance, true, true);
     insertAppearanceEntries(menuitemAppearance, true, true);
     insertLineEntries(handles, false);
-    insertLineEntries(sliderThumbs, true);
+    insertLineEntries(sliderThumbs, true, true);
     insertLineEntries(toolbarSeparators, true);
     insertLineEntries(splitters, false);
     insertDefBtnEntries(defBtnIndicator);
@@ -228,7 +232,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(toolbarAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(lvAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(sliderAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
-    connect(tabAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(tabAppearance, SIGNAL(activated(int)), SLOT(tabAppearanceChanged()));
     connect(toolbarSeparators, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(splitters, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(fixParentlessDialogs, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -237,6 +241,8 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(gradientPbGroove, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(darkerBorders, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(vArrows, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(xCheck, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(colorSelTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(stdSidebarButtons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(borderMenuitems, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(progressAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
@@ -288,6 +294,9 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     menu->insertSeparator();
     menu->insertItem(i18n("Import..."), this, SLOT(importStyle()));
     menu->insertItem(i18n("Export..."), this, SLOT(exportStyle()));
+    menu->insertSeparator();
+    menu->insertItem(i18n("Export Theme..."), this, SLOT(exportTheme()));
+
     loadStyles(subMenu);
 }
 
@@ -394,6 +403,14 @@ void QtCurveConfig::stripedProgressChanged()
     updateChanged();
 }
 
+void QtCurveConfig::tabAppearanceChanged()
+{
+    if(colorSelTab->isChecked() && APPEARANCE_GRADIENT!=tabAppearance->currentItem())
+        colorSelTab->setChecked(false);
+    colorSelTab->setEnabled(APPEARANCE_GRADIENT==tabAppearance->currentItem());
+    updateChanged();
+}
+
 void QtCurveConfig::passwordCharClicked()
 {
     int              cur(toInt(passwordChar->text()));
@@ -447,6 +464,17 @@ void QtCurveConfig::exportStyle()
         if(!rv)
             KMessageBox::error(this, i18n("Could not write to file:\n%1").arg(file));
     }
+}
+
+void QtCurveConfig::exportTheme()
+{
+    if(!exportDialog)
+        exportDialog=new CExportThemeDialog(this);
+
+    Options opts;
+
+    setOptions(opts);
+    exportDialog->run(opts);
 }
 
 void QtCurveConfig::loadStyle(const QString &file)
@@ -506,6 +534,8 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.gradientPbGroove=gradientPbGroove->isChecked();
     opts.darkerBorders=darkerBorders->isChecked();
     opts.vArrows=vArrows->isChecked();
+    opts.xCheck=xCheck->isChecked();
+    opts.colorSelTab=colorSelTab->isChecked();
     opts.stdSidebarButtons=stdSidebarButtons->isChecked();
     opts.borderMenuitems=borderMenuitems->isChecked();
     opts.progressAppearance=(EAppearance)progressAppearance->currentItem();
@@ -576,6 +606,8 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     gradientPbGroove->setChecked(opts.gradientPbGroove);
     darkerBorders->setChecked(opts.darkerBorders);
     vArrows->setChecked(opts.vArrows);
+    xCheck->setChecked(opts.xCheck);
+    colorSelTab->setChecked(opts.colorSelTab);
     stdSidebarButtons->setChecked(opts.stdSidebarButtons);
     borderMenuitems->setChecked(opts.borderMenuitems);
     progressAppearance->setCurrentItem(opts.progressAppearance);
@@ -618,6 +650,8 @@ bool QtCurveConfig::settingsChanged()
          gradientPbGroove->isChecked()!=currentStyle.gradientPbGroove ||
          darkerBorders->isChecked()!=currentStyle.darkerBorders ||
          vArrows->isChecked()!=currentStyle.vArrows ||
+         xCheck->isChecked()!=currentStyle.xCheck ||
+         colorSelTab->isChecked()!=currentStyle.colorSelTab ||
          stdSidebarButtons->isChecked()!=currentStyle.stdSidebarButtons ||
          borderMenuitems->isChecked()!=currentStyle.borderMenuitems ||
          defBtnIndicator->currentItem()!=(int)currentStyle.defBtnIndicator ||
