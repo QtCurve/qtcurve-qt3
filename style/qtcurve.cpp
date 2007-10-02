@@ -2696,8 +2696,6 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         case PE_DockWindowSeparator:
         {
             QRect r2(r);
-            int   light=0,
-                  dark=3;
 
             r2.addCoords(-1, -1, 2, 2);
             drawMenuOrToolBarBackground(p, r2, cg, false, flags&Style_Horizontal);
@@ -2706,15 +2704,19 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             {
                 case LINE_NONE:
                     break;
+                case LINE_FLAT:
                 case LINE_SUNKEN:
                     if(r.width()<r.height())
                     {
                         int x(r.x()+((r.width()-2) / 2));
 
-                        p->setPen(itsBackgroundCols[dark]);
+                        p->setPen(itsBackgroundCols[3]);
                         p->drawLine(x, r.y()+6, x, r.y()+r.height()-7);
-                        p->setPen(itsBackgroundCols[light]);
-                        p->drawLine(x+1, r.y()+6, x+1, r.y()+r.height()-7);
+                        if(LINE_SUNKEN==opts.toolbarSeparators)
+                        {
+                            p->setPen(itsBackgroundCols[0]);
+                            p->drawLine(x+1, r.y()+6, x+1, r.y()+r.height()-7);
+                        }
                     }
                     else
                     {
@@ -2722,8 +2724,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                         p->setPen(itsBackgroundCols[3]);
                         p->drawLine(r.x()+6, y, r.x()+r.width()-7, y);
-                        p->setPen(itsBackgroundCols[0]);
-                        p->drawLine(r.x()+6, y+1, r.x()+r.width()-7, y+1);
+                        if(LINE_SUNKEN==opts.toolbarSeparators)
+                        {
+                            p->setPen(itsBackgroundCols[0]);
+                            p->drawLine(r.x()+6, y+1, r.x()+r.width()-7, y+1);
+                        }
                     }
                     break;
                 default:
@@ -2751,6 +2756,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     break;
                 case LINE_SUNKEN:
                     drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 3);
+                    break;
+                case LINE_FLAT:
+                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 3, border, 0, 3, 0, false);
                     break;
                 case LINE_DASHES:
                     drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 3, 0);
@@ -5790,6 +5798,11 @@ void QtCurveStyle::drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, 
                 drawLines(p, r1, false, (r.width()-8)/3,
                           tb ? 0 : (r.height()-5)/2, border, 0, 5);
             }
+            break;
+        case LINE_FLAT:
+            drawLines(p, r, !(flags & Style_Horizontal), 2,
+                      APP_KICKER==itsThemedApp ? 1 : tb ? 4 : 2, border,
+                      APP_KICKER==itsThemedApp ? 1 : tb ? -2 : 0, 3, 0, false);
             break;
         default:
             drawLines(p, r, !(flags & Style_Horizontal), 2,
