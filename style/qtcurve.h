@@ -172,7 +172,7 @@ class QtCurveStyle : public HighContrastStyle
                            EWidget w=WIDGET_OTHER) const;
     void drawGradient(const QColor &top, const QColor &bot, bool increase, QPainter *p,
                       const QRect &r, bool horiz=true) const;
-    void drawSbSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags) const;
+    void drawSbSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, bool slider=false) const;
     void drawSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, bool tb=false) const;
     void drawSliderGroove(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
                           const QWidget *widget) const;
