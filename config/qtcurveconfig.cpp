@@ -194,6 +194,7 @@ static void insertSliderStyleEntries(QComboBox *combo)
 {
     combo->insertItem(i18n("Plain"));
     combo->insertItem(i18n("Round"));
+    combo->insertItem(i18n("Triangular"));
 }
 
 QtCurveConfig::QtCurveConfig(QWidget *parent)

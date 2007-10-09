@@ -3249,7 +3249,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             drawSliderGroove(p, r, cg, flags, widget);
             break;
         case KPE_SliderHandle:
-            drawSliderHandle(p, r, cg, flags);
+            drawSliderHandle(p, r, cg, flags, widget ? ::qt_cast<QSlider *>(widget) : NULL);
             break;
         case KPE_ListViewExpander:
         {
@@ -4744,7 +4744,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             if((controls & SC_SliderGroove)&& groove.isValid())
                 drawSliderGroove(paint, groove, cg, flags, widget);
             if((controls & SC_SliderHandle)&& handle.isValid())
-                drawSliderHandle(paint, handle, cg, flags, tb);
+                drawSliderHandle(paint, handle, cg, flags, widget ? ::qt_cast<QSlider *>(widget) : NULL,  tb);
             if(controls & SC_SliderTickmarks)
                 QCommonStyle::drawComplexControl(control, paint, widget, r, cg, flags, SC_SliderTickmarks,
                                                  active, data);
@@ -5030,11 +5030,11 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
         case PM_ScrollBarSliderMin:
             return 16;
         case PM_SliderThickness:
-            return 18;
+            return SLIDER_TRIANGULAR==opts.sliderStyle ? 22 : 18;
         case PM_SliderControlThickness:
-            return 15; // This equates to 13, as we draw the handle 2 pix smaller for focus rect...
+            return SLIDER_TRIANGULAR==opts.sliderStyle ? 19 : 15; // This equates to 13, as we draw the handle 2 pix smaller for focus rect...
         case PM_SliderLength:
-            return 21;
+            return SLIDER_TRIANGULAR==opts.sliderStyle ? 11 : 21;
         case PM_ScrollBarExtent:
             // See KHTML note at top of file
             return APP_KPRESENTER==itsThemedApp ||
@@ -5630,18 +5630,22 @@ void QtCurveStyle::drawSbSliderHandle(QPainter *p, const QRect &orig, const QCol
 }
 
 void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg,
-                                    SFlags flags, bool tb) const
+                                    SFlags flags, QSlider *slider, bool tb) const
 {
-    bool horiz(r.width()>r.height());
+    bool horiz(SLIDER_TRIANGULAR==opts.sliderStyle ? r.height()>r.width() : r.width()>r.height());
 
-    if(SLIDER_ROUND==opts.sliderStyle && ROUND_FULL==opts.round)
+    if(SLIDER_PLAIN!=opts.sliderStyle && ROUND_FULL==opts.round)
     {
-        const QColor *use(sliderColors(/*cg, */flags));
-        const QColor &fill(getFill(flags, use));
-        int          x(r.x()),
-                     y(r.y()),
-                     xo(horiz ? 8 : 0),
-                     yo(horiz ? 0 : 8);
+        const QColor     *use(sliderColors(/*cg, */flags));
+        const QColor     &fill(getFill(flags, use));
+        int              x(r.x()),
+                         y(r.y()),
+                         xo(horiz ? 8 : 0),
+                         yo(horiz ? 0 : 8);
+        PrimitiveElement direction(horiz ? PE_ArrowDown : PE_ArrowRight);
+        bool             drawLight(MO_PLASTIK!=opts.coloredMouseOver || !(flags&Style_MouseOver) ||
+                                   (SLIDER_ROUND==opts.sliderStyle &&
+                                    (SHADE_BLEND_SELECTED==opts.shadeSliders || SHADE_SELECTED==opts.shadeSliders)));
 
         if(horiz)
             y++;
@@ -5650,8 +5654,44 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
 
         QPointArray clipRegion;
 
-        clipRegion.setPoints(8, x,       y+8+yo,  x,       y+4,     x+4,    y,        x+8+xo, y,
-                                x+12+xo, y+4,     x+12+xo, y+8+yo,  x+8+xo, y+12+yo,  x+4,    y+12+yo);
+        p->save();
+        if(SLIDER_TRIANGULAR==opts.sliderStyle)
+        {
+            if(slider)
+                switch(slider->tickmarks())
+                {
+                    case QSlider::Both:
+                    case QSlider::NoMarks:
+                    case QSlider::Below:
+                        direction=horiz ? PE_ArrowDown : PE_ArrowRight;
+                        break;
+                    case QSlider::Above:
+                        direction=horiz ? PE_ArrowUp : PE_ArrowLeft;
+                }
+
+            switch(direction)
+            {
+                default:
+                case PE_ArrowDown:
+                    y+=2;
+                    clipRegion.setPoints(7,   x, y+2,    x+2, y,   x+8, y,    x+10, y+2,   x+10, y+9,   x+5, y+14,    x, y+9);
+                    break;
+                case PE_ArrowUp:
+                    y-=2;
+                    clipRegion.setPoints(7,   x, y+12,   x+2, y+14,   x+8, y+14,   x+10, y+12,   x+10, y+5,   x+5, y,    x, y+5);
+                    break;
+                case PE_ArrowLeft:
+                    x-=2;
+                    clipRegion.setPoints(7,   x+12, y,   x+14, y+2,   x+14, y+8,   x+12, y+10,   x+5, y+10,    x, y+5,    x+5, y );
+                    break;
+                case PE_ArrowRight:
+                    x+=2;
+                    clipRegion.setPoints(7,   x+2, y,    x, y+2,   x, y+8,    x+2, y+10,   x+9, y+10,   x+14, y+5,    x+9, y);
+            }
+        }
+        else
+            clipRegion.setPoints(8, x,       y+8+yo,  x,       y+4,     x+4,    y,        x+8+xo, y,
+                                    x+12+xo, y+4,     x+12+xo, y+8+yo,  x+8+xo, y+12+yo,  x+4,    y+12+yo);
 
         if(!tb)
             p->fillRect(QRect(x, y, r.width()-(horiz ? 0 : 2), r.height()-(horiz ? 2 : 0)), cg.background());
@@ -5706,11 +5746,50 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
 
         p->setClipping(false);
 
-        p->drawPixmap(x, y,
-                    *getPixmap(use[opts.coloredMouseOver && flags&Style_MouseOver ? 4 : QT_BORDER(flags&Style_Enabled)],
-                                horiz ? PIX_SLIDER : PIX_SLIDER_V, 0.8));
-        if(MO_PLASTIK!=opts.coloredMouseOver || !(flags&Style_MouseOver))
-            p->drawPixmap(x, y, *getPixmap(use[0], horiz ? PIX_SLIDER_LIGHT : PIX_SLIDER_LIGHT_V));
+        if(SLIDER_TRIANGULAR==opts.sliderStyle)
+        {
+            QPointArray aa,
+                        light;
+
+            switch(direction)
+            {
+                default:
+                case PE_ArrowDown:
+                    aa.setPoints(8,   x, y+1,    x+1, y,   x+9, y,    x+10, y+1,   x+10, y+10,   x+6, y+14,  x+4, y+14,  x, y+10);
+                    light.setPoints(3, x+1, y+9,   x+1, y+1,  x+8, y+1);
+                    break;
+                case PE_ArrowUp:
+                    aa.setPoints(8,   x, y+13,   x+1, y+14,   x+9, y+14,   x+10, y+13,   x+10, y+4,   x+6, y,  x+4, y,  x, y+4);
+                    light.setPoints(3, x+1, y+13,   x+1, y+5,  x+5, y+1);
+                    break;
+                case PE_ArrowLeft:
+                    aa.setPoints(8,   x+13, y,   x+14, y+1,   x+14, y+9,   x+13, y+10,   x+4, y+10,   x, y+6,  x, y+4,  x+4, y);
+                    light.setPoints(3, x+1, y+5,   x+5, y+1,  x+13, y+1);
+                    break;
+                case PE_ArrowRight:
+                    aa.setPoints(8,   x+1, y,    x, y+1,   x, y+9,    x+1, y+10,   x+10, y+10,   x+14, y+6, x+14, y+4,  x+10, y);
+                    light.setPoints(3, x+1, y+8,   x+1, y+1,  x+9, y+1);
+            }
+
+            p->setPen(midColor(use[QT_STD_BORDER], cg.background()));
+            p->drawPolygon(aa);
+            if(drawLight)
+            {
+                p->setPen(use[APPEARANCE_DULL_GLASS==opts.sliderAppearance ? 1 : 0]);
+                p->drawPolyline(light);
+            }
+            p->setPen(use[QT_STD_BORDER]);
+            p->drawPolygon(clipRegion);
+        }
+        else
+        {
+            p->drawPixmap(x, y,
+                        *getPixmap(use[opts.coloredMouseOver && flags&Style_MouseOver ? 4 : QT_BORDER(flags&Style_Enabled)],
+                                    horiz ? PIX_SLIDER : PIX_SLIDER_V, 0.8));
+            if(drawLight)
+                p->drawPixmap(x, y, *getPixmap(use[0], horiz ? PIX_SLIDER_LIGHT : PIX_SLIDER_LIGHT_V));
+        }
+        p->restore();
     }
     else
     {
