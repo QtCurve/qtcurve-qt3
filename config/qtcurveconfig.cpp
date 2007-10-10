@@ -19,6 +19,7 @@
 */
 
 #include "qtcurveconfig.h"
+#include "exportthemedialog.h"
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
@@ -105,24 +106,25 @@ static void insertShadeEntries(QComboBox *combo, bool withDarken, bool checkRadi
     }
 }
 
-static void insertAppearanceEntries(QComboBox *combo, bool raised, bool bev)
+static void insertAppearanceEntries(QComboBox *combo, bool all=true)
 {
     combo->insertItem(i18n("Flat"));
+    combo->insertItem(i18n("Raised"));
     combo->insertItem(i18n("Dull glass"));
     combo->insertItem(i18n("Shiny glass"));
     combo->insertItem(i18n("Gradient"));
     combo->insertItem(i18n("Inverted gradient"));
-    if(raised)
+    if(all)
     {
-        combo->insertItem(i18n("Raised"));
-        if(bev)
-            combo->insertItem(i18n("Bevelled"));
+        combo->insertItem(i18n("Split gradient"));
+        combo->insertItem(i18n("Bevelled"));
     }
 }
 
 static void insertLineEntries(QComboBox *combo, bool none)
 {
     combo->insertItem(i18n("Sunken lines"));
+    combo->insertItem(i18n("Flat lines"));
     combo->insertItem(i18n("Dots"));
     combo->insertItem(none ? i18n("None") : i18n("Dashes"));
 }
@@ -181,21 +183,36 @@ static void insertShadingEntries(QComboBox *combo)
     combo->insertItem(i18n("Use HSV color space"));
 }
 
+static void insertStripeEntries(QComboBox *combo)
+{
+    combo->insertItem(i18n("Plain"));
+    combo->insertItem(i18n("Striped"));
+    combo->insertItem(i18n("Diagonal stripes"));
+}
+
+static void insertSliderStyleEntries(QComboBox *combo)
+{
+    combo->insertItem(i18n("Plain"));
+    combo->insertItem(i18n("Round"));
+    combo->insertItem(i18n("Triangular"));
+}
+
 QtCurveConfig::QtCurveConfig(QWidget *parent)
-             : QtCurveConfigBase(parent)
+             : QtCurveConfigBase(parent),
+               exportDialog(NULL)
 {
     titleLabel->setText("QtCurve " VERSION " - (C) Craig Drummond, 2003-2007");
     insertShadeEntries(shadeSliders, false);
     insertShadeEntries(shadeMenubars, true);
     insertShadeEntries(shadeCheckRadio, false, true);
-    insertAppearanceEntries(appearance, true, true);
-    insertAppearanceEntries(menubarAppearance, false, false);
-    insertAppearanceEntries(toolbarAppearance, false, false);
-    insertAppearanceEntries(lvAppearance, true, true);
-    insertAppearanceEntries(sliderAppearance, true, false);
-    insertAppearanceEntries(tabAppearance, true, false);
-    insertAppearanceEntries(progressAppearance, true, true);
-    insertAppearanceEntries(menuitemAppearance, true, true);
+    insertAppearanceEntries(appearance);
+    insertAppearanceEntries(menubarAppearance);
+    insertAppearanceEntries(toolbarAppearance);
+    insertAppearanceEntries(lvAppearance);
+    insertAppearanceEntries(sliderAppearance);
+    insertAppearanceEntries(tabAppearance, false);
+    insertAppearanceEntries(progressAppearance);
+    insertAppearanceEntries(menuitemAppearance);
     insertLineEntries(handles, false);
     insertLineEntries(sliderThumbs, true);
     insertLineEntries(toolbarSeparators, true);
@@ -207,6 +224,8 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertToolbarBorderEntries(toolbarBorders);
     insertEffectEntries(buttonEffect);
     insertShadingEntries(shading);
+    insertStripeEntries(stripedProgress);
+    insertSliderStyleEntries(sliderStyle);
 
     highlightFactor->setMinValue(MIN_HIGHLIGHT_FACTOR);
     highlightFactor->setMaxValue(MAX_HIGHLIGHT_FACTOR);
@@ -219,7 +238,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(handles, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(appearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(customMenuTextColor, SIGNAL(toggled(bool)), SLOT(customMenuTextColorChanged()));
-    connect(stripedProgress, SIGNAL(toggled(bool)), SLOT(stripedProgressChanged()));
+    connect(stripedProgress, SIGNAL(activated(int)), SLOT(stripedProgressChanged()));
     connect(animatedProgress, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(embolden, SIGNAL(toggled(bool)), SLOT(emboldenToggled()));
     connect(defBtnIndicator, SIGNAL(activated(int)), SLOT(dbiChanged()));
@@ -228,15 +247,18 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(toolbarAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(lvAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(sliderAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
-    connect(tabAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(tabAppearance, SIGNAL(activated(int)), SLOT(tabAppearanceChanged()));
     connect(toolbarSeparators, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(splitters, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(fixParentlessDialogs, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(fillSlider, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(sliderStyle, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(roundMbTopOnly, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gradientPbGroove, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(darkerBorders, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(vArrows, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(xCheck, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(colorSelTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(stdSidebarButtons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(borderMenuitems, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(progressAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
@@ -288,6 +310,9 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     menu->insertSeparator();
     menu->insertItem(i18n("Import..."), this, SLOT(importStyle()));
     menu->insertItem(i18n("Export..."), this, SLOT(exportStyle()));
+    menu->insertSeparator();
+    menu->insertItem(i18n("Export Theme..."), this, SLOT(exportTheme()));
+
     loadStyles(subMenu);
 }
 
@@ -388,9 +413,17 @@ void QtCurveConfig::customMenuTextColorChanged()
 
 void QtCurveConfig::stripedProgressChanged()
 {
-    animatedProgress->setEnabled(stripedProgress->isChecked());
-    if(animatedProgress->isChecked() && !stripedProgress->isChecked())
+    animatedProgress->setEnabled(STRIPE_NONE!=stripedProgress->currentItem());
+    if(animatedProgress->isChecked() && STRIPE_NONE==stripedProgress->currentItem())
         animatedProgress->setChecked(false);
+    updateChanged();
+}
+
+void QtCurveConfig::tabAppearanceChanged()
+{
+    if(colorSelTab->isChecked() && APPEARANCE_GRADIENT!=tabAppearance->currentItem())
+        colorSelTab->setChecked(false);
+    colorSelTab->setEnabled(APPEARANCE_GRADIENT==tabAppearance->currentItem());
     updateChanged();
 }
 
@@ -449,6 +482,17 @@ void QtCurveConfig::exportStyle()
     }
 }
 
+void QtCurveConfig::exportTheme()
+{
+    if(!exportDialog)
+        exportDialog=new CExportThemeDialog(this);
+
+    Options opts;
+
+    setOptions(opts);
+    exportDialog->run(opts);
+}
+
 void QtCurveConfig::loadStyle(const QString &file)
 {
     Options opts;
@@ -478,7 +522,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.thinnerMenuItems=thinnerMenuItems->isChecked();
     opts.fixParentlessDialogs=fixParentlessDialogs->isChecked();
     opts.animatedProgress=animatedProgress->isChecked();
-    opts.stripedProgress=stripedProgress->isChecked();
+    opts.stripedProgress=(EStripe)stripedProgress->currentItem();
     opts.lighterPopupMenuBgnd=lighterPopupMenuBgnd->isChecked();
     opts.embolden=embolden->isChecked();
     opts.scrollbarType=(EScrollbar)scrollbarType->currentItem();
@@ -502,10 +546,13 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.customMenuSelTextColor=customMenuSelTextColor->color();
     opts.customMenuTextColor=customMenuTextColor->isChecked();
     opts.fillSlider=fillSlider->isChecked();
+    opts.sliderStyle=(ESliderStyle)sliderStyle->currentItem();
     opts.roundMbTopOnly=roundMbTopOnly->isChecked();
     opts.gradientPbGroove=gradientPbGroove->isChecked();
     opts.darkerBorders=darkerBorders->isChecked();
     opts.vArrows=vArrows->isChecked();
+    opts.xCheck=xCheck->isChecked();
+    opts.colorSelTab=colorSelTab->isChecked();
     opts.stdSidebarButtons=stdSidebarButtons->isChecked();
     opts.borderMenuitems=borderMenuitems->isChecked();
     opts.progressAppearance=(EAppearance)progressAppearance->currentItem();
@@ -543,7 +590,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     thinnerMenuItems->setChecked(opts.thinnerMenuItems);
     fixParentlessDialogs->setChecked(opts.fixParentlessDialogs);
     animatedProgress->setChecked(opts.animatedProgress);
-    stripedProgress->setChecked(opts.stripedProgress);
+    stripedProgress->setCurrentItem(opts.stripedProgress);
     embolden->setChecked(opts.embolden);
     defBtnIndicator->setCurrentItem(opts.defBtnIndicator);
     highlightTab->setChecked(opts.highlightTab);
@@ -569,13 +616,16 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     customMenuSelTextColor->setEnabled(customMenuTextColor->isChecked());
     customCheckRadioColor->setEnabled(SHADE_CUSTOM==opts.shadeCheckRadio);
 
-    animatedProgress->setEnabled(stripedProgress->isChecked());
+    animatedProgress->setEnabled(STRIPE_NONE!=stripedProgress->currentItem());
 
     fillSlider->setChecked(opts.fillSlider);
+    sliderStyle->setCurrentItem(opts.sliderStyle);
     roundMbTopOnly->setChecked(opts.roundMbTopOnly);
     gradientPbGroove->setChecked(opts.gradientPbGroove);
     darkerBorders->setChecked(opts.darkerBorders);
     vArrows->setChecked(opts.vArrows);
+    xCheck->setChecked(opts.xCheck);
+    colorSelTab->setChecked(opts.colorSelTab);
     stdSidebarButtons->setChecked(opts.stdSidebarButtons);
     borderMenuitems->setChecked(opts.borderMenuitems);
     progressAppearance->setCurrentItem(opts.progressAppearance);
@@ -610,14 +660,17 @@ bool QtCurveConfig::settingsChanged()
          thinnerMenuItems->isChecked()!=currentStyle.thinnerMenuItems ||
          fixParentlessDialogs->isChecked()!=currentStyle.fixParentlessDialogs ||
          animatedProgress->isChecked()!=currentStyle.animatedProgress ||
-         stripedProgress->isChecked()!=currentStyle.stripedProgress ||
+         stripedProgress->currentItem()!=currentStyle.stripedProgress ||
          lighterPopupMenuBgnd->isChecked()!=currentStyle.lighterPopupMenuBgnd ||
          embolden->isChecked()!=currentStyle.embolden ||
          fillSlider->isChecked()!=currentStyle.fillSlider ||
+         sliderStyle->currentItem()!=currentStyle.sliderStyle ||
          roundMbTopOnly->isChecked()!=currentStyle.roundMbTopOnly ||
          gradientPbGroove->isChecked()!=currentStyle.gradientPbGroove ||
          darkerBorders->isChecked()!=currentStyle.darkerBorders ||
          vArrows->isChecked()!=currentStyle.vArrows ||
+         xCheck->isChecked()!=currentStyle.xCheck ||
+         colorSelTab->isChecked()!=currentStyle.colorSelTab ||
          stdSidebarButtons->isChecked()!=currentStyle.stdSidebarButtons ||
          borderMenuitems->isChecked()!=currentStyle.borderMenuitems ||
          defBtnIndicator->currentItem()!=(int)currentStyle.defBtnIndicator ||

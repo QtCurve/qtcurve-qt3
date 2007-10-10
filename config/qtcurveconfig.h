@@ -29,6 +29,7 @@
 #include "common.h"
 
 class QPopupMenu;
+class CExportThemeDialog;
 
 class QtCurveConfig : public QtCurveConfigBase
 {
@@ -58,6 +59,7 @@ class QtCurveConfig : public QtCurveConfigBase
     void updateChanged();
     void importStyle();
     void exportStyle();
+    void exportTheme();
     void emboldenToggled();
     void dbiChanged();
     void shadeSlidersChanged();
@@ -65,6 +67,7 @@ class QtCurveConfig : public QtCurveConfigBase
     void shadeCheckRadioChanged();
     void customMenuTextColorChanged();
     void stripedProgressChanged();
+    void tabAppearanceChanged();
     void passwordCharClicked();
 
     private:
@@ -80,6 +83,7 @@ class QtCurveConfig : public QtCurveConfigBase
     Options            currentStyle,
                        defaultStyle;
     QMap<int, QString> styles;
+    CExportThemeDialog *exportDialog;
 };
 
 #endif

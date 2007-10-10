@@ -61,6 +61,7 @@
 #include "common.h"
 
 class QTimer;
+class QSlider;
 
 class HighContrastStyle : public KStyle
 {
@@ -114,7 +115,7 @@ class QtCurveStyle : public HighContrastStyle
         HOVER_CB_ARROW
     };
 
-    QtCurveStyle();
+    QtCurveStyle(const QString &name=QString());
     virtual ~QtCurveStyle();
 
     void polish(QApplication *app);
@@ -172,8 +173,8 @@ class QtCurveStyle : public HighContrastStyle
                            EWidget w=WIDGET_OTHER) const;
     void drawGradient(const QColor &top, const QColor &bot, bool increase, QPainter *p,
                       const QRect &r, bool horiz=true) const;
-    void drawSbSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags) const;
-    void drawSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, bool tb=false) const;
+    void drawSbSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, bool slider=false) const;
+    void drawSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, QSlider *slider, bool tb=false) const;
     void drawSliderGroove(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
                           const QWidget *widget) const;
     void drawMenuOrToolBarBackground(QPainter *p, const QRect &r, const QColorGroup &cg, bool menu=true,

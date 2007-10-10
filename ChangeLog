@@ -1,3 +1,19 @@
+0.55
+----
+ 1. Ability to create custom themes. See Theme details in 'README' file.
+ 2. Supply a 'Klearlooks' QtCurve theme.
+ 3. Allow 'flat' lines in scrollbar handles, toolbar handles, toolbar
+    separators, and splitters.
+ 4. Option for 'X' style checkmarks.
+ 5. Option to have colour the selcted tab.
+ 6. Optional diagonal progressbar sripes.
+ 7. Use alternating dark/light for dashed toolbar handles.
+ 8. New 'split' style gradient.
+ 9. Option to specift slider style: plain, round (only when appearance=round),
+    and triangular (plastik-ish)
+10. Modify default style: flat splitter lines, flat slider thumbs, no
+    toolbar separators, triangular slider, diagonal progressbar stripes.
+
 0.54.1
 ------
 1. Supply a simple 'mkpkg' script to create packages with checkinstall.
