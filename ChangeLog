@@ -2,6 +2,8 @@
 ------
 1. Only allow coloured selected tabs if tab appearance is set to gradient.
 2. Allow triangular sliders when not rounding.
+3. Fix appearance of flat/raised disabled scrollbar buttons - more
+   consistent with Gtk2 and KDE4
 
 0.55
 ----

@@ -2928,7 +2928,6 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         {
             QRect        br(r),
                          ar(r);
-            bool         down((flags &(Style_Down|Style_On|Style_Sunken)));
             const QColor *use(itsButtonCols); // buttonColors(cg));
 
             pe=flags&Style_Horizontal
@@ -2978,10 +2977,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     }
                     break;
             }
-            drawLightBevel(p, br, cg, down ? flags
-                                           : flags|(flags&Style_Enabled
-                                                        ? Style_Raised
-                                                        : Style_Default),
+            drawLightBevel(p, br, cg, flags|Style_Raised,
                            round, getFill(flags, use), use, true, true, WIDGET_SB_BUTTON);
 
             drawPrimitive(pe, p, ar, cg, flags);
