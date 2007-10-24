@@ -4,6 +4,8 @@
 2. Allow triangular sliders when not rounding.
 3. Fix appearance of flat/raised disabled scrollbar buttons - more
    consistent with Gtk2 and KDE4
+4. Fix potential infinte loop when elliditiding title string.
+5. Also eliditude vertical titlebars.
 
 0.55
 ----
