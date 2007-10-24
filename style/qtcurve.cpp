@@ -2928,7 +2928,6 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         {
             QRect        br(r),
                          ar(r);
-            bool         down((flags &(Style_Down|Style_On|Style_Sunken)));
             const QColor *use(itsButtonCols); // buttonColors(cg));
 
             pe=flags&Style_Horizontal
@@ -2978,10 +2977,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     }
                     break;
             }
-            drawLightBevel(p, br, cg, down ? flags
-                                           : flags|(flags&Style_Enabled
-                                                        ? Style_Raised
-                                                        : Style_Default),
+            drawLightBevel(p, br, cg, flags|Style_Raised,
                            round, getFill(flags, use), use, true, true, WIDGET_SB_BUTTON);
 
             drawPrimitive(pe, p, ar, cg, flags);
@@ -3162,16 +3158,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
     }
 }
 
-static QString elliditide(const QString &text, const QFontMetrics &fontMetrics, const QRect &rect)
+static QString elliditide(const QString &text, const QFontMetrics &fontMetrics, int space)
 {
     // Chop and insert ellide into title if text is too wide
     QString title(text);
 
-    if (fontMetrics.width(text) > rect.width())
+    if (fontMetrics.width(text) > space)
     {
         QString ellipsis("...");
 
-        while (fontMetrics.width(title+ellipsis)>rect.width())
+        while (fontMetrics.width(title+ellipsis)>space && !title.isEmpty())
             title=title.left(title.length()-1);
         return title+ellipsis;
     }
@@ -3198,47 +3194,47 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
         }
         case KPE_DockWindowHandle:
         {
-/*
-            QRect left(r);
+            int  x, y, w, h;
 
-            if(flags&Style_Horizontal)
-                left.addCoords(0, 2, 0, -2);
-            else
-                left.addCoords(2, 0, -2, 0);
-            drawHandleMarkers(p, left, flags, false, handles);
-*/
-/*
-            if(IS_FLAT(opts.appearance))
-*/
+            r.rect(&x, &y, &w, &h);
+            if ((w <= 2) || (h <= 2))
                 p->fillRect(r, cg.background().dark(110));
-/*
             else
             {
-                const QColor *use(backgroundColors(cg));
+                QWidget  *wid(const_cast<QWidget*>(widget));
+                bool     horizontal(flags & Style_Horizontal);
+                QFont    fnt(QApplication::font(wid));
+                QPixmap  pix;
+                QString  title(wid->parentWidget()->caption());
+                QPainter p2;
 
-                drawBevelGradient(use[ORIGINAL_SHADE], true, p, r,
-                                  !(flags&Style_Horizontal) || r.width()>r.height(),
-                                  getWidgetShade(WIDGET_STD_BUTTON, true, false, opts.appearance),
-                                  getWidgetShade(WIDGET_STD_BUTTON, false, false, opts.appearance),
-                                  false, opts.appearance, WIDGET_STD_BUTTON);
-            }
-*/
-            if(widget && widget->parentWidget())
-            {
-                QString title(widget->parentWidget()->caption());
+                fnt.setPointSize(fnt.pointSize()-2);
 
-                if(!title.isEmpty())
+                // Draw the item on an off-screen pixmap to preserve Xft antialiasing for
+                // vertically oriented handles.
+                if (horizontal)
+                    pix.resize(h-2, w-2);
+                else
+                    pix.resize(w-2, h-2);
+
+                p2.begin(&pix);
+                p2.fillRect(pix.rect(), cg.background().dark(110));
+                p2.setPen(cg.text());
+                p2.setFont(fnt);
+                p2.drawText(pix.rect(), AlignCenter,
+                            elliditide(title, QFontMetrics(fnt), pix.width()));
+                p2.end();
+
+                if (horizontal)
                 {
-                    QRect r2(r);
-                    QFont font(QApplication::font(widget));
+                    QWMatrix m;
 
-                    font.setPointSize(font.pointSize()-2);
-                    r2.addCoords(2, -2, -2, -2);
-                    p->save();
-                    p->setFont(font);
-                    p->drawText(r, AlignLeft|AlignVCenter, elliditide(title, QFontMetrics(font), r2));
-                    p->restore();
+                    m.rotate(-90.0);
+                    QPixmap vpix(pix.xForm(m));
+                    bitBlt(wid, r.x()+1, r.y()+1, &vpix);
                 }
+                else
+                    bitBlt(wid, r.x()+1, r.y()+1, &pix);
             }
             break;
         }
@@ -5634,7 +5630,7 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
 {
     bool horiz(SLIDER_TRIANGULAR==opts.sliderStyle ? r.height()>r.width() : r.width()>r.height());
 
-    if(SLIDER_PLAIN!=opts.sliderStyle && ROUND_FULL==opts.round)
+    if(SLIDER_TRIANGULAR==opts.sliderStyle || (SLIDER_ROUND==opts.sliderStyle && ROUND_FULL==opts.round))
     {
         const QColor     *use(sliderColors(/*cg, */flags));
         const QColor     &fill(getFill(flags, use));
