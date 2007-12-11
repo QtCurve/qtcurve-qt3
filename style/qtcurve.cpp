@@ -2424,8 +2424,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
             if(IND_COLORED==opts.defBtnIndicator && (flags&Style_ButtonDefault))
             {
-                QRegion outer(r);
-                QRect   r2(r);
+                const QColor *cols=itsMouseOverCols && flags&Style_MouseOver ? itsMouseOverCols : itsDefBtnCols;
+                QRegion      outer(r);
+                QRect        r2(r);
 
                 if(!itsFormMode && QTC_DO_EFFECT)
                     r2.addCoords(0, 1, 0, -1);
@@ -2443,7 +2444,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                  || (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe)
 #endif
                                     ? ROUNDED_NONE : ROUNDED_ALL,
-                               itsDefBtnCols[QTC_MO_DEF_BTN], itsDefBtnCols, true, true,
+                               cols[QTC_MO_DEF_BTN], cols, true, true,
                                WIDGET_DEF_BUTTON);
                 p->setClipping(false);
             }
