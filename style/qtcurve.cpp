@@ -2424,8 +2424,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
             if(IND_COLORED==opts.defBtnIndicator && (flags&Style_ButtonDefault))
             {
-                QRegion outer(r);
-                QRect   r2(r);
+                const QColor *cols=itsMouseOverCols && flags&Style_MouseOver ? itsMouseOverCols : itsDefBtnCols;
+                QRegion      outer(r);
+                QRect        r2(r);
 
                 if(!itsFormMode && QTC_DO_EFFECT)
                     r2.addCoords(0, 1, 0, -1);
@@ -2443,7 +2444,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                  || (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe)
 #endif
                                     ? ROUNDED_NONE : ROUNDED_ALL,
-                               itsDefBtnCols[QTC_MO_DEF_BTN], itsDefBtnCols, true, true,
+                               cols[QTC_MO_DEF_BTN], cols, true, true,
                                WIDGET_DEF_BUTTON);
                 p->setClipping(false);
             }
@@ -3198,7 +3199,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
 
             r.rect(&x, &y, &w, &h);
             if ((w <= 2) || (h <= 2))
-                p->fillRect(r, cg.background().dark(110));
+                p->fillRect(r, cg.background().dark(105));
             else
             {
                 QWidget  *wid(const_cast<QWidget*>(widget));
@@ -3218,7 +3219,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                     pix.resize(w-2, h-2);
 
                 p2.begin(&pix);
-                p2.fillRect(pix.rect(), cg.background().dark(110));
+                p2.fillRect(pix.rect(), cg.background().dark(105));
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
                 p2.drawText(pix.rect(), AlignCenter,
