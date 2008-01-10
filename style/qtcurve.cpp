@@ -3199,7 +3199,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
 
             r.rect(&x, &y, &w, &h);
             if ((w <= 2) || (h <= 2))
-                p->fillRect(r, cg.background().dark(110));
+                p->fillRect(r, cg.background().dark(105));
             else
             {
                 QWidget  *wid(const_cast<QWidget*>(widget));
@@ -3219,7 +3219,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                     pix.resize(w-2, h-2);
 
                 p2.begin(&pix);
-                p2.fillRect(pix.rect(), cg.background().dark(110));
+                p2.fillRect(pix.rect(), cg.background().dark(105));
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
                 p2.drawText(pix.rect(), AlignCenter,

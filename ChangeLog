@@ -1,6 +1,7 @@
 0.55.2
 ------
 1. Add ability to import qtc_*.themerc settings into config dialog.
+2. Lighten dockwidget titlebars.
 
 0.55.1
 ------
