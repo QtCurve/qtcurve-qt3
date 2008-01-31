@@ -3674,9 +3674,11 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             // Make the label indicate if the button is a default button or not
             int          i,
                          j(opts.embolden && button->isDefault() ? 2 : 1);
-            const QColor &textCol(!opts.stdSidebarButtons && button->isFlat() &&
-                                  button->inherits("KMultiTabBarTab") &&
-                                  (button->isOn() || flags&Style_On)
+            bool         sidebar(!opts.stdSidebarButtons &&
+                                 ((button->isFlat() && button->inherits("KMultiTabBarTab")) ||
+                                  (button->parentWidget() && button->inherits("Ideal::Button") &&
+                                   button->parentWidget()->inherits("Ideal::ButtonBar"))));
+            const QColor &textCol(sidebar && (button->isOn() || flags&Style_On)
                                     ? QApplication::palette().active().highlightedText()
                                     : button->colorGroup().buttonText());
 
@@ -4007,9 +4009,12 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
         case CE_PushButton:
         {
             const QPushButton *button(static_cast<const QPushButton *>(widget));
-            bool              sidebar(button->isFlat() && button->inherits("KMultiTabBarTab"));
+            bool              sidebar(!opts.stdSidebarButtons &&
+                                      ((button->isFlat() && button->inherits("KMultiTabBarTab")) ||
+                                       (button->parentWidget() && button->inherits("Ideal::Button") &&
+                                        button->parentWidget()->inherits("Ideal::ButtonBar"))));
 
-            if(!opts.stdSidebarButtons && sidebar)
+            if(sidebar)
             {
                 QRect r2(r);
 
