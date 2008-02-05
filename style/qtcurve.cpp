@@ -466,11 +466,12 @@ static void readPal(QString &line, QPalette::ColorGroup grp, QPalette &pal)
     }
 }
 
-static bool readQt4(QFile &f, QPalette &pal, QFont &font)
+static bool readQt4(QFile &f, QPalette &pal, QFont &font, int &contrast)
 {
     bool inSect(false),
          gotPal(false),
-         gotFont(false);
+         gotFont(false),
+         gotContrast(false);
 
     if(f.open(IO_ReadOnly))
     {
@@ -500,6 +501,11 @@ static bool readQt4(QFile &f, QPalette &pal, QFont &font)
                 }
                 else if(0==line.find("font=\""))
                     gotFont=font.fromString(line.mid(6, line.findRev('\"')-6));
+                else if(0==line.find("KDE\\contrast="))
+                {
+                    contrast=line.mid(13).toInt();
+                    gotContrast=true;
+                }
                 else if (0==line.find('['))
                     break;
             }
@@ -509,7 +515,7 @@ static bool readQt4(QFile &f, QPalette &pal, QFont &font)
         f.close();
     }
 
-    return gotPal && gotFont;
+    return gotPal && gotFont && gotContrast;
 }
 
 static bool useQt4Settings()
@@ -519,14 +525,14 @@ static bool useQt4Settings()
     return vers && atoi(vers)>=4;
 }
 
-static bool readQt4(QPalette &pal, QFont &font)
+static bool readQt4(QPalette &pal, QFont &font, int &contrast)
 {
     if(useQt4Settings())
     {
         QFile file(xdgConfigFolder()+QString("Trolltech.conf"));
 
         if(file.exists())
-            return readQt4(file, pal, font);
+            return readQt4(file, pal, font, contrast);
     }
     return false;
 }
@@ -754,35 +760,50 @@ void QtCurveStyle::polish(QPalette &pal)
     QPalette  pal4;
     QFont     font;
     QSettings settings;
+    int       contrast(7);
+    bool      newContrast(false);
 
-    if(readQt4(pal4, font))
+    if(readQt4(pal4, font, contrast))
     {
         pal=pal4;
         QApplication::setFont(font);
     }
-    else if(!opts.inactiveHighlight)// Read in Qt3 palette... Required for the inactive settings...
+    else
     {
-        QStringList active(settings.readListEntry("/Qt/Palette/active")),
-                    inactive(settings.readListEntry("/Qt/Palette/inactive"));
-
-        // Only set if: the active highlight is the same, and the inactive highlight is different.
-        // If the user has no ~/.qt/qtrc, then QSettings will return a default palette. However, the palette
-        // passed in to this ::polish function will be the KDE one - which maybe different. Hence, we need to
-        // check that Qt active == KDE active, before reading inactive...
-        if (QColorGroup::NColorRoles==active.count() &&
-            QColorGroup::NColorRoles==inactive.count() &&
-            QColor(active[QColorGroup::Highlight])==pal.color(QPalette::Active, QColorGroup::Highlight) &&
-            QColor(active[QColorGroup::HighlightedText])==pal.color(QPalette::Active, QColorGroup::HighlightedText))
+        contrast=settings.readNumEntry("/Qt/KDE/contrast", 7);
+        if(!opts.inactiveHighlight)// Read in Qt3 palette... Required for the inactive settings...
         {
-            QColor h(inactive[QColorGroup::Highlight]),
-                   t(inactive[QColorGroup::HighlightedText]);
+            QStringList active(settings.readListEntry("/Qt/Palette/active")),
+                        inactive(settings.readListEntry("/Qt/Palette/inactive"));
 
-            if(h!=pal.color(QPalette::Inactive, QColorGroup::Highlight) || t!=QPalette::Inactive, QColorGroup::HighlightedText)
+            // Only set if: the active highlight is the same, and the inactive highlight is different.
+            // If the user has no ~/.qt/qtrc, then QSettings will return a default palette. However, the palette
+            // passed in to this ::polish function will be the KDE one - which maybe different. Hence, we need to
+            // check that Qt active == KDE active, before reading inactive...
+            if (QColorGroup::NColorRoles==active.count() &&
+                QColorGroup::NColorRoles==inactive.count() &&
+                QColor(active[QColorGroup::Highlight])==pal.color(QPalette::Active, QColorGroup::Highlight) &&
+                QColor(active[QColorGroup::HighlightedText])==pal.color(QPalette::Active, QColorGroup::HighlightedText))
             {
-                pal.setColor(QPalette::Inactive, QColorGroup::Highlight, h);
-                pal.setColor(QPalette::Inactive, QColorGroup::HighlightedText, t);
+                QColor h(inactive[QColorGroup::Highlight]),
+                    t(inactive[QColorGroup::HighlightedText]);
+
+                if(h!=pal.color(QPalette::Inactive, QColorGroup::Highlight) || t!=QPalette::Inactive, QColorGroup::HighlightedText)
+                {
+                    pal.setColor(QPalette::Inactive, QColorGroup::Highlight, h);
+                    pal.setColor(QPalette::Inactive, QColorGroup::HighlightedText, t);
+                }
             }
         }
+    }
+
+    if(contrast<0 || contrast>10)
+        contrast=7;
+
+    if(contrast!=opts.contrast)
+    {
+        opts.contrast=contrast;
+        newContrast=true;
     }
 
     if(opts.inactiveHighlight)
@@ -791,18 +812,6 @@ void QtCurveStyle::polish(QPalette &pal)
                      midColor(pal.color(QPalette::Active, QColorGroup::Background),
                               pal.color(QPalette::Active, QColorGroup::Highlight), INACTIVE_HIGHLIGHT_FACTOR));
         pal.setColor(QPalette::Inactive, QColorGroup::HighlightedText, pal.color(QPalette::Active, QColorGroup::Foreground));
-    }
-
-    int  c(settings.readNumEntry("/Qt/KDE/contrast", 7));
-    bool newContrast(false);
-
-    if(c<0 || c>10)
-        c=7;
-
-    if(c!=opts.contrast)
-    {
-        opts.contrast=c;
-        newContrast=true;
     }
 
     bool newMenu(newContrast ||
@@ -1120,13 +1129,13 @@ void QtCurveStyle::polish(QWidget *widget)
         }
 
         if(opts.animatedProgress)
-    {
-        widget->installEventFilter(this);
-        itsProgAnimWidgets[widget] = 0;
-        connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(progressBarDestroyed(QObject *)));
-        if (!itsAnimationTimer->isActive())
-            itsAnimationTimer->start(PROGRESS_ANIMATION, false);
-    }
+        {
+            widget->installEventFilter(this);
+            itsProgAnimWidgets[widget] = 0;
+            connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(progressBarDestroyed(QObject *)));
+            if (!itsAnimationTimer->isActive())
+                itsAnimationTimer->start(PROGRESS_ANIMATION, false);
+        }
     }
 #ifdef QTC_HIGHLIGHT_SCROLVIEWS
     else if(::qt_cast<QScrollView*>(widget))
@@ -6359,19 +6368,19 @@ void QtCurveStyle::updateProgressPos()
     bool                          visible(false);
     for (; it!=end; ++it)
     {
-        if (!::qt_cast<QProgressBar*>(it.key()))
-            continue;
-
         QProgressBar *pb(::qt_cast<QProgressBar*>(it.key()));
 
-        if (it.key() -> isEnabled() && pb -> progress()!=pb->totalSteps())
+        if (!pb)
+            continue;
+
+        if(pb->isEnabled() && pb->progress()!=pb->totalSteps())
         {
             // update animation Offset of the current Widget
             it.data() = (it.data() + (QApplication::reverseLayout() ? -1 : 1))
                         % (PROGRESS_CHUNK_WIDTH*2);
-            it.key()->update();
+            pb->update();
         }
-        if (it.key()->isVisible())
+        if(pb->isVisible())
             visible = true;
     }
     if (!visible)
