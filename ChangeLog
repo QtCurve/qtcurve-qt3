@@ -1,3 +1,9 @@
+0.55.3
+------
+1. Style "Ideal::Button"s on "Ideal::ButtonBar"s as per KMultiTabBar tabs.
+   (Makes KTorrent's tab buttons look like Kate's sidebar buttons)
+2. Read KDE4's contrast setting if running under KDE4.
+
 0.55.2
 ------
 1. Add ability to import qtc_*.themerc settings into config dialog.
