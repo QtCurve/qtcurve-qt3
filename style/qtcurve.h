@@ -58,6 +58,7 @@
 #include <qpalette.h>
 #include <qpixmap.h>
 #include <qcache.h>
+#include <qvaluelist.h>
 #include "common.h"
 
 class QTimer;
@@ -133,6 +134,9 @@ class QtCurveStyle : public HighContrastStyle
     void drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, const QColorGroup &cg,
                     SFlags flags, int round, const QColor *custom=NULL, EWidget w=WIDGET_OTHER,
                     bool doCorners=true, EBorder borderProfile=BORDER_FLAT, bool blendBorderColors=true, int borderVal=QT_STD_BORDER) const;
+    void drawMdiIcon(QPainter *painter, const QColor &color, const QColor &shadow, const QRect &r, bool sunken, int margin,
+                     SubControl button) const;
+    void drawWindowIcon(QPainter *painter, const QColor &color, const QRect &r, bool sunken, int margin, SubControl button) const;
     void drawEntryField(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
                         bool highlight, int round, EWidget=WIDGET_OTHER) const;
     void drawArrow(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
@@ -183,6 +187,11 @@ class QtCurveStyle : public HighContrastStyle
 
     private:
 
+    static QColor shadowColor(const QColor col)
+    {
+        return qGray(col.rgb()) < 100 ? QColor(255, 255, 255) : QColor(0, 0, 0);
+    }
+
     void           shadeColors(const QColor &base, QColor *vals) const;
     const QColor * buttonColors(const QColorGroup &cg) const;
     const QColor * sliderColors(/*const QColorGroup &cg, */SFlags flags) const;
@@ -192,6 +201,10 @@ class QtCurveStyle : public HighContrastStyle
     const QColor * borderColors(SFlags flags, const QColor *use) const;
     const QColor * getSidebarButtons() const;
     void           setMenuColors(const QColorGroup &cg);
+    const QColor * getMdiColors(const QColorGroup &cg, bool active) const;
+#ifdef SET_MDI_WINDOW_BUTTON_POSITIONS
+    void           readMdiPositions() const;
+#endif
     bool           redrawHoverWidget(const QPoint &pos);
     const QColor & getFill(SFlags flags, const QColor *use) const;
     const QColor & getListViewFill(SFlags flags, const QColor *use) const;
@@ -222,6 +235,10 @@ class QtCurveStyle : public HighContrastStyle
                                itsLighterPopupMenuBgndCol,
                                itsCheckRadioCol;
     mutable QColor             *itsSidebarButtonsCols;
+    mutable QColor             *itsActiveMdiColors;
+    mutable QColor             *itsMdiColors;
+    mutable QColor             itsActiveMdiTextColor;
+    mutable QColor             itsMdiTextColor;
     mutable QColor             itsColoredButtonCols[TOTAL_SHADES+1];
     mutable QColor             itsColoredBackgroundCols[TOTAL_SHADES+1];
     EApp                       itsThemedApp;
@@ -241,6 +258,7 @@ class QtCurveStyle : public HighContrastStyle
     QTimer                     *itsAnimationTimer;
     mutable bool               itsActive,
                                itsIsSpecialHover;
+    mutable QValueList<int>    itsMdiButtons[2]; // 0=left, 1=right
 };
 
 #endif

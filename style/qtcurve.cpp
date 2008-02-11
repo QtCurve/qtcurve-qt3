@@ -113,6 +113,26 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <X11/Xatom.h>
 #include <fixx11h.h>
 
+static QRect adjusted(const QRect r, int xp1, int yp1, int xp2, int yp2)
+{
+    int x1, y1, x2, y2;
+
+    r.coords(&x1, &y1, &x2, &y2);
+    return QRect(QPoint(x1 + xp1, y1 + yp1), QPoint(x2 + xp2, y2 + yp2));
+}
+
+static void adjust(QRect &r, int dx1, int dy1, int dx2, int dy2)
+{
+    int x1, y1, x2, y2;
+
+    r.coords(&x1, &y1, &x2, &y2);
+    x1 += dx1;
+    y1 += dy1;
+    x2 += dx2;
+    y2 += dy2;
+    r.setCoords(x1, y1, x2, y2);
+}
+
 static QString readEnvPath(const char *env)
 {
    QCString path=getenv(env);
@@ -200,6 +220,7 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 #define QTC_NO_ETCH_BUTTON     0x10000000
 #define QTC_LISTVIEW_ITEM      0x20000000
 #define QTC_MENU_ITEM          0x40000000
+#define WINDOWTITLE_SPACER     0x10000000
 
 #if KDE_VERSION >= 0x30200
 // Try to read $KDEHOME/share/config/kickerrc to find out if kicker is transparent...
@@ -466,6 +487,46 @@ static void readPal(QString &line, QPalette::ColorGroup grp, QPalette &pal)
     }
 }
 
+static void setRgb(QColor *col, const QStringList &rgb)
+{
+    if(3==rgb.size())
+        *col=QColor(rgb[0].toInt(), rgb[1].toInt(), rgb[2].toInt());
+}
+
+#ifdef SET_MDI_WINDOW_BUTTON_POSITIONS
+static void parseWindowLine(const QString &line, QValueList<int> &data)
+{
+    int len(line.length());
+
+    for(int i=0; i<len; ++i)
+        switch(line[i].latin1())
+        {
+            case 'M':
+                data.append(QStyle::SC_TitleBarSysMenu);
+                break;
+            case '_':
+                data.append(WINDOWTITLE_SPACER);
+                break;
+//             case 'H':
+//                 data.append(QStyle::SC_TitleBarContextHelpButton);
+//                 break;
+            case 'L':
+                data.append(QStyle::SC_TitleBarShadeButton);
+                break;
+            case 'I':
+                data.append(QStyle::SC_TitleBarMinButton);
+                break;
+            case 'A':
+                data.append(QStyle::SC_TitleBarMaxButton);
+                break;
+            case 'X':
+                data.append(QStyle::SC_TitleBarCloseButton);
+            default:
+                break;
+        }
+}
+#endif
+
 static bool readQt4(QFile &f, QPalette &pal, QFont &font, int &contrast)
 {
     bool inSect(false),
@@ -544,6 +605,58 @@ static bool isCheckBoxOfGroupBox(const QObject *w)
            !qstrcmp(w->name(), "qt_groupbox_checkbox");
 }
 
+static void drawArrow(QPainter *p, const QRect &r, const QColor &col, QStyle::PrimitiveElement pe, const Options &opts, bool small=false)
+{
+    QPointArray a;
+
+    if(small)
+        switch(pe)
+        {
+            case QStyle::PE_ArrowUp:
+                a.setPoints(opts.vArrows ? 7 : 3,  2,0,  0,-2,  -2,0,   -2,1, -1,0, 1,0, 2,1);
+                break;
+            case QStyle::PE_ArrowDown:
+                a.setPoints(opts.vArrows ? 7 : 3,  2,0,  0,2,  -2,0,   -2,-1, -1,0, 1,0, 2,-1);
+                break;
+            case QStyle::PE_ArrowRight:
+                a.setPoints(opts.vArrows ? 7 : 3,  0,-2,  2,0,  0,2,   -1,2, 0,1, 0,-1, -1,-2);
+                break;
+            case QStyle::PE_ArrowLeft:
+                a.setPoints(opts.vArrows ? 7 : 3,  0,-2,  -2,0,  0,2,   1,2, 0,1, 0,-1, 1,-2);
+                break;
+            default:
+                return;
+        }
+    else // Large arrows...
+        switch(pe)
+        {
+            case QStyle::PE_ArrowUp:
+                a.setPoints(opts.vArrows ? 6 : 3,  3,1,  0,-2,  -3,1,    -2, 2,  0,0,  2,2);
+                break;
+            case QStyle::PE_ArrowDown:
+                a.setPoints(opts.vArrows ? 6 : 3,  3,-1,  0,2,  -3,-1,   -2,-2,  0,0, 2,-2);
+                break;
+            case QStyle::PE_ArrowRight:
+                a.setPoints(opts.vArrows ? 6 : 3,  -1,-3,  2,0,  -1,3,   -2,2, 0,0, -2,-2);
+                break;
+            case QStyle::PE_ArrowLeft:
+                a.setPoints(opts.vArrows ? 6 : 3,  1,-3,  -2,0,  1,3,    2,2, 0,0, 2,-2);
+                break;
+            default:
+                return;
+        }
+
+    if(a.isNull())
+        return;
+
+    p->save();
+    a.translate((r.x()+(r.width()>>1)),(r.y()+(r.height()>>1)));
+    p->setBrush(col);
+    p->setPen(col);
+    p->drawPolygon(a);
+    p->restore();
+}
+
 //
 // OO.o 2.x checks to see whether the used theme "inherits" from HighContrastStyle,
 // if so it uses the highlightedText color to draw highlighted menubar and popup menu
@@ -559,6 +672,8 @@ QtCurveStyle::QtCurveStyle(const QString &name)
               itsDefBtnCols(NULL),
               itsMouseOverCols(NULL),
               itsSidebarButtonsCols(NULL),
+              itsActiveMdiColors(NULL),
+              itsMdiColors(NULL),
               itsThemedApp(APP_OTHER),
               itsPixmapCache(150000, 499),
 #if KDE_VERSION >= 0x30200
@@ -669,6 +784,10 @@ QtCurveStyle::~QtCurveStyle()
     if(itsSidebarButtonsCols!=itsSliderCols &&
        itsSidebarButtonsCols!=itsDefBtnCols)
         delete [] itsSidebarButtonsCols;
+    if(itsActiveMdiColors && itsActiveMdiColors!=itsMenuitemCols)
+        delete [] itsActiveMdiColors;
+    if(itsMdiColors && itsMdiColors!=itsBackgroundCols)
+        delete [] itsMdiColors;
     if(itsMouseOverCols && itsMouseOverCols!=itsDefBtnCols &&
        itsMouseOverCols!=itsSliderCols)
         delete [] itsMouseOverCols;
@@ -2131,6 +2250,97 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
     }
 }
 
+void QtCurveStyle::drawMdiIcon(QPainter *painter, const QColor &color, const QColor &shadow, const QRect &r, bool sunken, int margin,
+                               SubControl button) const
+{
+    if(!sunken)
+        drawWindowIcon(painter, shadow, adjusted(r, 1, 1, 1, 1), sunken, margin, button);
+    drawWindowIcon(painter, color, r, sunken, margin, button);
+}
+
+void QtCurveStyle::drawWindowIcon(QPainter *painter, const QColor &color, const QRect &r, bool sunken, int margin, SubControl button) const
+{
+    QRect rect(r);
+
+    // Icons look best at 22x22...
+    if(rect.height()>22)
+    {
+        int diff=(rect.height()-22)/2;
+        adjust(rect, diff, diff, -diff, -diff);
+    }
+
+    if(sunken)
+        adjust(rect, 1, 1, 1, 1);
+
+    if(margin)
+        adjust(rect, margin, margin, -margin, -margin);
+
+    painter->setPen(color);
+
+    switch(button)
+    {
+        case SC_TitleBarMinButton:
+            painter->drawLine(rect.center().x() - 2, rect.center().y() + 3, rect.center().x() + 3, rect.center().y() + 3);
+            painter->drawLine(rect.center().x() - 2, rect.center().y() + 4, rect.center().x() + 3, rect.center().y() + 4);
+            painter->drawLine(rect.center().x() - 3, rect.center().y() + 3, rect.center().x() - 3, rect.center().y() + 4);
+            painter->drawLine(rect.center().x() + 4, rect.center().y() + 3, rect.center().x() + 4, rect.center().y() + 4);
+            break;
+        case SC_TitleBarMaxButton:
+            painter->drawRect(rect); // adjusted(rect, 0, 0, -1, -1));
+            painter->drawLine(rect.left() + 1, rect.top() + 1,  rect.right() - 1, rect.top() + 1);
+            painter->drawPoint(rect.topLeft());
+            painter->drawPoint(rect.topRight());
+            painter->drawPoint(rect.bottomLeft());
+            painter->drawPoint(rect.bottomRight());
+            break;
+        case SC_TitleBarCloseButton:
+            painter->drawLine(rect.left() + 1, rect.top(), rect.right(), rect.bottom() - 1);
+            painter->drawLine(rect.left(), rect.top() + 1, rect.right() - 1, rect.bottom());
+            painter->drawLine(rect.right() - 1, rect.top(), rect.left(), rect.bottom() - 1);
+            painter->drawLine(rect.right(), rect.top() + 1, rect.left() + 1, rect.bottom());
+            painter->drawPoint(rect.topLeft());
+            painter->drawPoint(rect.topRight());
+            painter->drawPoint(rect.bottomLeft());
+            painter->drawPoint(rect.bottomRight());
+            painter->drawLine(rect.left() + 1, rect.top() + 1, rect.right() - 1, rect.bottom() - 1);
+            painter->drawLine(rect.left() + 1, rect.bottom() - 1, rect.right() - 1, rect.top() + 1);
+            break;
+        case SC_TitleBarNormalButton:
+        {
+            QRect r2 = adjusted(rect, 0, 3, -3, 0);
+
+            painter->drawRect(r2); // adjusted(r2, 0, 0, -1, -1));
+            painter->drawLine(r2.left() + 1, r2.top() + 1, r2.right() - 1, r2.top() + 1);
+            painter->drawPoint(r2.topLeft());
+            painter->drawPoint(r2.topRight());
+            painter->drawPoint(r2.bottomLeft());
+            painter->drawPoint(r2.bottomRight());
+
+            QRect   backWindowRect(adjusted(rect, 3, 0, 0, -3));
+            QRegion clipRegion(backWindowRect);
+
+            clipRegion -= r2;
+            if(sunken)
+                adjust(backWindowRect, 1, 1, 1, 1);
+            painter->drawRect(backWindowRect); // adjusted(backWindowRect, 0, 0, -1, -1));
+            painter->drawLine(backWindowRect.left() + 1, backWindowRect.top() + 1,
+                              backWindowRect.right() - 1, backWindowRect.top() + 1);
+            painter->drawPoint(backWindowRect.topLeft());
+            painter->drawPoint(backWindowRect.topRight());
+            painter->drawPoint(backWindowRect.bottomLeft());
+            painter->drawPoint(backWindowRect.bottomRight());
+            break;
+        }
+        case SC_TitleBarShadeButton:
+             ::drawArrow(painter, rect, color, PE_ArrowUp, opts, true);
+            break;
+        case SC_TitleBarUnshadeButton:
+             ::drawArrow(painter, rect, color, PE_ArrowDown, opts, true);
+        default:
+            break;
+    }
+}
+
 void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGroup &cg,
                                   SFlags flags, bool highlight, int round, EWidget w) const
 {
@@ -2189,58 +2399,6 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
                  !(flags &(Style_Down | Style_On | Style_Sunken)));
         p->setClipping(false);
     }
-}
-
-static void drawArrow(QPainter *p, const QRect &r, const QColor &col, QStyle::PrimitiveElement pe, const Options &opts, bool small=false)
-{
-    QPointArray a;
-
-    if(small)
-        switch(pe)
-        {
-            case QStyle::PE_ArrowUp:
-                a.setPoints(opts.vArrows ? 7 : 3,  2,0,  0,-2,  -2,0,   -2,1, -1,0, 1,0, 2,1);
-                break;
-            case QStyle::PE_ArrowDown:
-                a.setPoints(opts.vArrows ? 7 : 3,  2,0,  0,2,  -2,0,   -2,-1, -1,0, 1,0, 2,-1);
-                break;
-            case QStyle::PE_ArrowRight:
-                a.setPoints(opts.vArrows ? 7 : 3,  0,-2,  2,0,  0,2,   -1,2, 0,1, 0,-1, -1,-2);
-                break;
-            case QStyle::PE_ArrowLeft:
-                a.setPoints(opts.vArrows ? 7 : 3,  0,-2,  -2,0,  0,2,   1,2, 0,1, 0,-1, 1,-2);
-                break;
-            default:
-                return;
-        }
-    else // Large arrows...
-        switch(pe)
-        {
-            case QStyle::PE_ArrowUp:
-                a.setPoints(opts.vArrows ? 6 : 3,  3,1,  0,-2,  -3,1,    -2, 2,  0,0,  2,2);
-                break;
-            case QStyle::PE_ArrowDown:
-                a.setPoints(opts.vArrows ? 6 : 3,  3,-1,  0,2,  -3,-1,   -2,-2,  0,0, 2,-2);
-                break;
-            case QStyle::PE_ArrowRight:
-                a.setPoints(opts.vArrows ? 6 : 3,  -1,-3,  2,0,  -1,3,   -2,2, 0,0, -2,-2);
-                break;
-            case QStyle::PE_ArrowLeft:
-                a.setPoints(opts.vArrows ? 6 : 3,  1,-3,  -2,0,  1,3,    2,2, 0,0, 2,-2);
-                break;
-            default:
-                return;
-        }
-
-    if(a.isNull())
-        return;
-
-    p->save();
-    a.translate((r.x()+(r.width()>>1)),(r.y()+(r.height()>>1)));
-    p->setBrush(col);
-    p->setPen(col);
-    p->drawPolygon(a);
-    p->restore();
 }
 
 void QtCurveStyle::drawArrow(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
@@ -2419,7 +2577,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             itsFormMode=itsFormMode || mdi || operaMdi;
 
             if(mdi || operaMdi)
+            {
                 flags|=Style_Horizontal;
+                if(!operaMdi)
+                {
+                    if(flags<0x14000000 && !(flags&(Style_Down|Style_On|Style_Sunken|Style_MouseOver)))
+                        break;
+                    if(flags<0x14000000)
+                        use=getMdiColors(cg, true);
+                }
+            }
 
             drawLightBevel(p, r, cg, glassMod ? flags : flags|Style_Horizontal,
 #if KDE_VERSION >= 0x30200
@@ -2466,16 +2633,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             {
                 case IND_CORNER:
                 {
-                    const QColor *use(buttonColors(cg));
                     QPointArray  points;
                     bool         sunken(flags&Style_Down || flags&Style_Sunken);
-                    int          offset(sunken ? 4 : 3);
+                    int          offset(sunken ? 5 : 4),
+                                 etchOffset(QTC_DO_EFFECT ? 1 : 0);
 
-                    points.setPoints(3, r.x()+offset, r.y()+offset+1, r.x()+offset+6, r.y()+offset+1,
-                                        r.x()+offset, r.y()+offset+7);
+                    points.setPoints(3, r.x()+offset, r.y()+offset+etchOffset, r.x()+offset+6, r.y()+offset+etchOffset,
+                                        r.x()+offset, r.y()+offset+6+etchOffset);
 
-                    p->setBrush(use[sunken ? 0 : 4]);
-                    p->setPen(use[sunken ? 0 : 4]);
+                    p->setBrush(itsMouseOverCols[sunken ? 0 : 4]);
+                    p->setPen(itsMouseOverCols[sunken ? 0 : 4]);
                     p->drawPolygon(points);
                     break;
                 }
@@ -2791,13 +2958,17 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     const QColor *use(backgroundColors(cg));
 
                     drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal),
-                            ROUNDED_ALL, use, WIDGET_OTHER, true, BORDER_FLAT);
+                               ROUNDED_ALL, use, WIDGET_OTHER, true, BORDER_FLAT);
                 }
                 else
                     QCommonStyle::drawPrimitive(pe, p, r, cg, flags, data);
             break;
-        case PE_Panel:
         case PE_WindowFrame:
+            if(data.lineWidth()>0 || data.isDefault())
+                drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal),
+                            ROUNDED_NONE, backgroundColors(cg), WIDGET_MDI_WINDOW, true, BORDER_RAISED, false);
+            break;
+        case PE_Panel:
             if(APP_OPENOFFICE==itsThemedApp || data.lineWidth()>0 || data.isDefault())
             {
                 const QColor *use(
@@ -4186,6 +4357,15 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
     return rect;
 }
 
+// This is a hack, as QTitleBar is private!!!
+class QTitleBar : public QWidget
+{
+    public:
+
+    bool isActive() const;
+    QWidget *window() const;
+};
+
 void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const QWidget *widget,
                                       const QRect &r, const QColorGroup &cg, SFlags flags,
                                       SCFlags controls, SCFlags active,
@@ -4770,6 +4950,95 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             }
             break;
         }
+        case CC_TitleBar:
+        {
+            const int       buttonMargin(3);
+            const QTitleBar *tb((const QTitleBar *)widget);
+            bool            isActive((tb->isActive() && widget->isActiveWindow()) ||
+                                   (!tb->window() && widget->topLevelWidget()->isActiveWindow()));
+            QColorGroup     cgroup(isActive
+                                        ? widget->palette().active()
+                                        : widget->palette().inactive());
+            const QColor    *cols(getMdiColors(cg, isActive));
+            QColor          textCol(isActive ? itsActiveMdiTextColor : itsMdiTextColor),
+                            shadowCol(midColor(cols[ORIGINAL_SHADE], shadowColor(textCol)));
+
+            if (controls&SC_TitleBarLabel)
+            {
+                QRect ir(visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarLabel), widget));
+
+                drawBevelGradient(cols[ORIGINAL_SHADE], true, p, r, true,
+                                  getWidgetShade(WIDGET_MDI_WINDOW, true, false, opts.titlebarAppearance),
+                                  getWidgetShade(WIDGET_MDI_WINDOW, false, false, opts.titlebarAppearance),
+                                  false, opts.titlebarAppearance, WIDGET_MDI_WINDOW);
+                ir.addCoords(2, 0, -4, 0);
+
+                QString titleString(elliditide(widget->caption(), QFontMetrics(widget->font()), ir.width()));
+
+                p->setPen(shadowCol);
+                p->drawText(ir.x()+1, ir.y()+1, ir.width(), ir.height(), AlignAuto|AlignVCenter|SingleLine, titleString);
+                p->setPen(textCol);
+                p->drawText(ir.x(), ir.y(), ir.width(), ir.height(), AlignAuto|AlignVCenter|SingleLine, titleString);
+
+                //controls-=SC_TitleBarLabel;
+            }
+            QRect ir;
+            bool down(false);
+            QPixmap pm;
+
+            if (controls&SC_TitleBarCloseButton)
+            {
+                ir = visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarCloseButton), widget);
+                down = active & SC_TitleBarCloseButton;
+                drawPrimitive(PE_ButtonTool, p, ir, tb->colorGroup(), down ? Style_Down : Style_Raised);
+                drawMdiIcon(p, textCol, shadowCol, ir, down, buttonMargin, SC_TitleBarCloseButton);
+            }
+
+            if (tb->window())
+            {
+                if (controls &SC_TitleBarMaxButton)
+                {
+                    ir = visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarMaxButton), widget);
+                    down = active & SC_TitleBarMaxButton;
+                    drawPrimitive(PE_ButtonTool, p, ir, tb->colorGroup(), down ? Style_Down : Style_Raised);
+                    drawMdiIcon(p, textCol, shadowCol, ir, down, buttonMargin, SC_TitleBarMaxButton);
+                }
+
+                if (controls&SC_TitleBarNormalButton || controls&SC_TitleBarMinButton)
+                {
+                    ir = visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarMinButton), widget);
+                    QStyle::SubControl ctrl = (controls & SC_TitleBarNormalButton ?
+                                SC_TitleBarNormalButton :
+                                SC_TitleBarMinButton);
+                    down = active & ctrl;
+                    drawPrimitive(PE_ButtonTool, p, ir, tb->colorGroup(), down ? Style_Down : Style_Raised);
+                    drawMdiIcon(p, textCol, shadowCol, ir, down, buttonMargin, ctrl);
+                }
+
+                if (controls&SC_TitleBarShadeButton)
+                {
+                    ir = visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarShadeButton), widget);
+                    down = active & SC_TitleBarShadeButton;
+                    drawPrimitive(PE_ButtonTool, p, ir, tb->colorGroup(), down ? Style_Down : Style_Raised);
+                    drawMdiIcon(p, textCol, shadowCol, ir, down, buttonMargin, SC_TitleBarShadeButton);
+                }
+                if (controls&SC_TitleBarUnshadeButton)
+                {
+                    ir = visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarUnshadeButton), widget);
+                    down = active & SC_TitleBarUnshadeButton;
+                    drawPrimitive(PE_ButtonTool, p, ir, tb->colorGroup(), down ? Style_Down : Style_Raised);
+                    drawMdiIcon(p, textCol, shadowCol, ir, down, buttonMargin, SC_TitleBarUnshadeButton);
+                }
+            }
+            if (controls&SC_TitleBarSysMenu && tb->icon())
+            {
+                ir = visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarSysMenu), widget);
+                down = active & SC_TitleBarSysMenu;
+                drawPrimitive(PE_ButtonTool, p, ir, tb->colorGroup(), down ? Style_Down : Style_Raised);
+                drawItem(p, ir, AlignCenter, tb->colorGroup(), true, tb->icon(), QString::null);
+            }
+            break;
+        }
         default:
             KStyle::drawComplexControl(control, p, widget, r, cg, flags, controls, active, data);
     }
@@ -4979,6 +5248,90 @@ QRect QtCurveStyle::querySubControlMetrics(ComplexControl control, const QWidget
             }
             return ret;
         }
+#ifdef SET_MDI_WINDOW_BUTTON_POSITIONS // TODO
+        case CC_TitleBar:
+            if (widget)
+            {
+                bool isMinimized(tb->titleBarState&Qt::WindowMinimized),
+                    isMaximized(tb->titleBarState&Qt::WindowMaximized);
+
+                if( (isMaximized && SC_TitleBarMaxButton==subControl) ||
+                    (isMinimized && SC_TitleBarMinButton==subControl) ||
+                    (isMinimized && SC_TitleBarShadeButton==subControl) ||
+                    (!isMinimized && SC_TitleBarUnshadeButton==subControl))
+                    return QRect();
+
+                readMdiPositions();
+
+                const int windowMargin(2);
+                const int controlSize(tb->rect.height() - windowMargin *2);
+
+                QList<int>::ConstIterator it(itsMdiButtons[0].begin()),
+                                        end(itsMdiButtons[0].end());
+                int                       sc(SC_TitleBarUnshadeButton==subControl
+                                            ? SC_TitleBarShadeButton
+                                            : SC_TitleBarNormalButton==subControl
+                                                ? isMaximized
+                                                    ? SC_TitleBarMaxButton
+                                                    : SC_TitleBarMinButton
+                                                : subControl),
+                                        pos(0),
+                                        totalLeft(0),
+                                        totalRight(0);
+                bool                      rhs(false),
+                                        found(false);
+
+                for(; it!=end; ++it)
+                    if(SC_TitleBarCloseButton==(*it) || WINDOWTITLE_SPACER==(*it) || tb->titleBarFlags&(toHint(*it)))
+                    {
+                        totalLeft+=WINDOWTITLE_SPACER==(*it) ? controlSize/2 : controlSize;
+                        if(*it==sc)
+                            found=true;
+                        else if(!found)
+                            pos+=WINDOWTITLE_SPACER==(*it) ? controlSize/2 : controlSize;
+                    }
+
+                if(!found)
+                {
+                    pos=0;
+                    rhs=true;
+                }
+
+                it=itsMdiButtons[1].begin();
+                end=itsMdiButtons[1].end();
+                for(; it!=end; ++it)
+                    if(SC_TitleBarCloseButton==(*it) || WINDOWTITLE_SPACER==(*it) || tb->titleBarFlags&(toHint(*it)))
+                    {
+                        if(WINDOWTITLE_SPACER!=(*it) || totalRight)
+                            totalRight+=WINDOWTITLE_SPACER==(*it) ? controlSize/2 : controlSize;
+                        if(rhs)
+                            if(*it==sc)
+                            {
+                                pos+=controlSize;
+                                found=true;
+                            }
+                            else if(found)
+                                pos+=WINDOWTITLE_SPACER==(*it) ? controlSize/2 : controlSize;
+                    }
+
+                totalLeft+=(windowMargin*(totalLeft ? 2 : 1));
+                totalRight+=(windowMargin*(totalRight ? 2 : 1));
+
+                if(SC_TitleBarLabel==subControl)
+                    r.adjust(totalLeft, 0, -totalRight, 0);
+                else if(!found)
+                    return QRect();
+                else if(rhs)
+                    r.setRect(r.right()-(pos+windowMargin),
+                            r.top()+windowMargin,
+                            controlSize, controlSize);
+                else
+                    r.setRect(r.left()+windowMargin+pos, r.top()+windowMargin,
+                            controlSize, controlSize);
+                return visualRect(tb->direction, tb->rect, r);
+            }
+        }
+#endif
         default:
             break; // Remove compiler warnings...
     }
@@ -6031,6 +6384,200 @@ void QtCurveStyle::setMenuColors(const QColorGroup &cg)
             shadeColors(shade(cg.background(), MENUBAR_DARK_FACTOR), itsMenubarCols);
     }
 }
+
+const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) const
+{
+    if(!itsActiveMdiColors)
+    {
+        itsActiveMdiTextColor=cg.highlightedText();
+        itsMdiTextColor=cg.text();
+
+        // Try to read kwin's settings...
+        if(!useQt4Settings())
+        {
+            QFile f(QDir::homeDirPath()+"/.qt/qtrc");
+
+            if(f.open(IO_ReadOnly))
+            {
+                QTextStream in(&f);
+                bool        inPal(false);
+
+                while (!in.atEnd())
+                {
+                    QString line(in.readLine());
+
+                    if(inPal)
+                    {
+                        if(!itsActiveMdiColors && 0==line.find("activeBackground=#"))
+                        {
+                            QColor col;
+
+                            setRgb(&col, line.mid(17).latin1());
+
+                            if(col!=itsMenuitemCols[ORIGINAL_SHADE])
+                            {
+                                itsActiveMdiColors=new QColor [TOTAL_SHADES+1]; 
+                                shadeColors(col, itsActiveMdiColors);
+                            }
+                        }
+                        else if(!itsMdiColors && 0==line.find("inactiveBackground=#"))
+                        {
+                            QColor col;
+
+                            setRgb(&col, line.mid(19).latin1());
+                            if(col!=itsButtonCols[ORIGINAL_SHADE])
+                            {
+                                itsMdiColors=new QColor [TOTAL_SHADES+1];
+                                shadeColors(col, itsMdiColors);
+                            }
+                        }
+                        else if(0==line.find("activeForeground=#"))
+                            setRgb(&itsActiveMdiTextColor, line.mid(17).latin1());
+                        else if(0==line.find("inactiveForeground=#"))
+                            setRgb(&itsMdiTextColor, line.mid(19).latin1());
+                        else if (-1!=line.find('['))
+                            break;
+                    }
+                    else if(0==line.find("[KWinPalette]"))
+                        inPal=true;
+                }
+                f.close();
+            }
+        }
+        else // KDE4
+        {
+            QFile f(kdeHome()+"/share/config/kdeglobals");
+
+            if(f.open(IO_ReadOnly))
+            {
+                QTextStream in(&f);
+                bool        inPal(false);
+
+                while (!in.atEnd())
+                {
+                    QString line(in.readLine());
+
+                    if(inPal)
+                    {
+                        if(!itsActiveMdiColors && 0==line.find("activeBackground="))
+                        {
+                            QColor col;
+
+                            setRgb(&col, QStringList::split(",", line.mid(17)));
+
+                            if(col!=itsMenuitemCols[ORIGINAL_SHADE])
+                            {
+                                itsActiveMdiColors=new QColor [TOTAL_SHADES+1];
+                                shadeColors(col, itsActiveMdiColors);
+                            }
+                        }
+                        else if(!itsMdiColors && 0==line.find("inactiveBackground="))
+                        {
+                            QColor col;
+
+                            setRgb(&col, QStringList::split(",", line.mid(19)));
+                            if(col!=itsButtonCols[ORIGINAL_SHADE])
+                            {
+                                itsMdiColors=new QColor [TOTAL_SHADES+1];
+                                shadeColors(col, itsMdiColors);
+                            }
+                        }
+                        else if(0==line.find("activeForeground="))
+                            setRgb(&itsActiveMdiTextColor, QStringList::split(",", line.mid(17)));
+                        else if(0==line.find("inactiveForeground="))
+                            setRgb(&itsMdiTextColor, QStringList::split(",", line.mid(19)));
+                        else if (-1!=line.find('['))
+                            break;
+                    }
+                    else if(0==line.find("[WM]"))
+                        inPal=true;
+                }
+                f.close();
+            }
+        }
+
+        if(!itsActiveMdiColors)
+            itsActiveMdiColors=(QColor *)itsMenuitemCols;
+        if(!itsMdiColors)
+            itsMdiColors=(QColor *)itsBackgroundCols;
+    }
+
+    return active ? itsActiveMdiColors : itsMdiColors;
+}
+
+#ifdef SET_MDI_WINDOW_BUTTON_POSITIONS
+void QtCurveStyle::readMdiPositions() const
+{
+    if(0==itsMdiButtons[0].size() && 0==itsMdiButtons[1].size())
+    {
+        // Set defaults...
+        itsMdiButtons[0].append(SC_TitleBarSysMenu);
+        itsMdiButtons[0].append(SC_TitleBarShadeButton);
+
+        //itsMdiButtons[1].append(SC_TitleBarContextHelpButton);
+        itsMdiButtons[1].append(SC_TitleBarMinButton);
+        itsMdiButtons[1].append(SC_TitleBarMaxButton);
+        itsMdiButtons[1].append(WINDOWTITLE_SPACER);
+        itsMdiButtons[1].append(SC_TitleBarCloseButton);
+
+        // Read in KWin settings...
+        QFile f(kdeHome()+"/share/config/kwinrc");
+
+        if(f.open(IO_ReadOnly))
+        {
+            QTextStream in(&f);
+            bool        inStyle(false);
+
+            while (!in.atEnd())
+            {
+                QString line(in.readLine());
+
+                if(inStyle)
+                {
+                    if(0==line.find("ButtonsOnLeft="))
+                    {
+                        itsMdiButtons[0].clear();
+                        parseWindowLine(line.mid(14), itsMdiButtons[0]);
+                    }
+                    else if(0==line.find("ButtonsOnRight="))
+                    {
+                        itsMdiButtons[1].clear();
+                        parseWindowLine(line.mid(15), itsMdiButtons[1]);
+                    }
+                    else if (-1!=line.find('['))
+                        break;
+                }
+                else if(0==line.find("[Style]"))
+                    inStyle=true;
+            }
+            f.close();
+        }
+
+        // Designer uses shade buttons, not min/max - so if we dont have shade in our kwin config. then add this
+        // button near the max button...
+        if(-1==itsMdiButtons[0].findIndex(SC_TitleBarShadeButton) && -1==itsMdiButtons[1].findIndex(SC_TitleBarShadeButton))
+        {
+            int maxPos=itsMdiButtons[0].findIndex(SC_TitleBarMaxButton);
+
+            if(-1==maxPos) // Left doesnt have max button, assume right does and add shade there
+            {
+                int minPos=itsMdiButtons[1].findIndex(SC_TitleBarMinButton);
+                maxPos=itsMdiButtons[1].findIndex(SC_TitleBarMaxButton);
+
+                itsMdiButtons[1].insert(itsMdiButtons[1].find(minPos<maxPos ? (minPos==-1 ? 0 : minPos)
+                                                                            : (maxPos==-1 ? 0 : maxPos)), SC_TitleBarShadeButton);
+            }
+            else // Add to left button
+            {
+                int minPos=itsMdiButtons[0].findIndex(SC_TitleBarMinButton);
+
+                itsMdiButtons[1].insert(itsMdiButtons[1].find(minPos>maxPos ? (minPos==-1 ? 0 : minPos)
+                                                                            : (maxPos==-1 ? 0 : maxPos)), SC_TitleBarShadeButton);
+            }
+        }
+    }
+}
+#endif
 
 bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
 {

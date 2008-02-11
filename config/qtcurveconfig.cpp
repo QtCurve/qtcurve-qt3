@@ -213,6 +213,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(tabAppearance, false);
     insertAppearanceEntries(progressAppearance);
     insertAppearanceEntries(menuitemAppearance);
+    insertAppearanceEntries(titlebarAppearance);
     insertLineEntries(handles, false);
     insertLineEntries(sliderThumbs, true);
     insertLineEntries(toolbarSeparators, true);
@@ -263,6 +264,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(borderMenuitems, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(progressAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(menuitemAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(titlebarAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(shadeCheckRadio, SIGNAL(activated(int)), SLOT(shadeCheckRadioChanged()));
     connect(customCheckRadioColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
 
@@ -559,6 +561,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.borderMenuitems=borderMenuitems->isChecked();
     opts.progressAppearance=(EAppearance)progressAppearance->currentItem();
     opts.menuitemAppearance=(EAppearance)menuitemAppearance->currentItem();
+    opts.titlebarAppearance=(EAppearance)titlebarAppearance->currentItem();
     opts.shadeCheckRadio=(EShade)shadeCheckRadio->currentItem();
     opts.customCheckRadioColor=customCheckRadioColor->color();
     opts.shading=(EShading)shading->currentItem();
@@ -632,6 +635,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     borderMenuitems->setChecked(opts.borderMenuitems);
     progressAppearance->setCurrentItem(opts.progressAppearance);
     menuitemAppearance->setCurrentItem(opts.menuitemAppearance);
+    titlebarAppearance->setCurrentItem(opts.titlebarAppearance);
     shadeCheckRadio->setCurrentItem(opts.shadeCheckRadio);
     customCheckRadioColor->setColor(opts.customCheckRadioColor);
 
@@ -690,6 +694,7 @@ bool QtCurveConfig::settingsChanged()
          tabAppearance->currentItem()!=currentStyle.tabAppearance ||
          progressAppearance->currentItem()!=currentStyle.progressAppearance ||
          menuitemAppearance->currentItem()!=currentStyle.menuitemAppearance ||
+         titlebarAppearance->currentItem()!=currentStyle.titlebarAppearance ||
          toolbarSeparators->currentItem()!=currentStyle.toolbarSeparators ||
          splitters->currentItem()!=currentStyle.splitters ||
 
