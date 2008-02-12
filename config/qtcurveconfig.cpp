@@ -106,7 +106,7 @@ static void insertShadeEntries(QComboBox *combo, bool withDarken, bool checkRadi
     }
 }
 
-static void insertAppearanceEntries(QComboBox *combo, bool all=true)
+static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true)
 {
     combo->insertItem(i18n("Flat"));
     combo->insertItem(i18n("Raised"));
@@ -114,10 +114,11 @@ static void insertAppearanceEntries(QComboBox *combo, bool all=true)
     combo->insertItem(i18n("Shiny glass"));
     combo->insertItem(i18n("Gradient"));
     combo->insertItem(i18n("Inverted gradient"));
-    if(all)
+    if(split)
     {
         combo->insertItem(i18n("Split gradient"));
-        combo->insertItem(i18n("Bevelled"));
+        if(bev)
+            combo->insertItem(i18n("Bevelled"));
     }
 }
 
@@ -210,10 +211,10 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(toolbarAppearance);
     insertAppearanceEntries(lvAppearance);
     insertAppearanceEntries(sliderAppearance);
-    insertAppearanceEntries(tabAppearance, false);
+    insertAppearanceEntries(tabAppearance, false, false);
     insertAppearanceEntries(progressAppearance);
     insertAppearanceEntries(menuitemAppearance);
-    insertAppearanceEntries(titlebarAppearance);
+    insertAppearanceEntries(titlebarAppearance, true, false);
     insertLineEntries(handles, false);
     insertLineEntries(sliderThumbs, true);
     insertLineEntries(toolbarSeparators, true);
