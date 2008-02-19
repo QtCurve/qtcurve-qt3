@@ -270,6 +270,13 @@ inline QColor midColor(const QColor &a, const QColor &b, double factor=1.0)
                   (a.blue()+limit(b.blue()*factor))>>1);
 }
 
+inline QColor tint(const QColor &a, const QColor &b, double factor=0.2)
+{
+    return QColor((int)((a.red()+(factor*b.red()))/(1+factor)),
+                  (int)((a.green()+(factor*b.green()))/(1+factor)),
+                  (int)((a.blue()+(factor*b.blue()))/(1+factor)));
+}
+
 static bool isKhtmlWidget(const QWidget *w, int level=1)
 {
     return w && ((w->name() && 0==strcmp(w->name(), "__khtml")) ||
@@ -731,7 +738,14 @@ QtCurveStyle::QtCurveStyle(const QString &name)
                     itsSliderCols);
     }
 
-    if(IND_COLORED==opts.defBtnIndicator)
+    if(IND_TINT==opts.defBtnIndicator)
+    {
+        itsDefBtnCols=new QColor [TOTAL_SHADES+1];
+        shadeColors(tint(itsButtonCols[ORIGINAL_SHADE],
+                         itsMenuitemCols[ORIGINAL_SHADE]), itsDefBtnCols);
+    }
+    else/* if(IND_COLORED==opts.defBtnIndicator)*/
+    {
         if(SHADE_BLEND_SELECTED==opts.shadeSliders)
             itsDefBtnCols=itsSliderCols;
         else
@@ -740,9 +754,10 @@ QtCurveStyle::QtCurveStyle(const QString &name)
             shadeColors(midColor(itsMenuitemCols[ORIGINAL_SHADE],
                                  itsButtonCols[ORIGINAL_SHADE]), itsDefBtnCols);
         }
+    }
 
     if(opts.coloredMouseOver)
-        if(itsDefBtnCols)
+        if(itsDefBtnCols && IND_TINT!=opts.defBtnIndicator)
             itsMouseOverCols=itsDefBtnCols;
         else
         {
@@ -941,8 +956,9 @@ void QtCurveStyle::polish(QPalette &pal)
                    itsButtonCols[ORIGINAL_SHADE]!=QApplication::palette().active().button()),
          newSlider(itsSliderCols && SHADE_BLEND_SELECTED==opts.shadeSliders &&
                    (newContrast || newButton || newMenu)),
-         newDefBtn(itsDefBtnCols && IND_COLORED==opts.defBtnIndicator &&
-                   SHADE_BLEND_SELECTED!=opts.shadeSliders &&
+         newDefBtn(itsDefBtnCols && ( (IND_COLORED==opts.defBtnIndicator &&
+                                       SHADE_BLEND_SELECTED!=opts.shadeSliders) ||
+                                      (IND_TINT==opts.defBtnIndicator) ) &&
                    (newContrast || newButton || newMenu)),
          newMouseOver(itsMouseOverCols && itsMouseOverCols!=itsDefBtnCols &&
                       itsMouseOverCols!=itsSliderCols &&
@@ -964,8 +980,12 @@ void QtCurveStyle::polish(QPalette &pal)
                     itsButtonCols[ORIGINAL_SHADE]), itsSliderCols);
 
     if(newDefBtn)
-        shadeColors(midColor(itsMenuitemCols[ORIGINAL_SHADE],
-                    itsButtonCols[ORIGINAL_SHADE]), itsDefBtnCols);
+        if(IND_TINT==opts.defBtnIndicator)
+            shadeColors(tint(itsButtonCols[ORIGINAL_SHADE],
+                        itsMenuitemCols[ORIGINAL_SHADE]), itsDefBtnCols);
+        else
+            shadeColors(midColor(itsMenuitemCols[ORIGINAL_SHADE],
+                        itsButtonCols[ORIGINAL_SHADE]), itsDefBtnCols);
 
     if(newMouseOver)
         shadeColors(midColor(itsMenuitemCols[ORIGINAL_SHADE],
@@ -2555,7 +2575,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         case PE_ButtonTool:
         case PE_ButtonDropDown:
         {
-            const QColor *use(buttonColors(cg));
+            const QColor *use(IND_TINT==opts.defBtnIndicator && flags&Style_Enabled && flags&Style_ButtonDefault
+                                ? itsDefBtnCols : buttonColors(cg));
             bool         glassMod(PE_ButtonTool==pe && IS_GLASS(opts.appearance) &&
                                   IS_GLASS(opts.toolbarAppearance)),
                          mdi(!(flags&QTC_CHECK_BUTTON) && (!(flags&QTC_STD_TOOLBUTTON)||flags&QTC_NO_ETCH_BUTTON) &&
@@ -2598,7 +2619,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                            getFill(flags, use), use, true, true,
                            flags&QTC_NO_ETCH_BUTTON ? WIDGET_NO_ETCH_BTN : WIDGET_STD_BUTTON);
 
-            if(IND_COLORED==opts.defBtnIndicator && (flags&Style_ButtonDefault))
+            if(IND_COLORED==opts.defBtnIndicator && flags&Style_ButtonDefault && flags&Style_Enabled)
             {
                 const QColor *cols=itsMouseOverCols && flags&Style_MouseOver ? itsMouseOverCols : itsDefBtnCols;
                 QRegion      outer(r);

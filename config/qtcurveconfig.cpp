@@ -135,6 +135,7 @@ static void insertDefBtnEntries(QComboBox *combo)
     combo->insertItem(i18n("Corner indicator"));
     combo->insertItem(i18n("Font color thin border"));
     combo->insertItem(i18n("Selected background thick border"));
+    combo->insertItem(i18n("Tint with selected background"));
     combo->insertItem(i18n("None"));
 }
 
