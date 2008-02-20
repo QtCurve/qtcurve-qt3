@@ -506,166 +506,6 @@
                             <string>Border:</string>
                         </property>
                     </widget>
-                    <spacer row="3" column="2">
-                        <property name="name">
-                            <cstring>spacer5</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>54</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QGroupBox" row="1" column="0" rowspan="1" colspan="5">
-                        <property name="name">
-                            <cstring>groupBox2_2</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Menus</string>
-                        </property>
-                        <property name="flat">
-                            <bool>true</bool>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="8">
-                                <property name="name">
-                                    <cstring>lighterPopupMenuBgnd</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Lighter popup-menu background</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="8">
-                                <property name="name">
-                                    <cstring>menubarMouseOver</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Enable mouse-over for menubar items</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="8">
-                                <property name="name">
-                                    <cstring>roundMbTopOnly</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Round selected menubar items on top only</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_4_2_3</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Coloration:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_4_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Menubar appearance:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="5" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_4_2_4</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Menuitem appearance:</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="7">
-                                <property name="name">
-                                    <cstring>thinnerMenuItems</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Thinner menu items</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="1" column="7">
-                                <property name="name">
-                                    <cstring>shadeMenubarOnlyWhenActive</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Active window only</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>customMenuTextColor</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Custom text colors (normal/selected):</string>
-                                </property>
-                            </widget>
-                            <widget class="QComboBox" row="5" column="1" rowspan="1" colspan="5">
-                                <property name="name">
-                                    <cstring>menuitemAppearance</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QComboBox" row="1" column="1" rowspan="1" colspan="5">
-                                <property name="name">
-                                    <cstring>shadeMenubars</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                            </widget>
-                            <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="5">
-                                <property name="name">
-                                    <cstring>menubarAppearance</cstring>
-                                </property>
-                            </widget>
-                            <widget class="KColorButton" row="1" column="6">
-                                <property name="name">
-                                    <cstring>customMenubarsColor</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="5" column="6">
-                                <property name="name">
-                                    <cstring>borderMenuitems</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Border</string>
-                                </property>
-                            </widget>
-                            <widget class="KColorButton" row="2" column="2">
-                                <property name="name">
-                                    <cstring>customMenuNormTextColor</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <widget class="KColorButton" row="2" column="4">
-                                <property name="name">
-                                    <cstring>customMenuSelTextColor</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
                     <widget class="QLabel" row="0" column="2">
                         <property name="name">
                             <cstring>textLabel2</cstring>
@@ -701,6 +541,23 @@
                             <cstring>toolbarBorders</cstring>
                         </property>
                     </widget>
+                    <spacer row="3" column="2">
+                        <property name="name">
+                            <cstring>spacer5</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>43</height>
+                            </size>
+                        </property>
+                    </spacer>
                     <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="5">
                         <property name="name">
                             <cstring>groupBox2</cstring>
@@ -758,6 +615,157 @@
                                     </size>
                                 </property>
                             </spacer>
+                        </grid>
+                    </widget>
+                    <widget class="QGroupBox" row="1" column="0" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>groupBox2_2</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Menus</string>
+                        </property>
+                        <property name="flat">
+                            <bool>true</bool>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="6">
+                                <property name="name">
+                                    <cstring>lighterPopupMenuBgnd</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Lighter popup-menu background</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="6">
+                                <property name="name">
+                                    <cstring>menubarMouseOver</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Enable mouse-over for menubar items</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="6">
+                                <property name="name">
+                                    <cstring>roundMbTopOnly</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Round selected menubar items on top only</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1_4_2_3</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Coloration:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1_4_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Menubar appearance:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="5" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1_4_2_4</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Menuitem appearance:</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="5">
+                                <property name="name">
+                                    <cstring>thinnerMenuItems</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Thinner menu items</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="1" column="5">
+                                <property name="name">
+                                    <cstring>shadeMenubarOnlyWhenActive</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Active window only</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>customMenuTextColor</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Custom text colors (normal/selected):</string>
+                                </property>
+                            </widget>
+                            <widget class="QComboBox" row="5" column="1" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>menuitemAppearance</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QComboBox" row="1" column="1" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>shadeMenubars</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>menubarAppearance</cstring>
+                                </property>
+                            </widget>
+                            <widget class="KColorButton" row="1" column="4">
+                                <property name="name">
+                                    <cstring>customMenubarsColor</cstring>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="5" column="4">
+                                <property name="name">
+                                    <cstring>borderMenuitems</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Border</string>
+                                </property>
+                            </widget>
+                            <widget class="KColorButton" row="2" column="2">
+                                <property name="name">
+                                    <cstring>customMenuNormTextColor</cstring>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                            </widget>
+                            <widget class="KColorButton" row="2" column="3">
+                                <property name="name">
+                                    <cstring>customMenuSelTextColor</cstring>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="8" column="0">
+                                <property name="name">
+                                    <cstring>menuStripe</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Menu stripe</string>
+                                </property>
+                            </widget>
                         </grid>
                     </widget>
                 </grid>
@@ -987,6 +995,7 @@
     <tabstop>borderMenuitems</tabstop>
     <tabstop>lighterPopupMenuBgnd</tabstop>
     <tabstop>thinnerMenuItems</tabstop>
+    <tabstop>menuStripe</tabstop>
     <tabstop>toolbarAppearance</tabstop>
     <tabstop>toolbarSeparators</tabstop>
     <tabstop>gtkComboMenus</tabstop>

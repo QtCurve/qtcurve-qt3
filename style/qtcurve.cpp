@@ -1,5 +1,5 @@
 /*
-  QtCurve (C) Craig Drummond, 2003 - 2007 Craig.Drummond@lycos.co.uk
+  QtCurve (C) Craig Drummond, 2003 - 2008 Craig.Drummond@lycos.co.uk
 
   ----
 
@@ -112,6 +112,8 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <fixx11h.h>
+
+static const int constMenuPixmapWidth=22;
 
 static QRect adjusted(const QRect r, int xp1, int yp1, int xp2, int yp2)
 {
@@ -3914,8 +3916,17 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             else if(widget->erasePixmap() && !widget->erasePixmap()->isNull())
                 p->drawPixmap(x, y, *widget->erasePixmap(), x, y, w, h);
             else
+            {
                 p->fillRect(r, opts.lighterPopupMenuBgnd ? itsLighterPopupMenuBgndCol
                                                          : itsBackgroundCols[ORIGINAL_SHADE]);
+
+                if(opts.menuStripe)
+                    drawBevelGradient(itsBackgroundCols[opts.lighterPopupMenuBgnd ? ORIGINAL_SHADE : 3], true, p,
+                                      QRect(r.x(), r.y(), constMenuPixmapWidth, r.height()), false,
+                                      getWidgetShade(WIDGET_OTHER, true, false, opts.appearance),
+                                      getWidgetShade(WIDGET_OTHER, false, false, opts.appearance),
+                                      false, opts.appearance, WIDGET_OTHER);
+            }
 
             if(!mi)
                 break;
@@ -3930,7 +3941,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 break;
             }
 
-            maxpmw=QMAX(maxpmw, 16);
+            maxpmw=QMAX(maxpmw, constMenuPixmapWidth);
 
             QRect cr, ir, tr, sr;
             // check column
@@ -5543,7 +5554,7 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
             // check | 4 pixels | item | 8 pixels | accel | 4 pixels | check
 
             // check is at least 16x16
-            maxpmw=QMAX(maxpmw, 16);
+            maxpmw=QMAX(maxpmw, constMenuPixmapWidth);
             w += (maxpmw * 2) + 8;
 
             if (! mi->text().isNull() && mi->text().find('\t') >= 0)
