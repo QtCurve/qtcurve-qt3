@@ -763,7 +763,7 @@
                                     <cstring>menuStripe</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Menu stripe</string>
+                                    <string>Menu stripe (KDE3 and KDE4 only)</string>
                                 </property>
                             </widget>
                         </grid>
