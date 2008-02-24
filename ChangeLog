@@ -1,3 +1,19 @@
+0.56
+----
+1. Change default settings:
+        Dont animate progressbars
+        Frameless groupboxes
+        Gradient KDE4 window titlebars
+2. Correctly position corner indicator.
+3. Use mouse over colours for corner indicator.
+4. Add option to control window titlebar appearance - default to
+   gradient.
+5. Read in KWin's pallete, and use to colour MDI windows.
+6. Draw own icons for titlebar buttons - more KDE4 like.
+7. Option to tint the default button colour.
+8. Option to draw a stripe on the left hand side of popupmenus.
+9. Only mark default button if it is enabled.
+
 0.55.3
 ------
 1. Style "Ideal::Button"s on "Ideal::ButtonBar"s as per KMultiTabBar tabs.
