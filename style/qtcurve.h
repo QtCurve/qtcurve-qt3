@@ -163,6 +163,8 @@ class QtCurveStyle : public HighContrastStyle
                            const QStyleOption & = QStyleOption::Default) const;
     int styleHint(StyleHint, const QWidget *widget= 0, const QStyleOption & = QStyleOption::Default,
                   QStyleHintReturn *returnData= 0) const;
+    void drawItem(QPainter *p, const QRect &r, int flags, const QColorGroup &cg, bool enabled,
+                  const QPixmap *pixmap, const QString &text, int len=-1, const QColor *penColor=0) const;
 
     protected:
 

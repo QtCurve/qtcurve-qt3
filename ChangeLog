@@ -1,6 +1,7 @@
 0.56.2
 ------
 1. Use case-insesitive string compares when checking Qt and KDE config files.
+2. Fix for (sometimes) ever-boldening frameless groupbox titles.
 
 0.56.1
 ------

@@ -1295,7 +1295,7 @@ void QtCurveStyle::polish(QWidget *widget)
         pal.setColor(QColorGroup::Midlight, pal.active().background());
         QApplication::setPalette(pal);
     }
-    else if(widget->inherits("KTabCtl") || (opts.framelessGroupBoxes && ::qt_cast<QGroupBox *>(widget)))
+    else if(widget->inherits("KTabCtl"))
         widget->installEventFilter(this);
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
     {
@@ -1423,7 +1423,7 @@ void QtCurveStyle::unPolish(QWidget *widget)
         widget->removeEventFilter(this);
         widget->setBackgroundMode(PaletteBackground);  // We paint whole background.
     }
-    else if(widget->inherits("KTabCtl") || (opts.framelessGroupBoxes && ::qt_cast<QGroupBox *>(widget)))
+    else if(widget->inherits("KTabCtl"))
         widget->removeEventFilter(this);
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
         widget->removeEventFilter(this);
@@ -1541,40 +1541,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
     }
     else if (QEvent::Paint==event->type())
     {
-        if (opts.framelessGroupBoxes && ::qt_cast<QGroupBox *>(object))
-        {
-            QGroupBox *box=static_cast<QGroupBox*>(object);
-
-            if (!box->isCheckable())
-            {
-                QString title(box->title());
-
-                if(title.length())
-                {
-                    int          left,
-                                 right,
-                                 top,
-                                 bottom,
-                                 width,
-                                 height;
-                    QPainter     p(box);
-                    QFontMetrics fm(p.fontMetrics());
-                    QRect        r(box->rect());
-                    int          th(fm.height()+2);
-                    QFont        f(p.font());
-
-                    r.rect(&left, &top, &width, &height);
-                    r.coords(&left, &top, &right, &bottom);
-                    f.setBold(true);
-                    p.setPen(box->colorGroup().foreground());
-                    p.setFont(f);
-                    p.drawText(QRect(left, top, width, th),
-                               (QApplication::reverseLayout() ? AlignRight : AlignLeft)|AlignVCenter|ShowPrefix|SingleLine, title);
-                    return true;
-                }
-            }
-        }
-        else if (object->inherits("KToolBarSeparator"))
+        if (object->inherits("KToolBarSeparator"))
         {
             QFrame *frame(::qt_cast<QFrame *>(object));
 
@@ -5623,6 +5590,40 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
         default:
             return KStyle::styleHint(stylehint, widget, option, returnData);
     }
+}
+
+void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColorGroup &cg, bool enabled,
+                            const QPixmap *pixmap, const QString &text, int len, const QColor *penColor) const
+{
+    if(opts.framelessGroupBoxes && text.length() && p->device() && dynamic_cast<QGroupBox *>(p->device()))
+    {
+        QGroupBox *box=static_cast<QGroupBox*>(p->device());
+
+        if (!box->isCheckable())
+        {
+            int          left,
+                         top,
+                         width,
+                         height;
+            QFontMetrics fm(p->fontMetrics());
+            QRect        rb(box->rect());
+            int          th(fm.height()+2);
+            QFont        f(p->font());
+
+            rb.rect(&left, &top, &width, &height);
+            //rb.coords(&left, &top, &right, &bottom);
+            f.setBold(true);
+            p->setPen(box->colorGroup().foreground());
+            p->setFont(f);
+            p->drawText(QRect(left, top, width, th), (QApplication::reverseLayout()
+                                                        ? AlignRight
+                                                        : AlignLeft)|AlignVCenter|ShowPrefix|SingleLine,
+                        text);
+            return;
+        }
+    }
+
+    KStyle::drawItem(p, r, flags, cg, enabled, pixmap, text, len, penColor);
 }
 
 void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &cg,
