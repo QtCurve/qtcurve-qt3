@@ -1297,6 +1297,11 @@ void QtCurveStyle::polish(QWidget *widget)
     }
     else if(widget->inherits("KTabCtl"))
         widget->installEventFilter(this);
+    else if(opts.framelessGroupBoxes && ::qt_cast<QGroupBox *>(widget))
+    {
+        // Sometimes get drawing errors with framless flat groupboxes - so make them all non-flat!
+        ((QGroupBox *)widget)->setFlat(false);
+    }
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
     {
         QDialog *dlg=(QDialog *)widget;
@@ -4671,7 +4676,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                              atMin(maxed || sb->value()==sb->minValue()),
                              atMax(maxed || sb->value()==sb->maxValue());
             SFlags           sflags((horiz ? Style_Horizontal : Style_Default) |
-                                    (maxed ? Style_Default : Style_Enabled));
+                                    (maxed || !widget->isEnabled() ? Style_Default : Style_Enabled));
             QRect            subline(querySubControlMetrics(control, widget, SC_ScrollBarSubLine,
                                                             data)),
                              addline(querySubControlMetrics(control, widget, SC_ScrollBarAddLine,
@@ -5595,6 +5600,8 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
 void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColorGroup &cg, bool enabled,
                             const QPixmap *pixmap, const QString &text, int len, const QColor *penColor) const
 {
+    QRect r2(r);
+
     if(opts.framelessGroupBoxes && text.length() && p->device() && dynamic_cast<QGroupBox *>(p->device()))
     {
         QGroupBox *box=static_cast<QGroupBox*>(p->device());
@@ -5623,7 +5630,7 @@ void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColor
         }
     }
 
-    KStyle::drawItem(p, r, flags, cg, enabled, pixmap, text, len, penColor);
+    KStyle::drawItem(p, r2, flags, cg, enabled, pixmap, text, len, penColor);
 }
 
 void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &cg,
