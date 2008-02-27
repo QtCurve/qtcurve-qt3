@@ -1,3 +1,9 @@
+0.56.2
+------
+1. Use case-insesitive string compares when checking Qt and KDE config files.
+2. Fix for (sometimes) ever-boldening frameless groupbox titles.
+3. Don't colour non-maxed sliders of disabled scrollviews.
+
 0.56.1
 ------
 1. Fix crash when using corner default button indicator and no coloured

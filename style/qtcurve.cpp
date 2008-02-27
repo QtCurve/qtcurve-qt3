@@ -246,16 +246,16 @@ static bool kickerIsTrans()
 
             if(inGen)
             {
-                if(0==line.find("Transparent="))  // Found it!
+                if(0==line.find("Transparent=", false))  // Found it!
                 {
-                    if(-1!=line.find("true"))
+                    if(-1!=line.find("true", false))
                         trans=true;
                     stop=true;
                 }
                 else if(line[0]==QChar('['))   // Then wasn't in General section...
                     stop=true;
             }
-            else if(0==line.find("[General]"))
+            else if(0==line.find("[General]", false))
                 inGen=true;
         }
         cfgFile.close();
@@ -554,24 +554,24 @@ static bool readQt4(QFile &f, QPalette &pal, QFont &font, int &contrast)
             if(inSect)
             {
                 gotPal=true;
-                if(0==line.find("Palette\\active=#"))
+                if(0==line.find("Palette\\active=#", false))
                 {
                     readPal(line, QPalette::Active, pal);
                     gotPal=true;
                 }
-                else if(0==line.find("Palette\\disabled=#"))
+                else if(0==line.find("Palette\\disabled=#", false))
                 {
                     readPal(line, QPalette::Disabled, pal);
                     gotPal=true;
                 }
-                else if(0==line.find("Palette\\inactive=#"))
+                else if(0==line.find("Palette\\inactive=#", false))
                 {
                     readPal(line, QPalette::Inactive, pal);
                     gotPal=true;
                 }
-                else if(0==line.find("font=\""))
+                else if(0==line.find("font=\"", false))
                     gotFont=font.fromString(line.mid(6, line.findRev('\"')-6));
-                else if(0==line.find("KDE\\contrast="))
+                else if(0==line.find("KDE\\contrast=", false))
                 {
                     contrast=line.mid(13).toInt();
                     gotContrast=true;
@@ -579,7 +579,7 @@ static bool readQt4(QFile &f, QPalette &pal, QFont &font, int &contrast)
                 else if (0==line.find('['))
                     break;
             }
-            else if(0==line.find("[Qt]"))
+            else if(0==line.find("[Qt]", false))
                 inSect=true;
         }
         f.close();
@@ -1295,8 +1295,13 @@ void QtCurveStyle::polish(QWidget *widget)
         pal.setColor(QColorGroup::Midlight, pal.active().background());
         QApplication::setPalette(pal);
     }
-    else if(widget->inherits("KTabCtl") || (opts.framelessGroupBoxes && ::qt_cast<QGroupBox *>(widget)))
+    else if(widget->inherits("KTabCtl"))
         widget->installEventFilter(this);
+    else if(opts.framelessGroupBoxes && ::qt_cast<QGroupBox *>(widget))
+    {
+        // Sometimes get drawing errors with framless flat groupboxes - so make them all non-flat!
+        ((QGroupBox *)widget)->setFlat(false);
+    }
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
     {
         QDialog *dlg=(QDialog *)widget;
@@ -1423,7 +1428,7 @@ void QtCurveStyle::unPolish(QWidget *widget)
         widget->removeEventFilter(this);
         widget->setBackgroundMode(PaletteBackground);  // We paint whole background.
     }
-    else if(widget->inherits("KTabCtl") || (opts.framelessGroupBoxes && ::qt_cast<QGroupBox *>(widget)))
+    else if(widget->inherits("KTabCtl"))
         widget->removeEventFilter(this);
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
         widget->removeEventFilter(this);
@@ -1541,40 +1546,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
     }
     else if (QEvent::Paint==event->type())
     {
-        if (opts.framelessGroupBoxes && ::qt_cast<QGroupBox *>(object))
-        {
-            QGroupBox *box=static_cast<QGroupBox*>(object);
-
-            if (!box->isCheckable())
-            {
-                QString title(box->title());
-
-                if(title.length())
-                {
-                    int          left,
-                                 right,
-                                 top,
-                                 bottom,
-                                 width,
-                                 height;
-                    QPainter     p(box);
-                    QFontMetrics fm(p.fontMetrics());
-                    QRect        r(box->rect());
-                    int          th(fm.height()+2);
-                    QFont        f(p.font());
-
-                    r.rect(&left, &top, &width, &height);
-                    r.coords(&left, &top, &right, &bottom);
-                    f.setBold(true);
-                    p.setPen(box->colorGroup().foreground());
-                    p.setFont(f);
-                    p.drawText(QRect(left, top, width, th),
-                               (QApplication::reverseLayout() ? AlignRight : AlignLeft)|AlignVCenter|ShowPrefix|SingleLine, title);
-                    return true;
-                }
-            }
-        }
-        else if (object->inherits("KToolBarSeparator"))
+        if (object->inherits("KToolBarSeparator"))
         {
             QFrame *frame(::qt_cast<QFrame *>(object));
 
@@ -4704,7 +4676,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                              atMin(maxed || sb->value()==sb->minValue()),
                              atMax(maxed || sb->value()==sb->maxValue());
             SFlags           sflags((horiz ? Style_Horizontal : Style_Default) |
-                                    (maxed ? Style_Default : Style_Enabled));
+                                    (maxed || !widget->isEnabled() ? Style_Default : Style_Enabled));
             QRect            subline(querySubControlMetrics(control, widget, SC_ScrollBarSubLine,
                                                             data)),
                              addline(querySubControlMetrics(control, widget, SC_ScrollBarAddLine,
@@ -5625,6 +5597,42 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
     }
 }
 
+void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColorGroup &cg, bool enabled,
+                            const QPixmap *pixmap, const QString &text, int len, const QColor *penColor) const
+{
+    QRect r2(r);
+
+    if(opts.framelessGroupBoxes && text.length() && p->device() && dynamic_cast<QGroupBox *>(p->device()))
+    {
+        QGroupBox *box=static_cast<QGroupBox*>(p->device());
+
+        if (!box->isCheckable())
+        {
+            int          left,
+                         top,
+                         width,
+                         height;
+            QFontMetrics fm(p->fontMetrics());
+            QRect        rb(box->rect());
+            int          th(fm.height()+2);
+            QFont        f(p->font());
+
+            rb.rect(&left, &top, &width, &height);
+            //rb.coords(&left, &top, &right, &bottom);
+            f.setBold(true);
+            p->setPen(box->colorGroup().foreground());
+            p->setFont(f);
+            p->drawText(QRect(left, top, width, th), (QApplication::reverseLayout()
+                                                        ? AlignRight
+                                                        : AlignLeft)|AlignVCenter|ShowPrefix|SingleLine,
+                        text);
+            return;
+        }
+    }
+
+    KStyle::drawItem(p, r2, flags, cg, enabled, pixmap, text, len, penColor);
+}
+
 void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &cg,
                                 bool mbi, int round, const QColor &bgnd, const QColor *cols) const
 {
@@ -6440,7 +6448,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
 
                     if(inPal)
                     {
-                        if(!itsActiveMdiColors && 0==line.find("activeBackground=#"))
+                        if(!itsActiveMdiColors && 0==line.find("activeBackground=#", false))
                         {
                             QColor col;
 
@@ -6452,7 +6460,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
                                 shadeColors(col, itsActiveMdiColors);
                             }
                         }
-                        else if(!itsMdiColors && 0==line.find("inactiveBackground=#"))
+                        else if(!itsMdiColors && 0==line.find("inactiveBackground=#", false))
                         {
                             QColor col;
 
@@ -6463,14 +6471,14 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
                                 shadeColors(col, itsMdiColors);
                             }
                         }
-                        else if(0==line.find("activeForeground=#"))
+                        else if(0==line.find("activeForeground=#", false))
                             setRgb(&itsActiveMdiTextColor, line.mid(17).latin1());
-                        else if(0==line.find("inactiveForeground=#"))
+                        else if(0==line.find("inactiveForeground=#", false))
                             setRgb(&itsMdiTextColor, line.mid(19).latin1());
                         else if (-1!=line.find('['))
                             break;
                     }
-                    else if(0==line.find("[KWinPalette]"))
+                    else if(0==line.find("[KWinPalette]", false))
                         inPal=true;
                 }
                 f.close();
@@ -6491,7 +6499,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
 
                     if(inPal)
                     {
-                        if(!itsActiveMdiColors && 0==line.find("activeBackground="))
+                        if(!itsActiveMdiColors && 0==line.find("activeBackground=", false))
                         {
                             QColor col;
 
@@ -6503,7 +6511,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
                                 shadeColors(col, itsActiveMdiColors);
                             }
                         }
-                        else if(!itsMdiColors && 0==line.find("inactiveBackground="))
+                        else if(!itsMdiColors && 0==line.find("inactiveBackground=", false))
                         {
                             QColor col;
 
@@ -6514,14 +6522,14 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
                                 shadeColors(col, itsMdiColors);
                             }
                         }
-                        else if(0==line.find("activeForeground="))
+                        else if(0==line.find("activeForeground=", false))
                             setRgb(&itsActiveMdiTextColor, QStringList::split(",", line.mid(17)));
-                        else if(0==line.find("inactiveForeground="))
+                        else if(0==line.find("inactiveForeground=", false))
                             setRgb(&itsMdiTextColor, QStringList::split(",", line.mid(19)));
                         else if (-1!=line.find('['))
                             break;
                     }
-                    else if(0==line.find("[WM]"))
+                    else if(0==line.find("[WM]", false))
                         inPal=true;
                 }
                 f.close();
@@ -6566,12 +6574,12 @@ void QtCurveStyle::readMdiPositions() const
 
                 if(inStyle)
                 {
-                    if(0==line.find("ButtonsOnLeft="))
+                    if(0==line.find("ButtonsOnLeft=", false))
                     {
                         itsMdiButtons[0].clear();
                         parseWindowLine(line.mid(14), itsMdiButtons[0]);
                     }
-                    else if(0==line.find("ButtonsOnRight="))
+                    else if(0==line.find("ButtonsOnRight=", false))
                     {
                         itsMdiButtons[1].clear();
                         parseWindowLine(line.mid(15), itsMdiButtons[1]);
@@ -6579,7 +6587,7 @@ void QtCurveStyle::readMdiPositions() const
                     else if (-1!=line.find('['))
                         break;
                 }
-                else if(0==line.find("[Style]"))
+                else if(0==line.find("[Style]", false))
                     inStyle=true;
             }
             f.close();
