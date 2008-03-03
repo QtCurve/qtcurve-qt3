@@ -6101,7 +6101,7 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
         if(!tb)
             p->fillRect(QRect(x, y, r.width()-(horiz ? 0 : 2), r.height()-(horiz ? 2 : 0)), cg.background());
         p->setClipRegion(QRegion(clipRegion)); // , QPainter::CoordPainter);
-        if(IS_FLAT(opts.appearance))
+        if(IS_FLAT(opts.sliderAppearance))
         {
             p->fillRect(r, fill);
             if(MO_PLASTIK==opts.coloredMouseOver && flags&Style_MouseOver)
