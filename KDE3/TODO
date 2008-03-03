@@ -1,0 +1,18 @@
+--new--
+
+KDE: Better konqueror active (?) icon border.
+KDE: Combobox popup should be drawn as a popup menu - ala Gtk.
+ALL: Highlight tab bar? Not sure Gtk can do this :-( (qt gtk theme engine doesn't!)
+--app specific--
+
+OO.o:
+KDE: 2.x no highlight on combofocus.
+
+KDE: Combo box has a lighter grey when disabled
+KDE: Slight re-draw error on tabs if width of all tabs= width of tab bar -- but
+     all KDE themes seem to suffer from this.
+KDE: Mising white pixel when last tab is selected, if its added then the above 
+     suffers even more!
+KDE: V3 Combobox list needs to be rounded in rounded mode - missing pixels, etc.
+     Also take into account scrollbar pos? i.e. draw line 1 pixel less on right?
+ALL: GTK/KDE have different disabled text behaviour when contrast setting changed!
