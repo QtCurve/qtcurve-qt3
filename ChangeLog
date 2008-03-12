@@ -3,6 +3,7 @@
 1. Modify defaults:
      Turn off shade menubar only of active window
      Set default button indicator to tint
+2. Re-added option to highlight background of check/radio text on mouseover.
 
 0.56.3
 ------

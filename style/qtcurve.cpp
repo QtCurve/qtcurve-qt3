@@ -2834,7 +2834,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 bool         set(sflags&Style_On);
 
                 p->save();
-                p->fillRect(r, cg.background());
+                p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
+                               ? shade(cg.background(), opts.highlightFactor) : cg.background());
 
                 p->setClipRegion(QRegion(clipRegion));
                 if(IS_FLAT(opts.appearance))
@@ -4272,11 +4273,87 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             drawPrimitive(PE_Indicator, p, r, cg, flags, data);
             itsFormMode = false;
             break;
+        case CE_CheckBoxLabel:
+            if(opts.crHighlight)
+            {
+                const QCheckBox *checkbox((const QCheckBox *)widget);
+
+                if(flags&Style_MouseOver &&
+#if QT_VERSION >= 0x030200
+                   HOVER_CHECK==itsHover && itsHoverWidget && itsHoverWidget==widget &&
+#endif
+                   !isFormWidget(widget))
+                {
+#if QT_VERSION >= 0x030200
+                    QRect   cr(checkbox->rect());
+                    QRegion r(QRect(cr.x(), cr.y(), visualRect(subRect(SR_CheckBoxFocusRect, widget),
+                                                               widget).width()+
+                                                               pixelMetric(PM_IndicatorWidth)+4,
+                                                               cr.height()));
+
+#else
+                    QRegion r(checkbox->rect());
+#endif
+                    r-=visualRect(subRect(SR_CheckBoxIndicator, widget), widget);
+                    p->setClipRegion(r);
+                    p->fillRect(checkbox->rect(), shade(cg.background(), opts.highlightFactor));
+                    p->setClipping(false);
+                }
+                int alignment(QApplication::reverseLayout() ? AlignRight : AlignLeft);
+
+                drawItem(p, r, alignment | AlignVCenter | ShowPrefix, cg,
+                         flags & Style_Enabled, checkbox->pixmap(),  checkbox->text());
+
+                if(checkbox->hasFocus())
+                    drawPrimitive(PE_FocusRect, p, visualRect(subRect(SR_CheckBoxFocusRect, widget),
+                                  widget), cg, flags);
+            }
+            else
+                KStyle::drawControl(control, p, widget, r, cg, flags, data);
+            break;
         case CE_RadioButton:
             itsFormMode=isFormWidget(widget);
             drawPrimitive(PE_ExclusiveIndicator, p, r, cg, flags, data);
             itsFormMode=false;
             break;
+        case CE_RadioButtonLabel:
+            if(opts.crHighlight)
+            {
+                const QRadioButton *radiobutton((const QRadioButton *)widget);
+
+                if(flags&Style_MouseOver &&
+#if QT_VERSION >= 0x030200
+                   HOVER_RADIO==itsHover && itsHoverWidget && itsHoverWidget==widget &&
+#endif
+                   !isFormWidget(widget))
+                {
+#if QT_VERSION >= 0x030200
+                    QRect   rb(radiobutton->rect());
+                    QRegion r(QRect(rb.x(), rb.y(),
+                                    visualRect(subRect(SR_RadioButtonFocusRect, widget),
+                                               widget).width()+
+                                               pixelMetric(PM_ExclusiveIndicatorWidth)+4,
+                                               rb.height()));
+#else
+                    QRegion r(radiobutton->rect());
+#endif
+                    r-=visualRect(subRect(SR_RadioButtonIndicator, widget), widget);
+                    p->setClipRegion(r);
+                    p->fillRect(radiobutton->rect(), shade(cg.background(), opts.highlightFactor));
+                    p->setClipping(false);
+                }
+
+                int alignment(QApplication::reverseLayout() ? AlignRight : AlignLeft);
+
+                drawItem(p, r, alignment | AlignVCenter | ShowPrefix, cg, flags & Style_Enabled,
+                         radiobutton->pixmap(), radiobutton->text());
+
+                if(radiobutton->hasFocus())
+                    drawPrimitive(PE_FocusRect, p, visualRect(subRect(SR_RadioButtonFocusRect,
+                                  widget), widget), cg, flags);
+                break;
+            }
+            // Fall through intentional!
         default:
             KStyle::drawControl(control, p, widget, r, cg, flags, data);
     }
