@@ -1227,7 +1227,7 @@ void QtCurveStyle::polish(QWidget *widget)
            ::qt_cast<QFrame *>(widget))
             ((QFrame *)widget)->setLineWidth(0);
     }
-    else if (widget->inherits("QSplitterHandle") || widget->inherits("QDockWindowHandle"))
+    else if (widget->inherits("QSplitterHandle") || widget->inherits("QDockWindowHandle") || widget->inherits("QDockWindowResizeHandle"))
     {
         if(enableFilter)
             widget->installEventFilter(this);
@@ -1301,6 +1301,8 @@ void QtCurveStyle::polish(QWidget *widget)
     {
         // Sometimes get drawing errors with framless flat groupboxes - so make them all non-flat!
         ((QGroupBox *)widget)->setFlat(false);
+        // Also, to fix krusader's config dialog, set all groupboxes to have no frame.
+        ((QGroupBox *)widget)->setFrameShape(QFrame::NoFrame);
     }
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
     {
@@ -1407,7 +1409,7 @@ void QtCurveStyle::unPolish(QWidget *widget)
     }
     else if (::qt_cast<QLineEdit*>(widget) || ::qt_cast<QTextEdit*>(widget))
         widget->removeEventFilter(this);
-    else if (widget->inherits("QSplitterHandle") || widget->inherits("QDockWindowHandle"))
+    else if (widget->inherits("QSplitterHandle") || widget->inherits("QDockWindowHandle") || widget->inherits("QDockWindowResizeHandle"))
         widget->removeEventFilter(this);
     else if (::qt_cast<QProgressBar*>(widget))
     {
@@ -2910,6 +2912,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             }
             break;
         }
+        case PE_DockWindowResizeHandle:
+            if(flags&Style_Horizontal)
+                flags-=Style_Horizontal;
+            else
+                flags+=Style_Horizontal;
+            // Fall through intentional
         case PE_Splitter:
         {
             if(itsHoverWidget && itsHoverWidget == p->device())
@@ -2921,29 +2929,22 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             p->fillRect(r, QColor(flags&Style_MouseOver
                                       ? shade(cg.background(), opts.highlightFactor)
                                       : cg.background()));
+
             switch(opts.splitters)
             {
                 default:
                 case LINE_DOTS:
-                    drawDots(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 5);
+                    drawDots(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, PE_Splitter==pe ? 1 : 0, border, 0, 5);
                     break;
                 case LINE_SUNKEN:
-                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 3);
+                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, PE_Splitter==pe ? 1 : 0, border, 0, 3);
                     break;
                 case LINE_FLAT:
-                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 3, border, 0, 3, 0, false);
+                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, PE_Splitter==pe ? 3 : 1, border, 0, 3, 0, false);
                     break;
                 case LINE_DASHES:
-                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 3, 0);
+                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, PE_Splitter==pe ? 1 : 0, border, 0, 3, 0);
             }
-            break;
-        }
-        case PE_DockWindowResizeHandle:
-        {
-            const QColor *use(backgroundColors(cg));
-
-            drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal),
-                       ROUNDED_ALL, use, WIDGET_OTHER, true, BORDER_RAISED, false);
             break;
         }
         case PE_GroupBoxFrame:
@@ -2965,6 +2966,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                             ROUNDED_NONE, backgroundColors(cg), WIDGET_MDI_WINDOW, true, BORDER_RAISED, false);
             break;
         case PE_Panel:
+            if(dynamic_cast<QDockWindow *>(p->device()))
+                break;
+
             if(APP_OPENOFFICE==itsThemedApp || data.lineWidth()>0 || data.isDefault())
             {
                 const QColor *use(

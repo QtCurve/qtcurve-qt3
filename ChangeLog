@@ -1,3 +1,8 @@
+0.57.1
+------
+1. Fix for frameless groupboxes krusader's config dialog.
+2. Draw QDockWindowResize handles like QSplitters.
+
 0.57
 ----
 1. Modify defaults:
