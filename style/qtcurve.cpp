@@ -2973,7 +2973,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                             ROUNDED_NONE, backgroundColors(cg), WIDGET_MDI_WINDOW, true, BORDER_RAISED, false);
             break;
         case PE_Panel:
-            if(dynamic_cast<QDockWindow *>(p->device()))
+            if((APP_KICKER==itsThemedApp && data.isDefault()) ||
+               dynamic_cast<QDockWindow *>(p->device()))
                 break;
 
             if(APP_OPENOFFICE==itsThemedApp || data.lineWidth()>0 || data.isDefault())
