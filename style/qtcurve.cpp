@@ -3899,6 +3899,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                              maxpmw(data.maxIconWidth()),
                              x, y, w, h;
 
+            maxpmw=QMAX(maxpmw, constMenuPixmapWidth);
             r.rect(&x, &y, &w, &h);
 
             if((flags & Style_Active)&&(flags & Style_Enabled))
@@ -3914,7 +3915,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
                 if(opts.menuStripe)
                     drawBevelGradient(itsBackgroundCols[opts.lighterPopupMenuBgnd ? ORIGINAL_SHADE : 3], true, p,
-                                      QRect(r.x(), r.y(), constMenuPixmapWidth, r.height()), false,
+                                      QRect(r.x(), r.y(), maxpmw, r.height()), false,
                                       getWidgetShade(WIDGET_OTHER, true, false, opts.appearance),
                                       getWidgetShade(WIDGET_OTHER, false, false, opts.appearance),
                                       false, opts.appearance, WIDGET_OTHER);
@@ -3932,8 +3933,6 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 //                 p->drawLine(r.x()+4, y+1, r.x()+r.width()-5, y+1);
                 break;
             }
-
-            maxpmw=QMAX(maxpmw, constMenuPixmapWidth);
 
             QRect cr, ir, tr, sr;
             // check column

@@ -4,6 +4,7 @@
 2. Draw QDockWindowResize handles like QSplitters.
 3. Make dock windows more KDE4 like.
 4. Don't draw frames around kicker buttons.
+5. Fix kicker menu stripe.
 
 0.57
 ----
