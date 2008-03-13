@@ -2941,16 +2941,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             {
                 default:
                 case LINE_DOTS:
-                    drawDots(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, PE_Splitter==pe ? 1 : 0, border, 0, 5);
+                    drawDots(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 5);
                     break;
                 case LINE_SUNKEN:
-                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, PE_Splitter==pe ? 1 : 0, border, 0, 3);
+                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 3);
                     break;
                 case LINE_FLAT:
-                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, PE_Splitter==pe ? 3 : 1, border, 0, 3, 0, false);
+                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 3, border, 0, 3, 0, false);
                     break;
                 case LINE_DASHES:
-                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, PE_Splitter==pe ? 1 : 0, border, 0, 3, 0);
+                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 3, 0);
             }
             break;
         }
@@ -5503,7 +5503,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
         case PM_DockWindowHandleExtent:
             return 10;
         case PM_SplitterWidth:
-            return 6;
+            return widget && widget->inherits("QDockWindowResizeHandle") ? 9 : 6;
         case PM_ScrollBarSliderMin:
             return 16;
         case PM_SliderThickness:
