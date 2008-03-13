@@ -220,9 +220,12 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 #define QTC_STD_TOOLBUTTON     0x04000000
 #define QTC_TOGGLE_BUTTON      0x08000000
 #define QTC_NO_ETCH_BUTTON     0x10000000
+#define QTC_DW_CLOSE_BUTTON    0x80000000
 #define QTC_LISTVIEW_ITEM      0x20000000
 #define QTC_MENU_ITEM          0x40000000
 #define WINDOWTITLE_SPACER     0x10000000
+
+#define QTC_DW_BGND 105
 
 #if KDE_VERSION >= 0x30200
 // Try to read $KDEHOME/share/config/kickerrc to find out if kicker is transparent...
@@ -2061,7 +2064,8 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
     if(QTC_ROUNDED && ROUNDED_NONE!=round)
     {
         bool largeArc(ROUND_FULL==opts.round && !(flags&QTC_CHECK_BUTTON) &&
-                      r.width()>=QTC_MIN_BTN_SIZE && r.height()>=QTC_MIN_BTN_SIZE);
+                      r.width()>=QTC_MIN_BTN_SIZE && r.height()>=QTC_MIN_BTN_SIZE &&
+                      !(flags&QTC_DW_CLOSE_BUTTON));
 
         p->setPen(border);
         if(itsFormMode)
@@ -2585,13 +2589,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
             }
 
-            drawLightBevel(p, r, cg, glassMod ? flags : flags|Style_Horizontal,
+            drawLightBevel(flags&QTC_DW_CLOSE_BUTTON
+                            ? cg.background().dark(QTC_DW_BGND)
+                            : cg.background(),
+                           p, r, cg, glassMod ? flags : flags|Style_Horizontal,
 #if KDE_VERSION >= 0x30200
                            (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe) ||
 #endif
                            operaMdi || mdi
-                               ? ROUNDED_NONE
-                               : ROUNDED_ALL,
+                            ? ROUNDED_NONE
+                            : ROUNDED_ALL,
                            getFill(flags, use), use, true, true,
                            flags&QTC_NO_ETCH_BUTTON ? WIDGET_NO_ETCH_BTN : WIDGET_STD_BUTTON);
 
@@ -3378,28 +3385,35 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             int  x, y, w, h;
 
             r.rect(&x, &y, &w, &h);
-            if ((w <= 2) || (h <= 2))
-                p->fillRect(r, cg.background().dark(105));
-            else
+            p->fillRect(r, cg.background().dark(QTC_DW_BGND));
+            if (w > 2 && h > 2)
             {
                 QWidget  *wid(const_cast<QWidget*>(widget));
-                bool     horizontal(flags & Style_Horizontal);
+                bool     horizontal(flags & Style_Horizontal),
+                         hasClose(dynamic_cast<const QDockWindow *>(wid->parentWidget()) &&
+                                  ((QDockWindow *)(wid->parentWidget()))->area() &&
+                                  ((QDockWindow *)(wid->parentWidget()))->isCloseEnabled());
                 QFont    fnt(QApplication::font(wid));
                 QPixmap  pix;
                 QString  title(wid->parentWidget()->caption());
                 QPainter p2;
 
                 fnt.setPointSize(fnt.pointSize()-2);
+                if(hasClose)
+                    if (horizontal)
+                        h-=15;
+                    else
+                        w-=15;
 
                 // Draw the item on an off-screen pixmap to preserve Xft antialiasing for
                 // vertically oriented handles.
                 if (horizontal)
-                    pix.resize(h-2, w-2);
+                    pix.resize(h, w);
                 else
-                    pix.resize(w-2, h-2);
+                    pix.resize(w, h);
 
                 p2.begin(&pix);
-                p2.fillRect(pix.rect(), cg.background().dark(105));
+                p2.fillRect(pix.rect(), cg.background().dark(QTC_DW_BGND));
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
                 p2.drawText(pix.rect(), AlignCenter,
@@ -3412,10 +3426,10 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
 
                     m.rotate(-90.0);
                     QPixmap vpix(pix.xForm(m));
-                    bitBlt(wid, r.x()+1, r.y()+1, &vpix);
+                    bitBlt(wid, r.x(), r.y()+(hasClose ? 15 : 0), &vpix);
                 }
                 else
-                    bitBlt(wid, r.x()+1, r.y()+1, &pix);
+                    bitBlt(wid, r.x(), r.y(), &pix);
             }
             break;
         }
@@ -4435,6 +4449,9 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
         case SR_ProgressBarLabel:
             rect=QRect(wrect.left()+2, wrect.top()+2, wrect.width()-4, wrect.height()-4);
             break;
+        case SR_DockWindowHandleRect:
+            rect=wrect;
+            break;
         default:
             rect=KStyle::subRect(subrect, widget);
     }
@@ -4482,7 +4499,18 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                  onExtender(!tb &&
                             widget->parentWidget() &&
                             widget->parentWidget()->inherits( "QToolBarExtensionWidget") &&
-                            ::qt_cast<QToolBar *>(widget->parentWidget()->parentWidget()));
+                            ::qt_cast<QToolBar *>(widget->parentWidget()->parentWidget())),
+                 isDWClose(!tb && !onExtender &&
+                            widget->parentWidget() &&
+                            widget->parentWidget()->inherits( "QDockWindowHandle"));
+
+            if(isDWClose)
+            {
+                p->fillRect(r, cg.background().dark(QTC_DW_BGND));
+                if(!(flags&Style_MouseOver) && !(active & SC_ToolButton))
+                    break;
+                bflags|=QTC_DW_CLOSE_BUTTON;
+            }
 
             if (!tb && !onExtender && widget->parentWidget() &&
                 !qstrcmp(widget->parentWidget()->name(), "qt_maxcontrols"))
