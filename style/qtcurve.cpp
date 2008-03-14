@@ -220,9 +220,12 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 #define QTC_STD_TOOLBUTTON     0x04000000
 #define QTC_TOGGLE_BUTTON      0x08000000
 #define QTC_NO_ETCH_BUTTON     0x10000000
+#define QTC_DW_CLOSE_BUTTON    0x80000000
 #define QTC_LISTVIEW_ITEM      0x20000000
 #define QTC_MENU_ITEM          0x40000000
 #define WINDOWTITLE_SPACER     0x10000000
+
+#define QTC_DW_BGND 105
 
 #if KDE_VERSION >= 0x30200
 // Try to read $KDEHOME/share/config/kickerrc to find out if kicker is transparent...
@@ -1227,7 +1230,7 @@ void QtCurveStyle::polish(QWidget *widget)
            ::qt_cast<QFrame *>(widget))
             ((QFrame *)widget)->setLineWidth(0);
     }
-    else if (widget->inherits("QSplitterHandle") || widget->inherits("QDockWindowHandle"))
+    else if (widget->inherits("QSplitterHandle") || widget->inherits("QDockWindowHandle") || widget->inherits("QDockWindowResizeHandle"))
     {
         if(enableFilter)
             widget->installEventFilter(this);
@@ -1301,6 +1304,8 @@ void QtCurveStyle::polish(QWidget *widget)
     {
         // Sometimes get drawing errors with framless flat groupboxes - so make them all non-flat!
         ((QGroupBox *)widget)->setFlat(false);
+        // Also, to fix krusader's config dialog, set all groupboxes to have no frame.
+        ((QGroupBox *)widget)->setFrameShape(QFrame::NoFrame);
     }
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
     {
@@ -1407,7 +1412,7 @@ void QtCurveStyle::unPolish(QWidget *widget)
     }
     else if (::qt_cast<QLineEdit*>(widget) || ::qt_cast<QTextEdit*>(widget))
         widget->removeEventFilter(this);
-    else if (widget->inherits("QSplitterHandle") || widget->inherits("QDockWindowHandle"))
+    else if (widget->inherits("QSplitterHandle") || widget->inherits("QDockWindowHandle") || widget->inherits("QDockWindowResizeHandle"))
         widget->removeEventFilter(this);
     else if (::qt_cast<QProgressBar*>(widget))
     {
@@ -2059,7 +2064,8 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
     if(QTC_ROUNDED && ROUNDED_NONE!=round)
     {
         bool largeArc(ROUND_FULL==opts.round && !(flags&QTC_CHECK_BUTTON) &&
-                      r.width()>=QTC_MIN_BTN_SIZE && r.height()>=QTC_MIN_BTN_SIZE);
+                      r.width()>=QTC_MIN_BTN_SIZE && r.height()>=QTC_MIN_BTN_SIZE &&
+                      !(flags&QTC_DW_CLOSE_BUTTON));
 
         p->setPen(border);
         if(itsFormMode)
@@ -2583,13 +2589,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
             }
 
-            drawLightBevel(p, r, cg, glassMod ? flags : flags|Style_Horizontal,
+            drawLightBevel(flags&QTC_DW_CLOSE_BUTTON
+                            ? cg.background().dark(QTC_DW_BGND)
+                            : cg.background(),
+                           p, r, cg, glassMod ? flags : flags|Style_Horizontal,
 #if KDE_VERSION >= 0x30200
                            (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe) ||
 #endif
                            operaMdi || mdi
-                               ? ROUNDED_NONE
-                               : ROUNDED_ALL,
+                            ? ROUNDED_NONE
+                            : ROUNDED_ALL,
                            getFill(flags, use), use, true, true,
                            flags&QTC_NO_ETCH_BUTTON ? WIDGET_NO_ETCH_BTN : WIDGET_STD_BUTTON);
 
@@ -2910,6 +2919,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             }
             break;
         }
+        case PE_DockWindowResizeHandle:
+            if(flags&Style_Horizontal)
+                flags-=Style_Horizontal;
+            else
+                flags+=Style_Horizontal;
+            // Fall through intentional
         case PE_Splitter:
         {
             if(itsHoverWidget && itsHoverWidget == p->device())
@@ -2921,6 +2936,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             p->fillRect(r, QColor(flags&Style_MouseOver
                                       ? shade(cg.background(), opts.highlightFactor)
                                       : cg.background()));
+
             switch(opts.splitters)
             {
                 default:
@@ -2936,14 +2952,6 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 case LINE_DASHES:
                     drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 3, 0);
             }
-            break;
-        }
-        case PE_DockWindowResizeHandle:
-        {
-            const QColor *use(backgroundColors(cg));
-
-            drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal),
-                       ROUNDED_ALL, use, WIDGET_OTHER, true, BORDER_RAISED, false);
             break;
         }
         case PE_GroupBoxFrame:
@@ -2965,6 +2973,10 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                             ROUNDED_NONE, backgroundColors(cg), WIDGET_MDI_WINDOW, true, BORDER_RAISED, false);
             break;
         case PE_Panel:
+            if((APP_KICKER==itsThemedApp && data.isDefault()) ||
+               dynamic_cast<QDockWindow *>(p->device()))
+                break;
+
             if(APP_OPENOFFICE==itsThemedApp || data.lineWidth()>0 || data.isDefault())
             {
                 const QColor *use(
@@ -3374,28 +3386,35 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             int  x, y, w, h;
 
             r.rect(&x, &y, &w, &h);
-            if ((w <= 2) || (h <= 2))
-                p->fillRect(r, cg.background().dark(105));
-            else
+            p->fillRect(r, cg.background().dark(QTC_DW_BGND));
+            if (w > 2 && h > 2)
             {
                 QWidget  *wid(const_cast<QWidget*>(widget));
-                bool     horizontal(flags & Style_Horizontal);
+                bool     horizontal(flags & Style_Horizontal),
+                         hasClose(dynamic_cast<const QDockWindow *>(wid->parentWidget()) &&
+                                  ((QDockWindow *)(wid->parentWidget()))->area() &&
+                                  ((QDockWindow *)(wid->parentWidget()))->isCloseEnabled());
                 QFont    fnt(QApplication::font(wid));
                 QPixmap  pix;
                 QString  title(wid->parentWidget()->caption());
                 QPainter p2;
 
                 fnt.setPointSize(fnt.pointSize()-2);
+                if(hasClose)
+                    if (horizontal)
+                        h-=15;
+                    else
+                        w-=15;
 
                 // Draw the item on an off-screen pixmap to preserve Xft antialiasing for
                 // vertically oriented handles.
                 if (horizontal)
-                    pix.resize(h-2, w-2);
+                    pix.resize(h, w);
                 else
-                    pix.resize(w-2, h-2);
+                    pix.resize(w, h);
 
                 p2.begin(&pix);
-                p2.fillRect(pix.rect(), cg.background().dark(105));
+                p2.fillRect(pix.rect(), cg.background().dark(QTC_DW_BGND));
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
                 p2.drawText(pix.rect(), AlignCenter,
@@ -3408,10 +3427,10 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
 
                     m.rotate(-90.0);
                     QPixmap vpix(pix.xForm(m));
-                    bitBlt(wid, r.x()+1, r.y()+1, &vpix);
+                    bitBlt(wid, r.x(), r.y()+(hasClose ? 15 : 0), &vpix);
                 }
                 else
-                    bitBlt(wid, r.x()+1, r.y()+1, &pix);
+                    bitBlt(wid, r.x(), r.y(), &pix);
             }
             break;
         }
@@ -3880,6 +3899,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                              maxpmw(data.maxIconWidth()),
                              x, y, w, h;
 
+            maxpmw=QMAX(maxpmw, constMenuPixmapWidth);
             r.rect(&x, &y, &w, &h);
 
             if((flags & Style_Active)&&(flags & Style_Enabled))
@@ -3895,7 +3915,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
                 if(opts.menuStripe)
                     drawBevelGradient(itsBackgroundCols[opts.lighterPopupMenuBgnd ? ORIGINAL_SHADE : 3], true, p,
-                                      QRect(r.x(), r.y(), constMenuPixmapWidth, r.height()), false,
+                                      QRect(r.x(), r.y(), maxpmw, r.height()), false,
                                       getWidgetShade(WIDGET_OTHER, true, false, opts.appearance),
                                       getWidgetShade(WIDGET_OTHER, false, false, opts.appearance),
                                       false, opts.appearance, WIDGET_OTHER);
@@ -3913,8 +3933,6 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 //                 p->drawLine(r.x()+4, y+1, r.x()+r.width()-5, y+1);
                 break;
             }
-
-            maxpmw=QMAX(maxpmw, constMenuPixmapWidth);
 
             QRect cr, ir, tr, sr;
             // check column
@@ -4431,6 +4449,9 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
         case SR_ProgressBarLabel:
             rect=QRect(wrect.left()+2, wrect.top()+2, wrect.width()-4, wrect.height()-4);
             break;
+        case SR_DockWindowHandleRect:
+            rect=wrect;
+            break;
         default:
             rect=KStyle::subRect(subrect, widget);
     }
@@ -4478,7 +4499,18 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                  onExtender(!tb &&
                             widget->parentWidget() &&
                             widget->parentWidget()->inherits( "QToolBarExtensionWidget") &&
-                            ::qt_cast<QToolBar *>(widget->parentWidget()->parentWidget()));
+                            ::qt_cast<QToolBar *>(widget->parentWidget()->parentWidget())),
+                 isDWClose(!tb && !onExtender &&
+                            widget->parentWidget() &&
+                            widget->parentWidget()->inherits( "QDockWindowHandle"));
+
+            if(isDWClose)
+            {
+                p->fillRect(r, cg.background().dark(QTC_DW_BGND));
+                if(!(flags&Style_MouseOver) && !(active & SC_ToolButton))
+                    break;
+                bflags|=QTC_DW_CLOSE_BUTTON;
+            }
 
             if (!tb && !onExtender && widget->parentWidget() &&
                 !qstrcmp(widget->parentWidget()->name(), "qt_maxcontrols"))
@@ -5471,7 +5503,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
         case PM_DockWindowHandleExtent:
             return 10;
         case PM_SplitterWidth:
-            return 6;
+            return widget && widget->inherits("QDockWindowResizeHandle") ? 9 : 6;
         case PM_ScrollBarSliderMin:
             return 16;
         case PM_SliderThickness:
