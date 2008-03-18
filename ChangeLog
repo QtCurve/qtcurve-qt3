@@ -1,3 +1,8 @@
+0.58
+----
+1. Add a config option for menu stripe appearance - defaults to gradient.
+2. Add a config option for selection appearance - defaults to flat. Gtk2 only.
+
 0.57.1
 ------
 1. Fix for frameless groupboxes krusader's config dialog.
