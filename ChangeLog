@@ -1,7 +1,7 @@
 0.58
 ----
 1. Add a config option for menu stripe appearance - defaults to gradient.
-2. Add a config option for selection appearance - defaults to flat. Gtk2 only.
+2. Add a config option for selection appearance - defaults to flat. KDE4 (Qt4.4) & Gtk2 only.
 
 0.57.1
 ------

@@ -498,7 +498,7 @@
                             <cstring>textLabel1_8_2_2_3_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Selection (Gtk2 Only):</string>
+                            <string>Selection (KDE4 &amp; Gtk2):</string>
                         </property>
                         <property name="whatsThis" stdset="0">
                             <string>This controls the % that widgets will be highlighted by when the mouse hovers over them</string>
