@@ -864,6 +864,8 @@ void QtCurveStyle::polish(QApplication *app)
         itsThemedApp=APP_TORA;
     else if ("opera"==appName)
         itsThemedApp=APP_OPERA;
+    else if ("systemsettings"==appName)
+        itsThemedApp=APP_SYSTEMSETTINGS;
     else if ("korn"==appName)
     {
         itsThemedApp=APP_KORN;
@@ -1335,6 +1337,21 @@ void QtCurveStyle::polish(QWidget *widget)
                (index+17)==(int)cap.length())) )
             widget->QWidget::setCaption(cap.left(index));
     }
+
+    if(APP_SYSTEMSETTINGS==itsThemedApp)
+    {
+        if(widget && widget->parentWidget() && widget->parentWidget()->parentWidget() &&
+           ::qt_cast<QFrame *>(widget) && QFrame::NoFrame!=((QFrame *)widget)->frameShape() &&
+           ::qt_cast<QFrame *>(widget->parentWidget()) &&
+           ::qt_cast<QTabWidget *>(widget->parentWidget()->parentWidget()))
+            ((QFrame *)widget)->setFrameShape(QFrame::NoFrame);
+
+        if(widget->parentWidget() && widget->parentWidget()->parentWidget() &&
+           ::qt_cast<QScrollView *>(widget->parentWidget()->parentWidget()) &&
+           widget->inherits("KCMultiWidget") && widget->parentWidget()->inherits("QViewportWidget"))
+            ((QScrollView *)(widget->parentWidget()->parentWidget()))->setLineWidth(0);
+    }
+
 
     KStyle::polish(widget);
 }
@@ -3117,7 +3134,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         {
             QRect        br(r),
                          ar(r);
-            const QColor *use(itsButtonCols); // buttonColors(cg));
+            const QColor *use(flags&Style_Enabled ? itsButtonCols : itsBackgroundCols); // buttonColors(cg));
 
             pe=flags&Style_Horizontal
                    ? PE_ScrollBarAddLine==pe ? PE_ArrowRight : PE_ArrowLeft

@@ -97,6 +97,7 @@ class QtCurveStyle : public HighContrastStyle
         APP_TORA,
         APP_KONTACT,
         APP_OPERA,
+        APP_SYSTEMSETTINGS,
         APP_OTHER
     };
 
