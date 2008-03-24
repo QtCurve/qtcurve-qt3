@@ -4,6 +4,8 @@
 2. Add a config option for selection appearance - defaults to flat. KDE4 (Qt4.4) & Gtk2 only.
 3. Use background colour for disabled scrollbar buttons.
 4. Remove some frames from systemsettings.
+5. Don't draw menu separators through stripe.
+6. Draw menu stripe on the right for RTL languages.
 
 0.57.1
 ------

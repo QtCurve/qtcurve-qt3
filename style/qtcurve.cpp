@@ -3915,6 +3915,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             int              tab(data.tabWidth()),
                              maxpmw(data.maxIconWidth()),
                              x, y, w, h;
+            bool             reverse(QApplication::reverseLayout());
 
             maxpmw=QMAX(maxpmw, constMenuPixmapWidth);
             r.rect(&x, &y, &w, &h);
@@ -3932,7 +3933,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
                 if(opts.menuStripe)
                     drawBevelGradient(itsBackgroundCols[opts.lighterPopupMenuBgnd ? ORIGINAL_SHADE : 3], true, p,
-                                      QRect(r.x(), r.y(), maxpmw, r.height()), false,
+                                      QRect(reverse ? r.right()-maxpmw : r.x(),
+                                            r.y(), maxpmw, r.height()), false,
                                       getWidgetShade(WIDGET_OTHER, true, false, opts.menuStripeAppearance),
                                       getWidgetShade(WIDGET_OTHER, false, false, opts.menuStripeAppearance),
                                       false, opts.menuStripeAppearance, WIDGET_OTHER);
@@ -3945,7 +3947,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             {
                 y=r.y()+((r.height()/2)-1);
                 p->setPen(itsBackgroundCols[QT_STD_BORDER]);
-                p->drawLine(r.x()+4, y, r.x()+r.width()-5, y);
+                p->drawLine(r.x()+4+(!reverse && opts.menuStripe ? maxpmw : 0), y,
+                            r.x()+r.width()-5-(reverse && opts.menuStripe ? maxpmw : 0), y);
 //                 p->setPen(itsBackgroundCols[0]);
 //                 p->drawLine(r.x()+4, y+1, r.x()+r.width()-5, y+1);
                 break;
@@ -3960,8 +3963,6 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             tr.setCoords(sr.left()-tab-4, r.top(), sr.left(), r.bottom());
             // item column
             ir.setCoords(cr.right()+4, r.top(), tr.right()-4, r.bottom());
-
-            bool reverse(QApplication::reverseLayout());
 
             if(reverse)
             {
