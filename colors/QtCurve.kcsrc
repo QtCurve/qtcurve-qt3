@@ -1,0 +1,27 @@
+[Color Scheme]
+Name=QtCurve
+activeBackground=169,195,228
+activeBlend=169,195,228
+activeForeground=255,255,255
+activeTitleBtnBg=220,220,220
+alternateBackground=240,240,240
+background=239,236,231
+buttonBackground=239,236,231
+buttonForeground=0,0,0
+contrast=7
+foreground=0,0,0
+frame=238,238,230
+handle=238,238,230
+inactiveBackground=244,244,244
+inactiveBlend=244,244,244
+inactiveForeground=20,19,18
+inactiveFrame=238,238,230
+inactiveHandle=238,238,230
+inactiveTitleBtnBg=220,220,220
+linkColor=0,0,192
+selectBackground=69,126,224
+selectForeground=255,255,255
+shadeSortColumn=true
+visitedLinkColor=128,0,128
+windowBackground=224,232,238
+windowForeground=0,0,0

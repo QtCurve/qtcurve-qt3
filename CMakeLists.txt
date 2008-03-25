@@ -54,4 +54,4 @@ set(DATA_INSTALL_DIR ${KDE3PREFIX}/share/apps)
 add_subdirectory(style)
 add_subdirectory(config)
 add_subdirectory(themes)
-
+add_subdirectory(colors)
