@@ -216,6 +216,8 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(progressAppearance);
     insertAppearanceEntries(menuitemAppearance);
     insertAppearanceEntries(titlebarAppearance, true, false);
+    insertAppearanceEntries(selectionAppearance, true, false);
+    insertAppearanceEntries(menuStripeAppearance, true, false);
     insertLineEntries(handles, false);
     insertLineEntries(sliderThumbs, true);
     insertLineEntries(toolbarSeparators, true);
@@ -236,6 +238,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
 
     connect(lighterPopupMenuBgnd, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(menuStripe, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(menuStripeAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(round, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(toolbarBorders, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(sliderThumbs, SIGNAL(activated(int)), SLOT(updateChanged()));
@@ -269,6 +272,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(progressAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(menuitemAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(titlebarAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(selectionAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(shadeCheckRadio, SIGNAL(activated(int)), SLOT(shadeCheckRadioChanged()));
     connect(customCheckRadioColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
 
@@ -533,6 +537,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.stripedProgress=(EStripe)stripedProgress->currentItem();
     opts.lighterPopupMenuBgnd=lighterPopupMenuBgnd->isChecked();
     opts.menuStripe=menuStripe->isChecked();
+    opts.menuStripeAppearance=(EAppearance)menuStripeAppearance->currentItem();
     opts.embolden=embolden->isChecked();
     opts.scrollbarType=(EScrollbar)scrollbarType->currentItem();
     opts.defBtnIndicator=(EDefBtnIndicator)defBtnIndicator->currentItem();
@@ -568,6 +573,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.progressAppearance=(EAppearance)progressAppearance->currentItem();
     opts.menuitemAppearance=(EAppearance)menuitemAppearance->currentItem();
     opts.titlebarAppearance=(EAppearance)titlebarAppearance->currentItem();
+    opts.selectionAppearance=(EAppearance)selectionAppearance->currentItem();
     opts.shadeCheckRadio=(EShade)shadeCheckRadio->currentItem();
     opts.customCheckRadioColor=customCheckRadioColor->color();
     opts.shading=(EShading)shading->currentItem();
@@ -586,6 +592,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     scrollbarType->setCurrentItem(opts.scrollbarType);
     lighterPopupMenuBgnd->setChecked(opts.lighterPopupMenuBgnd);
     menuStripe->setChecked(opts.menuStripe);
+    menuStripeAppearance->setCurrentItem(opts.menuStripeAppearance);
     toolbarBorders->setCurrentItem(opts.toolbarBorders);
     sliderThumbs->setCurrentItem(opts.sliderThumbs);
     handles->setCurrentItem(opts.handles);
@@ -644,6 +651,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     progressAppearance->setCurrentItem(opts.progressAppearance);
     menuitemAppearance->setCurrentItem(opts.menuitemAppearance);
     titlebarAppearance->setCurrentItem(opts.titlebarAppearance);
+    selectionAppearance->setCurrentItem(opts.selectionAppearance);
     shadeCheckRadio->setCurrentItem(opts.shadeCheckRadio);
     customCheckRadioColor->setColor(opts.customCheckRadioColor);
 
@@ -677,6 +685,7 @@ bool QtCurveConfig::settingsChanged()
          stripedProgress->currentItem()!=currentStyle.stripedProgress ||
          lighterPopupMenuBgnd->isChecked()!=currentStyle.lighterPopupMenuBgnd ||
          menuStripe->isChecked()!=currentStyle.menuStripe ||
+         menuStripeAppearance->currentItem()!=currentStyle.menuStripeAppearance ||
          embolden->isChecked()!=currentStyle.embolden ||
          fillSlider->isChecked()!=currentStyle.fillSlider ||
          sliderStyle->currentItem()!=currentStyle.sliderStyle ||
@@ -705,6 +714,7 @@ bool QtCurveConfig::settingsChanged()
          progressAppearance->currentItem()!=currentStyle.progressAppearance ||
          menuitemAppearance->currentItem()!=currentStyle.menuitemAppearance ||
          titlebarAppearance->currentItem()!=currentStyle.titlebarAppearance ||
+         selectionAppearance->currentItem()!=currentStyle.selectionAppearance ||
          toolbarSeparators->currentItem()!=currentStyle.toolbarSeparators ||
          splitters->currentItem()!=currentStyle.splitters ||
 

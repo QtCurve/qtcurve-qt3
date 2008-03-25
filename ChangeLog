@@ -1,3 +1,15 @@
+0.58
+----
+1. Add a config option for menu stripe appearance - defaults to gradient.
+2. Add a config option for selection appearance - defaults to flat. KDE4 (Qt4.4) & Gtk2 only.
+3. Use background colour for disabled scrollbar buttons.
+4. Remove some frames from systemsettings.
+5. Don't draw menu separators through stripe.
+6. Draw menu stripe on the right for RTL languages.
+7. Supply a QtCurve colors file.
+8. Lighter menustripe when not lightening menus.
+9. Lighter menu separators.
+
 0.57.1
 ------
 1. Fix for frameless groupboxes krusader's config dialog.

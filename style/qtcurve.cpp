@@ -864,6 +864,8 @@ void QtCurveStyle::polish(QApplication *app)
         itsThemedApp=APP_TORA;
     else if ("opera"==appName)
         itsThemedApp=APP_OPERA;
+    else if ("systemsettings"==appName)
+        itsThemedApp=APP_SYSTEMSETTINGS;
     else if ("korn"==appName)
     {
         itsThemedApp=APP_KORN;
@@ -1335,6 +1337,21 @@ void QtCurveStyle::polish(QWidget *widget)
                (index+17)==(int)cap.length())) )
             widget->QWidget::setCaption(cap.left(index));
     }
+
+    if(APP_SYSTEMSETTINGS==itsThemedApp)
+    {
+        if(widget && widget->parentWidget() && widget->parentWidget()->parentWidget() &&
+           ::qt_cast<QFrame *>(widget) && QFrame::NoFrame!=((QFrame *)widget)->frameShape() &&
+           ::qt_cast<QFrame *>(widget->parentWidget()) &&
+           ::qt_cast<QTabWidget *>(widget->parentWidget()->parentWidget()))
+            ((QFrame *)widget)->setFrameShape(QFrame::NoFrame);
+
+        if(widget->parentWidget() && widget->parentWidget()->parentWidget() &&
+           ::qt_cast<QScrollView *>(widget->parentWidget()->parentWidget()) &&
+           widget->inherits("KCMultiWidget") && widget->parentWidget()->inherits("QViewportWidget"))
+            ((QScrollView *)(widget->parentWidget()->parentWidget()))->setLineWidth(0);
+    }
+
 
     KStyle::polish(widget);
 }
@@ -3117,7 +3134,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         {
             QRect        br(r),
                          ar(r);
-            const QColor *use(itsButtonCols); // buttonColors(cg));
+            const QColor *use(flags&Style_Enabled ? itsButtonCols : itsBackgroundCols); // buttonColors(cg));
 
             pe=flags&Style_Horizontal
                    ? PE_ScrollBarAddLine==pe ? PE_ArrowRight : PE_ArrowLeft
@@ -3898,6 +3915,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             int              tab(data.tabWidth()),
                              maxpmw(data.maxIconWidth()),
                              x, y, w, h;
+            bool             reverse(QApplication::reverseLayout());
 
             maxpmw=QMAX(maxpmw, constMenuPixmapWidth);
             r.rect(&x, &y, &w, &h);
@@ -3914,11 +3932,12 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                                          : itsBackgroundCols[ORIGINAL_SHADE]);
 
                 if(opts.menuStripe)
-                    drawBevelGradient(itsBackgroundCols[opts.lighterPopupMenuBgnd ? ORIGINAL_SHADE : 3], true, p,
-                                      QRect(r.x(), r.y(), maxpmw, r.height()), false,
-                                      getWidgetShade(WIDGET_OTHER, true, false, opts.appearance),
-                                      getWidgetShade(WIDGET_OTHER, false, false, opts.appearance),
-                                      false, opts.appearance, WIDGET_OTHER);
+                    drawBevelGradient(itsBackgroundCols[QTC_MENU_STRIPE_SHADE], true, p,
+                                      QRect(reverse ? r.right()-maxpmw : r.x(),
+                                            r.y(), maxpmw, r.height()), false,
+                                      getWidgetShade(WIDGET_OTHER, true, false, opts.menuStripeAppearance),
+                                      getWidgetShade(WIDGET_OTHER, false, false, opts.menuStripeAppearance),
+                                      false, opts.menuStripeAppearance, WIDGET_OTHER);
             }
 
             if(!mi)
@@ -3927,8 +3946,9 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             if(mi->isSeparator())
             {
                 y=r.y()+((r.height()/2)-1);
-                p->setPen(itsBackgroundCols[QT_STD_BORDER]);
-                p->drawLine(r.x()+4, y, r.x()+r.width()-5, y);
+                p->setPen(itsBackgroundCols[QTC_MENU_SEP_SHADE]);
+                p->drawLine(r.x()+3+(!reverse && opts.menuStripe ? maxpmw : 0), y,
+                            r.x()+r.width()-4-(reverse && opts.menuStripe ? maxpmw : 0), y);
 //                 p->setPen(itsBackgroundCols[0]);
 //                 p->drawLine(r.x()+4, y+1, r.x()+r.width()-5, y+1);
                 break;
@@ -3943,8 +3963,6 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             tr.setCoords(sr.left()-tab-4, r.top(), sr.left(), r.bottom());
             // item column
             ir.setCoords(cr.right()+4, r.top(), tr.right()-4, r.bottom());
-
-            bool reverse(QApplication::reverseLayout());
 
             if(reverse)
             {
