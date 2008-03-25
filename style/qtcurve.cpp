@@ -3932,7 +3932,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                                          : itsBackgroundCols[ORIGINAL_SHADE]);
 
                 if(opts.menuStripe)
-                    drawBevelGradient(itsBackgroundCols[opts.lighterPopupMenuBgnd ? ORIGINAL_SHADE : 3], true, p,
+                    drawBevelGradient(itsBackgroundCols[QTC_MENU_STRIPE_SHADE], true, p,
                                       QRect(reverse ? r.right()-maxpmw : r.x(),
                                             r.y(), maxpmw, r.height()), false,
                                       getWidgetShade(WIDGET_OTHER, true, false, opts.menuStripeAppearance),
@@ -3946,9 +3946,9 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             if(mi->isSeparator())
             {
                 y=r.y()+((r.height()/2)-1);
-                p->setPen(itsBackgroundCols[QT_STD_BORDER]);
-                p->drawLine(r.x()+4+(!reverse && opts.menuStripe ? maxpmw : 0), y,
-                            r.x()+r.width()-5-(reverse && opts.menuStripe ? maxpmw : 0), y);
+                p->setPen(itsBackgroundCols[QTC_MENU_SEP_SHADE]);
+                p->drawLine(r.x()+3+(!reverse && opts.menuStripe ? maxpmw : 0), y,
+                            r.x()+r.width()-4-(reverse && opts.menuStripe ? maxpmw : 0), y);
 //                 p->setPen(itsBackgroundCols[0]);
 //                 p->drawLine(r.x()+4, y+1, r.x()+r.width()-5, y+1);
                 break;
