@@ -2080,7 +2080,7 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
 
     if(QTC_ROUNDED && ROUNDED_NONE!=round)
     {
-        bool largeArc(ROUND_FULL==opts.round && !(flags&QTC_CHECK_BUTTON) &&
+        bool largeArc(WIDGET_FOCUS!=w && ROUND_FULL==opts.round && !(flags&QTC_CHECK_BUTTON) &&
                       r.width()>=QTC_MIN_BTN_SIZE && r.height()>=QTC_MIN_BTN_SIZE &&
                       !(flags&QTC_DW_CLOSE_BUTTON));
 
@@ -3249,7 +3249,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
                 else
                     drawBorder(cg.background(), p, r, cg, Style_Horizontal,
-                               ROUNDED_ALL, use, WIDGET_OTHER, false, BORDER_FLAT, true, QT_FOCUS);
+                               ROUNDED_ALL, use, WIDGET_FOCUS, false, BORDER_FLAT, true, QT_FOCUS);
             }
 #endif
             break;
