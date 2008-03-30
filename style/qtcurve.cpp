@@ -1182,12 +1182,38 @@ void QtCurveStyle::polish(QWidget *widget)
         if(((QComboBox *)widget)->listBox())
             ((QComboBox *)widget)->listBox()->installEventFilter(this);
     }
-    else if(::qt_cast<QMenuBar *>(widget) || ::qt_cast<QToolBar *>(widget))
+    else if(::qt_cast<QMenuBar *>(widget))
     {
         if(NoBackground!=widget->backgroundMode())
             widget->setBackgroundMode(PaletteBackground);
         if(SHADE_NONE!=opts.shadeMenubars)
             widget->installEventFilter(this);
+
+        if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars ||
+           (SHADE_CUSTOM==opts.shadeMenubars &&TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
+        {
+            QPalette    pal(widget->palette());
+            QColorGroup act(pal.active());
+
+            act.setColor(QColorGroup::Foreground, opts.customMenuTextColor
+                                                   ? opts.customMenuNormTextColor
+                                                   : QApplication::palette().active().highlightedText());
+
+            if(!opts.shadeMenubarOnlyWhenActive)
+            {
+                QColorGroup inact(pal.inactive());
+                inact.setColor(QColorGroup::Foreground, act.color(QColorGroup::Foreground));
+                pal.setInactive(inact);
+            }
+
+            pal.setActive(act);
+            widget->setPalette(pal);
+        }
+    }
+    else if(::qt_cast<QToolBar *>(widget))
+    {
+        if(NoBackground!=widget->backgroundMode())
+            widget->setBackgroundMode(PaletteBackground);
     }
     else if(::qt_cast<QPopupMenu *>(widget))
             widget->setBackgroundMode(NoBackground); // PaletteBackground);
@@ -1409,6 +1435,10 @@ void QtCurveStyle::unPolish(QWidget *widget)
            widget->setBackgroundMode(PaletteBackground);
         if(SHADE_NONE!=opts.shadeMenubars)
             widget->removeEventFilter(this);
+
+        if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars ||
+           (SHADE_CUSTOM==opts.shadeMenubars &&TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
+            widget->setPalette(QApplication::palette());
     }
     else if (widget->inherits("KToolBarSeparator"))
     {
@@ -4138,15 +4168,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                 ? opts.customMenuTextColor
                                     ? &opts.customMenuSelTextColor
                                     : &cg.highlightedText()
-                                : itsActive
-                                    ? opts.customMenuTextColor
-                                        ? &opts.customMenuNormTextColor
-                                        : SHADE_BLEND_SELECTED==opts.shadeMenubars ||
-                                            (SHADE_CUSTOM==opts.shadeMenubars &&
-                                            TOO_DARK(itsMenubarCols[ORIGINAL_SHADE]))
-                                            ? &cg.highlightedText()
-                                            : &cg.foreground()
-                                    : &cg.foreground();
+                                : &cg.foreground();
 
                 p->setPen(*col);
                 p->drawText(r, AlignCenter|ShowPrefix|DontClip|SingleLine, mi->text());

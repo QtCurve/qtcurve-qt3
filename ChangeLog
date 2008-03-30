@@ -1,6 +1,8 @@
 0.58.1
 ------
 1. When drawing gray focus rect, draw only slightly rounded.
+2. When coloring menubars, correctly draw menubar text colour
+   of inactive windows.
 
 0.58
 ----
