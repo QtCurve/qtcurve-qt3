@@ -1912,7 +1912,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
 
     if(doEtch)
     {
-        r.addCoords(0, 1, 0, -1);
+        r.addCoords(1, 1, -1, -1);
         br=r;
     }
 
@@ -2039,36 +2039,35 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
         drawBorder(bgnd, p, r, cg, flags, round, cols, w, doCorners);
 
     if(doEtch)
-        drawEtch(p, rOrig, cg, true, true, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) && !sunken);
+        drawEtch(p, rOrig, cg, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) && !sunken);
 
     p->restore();
 }
 
-void QtCurveStyle::drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool top, bool bot, bool raised) const
+void QtCurveStyle::drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised) const
 {
-    if(top && !raised)
-    {
-        QColor darkCol(shade(cg.background(), QTC_ETCHED_DARK));
-
-        p->setPen(darkCol);
-        p->drawLine(r.x()+2, r.y(), r.x()+r.width()-3, r.y());
-        p->setPen(midColor(darkCol, cg.background()));
-        p->drawPoint(r.x()+1, r.y());
-        p->drawPoint(r.x()+r.width()-2, r.y());
-        p->drawPoint(r.x(), r.y()+1);
-        p->drawPoint(r.x()+r.width()-1, r.y()+1);
-    }
-    if(bot)
     {
         QColor col(raised ? shade(cg.background(), QTC_ETCHED_DARK) : itsBackgroundCols[1]);
 
         p->setPen(col);
         p->drawLine(r.x()+2, r.y()+r.height()-1, r.x()+r.width()-3, r.y()+r.height()-1);
+        p->drawLine(r.x()+r.width()-1, r.y()+2, r.x()+r.width()-1, r.y()+r.height()-3);
         p->setPen(midColor(raised ? col : itsBackgroundCols[0], cg.background()));
-        p->drawPoint(r.x()+1, r.y()+r.height()-1);
-        p->drawPoint(r.x()+r.width()-2, r.y()+r.height()-1);
-        p->drawPoint(r.x(), r.y()+r.height()-2);
-        p->drawPoint(r.x()+r.width()-1, r.y()+r.height()-2);
+        p->drawLine(r.x()+r.width()-1, r.y()+r.height()-3, r.x()+r.width()-3, r.y()+r.height()-1);
+        p->drawLine(r.x()+1, r.y()+r.height()-2, r.x()+2, r.y()+r.height()-1);
+        p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-1, r.y()+2);
+    }
+    if(!raised)
+    {
+        QColor darkCol(shade(cg.background(), QTC_ETCHED_DARK));
+
+        p->setPen(darkCol);
+        p->drawLine(r.x()+3, r.y(), r.x()+r.width()-4, r.y());
+        p->drawLine(r.x(), r.y()+3, r.x(), r.y()+r.height()-4);
+        p->setPen(midColor(darkCol, cg.background()));
+        p->drawLine(r.x(), r.y()+2, r.x()+2, r.y());
+        p->drawLine(r.x()+r.width()-3, r.y(), r.x()+r.width()-2, r.y()+1);
+        p->drawLine(r.x(), r.y()+r.height()-3, r.x()+1, r.y()+r.height()-2);
     }
 }
 
@@ -2393,16 +2392,17 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
 {
     const QColor *use(highlight ? itsMenuitemCols : buttonColors(cg));
     bool         isSpin(WIDGET_SPIN==w),
-                 doEtch(!itsFormMode && QTC_DO_EFFECT);
+                 doEtch(!itsFormMode && !isSpin && WIDGET_COMBO!=w && QTC_DO_EFFECT),
+                 reverse(QApplication::reverseLayout());
 
     QRect r(rx);
 
     if(doEtch)
-        r.addCoords(0, 1, 0, -1);
+        r.addCoords(reverse ? 0 : 1, 1, reverse ? -1 : 0, -1);
 
     if(isSpin)
     {
-        if(QApplication::reverseLayout())
+        if(reverse)
             r.addCoords(-1, 0, 0, 0);
 
         p->setPen(flags&Style_Enabled ? cg.base() : cg.background());
@@ -2433,16 +2433,17 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
     }
 
     drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal), round, use);
+
     if(doEtch)
     {
-        r=rx;
+        QRect r(rx);
         p->setClipRegion(r);
 
         if(!(round&CORNER_TR) && !(round&CORNER_BR))
             r.addCoords(0, 0, 2, 0);
         if(!(round&CORNER_TL) && !(round&CORNER_BL))
             r.addCoords(-2, 0, 0, 0);
-        drawEtch(p, r, cg, true, true, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) &&
+        drawEtch(p, r, cg, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) &&
                  !(flags &(Style_Down | Style_On | Style_Sunken)));
         p->setClipping(false);
     }
@@ -2656,7 +2657,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 QRect        r2(r);
 
                 if(!itsFormMode && QTC_DO_EFFECT)
-                    r2.addCoords(0, 1, 0, -1);
+                    r2.addCoords(1, 1, -1, -1);
 
                 r2.addCoords(COLORED_BORDER_SIZE, COLORED_BORDER_SIZE, -COLORED_BORDER_SIZE,
                              -COLORED_BORDER_SIZE);
@@ -2689,8 +2690,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     int          offset(sunken ? 5 : 4),
                                  etchOffset(QTC_DO_EFFECT ? 1 : 0);
 
-                    points.setPoints(3, r.x()+offset, r.y()+offset+etchOffset, r.x()+offset+6, r.y()+offset+etchOffset,
-                                        r.x()+offset, r.y()+offset+6+etchOffset);
+                    points.setPoints(3, r.x()+offset+etchOffset, r.y()+offset+etchOffset, r.x()+offset+6+etchOffset, r.y()+offset+etchOffset,
+                                        r.x()+offset+etchOffset, r.y()+offset+6+etchOffset);
 
                     p->setBrush(itsMouseOverCols[sunken ? 0 : 4]);
                     p->setPen(itsMouseOverCols[sunken ? 0 : 4]);
@@ -3296,14 +3297,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         {
             QRect        sr(r);
             const QColor *use(buttonColors(cg));
-            bool         reverse(QApplication::reverseLayout()),
-                         doEtch(!itsFormMode && QTC_DO_EFFECT);
-
-            if(doEtch)
-                if(PE_SpinWidgetDown==pe || PE_SpinWidgetMinus==pe)
-                    sr.addCoords(0, 0, 0, -1);
-                else
-                    sr.addCoords(0, 1, 0, 0);
+            bool         reverse(QApplication::reverseLayout());
 
             drawLightBevel(p, sr, cg, flags|Style_Horizontal, PE_SpinWidgetDown==pe || PE_SpinWidgetMinus==pe
                                                                 ? reverse
@@ -3313,19 +3307,6 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                                                     ? ROUNDED_TOPLEFT
                                                                     : ROUNDED_TOPRIGHT,
                            getFill(flags, use), use, true, true, WIDGET_SPIN);
-
-            if(doEtch)
-            {
-                QRect er(r);
-                p->setClipRegion(er);
-                if(reverse)
-                    er.addCoords(0, 0, 2, 0);
-                else
-                    er.addCoords(-2, 0, 0, 0);
-                drawEtch(p, er, cg, PE_SpinWidgetUp==pe || PE_SpinWidgetPlus==pe,
-                         PE_SpinWidgetDown==pe || PE_SpinWidgetMinus==pe);
-                p->setClipping(false);
-            }
 
             if(PE_SpinWidgetUp==pe || PE_SpinWidgetDown==pe)
             {
@@ -3825,7 +3806,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
         case CE_PushButtonLabel:  // Taken from Highcolor and Plastik...
         {
-            int x, y, w, h;
+            int x, y, w, h, arrowOffset=QTC_DO_EFFECT ? 1 : 0;
 
             r.rect(&x, &y, &w, &h);
 
@@ -3855,9 +3836,9 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 else
                 {
                     drawPrimitive(PE_ArrowDown, p,
-                                  visualRect(QRect((x + w) - (dx + margin), y, dx, h), r), cg,
+                                  visualRect(QRect((x + w) - (dx + margin + arrowOffset), y, dx, h), r), cg,
                                   flags, data);
-                    w-=dx;
+                    w-=(dx+arrowOffset);
                 }
             }
 
@@ -3898,7 +3879,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 }
 
                 if (cornArrow) //Draw over the icon
-                    drawPrimitive(PE_ArrowDown, p, visualRect(QRect(x + w - 6, x + h - 6, 7, 7), r),
+                    drawPrimitive(PE_ArrowDown, p, visualRect(QRect(x + w - (6+arrowOffset), y + h - (6+arrowOffset), 7, 7), r),
                                   cg, flags, data);
 
                 if(xo && iw)
@@ -4478,7 +4459,7 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
 
 
             if(!isFormWidget(widget) && QTC_DO_EFFECT)
-                rect.addCoords(0, 1, 0, -1);
+                rect.addCoords(1, 1, -1, -1);
 
             break;
         }
@@ -4648,6 +4629,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
         }
         case CC_ComboBox:
         {
+            itsFormMode = isFormWidget(widget);
+
             const QComboBox *combobox((const QComboBox *)widget);
             QRect           frame(QStyle::visualRect(querySubControlMetrics(CC_ComboBox, widget,
                                                                             SC_ComboBoxFrame,
@@ -4662,9 +4645,14 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             bool            editable(combobox->editable()),
                             sunken(combobox->listBox() ? combobox->listBox()->isShown() : false),
                             reverse(QApplication::reverseLayout());
-            SFlags          fillFlags(flags);
+            SFlags          fillFlags(flags),
+                            doEtch(!itsFormMode && QTC_DO_EFFECT);
 
-            itsFormMode = isFormWidget(widget);
+            if(doEtch)
+            {
+                frame.addCoords(1, 1, -1, -1);
+                field.addCoords(reverse ? -1 : 1, 1, reverse ? -1 : 0, -1);
+            }
 
             if(sunken)
             {
@@ -4684,13 +4672,13 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 if(editable && HOVER_CB_ARROW!=itsHover && fillFlags&Style_MouseOver)
                     fillFlags-=Style_MouseOver;
 
-                if(opts.coloredMouseOver && fillFlags&Style_MouseOver && editable && !sunken)
-                    frame.addCoords(reverse ? 0 : 1, 0, reverse ? 1 : 0, 0);
+//                 if(opts.coloredMouseOver && fillFlags&Style_MouseOver && editable && !sunken)
+//                     frame.addCoords(reverse ? 0 : 1, 0, reverse ? 1 : 0, 0);
 
                 drawLightBevel(p, frame, cg, fillFlags|Style_Raised|Style_Horizontal,
                                controls&SC_ComboBoxEditField && field.isValid() && editable
                                    ? (reverse ? ROUNDED_LEFT : ROUNDED_RIGHT) : ROUNDED_ALL,
-                               getFill(fillFlags, use), use, true, true, WIDGET_STD_BUTTON);
+                               getFill(fillFlags, use), use, true, true, WIDGET_COMBO);
             }
 
             if(controls&SC_ComboBoxArrow && arrow.isValid())
@@ -4710,7 +4698,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     field.addCoords(-2,-2, 2, 2);
                     drawEntryField(p, field, cg, fillFlags, flags&Style_Enabled &&
                                    (flags&Style_HasFocus), reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
-                                   WIDGET_STD_BUTTON);
+                                   WIDGET_COMBO);
                 }
                 else 
                 {
@@ -4736,11 +4724,15 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                         fr.addCoords(0, 0, -2, 0);
 
                     if(!itsFormMode && QTC_DO_EFFECT)
-                        fr.addCoords(0, 1, 0, -1);
+                        fr.addCoords(1, 1, -1, -1);
                     drawPrimitive(PE_FocusRect, p, fr, cg, flags | Style_FocusAtBorder,
                                   QStyleOption(cg.highlight()));
                 }
             }
+
+            if(doEtch)
+                drawEtch(p, widget ? widget->rect() : r, cg,
+                         !editable && EFFECT_SHADOW==opts.buttonEffect && !sunken);
 
             p->setPen(flags & Style_Enabled ? cg.buttonText() : cg.mid());
             itsFormMode = false;
@@ -4748,6 +4740,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
         }
         case CC_SpinWidget:
         {
+            itsFormMode = isFormWidget(widget);
+
             const QSpinWidget *spinwidget((const QSpinWidget *)widget);
             QRect             frame(querySubControlMetrics(CC_SpinWidget, widget, SC_SpinWidgetFrame,
                                     data)),
@@ -4755,20 +4749,26 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                               down(spinwidget->downRect());
             bool              hw(itsHoverWidget && itsHoverWidget==spinwidget),
                               reverse(QApplication::reverseLayout()),
-                              doFrame((controls&SC_SpinWidgetFrame) && frame.isValid());
+                              doFrame((controls&SC_SpinWidgetFrame) && frame.isValid()),
+                              doEtch(!itsFormMode && QTC_DO_EFFECT);
+
+            if(doEtch)
+            {
+                down.addCoords(reverse ? 1 : 0, 0, reverse ? 0 : -1, -1);
+                up.addCoords(reverse ? 1 : 0, 1, reverse ? 0 : -1, 0);
+                frame.addCoords(reverse ? 0 : 1, 1, reverse ? -1 : 0, -1);
+            }
 
             if(flags&Style_MouseOver)
                 flags-=Style_MouseOver;
 
             if(!reverse && doFrame)
             {
-                itsFormMode = isFormWidget(widget);
                 frame.setWidth(frame.width()+1);
 
                 drawEntryField(p, frame, cg, flags,
                                spinwidget ? spinwidget->hasFocus() && (flags&Style_Enabled) : false,
                                ROUNDED_LEFT, WIDGET_SPIN);
-                itsFormMode=false;
             }
 
             if((controls&SC_SpinWidgetUp) && up.isValid())
@@ -4806,13 +4806,16 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(reverse && doFrame)
             {
-                itsFormMode = isFormWidget(widget);
                 frame.setWidth(frame.width()+1);
                 drawEntryField(p, frame, cg, flags,
                                spinwidget ? spinwidget->hasFocus() && (flags&Style_Enabled) : false,
                                ROUNDED_RIGHT, WIDGET_SPIN);
-                itsFormMode=false;
             }
+
+            if(doEtch)
+                drawEtch(p, spinwidget ? spinwidget->rect() : r, cg);
+
+            itsFormMode=false;
             break;
         }
         case CC_ScrollBar:
@@ -5215,7 +5218,7 @@ QRect QtCurveStyle::querySubControlMetrics(ComplexControl control, const QWidget
             bs.setHeight(widget->height()>>1);
             if(bs.height()< 8)
                 bs.setHeight(8);
-            bs.setWidth(15);
+            bs.setWidth(QTC_DO_EFFECT ? 16 : 15);
             bs=bs.expandedTo(QApplication::globalStrut());
 
             int extra(bs.height()*2==widget->height()? 0 : 1),

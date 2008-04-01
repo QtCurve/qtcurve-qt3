@@ -131,7 +131,7 @@ class QtCurveStyle : public HighContrastStyle
     void drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &r, const QColorGroup &cg,
                         SFlags flags, int round, const QColor &fill, const QColor *custom=NULL,
                         bool doBorder=true, bool doCorners=true, EWidget w=WIDGET_OTHER) const;
-    void drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool top, bool bot, bool raised=false) const;
+    void drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised=false) const;
     void drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, const QColorGroup &cg,
                     SFlags flags, int round, const QColor *custom=NULL, EWidget w=WIDGET_OTHER,
                     bool doCorners=true, EBorder borderProfile=BORDER_FLAT, bool blendBorderColors=true, int borderVal=QT_STD_BORDER) const;
