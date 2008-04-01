@@ -2398,7 +2398,7 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
     QRect r(rx);
 
     if(doEtch)
-        r.addCoords(reverse ? 0 : 1, 1, reverse ? -1 : 0, -1);
+        r.addCoords(1, 1, -1, -1);
 
     if(isSpin)
     {
