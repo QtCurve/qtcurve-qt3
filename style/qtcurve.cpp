@@ -4230,21 +4230,31 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             break;
         case CE_ProgressBarGroove:
         {
+            QRect rx(r);
+            bool  doEtch(QTC_DO_EFFECT);
+
+            if(doEtch)
+                rx.addCoords(1, 1, -1, -1);
+
             if(opts.gradientPbGroove)
-                drawBevelGradient(flags & Style_Enabled ? cg.base() : cg.background(), false, p, r, true,
+                drawBevelGradient(flags & Style_Enabled ? cg.base() : cg.background(), false, p, rx, true,
                                   getWidgetShade(WIDGET_TROUGH, true, false, opts.progressAppearance),
                                   getWidgetShade(WIDGET_TROUGH, false, false, opts.progressAppearance),
                                   false, APPEARANCE_GRADIENT, WIDGET_TROUGH);
             else
             {
                 p->setBrush(flags & Style_Enabled ? cg.base() : cg.background());
-                p->drawRect(r);
+                p->drawRect(rx);
             }
 
             const QColor *use(backgroundColors(cg));
 
-            drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal),
+            drawBorder(cg.background(), p, rx, cg, (SFlags)(flags|Style_Horizontal),
                        ROUNDED_ALL, use, WIDGET_OTHER, true, BORDER_SUNKEN);
+
+            if(doEtch)
+                drawEtch(p, r, cg, false);
+
             break;
         }
         case CE_ProgressBarContents:
@@ -4523,8 +4533,13 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
         }
 
         case SR_ProgressBarContents:
-            if(!opts.fillProgress)
-                return QRect(wrect.left()+2, wrect.top()+2, wrect.width()-4, wrect.height()-4);
+            return opts.fillProgress
+                    ? QTC_DO_EFFECT
+                        ? QRect(wrect.left()+1, wrect.top()+1, wrect.width()-2, wrect.height()-2)
+                        : wrect
+                    : QTC_DO_EFFECT
+                        ? QRect(wrect.left()+3, wrect.top()+3, wrect.width()-6, wrect.height()-6)
+                        : QRect(wrect.left()+2, wrect.top()+2, wrect.width()-4, wrect.height()-4);
         case SR_ProgressBarLabel:
         case SR_ProgressBarGroove:
             return wrect;
