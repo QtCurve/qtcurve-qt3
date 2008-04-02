@@ -831,7 +831,7 @@
                             <cstring>gtkScrollViews</cstring>
                         </property>
                         <property name="text">
-                            <string>Gtk style scrollviews (KDE3 and KDE4 only)</string>
+                            <string>Gtk style scrollviews</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
