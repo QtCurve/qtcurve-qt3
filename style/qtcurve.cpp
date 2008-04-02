@@ -1646,6 +1646,33 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
         {
             case QEvent::Paint:
                 drawMenubar=true;
+                if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_CUSTOM==opts.shadeMenubars)
+                {
+                    QPalette    pal(((QWidget *)object)->parentWidget()->palette());
+                    QColorGroup act(pal.active());
+
+                    // If we're relouring the menubar text, check to see if menubar palette has changed, if so set back to our values.
+                    // This fixes opera - which seems to change the widgets palette after it is polished.
+                    if((opts.customMenuTextColor && act.color(QColorGroup::Foreground)!=opts.customMenuNormTextColor) ||
+                            ( (SHADE_BLEND_SELECTED==opts.shadeMenubars ||
+                                (SHADE_CUSTOM==opts.shadeMenubars && TOO_DARK(itsMenubarCols[ORIGINAL_SHADE]))) &&
+                              act.color(QColorGroup::Foreground)!=QApplication::palette().active().highlightedText()))
+                    {
+                        act.setColor(QColorGroup::Foreground, opts.customMenuTextColor
+                                                            ? opts.customMenuNormTextColor
+                                                            : QApplication::palette().active().highlightedText());
+
+                        if(!opts.shadeMenubarOnlyWhenActive)
+                        {
+                            QColorGroup inact(pal.inactive());
+                            inact.setColor(QColorGroup::Foreground, act.color(QColorGroup::Foreground));
+                            pal.setInactive(inact);
+                        }
+
+                        pal.setActive(act);
+                        ((QWidget *)object)->parentWidget()->setPalette(pal);
+                    }
+                }
                 break;
             case QEvent::WindowActivate:
                 itsActive=true;
@@ -2156,137 +2183,140 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
             p->drawLine(r.x()+r.width()-1, r.y()+1, r.x()+r.width()-1, r.y()+r.height()-2);
         }
 
-        QColor  largeArcMid(midColor(border, bgnd)),
-                aaColor(midColor(custom ? custom[3] : itsBackgroundCols[3], bgnd));
-        QPixmap *pix=itsFormMode ? getPixelPixmap(border) : NULL;
-
-        if(round&CORNER_TL)
+        if(!opts.fillProgress || WIDGET_PROGRESSBAR!=w)
         {
-            if(largeArc)
-            {
-                p->drawPoint(r.x()+1, r.y()+1);
-                if(itsFormMode)
-                {
-                    p->drawPixmap(r.x(), r.y()+1, *pix);
-                    p->drawPixmap(r.x()+1, r.y(), *pix);
-                }
-                else
-                {
-                    p->setPen(largeArcMid);
-                    p->drawLine(r.x(), r.y()+1, r.x()+1, r.y());
-                }
-            }
-            if(doCorners)
-                if(itsFormMode)
-                {
-                    if(!largeArc)
-                        p->drawPixmap(r.x(), r.y(), *pix);
-                }
-                else
-                {
-                    p->setPen(largeArc ? bgnd : aaColor);
-                    p->drawPoint(r.x(), r.y());
-                }
-        }
-        else
-            p->drawPoint(r.x(), r.y());
+            QColor  largeArcMid(midColor(border, bgnd)),
+                    aaColor(midColor(custom ? custom[3] : itsBackgroundCols[3], bgnd));
+            QPixmap *pix=itsFormMode ? getPixelPixmap(border) : NULL;
 
-        p->setPen(border);
-        if(round&CORNER_TR)
-        {
-            if(largeArc)
+            if(round&CORNER_TL)
             {
-                p->drawPoint(r.x()+r.width()-2, r.y()+1);
-                if(itsFormMode)
+                if(largeArc)
                 {
-                    p->drawPixmap(r.x()+r.width()-2, r.y(), *pix);
-                    p->drawPixmap(r.x()+r.width()-1, r.y()+1, *pix);
+                    p->drawPoint(r.x()+1, r.y()+1);
+                    if(itsFormMode)
+                    {
+                        p->drawPixmap(r.x(), r.y()+1, *pix);
+                        p->drawPixmap(r.x()+1, r.y(), *pix);
+                    }
+                    else
+                    {
+                        p->setPen(largeArcMid);
+                        p->drawLine(r.x(), r.y()+1, r.x()+1, r.y());
+                    }
                 }
-                else
-                {
-                    p->setPen(largeArcMid);
-                    p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-1, r.y()+1);
-                }
+                if(doCorners)
+                    if(itsFormMode)
+                    {
+                        if(!largeArc)
+                            p->drawPixmap(r.x(), r.y(), *pix);
+                    }
+                    else
+                    {
+                        p->setPen(largeArc ? bgnd : aaColor);
+                        p->drawPoint(r.x(), r.y());
+                    }
             }
-            if(doCorners)
-                if(itsFormMode)
-                {
-                    if(!largeArc)
-                        p->drawPixmap(r.x()+r.width()-1, r.y(), *pix);
-                }
-                else
-                {
-                    p->setPen(largeArc ? bgnd : aaColor);
-                    p->drawPoint(r.x()+r.width()-1, r.y());
-                }
-        }
-        else
-            p->drawPoint(r.x()+r.width()-1, r.y());
+            else
+                p->drawPoint(r.x(), r.y());
 
-        p->setPen(border);
-        if(round&CORNER_BR)
-        {
-            if(largeArc)
+            p->setPen(border);
+            if(round&CORNER_TR)
             {
-                p->drawPoint(r.x()+r.width()-2, r.y()+r.height()-2);
-                if(itsFormMode)
+                if(largeArc)
                 {
-                    p->drawPixmap(r.x()+r.width()-2, r.y()+r.height()-1, *pix);
-                    p->drawPixmap(r.x()+r.width()-1, r.y()+r.height()-2, *pix);
+                    p->drawPoint(r.x()+r.width()-2, r.y()+1);
+                    if(itsFormMode)
+                    {
+                        p->drawPixmap(r.x()+r.width()-2, r.y(), *pix);
+                        p->drawPixmap(r.x()+r.width()-1, r.y()+1, *pix);
+                    }
+                    else
+                    {
+                        p->setPen(largeArcMid);
+                        p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-1, r.y()+1);
+                    }
                 }
-                else
-                {
-                    p->setPen(largeArcMid);
-                    p->drawLine(r.x()+r.width()-2, r.y()+r.height()-1, r.x()+r.width()-1,
-                                r.y()+r.height()-2);
-                }
+                if(doCorners)
+                    if(itsFormMode)
+                    {
+                        if(!largeArc)
+                            p->drawPixmap(r.x()+r.width()-1, r.y(), *pix);
+                    }
+                    else
+                    {
+                        p->setPen(largeArc ? bgnd : aaColor);
+                        p->drawPoint(r.x()+r.width()-1, r.y());
+                    }
             }
-            if(doCorners)
-                if(itsFormMode)
-                {
-                    if(!largeArc)
-                        p->drawPixmap(r.x()+r.width()-1, r.y()+r.height()-1, *pix);
-                }
-                else
-                {
-                    p->setPen(largeArc ? bgnd : aaColor);
-                    p->drawPoint(r.x()+r.width()-1, r.y()+r.height()-1);
-                }
-        }
-        else
-            p->drawPoint(r.x()+r.width()-1, r.y()+r.height()-1);
+            else
+                p->drawPoint(r.x()+r.width()-1, r.y());
 
-        p->setPen(border);
-        if(round&CORNER_BL)
-        {
-            if(largeArc)
+            p->setPen(border);
+            if(round&CORNER_BR)
             {
-                p->drawPoint(r.x()+1, r.y()+r.height()-2);
-                if(itsFormMode)
+                if(largeArc)
                 {
-                    p->drawPixmap(r.x(), r.y()+r.height()-2, *pix);
-                    p->drawPixmap(r.x()+1, r.y()+r.height()-1, *pix);
+                    p->drawPoint(r.x()+r.width()-2, r.y()+r.height()-2);
+                    if(itsFormMode)
+                    {
+                        p->drawPixmap(r.x()+r.width()-2, r.y()+r.height()-1, *pix);
+                        p->drawPixmap(r.x()+r.width()-1, r.y()+r.height()-2, *pix);
+                    }
+                    else
+                    {
+                        p->setPen(largeArcMid);
+                        p->drawLine(r.x()+r.width()-2, r.y()+r.height()-1, r.x()+r.width()-1,
+                                    r.y()+r.height()-2);
+                    }
                 }
-                else
-                {
-                    p->setPen(largeArcMid);
-                    p->drawLine(r.x(), r.y()+r.height()-2, r.x()+1, r.y()+r.height()-1);
-                }
+                if(doCorners)
+                    if(itsFormMode)
+                    {
+                        if(!largeArc)
+                            p->drawPixmap(r.x()+r.width()-1, r.y()+r.height()-1, *pix);
+                    }
+                    else
+                    {
+                        p->setPen(largeArc ? bgnd : aaColor);
+                        p->drawPoint(r.x()+r.width()-1, r.y()+r.height()-1);
+                    }
             }
-            if(doCorners)
-                if(itsFormMode)
+            else
+                p->drawPoint(r.x()+r.width()-1, r.y()+r.height()-1);
+
+            p->setPen(border);
+            if(round&CORNER_BL)
+            {
+                if(largeArc)
                 {
-                    if(!largeArc)
-                        p->drawPixmap(r.x(), r.y()+r.height()-1, *pix);
+                    p->drawPoint(r.x()+1, r.y()+r.height()-2);
+                    if(itsFormMode)
+                    {
+                        p->drawPixmap(r.x(), r.y()+r.height()-2, *pix);
+                        p->drawPixmap(r.x()+1, r.y()+r.height()-1, *pix);
+                    }
+                    else
+                    {
+                        p->setPen(largeArcMid);
+                        p->drawLine(r.x(), r.y()+r.height()-2, r.x()+1, r.y()+r.height()-1);
+                    }
                 }
-                else
-                {
-                    p->setPen(largeArc ? bgnd : aaColor);
-                    p->drawPoint(r.x(), r.y()+r.height()-1);
-                }
+                if(doCorners)
+                    if(itsFormMode)
+                    {
+                        if(!largeArc)
+                            p->drawPixmap(r.x(), r.y()+r.height()-1, *pix);
+                    }
+                    else
+                    {
+                        p->setPen(largeArc ? bgnd : aaColor);
+                        p->drawPoint(r.x(), r.y()+r.height()-1);
+                    }
+            }
+            else
+                p->drawPoint(r.x(), r.y()+r.height()-1);
         }
-        else
-            p->drawPoint(r.x(), r.y()+r.height()-1);
     }
     else
     {
@@ -2794,7 +2824,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             break;
         case PE_Indicator:
         {
-            bool   on(flags&Style_On || !(flags&Style_Off));
+            bool   doEtch(QTC_DO_EFFECT && !itsFormMode && !(flags&QTC_LISTVIEW_ITEM)),
+                   on(flags&Style_On || !(flags&Style_Off));
+            QRect  rect(doEtch ? QRect(r.x()+1, r.y()+1, r.width()-2, r.height()-2) : r);
             SFlags sflags(!(flags&Style_Off) ? flags|Style_On : flags);
 
             if(!itsFormMode && sflags&Style_MouseOver && HOVER_NONE==itsHover)
@@ -2810,22 +2842,36 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                 : cg.background());
 
             if(IS_FLAT(opts.appearance))
-                p->fillRect(QRect(r.x()+1, r.y()+1, r.width()-2, r.height()-2), bgnd);
+                p->fillRect(QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), bgnd);
             else
-                drawBevelGradient(bgnd, false, p, QRect(r.x()+1, r.y()+1, r.width()-2, r.height()-2), true,
+                drawBevelGradient(bgnd, false, p, QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), true,
                                     getWidgetShade(WIDGET_TROUGH, true, false, APPEARANCE_GRADIENT),
                                     getWidgetShade(WIDGET_TROUGH, false, false, APPEARANCE_GRADIENT),
                                     false, APPEARANCE_GRADIENT, WIDGET_TROUGH);
 
             p->setPen(midColor(sflags&Style_Enabled ? cg.base() : cg.background(), use[3]));
-            p->drawLine(r.x()+1, r.y()+1, r.x()+1, r.y()+r.height()-2);
-            p->drawLine(r.x()+1, r.y()+1, r.x()+r.width()-2, r.y()+1);
+            p->drawLine(rect.x()+1, rect.y()+1, rect.x()+1, rect.y()+rect.height()-2);
+            p->drawLine(rect.x()+1, rect.y()+1, rect.x()+rect.width()-2, rect.y()+1);
 
-            drawBorder(cg.background(), p, r, cg, (SFlags)(sflags|Style_Horizontal|QTC_CHECK_BUTTON),
+            drawBorder(cg.background(), p, rect, cg, (SFlags)(sflags|Style_Horizontal|QTC_CHECK_BUTTON),
                        ROUNDED_ALL, use, WIDGET_OTHER, !(flags&QTC_LISTVIEW_ITEM));
 
+            if(doEtch)
+            {
+                QColor topCol(shade(cg.background(), QTC_ETCHED_DARK)),
+                       botCol(itsBackgroundCols[1]);
+
+                p->setBrush(Qt::NoBrush);
+                p->setPen(topCol);
+                p->drawLine(r.x()+1, r.y(), r.x()+r.width()-2, r.y());
+                p->drawLine(r.x(), r.y()+1, r.x(), r.y()+r.height()-2);
+                p->setPen(botCol);
+                p->drawLine(r.x()+1, r.y()+r.height()-1, r.x()+r.width()-2, r.y()+r.height()-1);
+                p->drawLine(r.x()+r.width()-1, r.y()+1, r.x()+r.width()-1, r.y()+r.height()-2);
+            }
+
             if(on)
-                drawPrimitive(PE_CheckMark, p, r, cg, flags);
+                drawPrimitive(PE_CheckMark, p, rect, cg, flags);
             break;
         }
         case PE_CheckListExclusiveIndicator:
@@ -2853,9 +2899,6 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         }
         case PE_ExclusiveIndicator:
         case PE_ExclusiveIndicatorMask:
-        {
-            int x(r.x()), y(r.y());
-
             if(PE_ExclusiveIndicatorMask==pe)
             {
                 p->fillRect(r, color0);
@@ -2865,6 +2908,10 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             }
             else
             {
+                bool  doEtch(QTC_DO_EFFECT && !itsFormMode);
+                QRect rect(doEtch ? QRect(r.x()+1, r.y()+1, r.width()-2, r.height()-2) : r);
+                int   x(rect.x()), y(rect.y());
+
                 QPointArray clipRegion;
 
                 clipRegion.setPoints(8,  x,    y+8,     x,    y+4,     x+4, y,      x+8, y,
@@ -2896,16 +2943,28 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 p->setClipRegion(QRegion(clipRegion));
                 if(IS_FLAT(opts.appearance))
-                    p->fillRect(QRect(x+1, y+1, r.width()-2, r.height()-2), bgnd);
+                    p->fillRect(QRect(x+1, y+1, rect.width()-2, rect.height()-2), bgnd);
                 else
-                    drawBevelGradient(bgnd, false, p, QRect(x+1, y+1, r.width()-2, r.height()-2), true,
+                    drawBevelGradient(bgnd, false, p, QRect(x+1, y+1, rect.width()-2, rect.height()-2), true,
                                       getWidgetShade(WIDGET_TROUGH, true, false, APPEARANCE_GRADIENT),
                                       getWidgetShade(WIDGET_TROUGH, false, false, APPEARANCE_GRADIENT),
                                       false, APPEARANCE_GRADIENT, WIDGET_TROUGH);
 
                 p->setClipping(false);
 
-                p->drawPixmap(r.x(), r.y(),
+                if(doEtch)
+                {
+                    QColor topCol(shade(cg.background(), QTC_ETCHED_DARK)),
+                           botCol(itsBackgroundCols[1]);
+
+                    p->setBrush(Qt::NoBrush);
+                    p->setPen(topCol);
+                    p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 45*16, 180*16);
+                    p->setPen(botCol);
+                    p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 225*16, 180*16);
+                }
+
+                p->drawPixmap(rect.x(), rect.y(),
                               *getPixmap(use[opts.coloredMouseOver && sflags&Style_MouseOver ? 4 : QT_BORDER(flags&Style_Enabled)],
                                          PIX_RADIO_BORDER, 0.8));
 
@@ -2916,13 +2975,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
 
                 if(set)
-                    p->drawPixmap(r.x(), r.y(), *getPixmap(on, PIX_RADIO_ON, 1.0));
+                    p->drawPixmap(rect.x(), rect.y(), *getPixmap(on, PIX_RADIO_ON, 1.0));
                 if(QApplication::NormalColor==QApplication::colorSpec() || itsFormMode)
-                    p->drawPixmap(r.x(), r.y(), *getPixmap(btn[sflags&Style_MouseOver ? 3 : 4], PIX_RADIO_LIGHT));
+                    p->drawPixmap(rect.x(), rect.y(), *getPixmap(btn[sflags&Style_MouseOver ? 3 : 4], PIX_RADIO_LIGHT));
                 p->restore();
             }
             break;
-        }
         case PE_DockWindowSeparator:
         {
             QRect r2(r);
@@ -4461,20 +4519,19 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
             if(!isFormWidget(widget) && QTC_DO_EFFECT)
                 rect.addCoords(1, 1, -1, -1);
 
-            break;
+            return rect;
         }
-        case SR_ProgressBarGroove:
-            rect=QRect(widget->rect());
-            break;
+
         case SR_ProgressBarContents:
+            if(!opts.fillProgress)
+                return QRect(wrect.left()+2, wrect.top()+2, wrect.width()-4, wrect.height()-4);
         case SR_ProgressBarLabel:
-            rect=QRect(wrect.left()+2, wrect.top()+2, wrect.width()-4, wrect.height()-4);
-            break;
+        case SR_ProgressBarGroove:
+            return wrect;
         case SR_DockWindowHandleRect:
-            rect=wrect;
-            break;
+            return wrect;
         default:
-            rect=KStyle::subRect(subrect, widget);
+            return KStyle::subRect(subrect, widget);
     }
 
     return rect;
@@ -5533,10 +5590,10 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
             return QTC_DO_EFFECT && !isFormWidget(widget) ? 3 : 2;
         case PM_IndicatorWidth:
         case PM_IndicatorHeight:
-            return QTC_CHECK_SIZE;
+            return QTC_DO_EFFECT && widget && !isFormWidget(widget) ? QTC_CHECK_SIZE+2 : QTC_CHECK_SIZE;
         case PM_ExclusiveIndicatorWidth:
         case PM_ExclusiveIndicatorHeight:
-            return QTC_RADIO_SIZE;
+            return QTC_DO_EFFECT && widget && !isFormWidget(widget) ? QTC_RADIO_SIZE+2 : QTC_RADIO_SIZE;
         case PM_TabBarTabOverlap:
             return 1;
         case PM_ProgressBarChunkWidth:
@@ -5876,18 +5933,18 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &r, const QColorGroup &
         }
     }
 
-    if(drawFull)
+    if(drawFull || opts.fillProgress)
     {
         flags|=Style_Raised|Style_Horizontal;
 
         drawLightBevel(cg.background(), p, r, cg, flags, round, itsMenuitemCols[ORIGINAL_SHADE],
-                       itsMenuitemCols, true, true, WIDGET_PROGRESSBAR);
+                       itsMenuitemCols, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
 
         if(drawStripe && opts.stripedProgress)
         {
             p->setClipRegion(outer);
             drawLightBevel(cg.background(), p, r, cg, flags, round, itsMenuitemCols[1],
-                           itsMenuitemCols, true, true, WIDGET_PROGRESSBAR);
+                           itsMenuitemCols, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
             p->setClipping(false);
         }
     }
@@ -5897,7 +5954,7 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &r, const QColorGroup &
         p->setBrush(itsMenuitemCols[ORIGINAL_SHADE]);
         p->drawRect(r);
     }
-    if(QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
+    if(!opts.fillProgress && QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
     {
         p->setPen(midColor(cg.background(), itsMenuitemCols[QT_STD_BORDER]));
         if(!(round&CORNER_TL) || !drawFull)
@@ -6379,11 +6436,17 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
         int dh=(groove.height()-5)>>1;
         groove.addCoords(0, dh, 0, -dh);
         flags|=Style_Horizontal;
+
+        if(!itsFormMode && QTC_DO_EFFECT)
+            groove.addCoords(0, -1, 0, 1);
     }
     else
     {
         int dw=(groove.width()-5)>>1;
         groove.addCoords(dw, 0, -dw, 0);
+
+        if(!itsFormMode && QTC_DO_EFFECT)
+            groove.addCoords(-1, 0, 1, 0);
     }
 
     drawLightBevel(p, groove, cg, flags|Style_Down, ROUNDED_ALL, itsBackgroundCols[flags&Style_Enabled ? 2 : ORIGINAL_SHADE],

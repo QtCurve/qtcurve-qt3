@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>724</width>
-            <height>557</height>
+            <width>767</width>
+            <height>571</height>
         </rect>
     </property>
     <property name="caption">
@@ -166,11 +166,6 @@
                             </sizepolicy>
                         </property>
                     </widget>
-                    <widget class="QComboBox" row="4" column="6" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>stripedProgress</cstring>
-                        </property>
-                    </widget>
                     <widget class="QCheckBox" row="4" column="2" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>gradientPbGroove</cstring>
@@ -182,14 +177,6 @@
                     <widget class="QComboBox" row="2" column="1">
                         <property name="name">
                             <cstring>sliderAppearance</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="4" column="8">
-                        <property name="name">
-                            <cstring>animatedProgress</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Animated</string>
                         </property>
                     </widget>
                     <widget class="QComboBox" row="2" column="2" rowspan="1" colspan="4">
@@ -301,14 +288,6 @@
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                             </sizepolicy>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="2" column="9">
-                        <property name="name">
-                            <cstring>fillSlider</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Fill used</string>
                         </property>
                     </widget>
                     <widget class="QComboBox" row="2" column="8">
@@ -507,6 +486,35 @@
                     <widget class="QComboBox" row="7" column="7" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>selectionAppearance</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="2" column="9">
+                        <property name="name">
+                            <cstring>fillSlider</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Fill used</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="4" column="9">
+                        <property name="name">
+                            <cstring>animatedProgress</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Animated</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="4" column="8">
+                        <property name="name">
+                            <cstring>stripedProgress</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="4" column="6" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>fillProgress</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Fill groove</string>
                         </property>
                     </widget>
                 </grid>
@@ -996,6 +1004,7 @@
     <tabstop>sliderThumbs</tabstop>
     <tabstop>progressAppearance</tabstop>
     <tabstop>gradientPbGroove</tabstop>
+    <tabstop>fillProgress</tabstop>
     <tabstop>stripedProgress</tabstop>
     <tabstop>animatedProgress</tabstop>
     <tabstop>embolden</tabstop>
