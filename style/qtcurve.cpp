@@ -1646,33 +1646,6 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
         {
             case QEvent::Paint:
                 drawMenubar=true;
-                if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_CUSTOM==opts.shadeMenubars)
-                {
-                    QPalette    pal(((QWidget *)object)->parentWidget()->palette());
-                    QColorGroup act(pal.active());
-
-                    // If we're relouring the menubar text, check to see if menubar palette has changed, if so set back to our values.
-                    // This fixes opera - which seems to change the widgets palette after it is polished.
-                    if((opts.customMenuTextColor && act.color(QColorGroup::Foreground)!=opts.customMenuNormTextColor) ||
-                            ( (SHADE_BLEND_SELECTED==opts.shadeMenubars ||
-                                (SHADE_CUSTOM==opts.shadeMenubars && TOO_DARK(itsMenubarCols[ORIGINAL_SHADE]))) &&
-                              act.color(QColorGroup::Foreground)!=QApplication::palette().active().highlightedText()))
-                    {
-                        act.setColor(QColorGroup::Foreground, opts.customMenuTextColor
-                                                            ? opts.customMenuNormTextColor
-                                                            : QApplication::palette().active().highlightedText());
-
-                        if(!opts.shadeMenubarOnlyWhenActive)
-                        {
-                            QColorGroup inact(pal.inactive());
-                            inact.setColor(QColorGroup::Foreground, act.color(QColorGroup::Foreground));
-                            pal.setInactive(inact);
-                        }
-
-                        pal.setActive(act);
-                        ((QWidget *)object)->parentWidget()->setPalette(pal);
-                    }
-                }
                 break;
             case QEvent::WindowActivate:
                 itsActive=true;
@@ -1721,21 +1694,54 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
         return false;
     }
 
-    if(opts.shadeMenubarOnlyWhenActive && SHADE_NONE!=opts.shadeMenubars &&
-       ::qt_cast<QMenuBar *>(object))
-        switch(event->type())
+    if(::qt_cast<QMenuBar *>(object))
+    {
+        if( (opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars ||
+             SHADE_CUSTOM==opts.shadeMenubars) && QEvent::Paint==event->type())
         {
-            case QEvent::WindowActivate:
-                itsActive=true;
-                ((QWidget *)object)->repaint(false);
-                return false;
-            case QEvent::WindowDeactivate:
-                itsActive=false;
-                ((QWidget *)object)->repaint(false);
-                return false;
-            default:
-                break;
+            const QColor &col(((QWidget *)object)->palette().active().color(QColorGroup::Foreground));
+
+            // If we're relouring the menubar text, check to see if menubar palette has changed, if so set back to
+            // our values. This fixes opera - which seems to change the widgets palette after it is polished.
+            if((opts.customMenuTextColor && col!=opts.customMenuNormTextColor) ||
+                    ( (SHADE_BLEND_SELECTED==opts.shadeMenubars ||
+                        (SHADE_CUSTOM==opts.shadeMenubars && TOO_DARK(itsMenubarCols[ORIGINAL_SHADE]))) &&
+                        col!=QApplication::palette().active().highlightedText()))
+            {
+                QPalette    pal(((QWidget *)object)->palette());
+                QColorGroup act(pal.active());
+
+                act.setColor(QColorGroup::Foreground, opts.customMenuTextColor
+                                                    ? opts.customMenuNormTextColor
+                                                    : QApplication::palette().active().highlightedText());
+
+                if(!opts.shadeMenubarOnlyWhenActive)
+                {
+                    QColorGroup inact(pal.inactive());
+                    inact.setColor(QColorGroup::Foreground, act.color(QColorGroup::Foreground));
+                    pal.setInactive(inact);
+                }
+
+                pal.setActive(act);
+                ((QWidget *)object)->setPalette(pal);
+            }
         }
+
+        if(opts.shadeMenubarOnlyWhenActive && SHADE_NONE!=opts.shadeMenubars)
+            switch(event->type())
+            {
+                case QEvent::WindowActivate:
+                    itsActive=true;
+                    ((QWidget *)object)->repaint(false);
+                    return false;
+                case QEvent::WindowDeactivate:
+                    itsActive=false;
+                    ((QWidget *)object)->repaint(false);
+                    return false;
+                default:
+                    break;
+            }
+    }
 
     if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(object))
     {
