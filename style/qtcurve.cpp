@@ -2850,7 +2850,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                          *btn(buttonColors(cg)),
                          *use(bc ? bc : btn),
                          &bgnd(sflags&Style_Enabled
-                                ? MO_NONE==opts.coloredMouseOver && sflags&Style_MouseOver
+                                ? MO_NONE==opts.coloredMouseOver && !opts.crHighlight && sflags&Style_MouseOver
                                     ? use[QTC_CR_MO_FILL]
                                     : cg.base()
                                 : cg.background());
@@ -2954,7 +2954,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                          : itsCheckRadioCol
                                      : cg.mid()),
                              &bgnd(sflags&Style_Enabled
-                                    ? MO_NONE==opts.coloredMouseOver && sflags&Style_MouseOver
+                                    ? MO_NONE==opts.coloredMouseOver && !opts.crHighlight && sflags&Style_MouseOver
                                         ? use[QTC_CR_MO_FILL]
                                         : cg.base()
                                     : cg.background());

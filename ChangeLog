@@ -8,9 +8,11 @@
 5. Dont do coloured mouse over for mdi buttons, dock widget buttons,
    or toolbar buttons.
 6. Better colored mouse over for checks and radios.
-7. When coloring menubars, correctly draw menubar text colour
+7. Don't use background colour for non-coloured mouse over of
+   check/radios if highlighting text backgroud.
+8. When coloring menubars, correctly draw menubar text colour
    of inactive windows.
-8. Fix potential crash when using pixmap cache.
+9. Fix potential crash when using pixmap cache.
 
 0.58
 ----
