@@ -4401,10 +4401,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 else if(progress > r.width()-barWidth)
                     progress = (r.width()-barWidth)-(progress-(r.width()-barWidth));
 
-                p->fillRect(r, flags & Style_Enabled ? cg.base() : cg.background());
-                drawLightBevel(cg.background(), p, QRect(r.x()+progress, r.y(), barWidth,
-                               r.height()), cg, flags, ROUNDED_ALL, itsMenuitemCols[ORIGINAL_SHADE],
-                               itsMenuitemCols, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
+                drawProgress(p, QRect(r.x()+progress, r.y(), barWidth, r.height()), cg, flags,
+                             ROUNDED_ALL, widget);
             }
             else
             {
