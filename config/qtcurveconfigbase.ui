@@ -380,23 +380,6 @@
                             <string>Highlight background</string>
                         </property>
                     </widget>
-                    <spacer row="13" column="0">
-                        <property name="name">
-                            <cstring>spacer6</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>8</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <widget class="QCheckBox" row="11" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>stdFocus</cstring>
@@ -430,14 +413,6 @@
                         </property>
                         <property name="text">
                             <string>Standard buttons for sidebars</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="12" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>drawStatusBarFrames</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Draw statusbar frames</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="12" column="7" rowspan="1" colspan="3">
@@ -515,6 +490,39 @@
                         </property>
                         <property name="text">
                             <string>Fill groove</string>
+                        </property>
+                    </widget>
+                    <spacer row="14" column="0">
+                        <property name="name">
+                            <cstring>spacer6</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>16</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="12" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>drawStatusBarFrames</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw statusbar frames</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="13" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>comboSplitter</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Combo splitter</string>
                         </property>
                     </widget>
                 </grid>
@@ -1028,6 +1036,7 @@
     <tabstop>drawStatusBarFrames</tabstop>
     <tabstop>vArrows</tabstop>
     <tabstop>darkerBorders</tabstop>
+    <tabstop>comboSplitter</tabstop>
     <tabstop>toolbarBorders</tabstop>
     <tabstop>handles</tabstop>
     <tabstop>menubarAppearance</tabstop>

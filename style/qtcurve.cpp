@@ -3468,6 +3468,52 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             if(opts.drawStatusBarFrames)
                 KStyle::drawPrimitive(pe, p, r, cg, flags, data);
             break;
+        case PE_SizeGrip:
+        {
+            p->save();
+
+            int x, y, w, h;
+            r.rect(&x, &y, &w, &h);
+
+            int sw(QMIN(h,w));
+
+            if (h > w)
+                p->translate(0, h - w);
+            else
+                p->translate(w - h, 0);
+
+            int sx(x),
+                sy(y),
+                s(sw / 4),
+                dark(QT_BORDER(flags&Style_Enabled));
+
+            if (QApplication::reverseLayout())
+            {
+                sx = x + sw;
+                for (int i = 0; i < 4; ++i)
+                {
+                    p->setPen(QPen(itsBackgroundCols[0], 1));
+                    p->drawLine(x, sy - 1 , sx + 1,  sw);
+                    p->setPen(QPen(itsBackgroundCols[dark], 1));
+                    p->drawLine(x, sy, sx,  sw);
+                    sx -= s;
+                    sy += s;
+                }
+            }
+            else
+                for (int i = 0; i < 4; ++i)
+                {
+                    p->setPen(QPen(itsBackgroundCols[0], 1));
+                    p->drawLine(sx-1, sw, sw,  sy-1);
+                    p->setPen(QPen(itsBackgroundCols[dark], 1));
+                    p->drawLine(sx, sw, sw,  sy);
+                    sx += s;
+                    sy += s;
+                }
+
+            p->restore();
+            break;
+        }
         default:
             KStyle::drawPrimitive(pe, p, r, cg, flags, data);
     }
@@ -3640,7 +3686,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
         {
             const QTabBar *tb((const QTabBar *)widget);
             int           tabIndex(tb->indexOf(data.tab()->identifier())),
-                          dark(APPEARANCE_FLAT==opts.appearance ? ORIGINAL_SHADE : QT_FRAME_DARK_SHADOW);
+                          dark(APPEARANCE_FLAT==opts.appearance ? ORIGINAL_SHADE : QT_FRAME_DARK_SHADOW),
+                          moOffset(ROUNDED_NONE==opts.round ? 1 : opts.round);
             bool          cornerWidget(false),
                           bottomCornerWidget(false),
                           reverse(QApplication::reverseLayout()),
@@ -3733,12 +3780,12 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     if(opts.coloredMouseOver && itsHover)
                     {
                         p->setPen(itsMouseOverCols[ORIGINAL_SHADE]);
-                        p->drawLine(tr.x()+(firstTab ? opts.round : 1), tr.y()+1,
-                                    tr.x()+tr.width()-((lastTab ? opts.round : 0)+1), tr.y()+1);
+                        p->drawLine(tr.x()+(firstTab ? moOffset : 1), tr.y()+1,
+                                    tr.x()+tr.width()-((lastTab ? moOffset : 0)+1), tr.y()+1);
 
                         p->setPen(itsMouseOverCols[QT_STD_BORDER]);
-                        p->drawLine(tr.x()+(firstTab ? opts.round : 1), tr.y(),
-                                    tr.x()+tr.width()-((lastTab ? opts.round : 0)+1), tr.y());
+                        p->drawLine(tr.x()+(firstTab ? moOffset : 1), tr.y(),
+                                    tr.x()+tr.width()-((lastTab ? moOffset : 0)+1), tr.y());
                     }
                 }
 
@@ -3802,12 +3849,12 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     if(opts.coloredMouseOver && itsHover)
                     {
                         p->setPen(itsMouseOverCols[ORIGINAL_SHADE]);
-                        p->drawLine(tr.x()+(firstTab ? opts.round : 1), tr.y()+tr.height()-2,
-                                    tr.x()+tr.width()-((lastTab ? opts.round : 0)+1), tr.y()+tr.height()-2);
+                        p->drawLine(tr.x()+(firstTab ? moOffset : 1), tr.y()+tr.height()-2,
+                                    tr.x()+tr.width()-((lastTab ? moOffset : 0)+1), tr.y()+tr.height()-2);
 
                         p->setPen(itsMouseOverCols[3]);
-                        p->drawLine(tr.x()+(firstTab ? opts.round : 1), tr.y()+tr.height()-1,
-                                    tr.x()+tr.width()-((lastTab ? opts.round : 0)+1), tr.y()+tr.height()-1);
+                        p->drawLine(tr.x()+(firstTab ? moOffset : 1), tr.y()+tr.height()-1,
+                                    tr.x()+tr.width()-((lastTab ? moOffset : 0)+1), tr.y()+tr.height()-1);
                     }
                 }
 
@@ -4812,7 +4859,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                    (flags&Style_HasFocus), reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
                                    WIDGET_COMBO);
                 }
-                else 
+                else if(opts.comboSplitter)
                 {
                     field.addCoords(1, sunken ? 2 : 1, sunken ? 2 : 1, -1);
                     p->setPen(use[QT_BORDER(flags&Style_Enabled)]);
@@ -4828,15 +4875,25 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
                 if((flags & Style_HasFocus) && !editable)
                 {
-                    QRect fr(QStyle::visualRect(subRect(SR_ComboBoxFocusRect, widget), widget));
+                    QRect fr;
 
-                    if(reverse)
-                        fr.addCoords(3, 0, 0, 0);
+                    if(opts.comboSplitter)
+                    {
+                        fr=QStyle::visualRect(subRect(SR_ComboBoxFocusRect, widget), widget);
+                        if(reverse)
+                            fr.addCoords(3, 0, 0, 0);
+                        else
+                            fr.addCoords(0, 0, -2, 0);
+
+                        if(!itsFormMode && QTC_DO_EFFECT)
+                            fr.addCoords(1, 1, -1, -1);
+                    }
                     else
-                        fr.addCoords(0, 0, -2, 0);
+                    {
+                        fr=frame;
+                        fr.addCoords(3, 3, -3, -3);
+                    }
 
-                    if(!itsFormMode && QTC_DO_EFFECT)
-                        fr.addCoords(1, 1, -1, -1);
                     drawPrimitive(PE_FocusRect, p, fr, cg, flags | Style_FocusAtBorder,
                                   QStyleOption(cg.highlight()));
                 }
