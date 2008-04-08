@@ -16,6 +16,9 @@
 10. Fix potential crash when using pixmap cache.
 11. Fix tab coloured mouse-over when not rounded.
 12. Implement size grip.
+13. New mouse over effect - glow. Only applicable if etching or shadowing.
+14. New default button indicator - glow. Only applicable if etching
+    or shadowing.
 
 0.58
 ----

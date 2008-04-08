@@ -136,6 +136,7 @@ static void insertDefBtnEntries(QComboBox *combo)
     combo->insertItem(i18n("Font color thin border"));
     combo->insertItem(i18n("Selected background thick border"));
     combo->insertItem(i18n("Tint with selected background"));
+    combo->insertItem(i18n("Add a slight glow"));
     combo->insertItem(i18n("None"));
 }
 
@@ -160,6 +161,7 @@ static void insertMouseOverEntries(QComboBox *combo)
     combo->insertItem(i18n("No coloration"));
     combo->insertItem(i18n("Color border"));
     combo->insertItem(i18n("Plastik style"));
+    combo->insertItem(i18n("Glow"));
 }
 
 static void insertToolbarBorderEntries(QComboBox *combo)
@@ -248,7 +250,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(stripedProgress, SIGNAL(activated(int)), SLOT(stripedProgressChanged()));
     connect(animatedProgress, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(embolden, SIGNAL(toggled(bool)), SLOT(emboldenToggled()));
-    connect(defBtnIndicator, SIGNAL(activated(int)), SLOT(dbiChanged()));
+    connect(defBtnIndicator, SIGNAL(activated(int)), SLOT(defBtnIndicatorChanged()));
     connect(highlightTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(menubarAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(toolbarAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
@@ -285,8 +287,8 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
 #endif
     connect(lvLines, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(drawStatusBarFrames, SIGNAL(toggled(bool)), SLOT(updateChanged()));
-    connect(buttonEffect, SIGNAL(activated(int)), SLOT(updateChanged()));
-    connect(coloredMouseOver, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(buttonEffect, SIGNAL(activated(int)), SLOT(buttonEffectChanged()));
+    connect(coloredMouseOver, SIGNAL(activated(int)), SLOT(coloredMouseOverChanged()));
     connect(menubarMouseOver, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(shadeMenubarOnlyWhenActive, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(thinnerMenuItems, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -390,10 +392,35 @@ void QtCurveConfig::emboldenToggled()
     updateChanged();
 }
 
-void QtCurveConfig::dbiChanged()
+void QtCurveConfig::defBtnIndicatorChanged()
 {
     if(IND_NONE==defBtnIndicator->currentItem() && !embolden->isChecked())
         embolden->setChecked(true);
+    else if(IND_GLOW==defBtnIndicator->currentItem() && EFFECT_NONE==buttonEffect->currentItem())
+        buttonEffect->setCurrentItem(EFFECT_SHADOW);
+
+    updateChanged();
+}
+
+void QtCurveConfig::buttonEffectChanged()
+{
+    if(EFFECT_NONE==buttonEffect->currentItem())
+    {
+        if(IND_GLOW==defBtnIndicator->currentItem())
+            defBtnIndicator->setCurrentItem(IND_TINT);
+        if(MO_GLOW==coloredMouseOver->currentItem())
+            coloredMouseOver->setCurrentItem(MO_PLASTIK);
+    }
+
+    updateChanged();
+}
+
+void QtCurveConfig::coloredMouseOverChanged()
+{
+    if(MO_GLOW==coloredMouseOver->currentItem() &&
+       EFFECT_NONE==buttonEffect->currentItem())
+        buttonEffect->setCurrentItem(EFFECT_SHADOW);
+
     updateChanged();
 }
 

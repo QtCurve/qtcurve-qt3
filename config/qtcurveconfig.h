@@ -61,7 +61,9 @@ class QtCurveConfig : public QtCurveConfigBase
     void exportStyle();
     void exportTheme();
     void emboldenToggled();
-    void dbiChanged();
+    void defBtnIndicatorChanged();
+    void buttonEffectChanged();
+    void coloredMouseOverChanged();
     void shadeSlidersChanged();
     void shadeMenubarsChanged();
     void shadeCheckRadioChanged();
