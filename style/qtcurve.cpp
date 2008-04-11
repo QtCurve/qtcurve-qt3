@@ -1996,7 +1996,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
         br.addCoords(1,1,-1,-1);
         p->drawRect(br);
 
-        if(WIDGET_PROGRESSBAR==w && (!IS_GLASS(app) || opts.fillProgress))
+        if(IS_CUSTOM(app) || (WIDGET_PROGRESSBAR==w && (!IS_GLASS(app) || opts.fillProgress)))
             br.addCoords(1,1,-1,-1);
         else if(horiz)
             br.addCoords(1,0,-1,-1);
@@ -6254,6 +6254,43 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
                     drawGradient(midTop, midBot, true, &pixPainter, r2, horiz);
                     drawGradient(midBot, bot, true, &pixPainter, r3, horiz);
                 }
+            }
+            else if(!selected && IS_CUSTOM(app))
+            {
+                CustomGradientCont::const_iterator cg(opts.customGradient.find(app));
+
+                if(cg!=opts.customGradient.end())
+                {
+                    GradientCont::const_iterator it((*cg).second.grad.begin()),
+                                                 end((*cg).second.grad.end());
+                    QColor                       bot;
+                    int                          lastPos(horiz ? r.y() : r.x()),
+                                                 size(horiz ? r.height() : r.width());
+
+                    for(int i=0; it!=end; ++it, ++i)
+                    {
+                        if(0==i)
+                        {
+                            lastPos=(int)(((*it).pos*size)+0.5);
+                            shade(base, &bot, (*it).val);
+                        }
+                        else
+                        {
+                            QColor top(bot);
+                            int    pos((int)(((*it).pos*size)+0.5));
+
+                            shade(base, &bot, (*it).val);
+                            drawGradient(top, bot, true, &pixPainter,
+                                         horiz
+                                            ? QRect(r.x(), lastPos, r.width(), pos-lastPos)
+                                            : QRect(lastPos, r.y(), pos-lastPos, r.height()),
+                                         horiz);
+                            lastPos=pos;
+                        }
+                    }
+                }
+                else
+                    p->fillRect(r, base);
             }
             else
             {

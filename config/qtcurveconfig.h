@@ -21,7 +21,7 @@
   Boston, MA 02110-1301, USA.
 */
 
-#define QTC_COMMON_ONLY_COVERTERS
+#define QTC_COMMON_FUNCTIONS
 #define QTC_CONFIG_DIALOG
 
 #include <qtcurveconfigbase.h>
@@ -29,7 +29,31 @@
 #include "common.h"
 
 class QPopupMenu;
+class QListViewItem;
 class CExportThemeDialog;
+
+class CGradientPreview : public QWidget
+{
+    Q_OBJECT
+
+    public:
+
+    CGradientPreview(QWidget *p);
+
+    QSize sizeHint() const;
+    QSize minimumSizeHint() const;
+    void paintEvent(QPaintEvent *);
+    void setGrad(const GradientCont &s);
+
+    public slots:
+
+    void setColor(const QColor &col);
+
+    private:
+
+    QColor       color;
+    GradientCont stops;
+};
 
 class QtCurveConfig : public QtCurveConfigBase
 {
@@ -72,8 +96,14 @@ class QtCurveConfig : public QtCurveConfigBase
     void tabAppearanceChanged();
     void passwordCharClicked();
 
+    void gradChanged(int i);
+    void itemChanged(QListViewItem *i, int col);
+    void addGradStop();
+    void removeGradStop();
+
     private:
 
+    void setupPreviewTab();
     void setPasswordChar(int ch);
     void loadStyle(const QString &file);
     void setOptions(Options &opts);
@@ -86,6 +116,8 @@ class QtCurveConfig : public QtCurveConfigBase
                        defaultStyle;
     QMap<int, QString> styles;
     CExportThemeDialog *exportDialog;
+    CGradientPreview   *gradPreview;
+    CustomGradientCont customGradient;
 };
 
 #endif

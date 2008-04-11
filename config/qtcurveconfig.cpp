@@ -30,6 +30,9 @@
 #include <qtabwidget.h>
 #include <qpopupmenu.h>
 #include <qfileinfo.h>
+#include <qlistview.h>
+#include <qpainter.h>
+#include <qregexp.h>
 #include <klocale.h>
 #include <kcolorbutton.h>
 #include <kconfig.h>
@@ -39,7 +42,10 @@
 #include <kcharselect.h>
 #include <kdialogbase.h>
 #include <knuminput.h>
+#include <kguiitem.h>
+#include <kinputdialog.h>
 #include <unistd.h>
+#include <errno.h>
 #include "config.h"
 #define CONFIG_READ
 #define CONFIG_WRITE
@@ -53,6 +59,77 @@ extern "C"
     {
         KGlobal::locale()->insertCatalogue("kstyle_qtcurve_config");
         return new QtCurveConfig(parent);
+    }
+}
+
+static void drawGradient(const QColor &top, const QColor &bot, bool increase,
+                         QPainter *p, QRect const &r, bool horiz)
+{
+    if(r.width()>0 && r.height()>0)
+    {
+        if(top==bot)
+            p->fillRect(r, top);
+        else
+        {
+            int rh(r.height()), rw(r.width()),
+                rTop(top.red()), gTop(top.green()), bTop(top.blue()),
+                rx, ry, rx2, ry2,
+                size(horiz ? rh : rw);
+
+            r.coords(&rx, &ry, &rx2, &ry2);
+
+            register int rl(rTop << 16);
+            register int gl(gTop << 16);
+            register int bl(bTop << 16);
+            register int i;
+
+            int dr(((1<<16) * (bot.red() - rTop)) / size),
+                dg(((1<<16) * (bot.green() - gTop)) / size),
+                db(((1<<16) * (bot.blue() - bTop)) / size);
+
+            if(increase)
+                if(horiz)
+                {
+                    for (i=0; i < size; i++)
+                    {
+                        p->setPen(QColor(rl>>16, gl>>16, bl>>16));
+                        p->drawLine(rx, ry+i, rx2, ry+i);
+                        rl += dr;
+                        gl += dg;
+                        bl += db;
+                    }
+                }
+                else
+                    for(i=0; i < size; i++)
+                    {
+                        p->setPen(QColor(rl>>16, gl>>16, bl>>16));
+                        p->drawLine(rx+i, ry, rx+i, ry2);
+                        rl += dr;
+                        gl += dg;
+                        bl += db;
+                    }
+            else
+                if(horiz)
+                {
+                    for(i=size-1; i>=0; i--)
+                    {
+                        p->setPen(QColor(rl>>16, gl>>16, bl>>16));
+                        p->drawLine(rx, ry+i, rx2, ry+i);
+                        rl += dr;
+                        gl += dg;
+                        bl += db;
+                    }
+                }
+                else
+                    for(i=size-1; i>=0; i--)
+                    {
+                        p->setPen(QColor(rl>>16, gl>>16, bl>>16));
+                        p->drawLine(rx+i, ry, rx+i, ry2);
+                        rl += dr;
+                        gl += dg;
+                        bl += db;
+                    }
+        }
     }
 }
 
@@ -78,6 +155,78 @@ class CharSelectDialog : public KDialogBase
 
     KCharSelect *itsSelector;
 };
+
+CGradientPreview::CGradientPreview(QWidget *p)
+                : QWidget(p)
+{
+    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+}
+
+QSize CGradientPreview::sizeHint() const
+{
+    return QSize(64, 64);
+}
+
+QSize CGradientPreview::minimumSizeHint() const
+{
+    return sizeHint();
+}
+
+void CGradientPreview::paintEvent(QPaintEvent *)
+{
+    QRect    r(rect());
+    QPainter p(this);
+
+    if(stops.size())
+    {
+        GradientCont::const_iterator it(stops.begin()),
+                                     end(stops.end());
+        QColor                       bot;
+        bool                         horiz(true);
+        int                          lastPos(horiz ? r.y() : r.x()),
+                                     size(horiz ? r.height() : r.width());
+
+        for(int i=0; it!=end; ++it, ++i)
+        {
+            if(0==i)
+            {
+                lastPos=(int)(((*it).pos*size)+0.5);
+                shade(color, &bot, (*it).val);
+            }
+            else
+            {
+                QColor top(bot);
+                int    pos((int)(((*it).pos*size)+0.5));
+
+                shade(color, &bot, (*it).val);
+                drawGradient(top, bot, true, &p,
+                             horiz
+                                ? QRect(r.x(), lastPos, r.width(), pos-lastPos)
+                                : QRect(lastPos, r.y(), pos-lastPos, r.height()),
+                             horiz);
+                lastPos=pos;
+            }
+        }
+    }
+    else
+        p.fillRect(r, color);
+    p.end();
+}
+
+void CGradientPreview::setGrad(const GradientCont &s)
+{
+    stops=s;
+    repaint();
+}
+
+void CGradientPreview::setColor(const QColor &col)
+{
+    if(col!=color)
+    {
+        color=col;
+        repaint();
+    }
+}
 
 static int toInt(const QString &str)
 {
@@ -108,6 +257,9 @@ static void insertShadeEntries(QComboBox *combo, bool withDarken, bool checkRadi
 
 static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true)
 {
+    for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
+        combo->insertItem(i18n("Custom %1").arg((i-APPEARANCE_CUSTOM1)+1));
+
     combo->insertItem(i18n("Flat"));
     combo->insertItem(i18n("Raised"));
     combo->insertItem(i18n("Dull glass"));
@@ -328,6 +480,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     menu->insertItem(i18n("Export Theme..."), this, SLOT(exportTheme()));
 
     loadStyles(subMenu);
+    setupPreviewTab();
 }
 
 QtCurveConfig::~QtCurveConfig()
@@ -474,6 +627,226 @@ void QtCurveConfig::passwordCharClicked()
         setPasswordChar(dlg.currentChar());
 }
 
+//
+// QString.toDouble returns ok=true for "xx" ???
+static double toDouble(const QString &str, bool *ok)
+{
+    if(ok)
+    {
+        QString stripped(str.stripWhiteSpace());
+        int     size(stripped.length());
+
+        for(int i=0; i<size; ++i)
+            if(!stripped[i].isNumber() && stripped[i]!='.')
+            {
+                *ok=false;
+                return 0.0;
+            }
+    }
+
+    return str.toDouble(ok);
+}
+
+class CGradItem : public QListViewItem
+{
+    public:
+
+    CGradItem(QListView *p, const QString &a, const QString &b)
+        : QListViewItem(p, a, b)
+    {
+        setRenameEnabled(0, true);
+        setRenameEnabled(1, true);
+    }
+
+    virtual ~CGradItem() { }
+
+    void okRename(int col)
+    {
+        QString prevStr(text(col));
+
+        prev=prevStr.toDouble();
+        QListViewItem::okRename(col);
+
+        bool    ok(false);
+        double  val=toDouble(text(col), &ok);
+
+        if(!ok || (0==col && (val<0.0 || val>1.0)) || (1==col && (val<0.0 || val>2.0)))
+        {
+            setText(col, prevStr);
+            startRename(col);
+        }
+    }
+
+    double prevVal() const { return prev; }
+
+    private:
+
+    double prev;
+};
+void QtCurveConfig::gradChanged(int i)
+{
+    CustomGradientCont::const_iterator it(customGradient.find((EAppearance)i));
+
+    gradStops->clear();
+
+    if(it!=customGradient.end())
+    {
+        gradPreview->setGrad((*it).second.grad);
+        gradLightBorder->setChecked((*it).second.lightBorder);
+
+        GradientCont::const_iterator git((*it).second.grad.begin()),
+                                     gend((*it).second.grad.end());
+
+        for(; git!=gend; ++git)
+            new CGradItem(gradStops, QString().setNum((*git).pos),
+                                     QString().setNum((*git).val));
+    }
+    else
+    {
+        gradPreview->setGrad(GradientCont());
+        gradLightBorder->setChecked(false);
+    }
+}
+
+void QtCurveConfig::itemChanged(QListViewItem *i, int col)
+{
+    CustomGradientCont::iterator it=customGradient.find((EAppearance)gradCombo->currentItem());
+
+    if(it!=customGradient.end())
+    {
+        bool   ok;
+        double newVal=toDouble(i->text(col), &ok);
+
+        if(ok && ((0==col && (newVal>=0.0 && newVal<=1.0)) ||
+                (1==col && newVal>=0.0 && newVal<=2.0)) )
+        {
+            double pos=0==col ? newVal : i->text(0).toDouble(),
+                   val=1==col ? newVal : i->text(1).toDouble(),
+                   prev=((CGradItem *)i)->prevVal();
+
+            (*it).second.grad.erase(Gradient(col ? pos : prev, col ? prev : val));
+            (*it).second.grad.insert(Gradient(pos, val));
+            gradPreview->setGrad((*it).second.grad);
+            i->setText(col, QString().setNum(val));
+            emit changed(true);
+        }
+    }
+}
+
+void QtCurveConfig::addGradStop()
+{
+    CustomGradientCont::iterator cg=customGradient.find((EAppearance)gradCombo->currentItem());
+
+    if(cg!=customGradient.end())
+    {
+        bool    ok;
+        QString val(KInputDialog::getText(i18n("New Gradient Stops"),
+                                          i18n("Please enter a set of new \"position value\" pairs\n"
+                                               "(e.g. \"0.0 0.8 1.0 1.1\")"),
+                                          QString(), &ok, this/*, QValidator *validator*/));
+
+        if(ok)
+        {
+            QStringList list(QStringList::split(QRegExp("[\\s,]"), val));
+
+            if(list.size() && 0==list.size()%2)
+            {
+                GradientCont                grads;
+                QStringList::const_iterator it(list.begin()),
+                                            end(list.end());
+
+                for(; it!=end && ok; ++it)
+                {
+                    double pos=toDouble((*it), &ok),
+                           val=ok ? toDouble(*(++it), &ok) : 0.0;
+
+                    if(ok && pos>=0.0 && pos<=1.0 &&  val>=0.0 && val<=2.0)
+                        grads.insert(Gradient(pos, val));
+                }
+
+                if(ok)
+                    ok=grads.size()>0;
+
+                if(ok)
+                {
+                    unsigned int                 b4=(*cg).second.grad.size();
+                    GradientCont::const_iterator git(grads.begin()),
+                                                 gend(grads.end());
+
+                    for(; git!=gend; ++git)
+                        (*cg).second.grad.insert(*git);
+
+                    ok=(*cg).second.grad.size()!=b4;
+                }
+            }
+            else
+                ok=false;
+        }
+
+        if(ok)
+        {
+            gradChanged(gradCombo->currentItem());
+            emit changed(true);
+        }
+    }
+}
+
+void QtCurveConfig::removeGradStop()
+{
+    QListViewItem *cur=gradStops->currentItem();
+
+    if(cur)
+    {
+        QListViewItem *next=cur->itemBelow();
+
+        if(!next)
+            next=cur->itemAbove();
+
+        CustomGradientCont::iterator it=customGradient.find((EAppearance)gradCombo->currentItem());
+
+        if(it!=customGradient.end())
+        {
+            double pos=cur->text(0).toDouble(),
+                   val=cur->text(1).toDouble();
+
+            (*it).second.grad.erase(Gradient(pos, val));
+            gradPreview->setGrad((*it).second.grad);
+            emit changed(true);
+
+            delete cur;
+            if(next)
+                gradStops->setCurrentItem(next);
+        }
+    }
+}
+
+void QtCurveConfig::setupPreviewTab()
+{
+    for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
+        gradCombo->insertItem(i18n("Custom %1").arg((i-APPEARANCE_CUSTOM1)+1));
+    gradCombo->setCurrentItem(APPEARANCE_CUSTOM1);
+
+    gradPreview=new CGradientPreview(previewWidgetContainer);
+    QVBoxLayout *layout=new QVBoxLayout(previewWidgetContainer);
+    layout->addWidget(gradPreview);
+    layout->setMargin(0);
+    layout->setSpacing(0);
+    QColor col(palette().color(QPalette::Active, QColorGroup::Button));
+    previewColor->setColor(col);
+    gradPreview->setColor(col);
+    gradChanged(APPEARANCE_CUSTOM1);
+    addButton->setGuiItem(KGuiItem(i18n("Add"), "list_add"));
+    removeButton->setGuiItem(KGuiItem(i18n("Remove"), "list_remove"));
+
+    gradStops->setDefaultRenameAction(QListView::Reject);
+    gradStops->setAllColumnsShowFocus(true);
+    connect(gradCombo, SIGNAL(activated(int)), SLOT(gradChanged(int)));
+    connect(previewColor, SIGNAL(changed(const QColor &)), gradPreview, SLOT(setColor(const QColor &)));
+    connect(gradStops, SIGNAL(itemRenamed(QListViewItem *, int)), SLOT(itemChanged(QListViewItem *, int)));
+    connect(addButton, SIGNAL(clicked()), SLOT(addGradStop()));
+    connect(removeButton, SIGNAL(clicked()), SLOT(removeGradStop()));
+}
+
 void QtCurveConfig::setPasswordChar(int ch)
 {
     QString      str;
@@ -615,6 +988,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.passwordChar=toInt(passwordChar->text());
     opts.framelessGroupBoxes=framelessGroupBoxes->isChecked();
     opts.inactiveHighlight=inactiveHighlight->isChecked();
+    opts.customGradient=customGradient;
 }
 
 void QtCurveConfig::setWidgetOptions(const Options &opts)
@@ -696,6 +1070,8 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     setPasswordChar(opts.passwordChar);
     framelessGroupBoxes->setChecked(opts.framelessGroupBoxes);
     inactiveHighlight->setChecked(opts.inactiveHighlight);
+    customGradient=opts.customGradient;
+    gradCombo->setCurrentItem(APPEARANCE_CUSTOM1);
 }
 
 bool QtCurveConfig::settingsChanged()
@@ -774,7 +1150,9 @@ bool QtCurveConfig::settingsChanged()
          (customMenuTextColor->isChecked() &&
                customMenuNormTextColor->color()!=currentStyle.customMenuNormTextColor) ||
          (customMenuTextColor->isChecked() &&
-               customMenuSelTextColor->color()!=currentStyle.customMenuSelTextColor);
+               customMenuSelTextColor->color()!=currentStyle.customMenuSelTextColor) ||
+
+         customGradient!=currentStyle.customGradient;
 }
 
 #include "qtcurveconfig.moc"
