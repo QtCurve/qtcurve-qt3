@@ -6268,7 +6268,9 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
             {
                 CustomGradientCont::const_iterator cg;
 
-                if(sel && (cg=opts.customGradient.find(APPEARANCE_SUNKEN))!=opts.customGradient.end())
+                if(sel && WIDGET_TROUGH!=w & WIDGET_TAB_TOP!=w && WIDGET_TAB_BOT!=w &&
+                   WIDGET_SLIDER_TROUGH!=w &&
+                  (cg=opts.customGradient.find(APPEARANCE_SUNKEN))!=opts.customGradient.end())
                     drawCustomGradient(&pixPainter, r, horiz, base, cg);
                 else
                 {
