@@ -30,6 +30,7 @@
 
 class QPopupMenu;
 class QListViewItem;
+class KDoubleNumInput;
 class CExportThemeDialog;
 
 class CGradientPreview : public QWidget
@@ -103,7 +104,11 @@ class QtCurveConfig : public QtCurveConfigBase
 
     private:
 
-    void setupPreviewTab();
+    void setupGradientsTab();
+    void setupShadesTab();
+    void setupShade(KDoubleNumInput *w, int shade);
+    void populateShades(const Options &opts);
+    bool diffShades(const Options &opts);
     void setPasswordChar(int ch);
     void loadStyle(const QString &file);
     void setOptions(Options &opts);
@@ -118,6 +123,7 @@ class QtCurveConfig : public QtCurveConfigBase
     CExportThemeDialog *exportDialog;
     CGradientPreview   *gradPreview;
     CustomGradientCont customGradient;
+    KDoubleNumInput    *shadeVals[NUM_STD_SHADES];
 };
 
 #endif

@@ -929,19 +929,6 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QLabel" row="7" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_5</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Shading routine:</string>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="7" column="1" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>shading</cstring>
-                        </property>
-                    </widget>
                     <spacer row="8" column="2">
                         <property name="name">
                             <cstring>spacer7</cstring>
@@ -1112,6 +1099,185 @@
                     </widget>
                 </vbox>
             </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>TabPage</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Shading</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_5</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Shading routine:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="0" column="1">
+                        <property name="name">
+                            <cstring>shading</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                    </widget>
+                    <widget class="QGroupBox" row="1" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>customShading</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Use Custom Values</string>
+                        </property>
+                        <property name="checkable">
+                            <bool>true</bool>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <spacer row="6" column="0">
+                                <property name="name">
+                                    <cstring>spacer10</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>4</width>
+                                        <height>15</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="KDoubleNumInput" row="2" column="0">
+                                <property name="name">
+                                    <cstring>shade2</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="KDoubleNumInput" row="3" column="0">
+                                <property name="name">
+                                    <cstring>shade3</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="KDoubleNumInput" row="1" column="0">
+                                <property name="name">
+                                    <cstring>shade1</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="KDoubleNumInput" row="4" column="0">
+                                <property name="name">
+                                    <cstring>shade4</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="KDoubleNumInput" row="5" column="0">
+                                <property name="name">
+                                    <cstring>shade5</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="KDoubleNumInput" row="0" column="0">
+                                <property name="name">
+                                    <cstring>shade0</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="1" rowspan="7" colspan="1">
+                                <property name="name">
+                                    <cstring>textLabel1_10</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>3</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>&lt;i&gt;QtCurve uses various hard-coded shading values to draw elements such as button frames, the background for pressed buttons, etc. The following is a brief overview of how each shade is use - use this as a gude only, as shades are used for various things.&lt;br&gt;
+
+1 Is used for the light part of 3d elements - such as the border of tab widgets.&lt;br&gt;
+2 Is used for the lighter shade of striped progressbars.&lt;br&gt;
+3 Is used for the dark part of 3d elements - such as the border of tab widgets.&lt;br&gt;
+4 Is used for the shaded border of checks and radios, toolbar borders (when set to dark), the dark part of sunken/raised slider handles, etc.&lt;br&gt;
+5 Is used for the background of pressed widgets, and the border of toolbars (when not dark).&lt;br&gt;
+6 Is used as the border of most widgets.&lt;/i&gt;</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignTop</set>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                </grid>
+            </widget>
         </widget>
         <spacer row="3" column="0">
             <property name="name">
@@ -1214,13 +1380,20 @@
     <tabstop>fixParentlessDialogs</tabstop>
     <tabstop>inactiveHighlight</tabstop>
     <tabstop>passwordChar</tabstop>
-    <tabstop>shading</tabstop>
     <tabstop>gradCombo</tabstop>
     <tabstop>gradStops</tabstop>
     <tabstop>gradLightBorder</tabstop>
     <tabstop>addButton</tabstop>
     <tabstop>removeButton</tabstop>
     <tabstop>previewColor</tabstop>
+    <tabstop>shading</tabstop>
+    <tabstop>customShading</tabstop>
+    <tabstop>shade0</tabstop>
+    <tabstop>shade1</tabstop>
+    <tabstop>shade2</tabstop>
+    <tabstop>shade3</tabstop>
+    <tabstop>shade4</tabstop>
+    <tabstop>shade5</tabstop>
     <tabstop>optionBtn</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
@@ -1235,6 +1408,18 @@
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>

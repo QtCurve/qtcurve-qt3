@@ -33,6 +33,7 @@
 #include <qlistview.h>
 #include <qpainter.h>
 #include <qregexp.h>
+#include <qsettings.h>
 #include <klocale.h>
 #include <kcolorbutton.h>
 #include <kconfig.h>
@@ -44,6 +45,7 @@
 #include <knuminput.h>
 #include <kguiitem.h>
 #include <kinputdialog.h>
+#include <knuminput.h>
 #include <unistd.h>
 #include <errno.h>
 #include "config.h"
@@ -465,6 +467,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     if(!readConfig(NULL, &currentStyle, &defaultStyle))
         currentStyle=defaultStyle;
 
+    setupShadesTab();
     setWidgetOptions(currentStyle);
 
     QPopupMenu *menu=new QPopupMenu(this),
@@ -480,7 +483,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     menu->insertItem(i18n("Export Theme..."), this, SLOT(exportTheme()));
 
     loadStyles(subMenu);
-    setupPreviewTab();
+    setupGradientsTab();
 }
 
 QtCurveConfig::~QtCurveConfig()
@@ -820,7 +823,7 @@ void QtCurveConfig::removeGradStop()
     }
 }
 
-void QtCurveConfig::setupPreviewTab()
+void QtCurveConfig::setupGradientsTab()
 {
     for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
         gradCombo->insertItem(i18n("Custom %1").arg((i-APPEARANCE_CUSTOM1)+1));
@@ -845,6 +848,61 @@ void QtCurveConfig::setupPreviewTab()
     connect(gradStops, SIGNAL(itemRenamed(QListViewItem *, int)), SLOT(itemChanged(QListViewItem *, int)));
     connect(addButton, SIGNAL(clicked()), SLOT(addGradStop()));
     connect(removeButton, SIGNAL(clicked()), SLOT(removeGradStop()));
+}
+
+void QtCurveConfig::setupShadesTab()
+{
+    int shade(0);
+
+    setupShade(shade0, shade++);
+    setupShade(shade1, shade++);
+    setupShade(shade2, shade++);
+    setupShade(shade3, shade++);
+    setupShade(shade4, shade++);
+    setupShade(shade5, shade++);
+    connect(customShading, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+}
+
+void QtCurveConfig::setupShade(KDoubleNumInput *w, int shade)
+{
+    w->setRange(0.0, 2.0, 0.05, false);
+    connect(w, SIGNAL(valueChanged(double)), SLOT(updateChanged()));
+    shadeVals[shade]=w;
+}
+
+void QtCurveConfig::populateShades(const Options &opts)
+{
+    QTC_SHADES
+    int contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
+
+    if(contrast<0 || contrast>10)
+        contrast=7;
+
+    customShading->setChecked(opts.customShades.size());
+
+    for(int i=0; i<NUM_STD_SHADES; ++i)
+        shadeVals[i]->setValue(opts.customShades.size()
+                                  ? opts.customShades[i]
+                                  : shades[SHADING_SIMPLE==shading->currentItem()
+                                            ? 1 : 0]
+                                          [contrast]
+                                          [i]);
+}
+
+bool QtCurveConfig::diffShades(const Options &opts)
+{
+    if( (0==opts.customShades.size() && customShading->isChecked()) ||
+        (opts.customShades.size() && !customShading->isChecked()) )
+        return true;
+
+    if(customShading->isChecked())
+    {
+        for(int i=0; i<NUM_STD_SHADES; ++i)
+            if(!equal(shadeVals[i]->value(), opts.customShades[i]))
+                return true;
+    }
+
+    return false;
 }
 
 void QtCurveConfig::setPasswordChar(int ch)
@@ -989,6 +1047,15 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.framelessGroupBoxes=framelessGroupBoxes->isChecked();
     opts.inactiveHighlight=inactiveHighlight->isChecked();
     opts.customGradient=customGradient;
+
+    if(customShading->isChecked())
+    {
+        opts.customShades.resize(NUM_STD_SHADES);
+        for(int i=0; i<NUM_STD_SHADES; ++i)
+            opts.customShades[i]=shadeVals[i]->value();
+    }
+    else
+        opts.customShades.clear();
 }
 
 void QtCurveConfig::setWidgetOptions(const Options &opts)
@@ -1072,6 +1139,8 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     inactiveHighlight->setChecked(opts.inactiveHighlight);
     customGradient=opts.customGradient;
     gradCombo->setCurrentItem(APPEARANCE_CUSTOM1);
+
+    populateShades(opts);
 }
 
 bool QtCurveConfig::settingsChanged()
@@ -1153,6 +1222,8 @@ bool QtCurveConfig::settingsChanged()
                customMenuSelTextColor->color()!=currentStyle.customMenuSelTextColor) ||
 
          customGradient!=currentStyle.customGradient;
+
+         diffShades(currentStyle);
 }
 
 #include "qtcurveconfig.moc"
