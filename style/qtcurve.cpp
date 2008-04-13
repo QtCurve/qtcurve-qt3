@@ -6260,56 +6260,35 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
                 CustomGradientCont::const_iterator cg(opts.customGradient.find(app));
 
                 if(cg!=opts.customGradient.end())
-                {
-                    GradientCont::const_iterator it((*cg).second.grad.begin()),
-                                                 end((*cg).second.grad.end());
-                    QColor                       bot;
-                    int                          lastPos(horiz ? r.y() : r.x()),
-                                                 size(horiz ? r.height() : r.width());
-
-                    for(int i=0; it!=end; ++it, ++i)
-                    {
-                        if(0==i)
-                        {
-                            lastPos=(int)(((*it).pos*size)+0.5);
-                            shade(base, &bot, (*it).val);
-                        }
-                        else
-                        {
-                            QColor top(bot);
-                            int    pos((int)(((*it).pos*size)+0.5));
-
-                            shade(base, &bot, (*it).val);
-                            drawGradient(top, bot, true, &pixPainter,
-                                         horiz
-                                            ? QRect(r.x(), lastPos, r.width(), pos-lastPos)
-                                            : QRect(lastPos, r.y(), pos-lastPos, r.height()),
-                                         horiz);
-                            lastPos=pos;
-                        }
-                    }
-                }
+                    drawCustomGradient(&pixPainter, r, horiz, base, cg);
                 else
                     p->fillRect(r, base);
             }
             else
             {
-                QColor top,
-                       bot,
-                       baseTopCol(opts.colorSelTab && sel && (WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w)
-                                      ? midColor(base, itsMenuitemCols[0], QTC_COLOR_SEL_TAB_FACTOR) : base);
+                CustomGradientCont::const_iterator cg;
 
-                if(equal(1.0, shadeTop))
-                    top=baseTopCol;
+                if(sel && (cg=opts.customGradient.find(APPEARANCE_SUNKEN))!=opts.customGradient.end())
+                    drawCustomGradient(&pixPainter, r, horiz, base, cg);
                 else
-                    shade(baseTopCol, &top, shadeTop);
-                if(equal(1.0, shadeBot))
-                    bot=base;
-                else
-                    shade(base, &bot, shadeBot);
+                {
+                    QColor top,
+                        bot,
+                        baseTopCol(opts.colorSelTab && sel && (WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w)
+                                       ? midColor(base, itsMenuitemCols[0], QTC_COLOR_SEL_TAB_FACTOR) : base);
 
-                drawGradient(top, bot, sel || APPEARANCE_INVERTED!=app ? increase : !increase,
-                             &pixPainter, r, horiz);
+                    if(equal(1.0, shadeTop))
+                        top=baseTopCol;
+                    else
+                        shade(baseTopCol, &top, shadeTop);
+                    if(equal(1.0, shadeBot))
+                        bot=base;
+                    else
+                        shade(base, &bot, shadeBot);
+
+                    drawGradient(top, bot, sel || APPEARANCE_INVERTED!=app ? increase : !increase,
+                                 &pixPainter, r, horiz);
+                }
             }
             pixPainter.end();
             int cost(pix->width()*pix->height()*(pix->depth()/8));
@@ -6322,6 +6301,38 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
         p->drawTiledPixmap(origRect, *pix);
         if(!inCache)
             delete pix;
+    }
+}
+
+void QtCurveStyle::drawCustomGradient(QPainter *p, const QRect &r, bool horiz, const QColor &base,
+                                      CustomGradientCont::const_iterator &cg) const
+{
+    GradientCont::const_iterator it((*cg).second.grad.begin()),
+                                 end((*cg).second.grad.end());
+    QColor                       bot;
+    int                          lastPos(horiz ? r.y() : r.x()),
+                                 size(horiz ? r.height() : r.width());
+
+    for(int i=0; it!=end; ++it, ++i)
+    {
+        if(0==i)
+        {
+            lastPos=(int)(((*it).pos*size)+0.5);
+            shade(base, &bot, (*it).val);
+        }
+        else
+        {
+            QColor top(bot);
+            int    pos((int)(((*it).pos*size)+0.5));
+
+            shade(base, &bot, (*it).val);
+            drawGradient(top, bot, true, p,
+                         horiz
+                             ? QRect(r.x(), lastPos, r.width(), pos-lastPos)
+                             : QRect(lastPos, r.y(), pos-lastPos, r.height()),
+                         horiz);
+            lastPos=pos;
+        }
     }
 }
 

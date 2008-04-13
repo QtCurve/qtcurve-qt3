@@ -686,6 +686,7 @@ class CGradItem : public QListViewItem
 
     double prev;
 };
+
 void QtCurveConfig::gradChanged(int i)
 {
     CustomGradientCont::const_iterator it(customGradient.find((EAppearance)i));
@@ -836,6 +837,8 @@ void QtCurveConfig::setupGradientsTab()
 {
     for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
         gradCombo->insertItem(i18n("Custom %1").arg((i-APPEARANCE_CUSTOM1)+1));
+    gradCombo->insertItem(i18n("Sunken"));
+
     gradCombo->setCurrentItem(APPEARANCE_CUSTOM1);
 
     gradPreview=new CGradientPreview(previewWidgetContainer);
