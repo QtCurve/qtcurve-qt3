@@ -761,7 +761,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
         }
     }
 
-    if(opts.coloredMouseOver || IND_CORNER==opts.defBtnIndicator)
+    if(opts.coloredMouseOver || IND_CORNER==opts.defBtnIndicator || IND_GLOW==opts.defBtnIndicator)
         if(itsDefBtnCols && IND_TINT!=opts.defBtnIndicator)
             itsMouseOverCols=itsDefBtnCols;
         else
@@ -2073,7 +2073,12 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     }
 
     if(doBorder)
-        drawBorder(bgnd, p, r, cg, flags, round, cols, w, doCorners);
+        if((((doEtch && WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w) || (WIDGET_COMBO==w)) &&
+             MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
+           (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator))
+            drawBorder(bgnd, p, r, cg, flags, round, itsMouseOverCols, w, doCorners);
+        else
+            drawBorder(bgnd, p, r, cg, flags, round, cols, w, doCorners);
 
     if(doEtch)
         if( (WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w && MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
@@ -2898,7 +2903,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             {
                 p->setPen(use[QTC_CR_MO_FILL]);
                 p->drawRect(QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2));
-                p->drawRect(QRect(rect.x()+2, rect.y()+2, rect.width()-4, rect.height()-4));
+                // p->drawRect(QRect(rect.x()+2, rect.y()+2, rect.width()-4, rect.height()-4));
             }
             else
             {
@@ -6468,7 +6473,7 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
                          xo(horiz ? 8 : 0),
                          yo(horiz ? 0 : 8);
         PrimitiveElement direction(horiz ? PE_ArrowDown : PE_ArrowRight);
-        bool             drawLight(MO_PLASTIK!=opts.coloredMouseOver || !(flags&Style_MouseOver) ||
+        bool             drawLight((MO_GLOW!=opts.coloredMouseOver && MO_PLASTIK!=opts.coloredMouseOver) || !(flags&Style_MouseOver) ||
                                    (SLIDER_ROUND==opts.sliderStyle &&
                                     (SHADE_BLEND_SELECTED==opts.shadeSliders || SHADE_SELECTED==opts.shadeSliders)));
         int              size(SLIDER_TRIANGULAR==opts.sliderStyle ? 15 : 13);
