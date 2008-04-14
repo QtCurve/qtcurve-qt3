@@ -1261,7 +1261,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>&lt;i&gt;QtCurve uses various hard-coded shading values to draw elements such as button frames, the background for pressed buttons, etc. The following is a brief overview of how each shade is use - use this as a gude only, as shades are used for various things.&lt;br&gt;
+                                    <string>&lt;i&gt;QtCurve uses various hard-coded shading values to draw elements such as button frames, the background for pressed buttons, etc. The following is a brief overview of how each shade is used - use this as a guide only, as shades are used for various things.&lt;br&gt;
 
 1 Is used for the light part of 3d elements - such as the border of tab widgets.&lt;br&gt;
 2 Is used for the lighter shade of striped progressbars.&lt;br&gt;
