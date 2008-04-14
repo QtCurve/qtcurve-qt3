@@ -975,7 +975,7 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox" row="1" column="0">
+                            <widget class="QCheckBox" row="2" column="0">
                                 <property name="name">
                                     <cstring>gradLightBorder</cstring>
                                 </property>
@@ -983,10 +983,10 @@
                                     <string>Light border</string>
                                 </property>
                             </widget>
-                            <widget class="QListView" row="0" column="0">
+                            <widget class="QListView" row="0" column="0" rowspan="2" colspan="1">
                                 <column>
                                     <property name="text">
-                                        <string>Position</string>
+                                        <string>Position (%)</string>
                                     </property>
                                     <property name="clickable">
                                         <bool>true</bool>
@@ -997,7 +997,7 @@
                                 </column>
                                 <column>
                                     <property name="text">
-                                        <string>Value</string>
+                                        <string>Value (%)</string>
                                     </property>
                                     <property name="clickable">
                                         <bool>true</bool>
@@ -1009,50 +1009,136 @@
                                 <property name="name">
                                     <cstring>gradStops</cstring>
                                 </property>
-                            </widget>
-                            <widget class="KPushButton" row="1" column="1">
-                                <property name="name">
-                                    <cstring>addButton</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <widget class="KPushButton" row="1" column="2">
-                                <property name="name">
-                                    <cstring>removeButton</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>7</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                             </widget>
-                            <spacer row="1" column="3">
+                            <widget class="QGroupBox" row="1" column="1">
                                 <property name="name">
-                                    <cstring>spacer9</cstring>
+                                    <cstring>groupBox6</cstring>
                                 </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                <property name="title">
+                                    <string>Gradient Stop</string>
                                 </property>
-                                <property name="sizeType">
-                                    <enum>Minimum</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>19</width>
-                                        <height>6</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QLabel" row="0" column="1" rowspan="1" colspan="3">
+                                <grid>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="KPushButton" row="2" column="3">
+                                        <property name="name">
+                                            <cstring>addButton</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>0</hsizetype>
+                                                <vsizetype>1</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string></string>
+                                        </property>
+                                    </widget>
+                                    <widget class="KPushButton" row="2" column="2">
+                                        <property name="name">
+                                            <cstring>removeButton</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>0</hsizetype>
+                                                <vsizetype>1</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string></string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="1" column="0">
+                                        <property name="name">
+                                            <cstring>textLabel2_3</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Value:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="0" column="0">
+                                        <property name="name">
+                                            <cstring>textLabel1_11</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Position:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="KDoubleNumInput" row="0" column="1" rowspan="1" colspan="3">
+                                        <property name="name">
+                                            <cstring>stopPosition</cstring>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="suffix">
+                                            <string>%</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="KDoubleNumInput" row="1" column="1" rowspan="1" colspan="3">
+                                        <property name="name">
+                                            <cstring>stopValue</cstring>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>200</number>
+                                        </property>
+                                        <property name="suffix">
+                                            <string>%</string>
+                                        </property>
+                                    </widget>
+                                    <spacer row="2" column="0" rowspan="1" colspan="2">
+                                        <property name="name">
+                                            <cstring>spacer12</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>160</width>
+                                                <height>8</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </grid>
+                            </widget>
+                            <widget class="QLabel" row="0" column="1">
                                 <property name="name">
                                     <cstring>textLabel1_9</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>3</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                                 <property name="text">
                                     <string>&lt;i&gt;&lt;b&gt;NOTE: &lt;/b&gt;&lt;br&gt;
 
-&lt;u&gt;Position&lt;/u&gt; has a range of 0.0 to 1.0 - 0.0 being top/left, and 1.0 being bottom/right.&lt;br&gt;
+&lt;u&gt;Position&lt;/u&gt; has a range of 0% to 100% - 0% being top/left, and 100% being bottom/right.&lt;br&gt;
 
-&lt;u&gt;Value&lt;/u&gt; has a range of 0.0 to 2.0. A value of 1.2 implies lightening by 20%, and a value of 0.8 implies darkening by 20%&lt;/i&gt;</string>
+&lt;u&gt;Value&lt;/u&gt; has a range of 0% to 200%. A value of 120% implies lightening by 20%, and a value of 80% implies darkening by 20%&lt;/i&gt;</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignTop</set>
                                 </property>
                             </widget>
                         </grid>
@@ -1407,6 +1493,10 @@
     <includehint>kcolorbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>

@@ -671,7 +671,7 @@ class CGradItem : public QListViewItem
         QListViewItem::okRename(col);
 
         bool    ok(false);
-        double  val=toDouble(text(col), &ok);
+        double  val=toDouble(text(col), &ok)/100.0;
 
         if(!ok || (0==col && (val<0.0 || val>1.0)) || (1==col && (val<0.0 || val>2.0)))
         {
@@ -702,8 +702,8 @@ void QtCurveConfig::gradChanged(int i)
                                      gend((*it).second.grad.end());
 
         for(; git!=gend; ++git)
-            new CGradItem(gradStops, QString().setNum((*git).pos),
-                                     QString().setNum((*git).val));
+            new CGradItem(gradStops, QString().setNum((*git).pos*100.0),
+                                     QString().setNum((*git).val*100.0));
     }
     else
     {
@@ -721,13 +721,13 @@ void QtCurveConfig::itemChanged(QListViewItem *i, int col)
     if(it!=customGradient.end())
     {
         bool   ok;
-        double newVal=toDouble(i->text(col), &ok);
+        double newVal=toDouble(i->text(col), &ok)/100.0;
 
         if(ok && ((0==col && (newVal>=0.0 && newVal<=1.0)) ||
-                (1==col && newVal>=0.0 && newVal<=2.0)) )
+                  (1==col && newVal>=0.0 && newVal<=2.0)) )
         {
-            double pos=0==col ? newVal : i->text(0).toDouble(),
-                   val=1==col ? newVal : i->text(1).toDouble(),
+            double pos=0==(col ? newVal : i->text(0).toDouble())/100.0,
+                   val=1==(col ? newVal : i->text(1).toDouble())/100.0,
                    prev=((CGradItem *)i)->prevVal();
 
             (*it).second.grad.erase(Gradient(col ? pos : prev, col ? prev : val));
@@ -741,65 +741,42 @@ void QtCurveConfig::itemChanged(QListViewItem *i, int col)
 
 void QtCurveConfig::addGradStop()
 {
-    bool    ok;
-    QString val(KInputDialog::getText(i18n("New Gradient Stops"),
-                                      i18n("Please enter a set of new \"position value\" pairs\n"
-                                           "(e.g. \"0.0 0.8 1.0 1.1\")"),
-                                      QString(), &ok, this/*, QValidator *validator*/));
+    bool added(false);
 
-    if(ok)
+    CustomGradientCont::iterator cg=customGradient.find((EAppearance)gradCombo->currentItem());
+
+    if(cg==customGradient.end())
     {
-        QStringList list(QStringList::split(QRegExp("[\\s,]"), val));
+        CustomGradient cust;
 
-        if(list.size() && 0==list.size()%2)
-        {
-            GradientCont                grads;
-            QStringList::const_iterator it(list.begin()),
-                                        end(list.end());
+        cust.lightBorder=gradLightBorder->isChecked();
+        cust.grad.insert(Gradient(stopPosition->value(), stopValue->value()));
+        customGradient[(EAppearance)gradCombo->currentItem()]=cust;
+        added=true;
+    }
+    else
+    {
+        GradientCont::const_iterator it((*cg).second.grad.begin()),
+                                     end((*cg).second.grad.end());
+        double                       pos(stopPosition->value()/100.0),
+                                     val(stopValue->value()/100.0);
 
-            for(; it!=end && ok; ++it)
-            {
-                double pos=toDouble((*it), &ok),
-                        val=ok ? toDouble(*(++it), &ok) : 0.0;
-
-                if(ok && pos>=0.0 && pos<=1.0 &&  val>=0.0 && val<=2.0)
-                    grads.insert(Gradient(pos, val));
-            }
-
-            if(ok)
-                ok=grads.size()>0;
-
-            if(ok)
-            {
-                CustomGradientCont::iterator cg=customGradient.find((EAppearance)gradCombo->currentItem());
-
-                if(cg==customGradient.end())
-                {
-                    CustomGradient cust;
-
-                    cust.lightBorder=gradLightBorder->isChecked();
-                    cust.grad=grads;
-                    customGradient[(EAppearance)gradCombo->currentItem()]=cust;
-                    ok=true;
-                }
+        for(; it!=end; ++it)
+            if(equal(pos, (*it).pos))
+                if(equal(val, (*it).val))
+                    return;
                 else
                 {
-                    unsigned int                 b4=(*cg).second.grad.size();
-                    GradientCont::const_iterator git(grads.begin()),
-                                                 gend(grads.end());
-
-                    for(; git!=gend; ++git)
-                        (*cg).second.grad.insert(*git);
-
-                    ok=(*cg).second.grad.size()!=b4;
+                    (*cg).second.grad.erase(it);
+                    break;
                 }
-            }
-        }
-        else
-            ok=false;
+
+        unsigned int b4=(*cg).second.grad.size();
+        (*cg).second.grad.insert(Gradient(pos, val));
+        added=(*cg).second.grad.size()!=b4;
     }
 
-    if(ok)
+    if(added)
     {
         gradChanged(gradCombo->currentItem());
         emit changed(true);
@@ -835,6 +812,20 @@ void QtCurveConfig::removeGradStop()
     }
 }
 
+void QtCurveConfig::stopSelected(QListViewItem *i)
+{
+    if(i)
+    {
+        stopPosition->setValue(i->text(0).toDouble());
+        stopValue->setValue(i->text(1).toDouble());
+    }
+    else
+    {
+        stopPosition->setValue(0.0);
+        stopValue->setValue(0.0);
+    }
+}
+
 void QtCurveConfig::setupGradientsTab()
 {
     for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
@@ -857,11 +848,14 @@ void QtCurveConfig::setupGradientsTab()
 
     gradStops->setDefaultRenameAction(QListView::Reject);
     gradStops->setAllColumnsShowFocus(true);
+    stopPosition->setRange(0.0, 100.0, 5.0);
+    stopValue->setRange(0.0, 200.0, 5.0);
     connect(gradCombo, SIGNAL(activated(int)), SLOT(gradChanged(int)));
     connect(previewColor, SIGNAL(changed(const QColor &)), gradPreview, SLOT(setColor(const QColor &)));
     connect(gradStops, SIGNAL(itemRenamed(QListViewItem *, int)), SLOT(itemChanged(QListViewItem *, int)));
     connect(addButton, SIGNAL(clicked()), SLOT(addGradStop()));
     connect(removeButton, SIGNAL(clicked()), SLOT(removeGradStop()));
+    connect(gradStops, SIGNAL(selectionChanged(QListViewItem *)), SLOT(stopSelected(QListViewItem *)));
 }
 
 void QtCurveConfig::setupShadesTab()

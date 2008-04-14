@@ -101,6 +101,7 @@ class QtCurveConfig : public QtCurveConfigBase
     void itemChanged(QListViewItem *i, int col);
     void addGradStop();
     void removeGradStop();
+    void stopSelected(QListViewItem *i);
 
     private:
 
