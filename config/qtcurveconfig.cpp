@@ -710,6 +710,8 @@ void QtCurveConfig::gradChanged(int i)
         gradPreview->setGrad(GradientCont());
         gradLightBorder->setChecked(false);
     }
+
+    gradLightBorder->setEnabled(APPEARANCE_SUNKEN!=i);
 }
 
 void QtCurveConfig::itemChanged(QListViewItem *i, int col)
@@ -850,8 +852,8 @@ void QtCurveConfig::setupGradientsTab()
     previewColor->setColor(col);
     gradPreview->setColor(col);
     gradChanged(APPEARANCE_CUSTOM1);
-    addButton->setGuiItem(KGuiItem(i18n("Add"), "list_add"));
-    removeButton->setGuiItem(KGuiItem(i18n("Remove"), "list_remove"));
+    addButton->setGuiItem(KGuiItem(i18n("Add"), "add"));
+    removeButton->setGuiItem(KGuiItem(i18n("Remove"), "remove"));
 
     gradStops->setDefaultRenameAction(QListView::Reject);
     gradStops->setAllColumnsShowFocus(true);
