@@ -3853,7 +3853,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 {
                     p->setPen(itsMenuitemCols[0]);
                     p->drawLine(tr.left(), tr.top()+1, tr.right(), tr.top()+1);
-                    p->setPen(midColor(fill, itsMenuitemCols[0], IS_FLAT(opts.tabAppearance) ? 1.0 : 1.2));
+                    p->setPen(midColor(fill, itsMenuitemCols[0], IS_FLAT(opts.activeTabAppearance) ? 1.0 : 1.2));
                     p->drawLine(tr.left(), tr.top()+2, tr.right(), tr.top()+2);
 
                     p->setClipRect(QRect(tr.x(), tr.y(), tr.width(), 3), QPainter::CoordPainter);
@@ -6323,13 +6323,13 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
 }
 
 void QtCurveStyle::drawCustomGradient(QPainter *p, const QRect &r, bool horiz, const QColor &base,
-                                      CustomGradientCont::const_iterator &cg) const
+                                      CustomGradientCont::const_iterator &cg, bool rev) const
 {
     GradientCont::const_iterator it((*cg).second.grad.begin()),
                                  end((*cg).second.grad.end());
     QColor                       bot;
-    int                          lastPos(horiz ? r.y() : r.x()),
-                                 size(horiz ? r.height() : r.width());
+    int                          size(horiz ? r.height() : r.width()),
+                                 lastPos(0);
 
     p->fillRect(r, base);
 
@@ -6337,20 +6337,28 @@ void QtCurveStyle::drawCustomGradient(QPainter *p, const QRect &r, bool horiz, c
     {
         if(0==i)
         {
-            lastPos=(int)(((*it).pos*size)+0.5);
+            lastPos=(int)(((rev ? 1.0-(*it).pos : (*it).pos)*size)+0.5);
             shade(base, &bot, (*it).val);
         }
         else
         {
             QColor top(bot);
-            int    pos((int)(((*it).pos*size)+0.5));
+            int    pos((int)(((rev ? 1.0-(*it).pos : (*it).pos)*size)+0.5));
 
             shade(base, &bot, (*it).val);
-            drawGradient(top, bot, true, p,
-                         horiz
-                             ? QRect(r.x(), lastPos, r.width(), pos-lastPos)
-                             : QRect(lastPos, r.y(), pos-lastPos, r.height()),
-                         horiz);
+
+            if(rev)
+                drawGradient(bot, top, true, p,
+                            horiz
+                                ? QRect(r.x(), pos, r.width(), lastPos-pos)
+                                : QRect(pos, r.y(), lastPos-pos, r.height()),
+                            horiz);
+            else
+                drawGradient(top, bot, true, p,
+                            horiz
+                                ? QRect(r.x(), lastPos, r.width(), pos-lastPos)
+                                : QRect(lastPos, r.y(), pos-lastPos, r.height()),
+                            horiz);
             lastPos=pos;
         }
     }
