@@ -180,7 +180,7 @@ class QtCurveStyle : public HighContrastStyle
                            bool horiz, double shadeTop, double shadeBot, bool sel, EAppearance bevApp,
                            EWidget w=WIDGET_OTHER) const;
     void drawCustomGradient(QPainter *p, const QRect &r, bool horiz, const QColor &base,
-                            CustomGradientCont::const_iterator &cg) const;
+                            CustomGradientCont::const_iterator &cg, bool rev=false) const;
     void drawGradient(const QColor &top, const QColor &bot, bool increase, QPainter *p,
                       const QRect &r, bool horiz=true) const;
     void drawSbSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, bool slider=false) const;

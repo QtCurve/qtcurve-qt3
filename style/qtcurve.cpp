@@ -3786,10 +3786,10 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 p->fillRect(tr, cg.background());
             else
                 drawBevelGradient(fill, top, p, tr, true,
-                                    top || (active && opts.colorSelTab) ? SHADE_TAB_SEL_LIGHT
-                                        : SHADE_BOTTOM_TAB_SEL_DARK,
-                                    top || (active && opts.colorSelTab) ? SHADE_TAB_SEL_DARK
-                                        : SHADE_BOTTOM_TAB_SEL_LIGHT,
+                                  /*  top || (active && opts.colorSelTab) ? */SHADE_TAB_SEL_LIGHT
+                                        /*: SHADE_BOTTOM_TAB_SEL_DARK*/,
+                                    /*top || (active && opts.colorSelTab) ? */SHADE_TAB_SEL_DARK
+                                        /*: SHADE_BOTTOM_TAB_SEL_LIGHT*/,
                                   active, active ? QTC_SEL_TAB_APP : QTC_NORM_TAB_APP, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT);
 
             drawBorder(cg.background(), p, tr, cg, flags|Style_Horizontal|Style_Enabled,
@@ -6139,7 +6139,8 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
                             ? bevApp
                             : APPEARANCE_GRADIENT);
 
-        bool    selected(opts.colorSelTab && (WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w) ? false : sel);
+        bool    tab(WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w),
+                selected(tab ? false : sel);
         QRect   r(0, 0, horiz ? QTC_PIXMAP_DIMENSION : origRect.width(),
                         horiz ? origRect.height() : QTC_PIXMAP_DIMENSION);
         QString key(createKey(horiz ? r.height() : r.width(), base.rgb(), horiz, increase,
@@ -6153,15 +6154,23 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
 
             QPainter pixPainter(pix);
 
+            if(WIDGET_TAB_TOP==w)
+            {
+                shadeBot=1.0;
+                if(sel && APPEARANCE_INVERTED==app)
+                    shadeTop=0.8;
+            }
+            else if(WIDGET_TAB_BOT==w)
+            {
+                if(sel && APPEARANCE_INVERTED==app)
+                    shadeBot=1.2;
+                else
+                    shadeBot-=fabs(shadeTop-shadeBot);
+                shadeTop=1.0;
+            }
+
             if(!selected && (IS_GLASS(app) || APPEARANCE_SPLIT_GRADIENT==app))
             {
-                if(WIDGET_TAB_BOT==w)
-                {
-                    double t(shadeTop);
-                    shadeTop=shadeBot;
-                    shadeBot=t;
-                }
-
                 double shadeTopA(WIDGET_TAB_BOT==w
                                     ? 1.0
                                     : APPEARANCE_SPLIT_GRADIENT==app
@@ -6265,7 +6274,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
                 CustomGradientCont::const_iterator cg(opts.customGradient.find(app));
 
                 if(cg!=opts.customGradient.end())
-                    drawCustomGradient(&pixPainter, r, horiz, base, cg);
+                    drawCustomGradient(&pixPainter, r, horiz, base, cg, WIDGET_TAB_BOT==w);
                 else
                     p->fillRect(r, base);
             }
@@ -6273,16 +6282,16 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
             {
                 CustomGradientCont::const_iterator cg;
 
-                if(sel && WIDGET_TROUGH!=w & WIDGET_TAB_TOP!=w && WIDGET_TAB_BOT!=w &&
-                   WIDGET_SLIDER_TROUGH!=w &&
+                if(sel && WIDGET_TROUGH!=w && !tab && WIDGET_SLIDER_TROUGH!=w &&
                   (cg=opts.customGradient.find(APPEARANCE_SUNKEN))!=opts.customGradient.end())
                     drawCustomGradient(&pixPainter, r, horiz, base, cg);
                 else
                 {
                     QColor top,
-                        bot,
-                        baseTopCol(opts.colorSelTab && sel && (WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w)
+                           bot,
+                           baseTopCol(opts.colorSelTab && sel && tab
                                        ? midColor(base, itsMenuitemCols[0], QTC_COLOR_SEL_TAB_FACTOR) : base);
+                    bool   inc(selected || tab || APPEARANCE_INVERTED!=app ? increase : !increase);
 
                     if(equal(1.0, shadeTop))
                         top=baseTopCol;
@@ -6293,8 +6302,10 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
                     else
                         shade(base, &bot, shadeBot);
 
-                    drawGradient(top, bot, sel || APPEARANCE_INVERTED!=app ? increase : !increase,
-                                 &pixPainter, r, horiz);
+                    if(WIDGET_TAB_BOT==w)
+                        inc=!inc;
+
+                    drawGradient(top, bot, inc, &pixPainter, r, horiz);
                 }
             }
             pixPainter.end();
@@ -6319,6 +6330,8 @@ void QtCurveStyle::drawCustomGradient(QPainter *p, const QRect &r, bool horiz, c
     QColor                       bot;
     int                          lastPos(horiz ? r.y() : r.x()),
                                  size(horiz ? r.height() : r.width());
+
+    p->fillRect(r, base);
 
     for(int i=0; it!=end; ++it, ++i)
     {

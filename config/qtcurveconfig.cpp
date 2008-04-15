@@ -369,6 +369,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(lvAppearance);
     insertAppearanceEntries(sliderAppearance);
     insertAppearanceEntries(tabAppearance, false, false);
+    insertAppearanceEntries(activeTabAppearance, false, false);
     insertAppearanceEntries(progressAppearance);
     insertAppearanceEntries(menuitemAppearance);
     insertAppearanceEntries(titlebarAppearance, true, false);
@@ -410,7 +411,8 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(toolbarAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(lvAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(sliderAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
-    connect(tabAppearance, SIGNAL(activated(int)), SLOT(tabAppearanceChanged()));
+    connect(tabAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(activeTabAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(toolbarSeparators, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(splitters, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(fixParentlessDialogs, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -610,14 +612,6 @@ void QtCurveConfig::stripedProgressChanged()
     animatedProgress->setEnabled(STRIPE_NONE!=stripedProgress->currentItem());
     if(animatedProgress->isChecked() && STRIPE_NONE==stripedProgress->currentItem())
         animatedProgress->setChecked(false);
-    updateChanged();
-}
-
-void QtCurveConfig::tabAppearanceChanged()
-{
-    if(colorSelTab->isChecked() && APPEARANCE_GRADIENT!=tabAppearance->currentItem())
-        colorSelTab->setChecked(false);
-    colorSelTab->setEnabled(APPEARANCE_GRADIENT==tabAppearance->currentItem());
     updateChanged();
 }
 
@@ -1069,6 +1063,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.lvAppearance=(EAppearance)lvAppearance->currentItem();
     opts.sliderAppearance=(EAppearance)sliderAppearance->currentItem();
     opts.tabAppearance=(EAppearance)tabAppearance->currentItem();
+    opts.activeTabAppearance=(EAppearance)activeTabAppearance->currentItem();
     opts.toolbarSeparators=(ELine)toolbarSeparators->currentItem();
     opts.splitters=(ELine)splitters->currentItem();
     opts.customSlidersColor=customSlidersColor->color();
@@ -1148,6 +1143,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     lvAppearance->setCurrentItem(opts.lvAppearance);
     sliderAppearance->setCurrentItem(opts.sliderAppearance);
     tabAppearance->setCurrentItem(opts.tabAppearance);
+    activeTabAppearance->setCurrentItem(opts.activeTabAppearance);
     toolbarSeparators->setCurrentItem(opts.toolbarSeparators);
     splitters->setCurrentItem(opts.splitters);
     shadeSliders->setCurrentItem(opts.shadeSliders);
@@ -1249,6 +1245,7 @@ bool QtCurveConfig::settingsChanged()
          lvAppearance->currentItem()!=currentStyle.lvAppearance ||
          sliderAppearance->currentItem()!=currentStyle.sliderAppearance ||
          tabAppearance->currentItem()!=currentStyle.tabAppearance ||
+         activeTabAppearance->currentItem()!=currentStyle.activeTabAppearance ||
          progressAppearance->currentItem()!=currentStyle.progressAppearance ||
          menuitemAppearance->currentItem()!=currentStyle.menuitemAppearance ||
          titlebarAppearance->currentItem()!=currentStyle.titlebarAppearance ||

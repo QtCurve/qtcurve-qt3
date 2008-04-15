@@ -253,17 +253,6 @@
                             <cstring>splitters</cstring>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="8" column="2" rowspan="1" colspan="4">
-                        <property name="name">
-                            <cstring>highlightTab</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Highlight selected</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>This will cause a coloured stripe to be drawn over the current tab.</string>
-                        </property>
-                    </widget>
                     <widget class="QComboBox" row="3" column="2" rowspan="1" colspan="6">
                         <property name="name">
                             <cstring>sliderThumbs</cstring>
@@ -308,17 +297,12 @@
                             <string>%</string>
                         </property>
                     </widget>
-                    <widget class="QComboBox" row="8" column="1">
-                        <property name="name">
-                            <cstring>tabAppearance</cstring>
-                        </property>
-                    </widget>
                     <widget class="QLabel" row="8" column="0">
                         <property name="name">
                             <cstring>textLabel1_8_2_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Tabs:</string>
+                            <string>Tabs (normal/active):</string>
                         </property>
                         <property name="whatsThis" stdset="0">
                             <string>This controls the % that widgets will be highlighted by when the mouse hovers over them</string>
@@ -523,6 +507,27 @@
                         </property>
                         <property name="text">
                             <string>Combo splitter</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="8" column="4" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>highlightTab</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Highlight selected</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This will cause a coloured stripe to be drawn over the current tab.</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="8" column="1">
+                        <property name="name">
+                            <cstring>activeTabAppearance</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="8" column="2" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>tabAppearance</cstring>
                         </property>
                     </widget>
                 </grid>
@@ -740,7 +745,7 @@
                                     <cstring>customMenuTextColor</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Custom text colors (normal/selected):</string>
+                                    <string>Custom text colors (active/normal):</string>
                                 </property>
                             </widget>
                             <widget class="QComboBox" row="5" column="1" rowspan="1" colspan="3">
@@ -1441,6 +1446,7 @@
     <tabstop>lvAppearance</tabstop>
     <tabstop>lvLines</tabstop>
     <tabstop>selectionAppearance</tabstop>
+    <tabstop>activeTabAppearance</tabstop>
     <tabstop>tabAppearance</tabstop>
     <tabstop>highlightTab</tabstop>
     <tabstop>colorSelTab</tabstop>
@@ -1510,6 +1516,7 @@
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>knuminput.h</includehint>
