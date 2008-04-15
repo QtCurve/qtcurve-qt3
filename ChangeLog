@@ -23,6 +23,9 @@
 16. Allow custom shades to be specified.
 17. Add option to specify active tab appearance.
 18. Don't do coloured mouse-overs for sunken buttons.
+19. Apply 'border menuitems' only to popup menus.
+20. If lightening popup menus, and not bordering menuitems, then remove 1
+    pix border arund popup menus.
 
 0.58
 ----

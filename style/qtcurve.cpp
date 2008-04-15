@@ -5741,6 +5741,10 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
         case PM_ButtonDefaultIndicator:
             return 0;
         case PM_DefaultFrameWidth:
+            if (opts.lighterPopupMenuBgnd && !opts.borderMenuitems &&
+                widget && ::qt_cast<QPopupMenu *>(widget))
+                return 1;
+
             if(QTC_DO_EFFECT && widget && !isFormWidget(widget) &&
                (::qt_cast<const QLineEdit *>(widget) || ::qt_cast<QDateTimeEditBase*>(widget) ||
                 ::qt_cast<QTextEdit*>(widget)))
@@ -6006,7 +6010,7 @@ void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColor
 void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &cg,
                                 bool mbi, int round, const QColor &bgnd, const QColor *cols) const
 {
-    if(opts.borderMenuitems)
+    if(mbi || opts.borderMenuitems)
     {
         int  flags(Style_Raised);
         bool stdColor(!mbi || SHADE_BLEND_SELECTED!=opts.shadeMenubars);
