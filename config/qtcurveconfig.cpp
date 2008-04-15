@@ -747,8 +747,6 @@ void QtCurveConfig::itemChanged(QListViewItem *i, int col)
 
 void QtCurveConfig::addGradStop()
 {
-    bool added(false);
-
     CustomGradientCont::iterator cg=customGradient.find((EAppearance)gradCombo->currentItem());
 
     if(cg==customGradient.end())
@@ -759,6 +757,8 @@ void QtCurveConfig::addGradStop()
         cust.grad.insert(Gradient(stopPosition->value(), stopValue->value()));
         customGradient[(EAppearance)gradCombo->currentItem()]=cust;
         added=true;
+        gradChanged(gradCombo->currentItem());
+        emit changed(true);
     }
     else
     {
@@ -779,13 +779,22 @@ void QtCurveConfig::addGradStop()
 
         unsigned int b4=(*cg).second.grad.size();
         (*cg).second.grad.insert(Gradient(pos, val));
-        added=(*cg).second.grad.size()!=b4;
-    }
 
-    if(added)
-    {
-        gradChanged(gradCombo->currentItem());
-        emit changed(true);
+        if((*cg).second.grad.size()!=b4)
+        {
+            gradPreview->setGrad((*cg).second.grad);
+
+            QListViewItem *prev=gradStops->selectedItem();
+
+            if(prev)
+                gradStops->setSelected(prev, false);
+
+            CGradItem *i=new CGradItem(gradStops, QString().setNum(pos*100.0),
+                                                  QString().setNum(val*100.0));
+
+            gradStops->setSelected(i, true);
+            emit changed(true);
+        }
     }
 }
 
