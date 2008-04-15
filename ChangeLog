@@ -22,6 +22,7 @@
 15. Allow up to 5 custom defined gradients.
 16. Allow custom shades to be specified.
 17. Add option to specify active tab appearance.
+18. Don't do coloured mouse-overs for sunken buttons.
 
 0.58
 ----
