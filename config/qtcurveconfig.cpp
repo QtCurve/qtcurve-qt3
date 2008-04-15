@@ -680,6 +680,18 @@ class CGradItem : public QListViewItem
         }
     }
 
+    int compare(QListViewItem *i, int col, bool) const
+    {
+        double a(text(col).toDouble()),
+               b(i->text(col).toDouble());
+
+        return equal(a, b)
+                ? 0
+                : a<b
+                    ? -1
+                    : 1;
+    }
+
     double prevVal() const { return prev; }
 
     private:
@@ -798,8 +810,8 @@ void QtCurveConfig::removeGradStop()
 
         if(it!=customGradient.end())
         {
-            double pos=cur->text(0).toDouble(),
-                   val=cur->text(1).toDouble();
+            double pos=cur->text(0).toDouble()/100.0,
+                   val=cur->text(1).toDouble()/100.0;
 
             (*it).second.grad.erase(Gradient(pos, val));
             gradPreview->setGrad((*it).second.grad);
@@ -812,8 +824,41 @@ void QtCurveConfig::removeGradStop()
     }
 }
 
-void QtCurveConfig::stopSelected(QListViewItem *i)
+void QtCurveConfig::updateGradStop()
 {
+    QListViewItem *i=gradStops->currentItem();
+
+    CustomGradientCont::iterator cg=customGradient.find((EAppearance)gradCombo->currentItem());
+
+    if(i)
+    {
+        double curPos=i->text(0).toDouble()/100.0,
+               curVal=i->text(1).toDouble()/100.0,
+               newPos(stopPosition->value()/100.0),
+               newVal(stopValue->value()/100.0);
+
+        if(!equal(newPos, curPos) || !equal(newVal, curVal))
+        {
+            (*cg).second.grad.erase(Gradient(curPos, curVal));
+            (*cg).second.grad.insert(Gradient(newPos, newVal));
+
+            i->setText(0, QString().setNum(stopPosition->value()));
+            i->setText(1, QString().setNum(stopValue->value()));
+            gradPreview->setGrad((*cg).second.grad);
+            emit changed(true);
+        }
+    }
+    else
+        addGradStop();
+}
+
+void QtCurveConfig::stopSelected()
+{
+    QListViewItem *i=gradStops->selectedItem();
+
+    removeButton->setEnabled(i);
+    updateButton->setEnabled(i);
+
     if(i)
     {
         stopPosition->setValue(i->text(0).toDouble());
@@ -845,17 +890,22 @@ void QtCurveConfig::setupGradientsTab()
     gradChanged(APPEARANCE_CUSTOM1);
     addButton->setGuiItem(KGuiItem(i18n("Add"), "add"));
     removeButton->setGuiItem(KGuiItem(i18n("Remove"), "remove"));
+    updateButton->setGuiItem(KGuiItem(i18n("Update"), "button_ok"));
 
     gradStops->setDefaultRenameAction(QListView::Reject);
     gradStops->setAllColumnsShowFocus(true);
+    gradStops->setSortColumn(0);
     stopPosition->setRange(0.0, 100.0, 5.0);
     stopValue->setRange(0.0, 200.0, 5.0);
+    removeButton->setEnabled(false);
+    updateButton->setEnabled(false);
     connect(gradCombo, SIGNAL(activated(int)), SLOT(gradChanged(int)));
     connect(previewColor, SIGNAL(changed(const QColor &)), gradPreview, SLOT(setColor(const QColor &)));
     connect(gradStops, SIGNAL(itemRenamed(QListViewItem *, int)), SLOT(itemChanged(QListViewItem *, int)));
     connect(addButton, SIGNAL(clicked()), SLOT(addGradStop()));
     connect(removeButton, SIGNAL(clicked()), SLOT(removeGradStop()));
-    connect(gradStops, SIGNAL(selectionChanged(QListViewItem *)), SLOT(stopSelected(QListViewItem *)));
+    connect(updateButton, SIGNAL(clicked()), SLOT(updateGradStop()));
+    connect(gradStops, SIGNAL(selectionChanged()), SLOT(stopSelected()));
 }
 
 void QtCurveConfig::setupShadesTab()
