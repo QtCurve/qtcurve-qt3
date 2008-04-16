@@ -32,6 +32,7 @@ class QPopupMenu;
 class QListViewItem;
 class KDoubleNumInput;
 class CExportThemeDialog;
+class CStackItem;
 
 class CGradientPreview : public QWidget
 {
@@ -94,8 +95,10 @@ class QtCurveConfig : public QtCurveConfigBase
     void shadeCheckRadioChanged();
     void customMenuTextColorChanged();
     void stripedProgressChanged();
+    void activeTabAppearanceChanged();
     void passwordCharClicked();
 
+    void changeStack();
     void gradChanged(int i);
     void itemChanged(QListViewItem *i, int col);
     void addGradStop();
@@ -105,6 +108,7 @@ class QtCurveConfig : public QtCurveConfigBase
 
     private:
 
+    void setupStack();
     void setupGradientsTab();
     void setupShadesTab();
     void setupShade(KDoubleNumInput *w, int shade);
@@ -125,6 +129,7 @@ class QtCurveConfig : public QtCurveConfigBase
     CGradientPreview   *gradPreview;
     CustomGradientCont customGradient;
     KDoubleNumInput    *shadeVals[NUM_STD_SHADES];
+    CStackItem         *lastCategory;
 };
 
 #endif

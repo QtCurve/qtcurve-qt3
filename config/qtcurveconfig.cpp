@@ -34,6 +34,8 @@
 #include <qpainter.h>
 #include <qregexp.h>
 #include <qsettings.h>
+#include <qwidgetstack.h>
+#include <qheader.h>
 #include <klocale.h>
 #include <kcolorbutton.h>
 #include <kconfig.h>
@@ -156,6 +158,103 @@ class CharSelectDialog : public KDialogBase
     private:
 
     KCharSelect *itsSelector;
+};
+
+class CStackItem : public QListViewItem
+{
+    public:
+
+    CStackItem(QListView *p, const QString &text, int s)
+        : QListViewItem(p, text),
+          stackId(s)
+    {
+    }
+
+    int compare(QListViewItem *i, int, bool) const
+    {
+        int b=((CStackItem *)i)->stackId;
+
+        return stackId==b
+                ? 0
+                : stackId<b
+                    ? -1
+                    : 1;
+    }
+
+    int stack() { return stackId; }
+
+    private:
+
+    int stackId;
+};
+
+//
+// QString.toDouble returns ok=true for "xx" ???
+static double toDouble(const QString &str, bool *ok)
+{
+    if(ok)
+    {
+        QString stripped(str.stripWhiteSpace());
+        int     size(stripped.length());
+
+        for(int i=0; i<size; ++i)
+            if(!stripped[i].isNumber() && stripped[i]!='.')
+            {
+                *ok=false;
+                return 0.0;
+            }
+    }
+
+    return str.toDouble(ok);
+}
+
+class CGradItem : public QListViewItem
+{
+    public:
+
+    CGradItem(QListView *p, const QString &a, const QString &b)
+        : QListViewItem(p, a, b)
+    {
+        setRenameEnabled(0, true);
+        setRenameEnabled(1, true);
+    }
+
+    virtual ~CGradItem() { }
+
+    void okRename(int col)
+    {
+        QString prevStr(text(col));
+
+        prev=prevStr.toDouble();
+        QListViewItem::okRename(col);
+
+        bool    ok(false);
+        double  val=toDouble(text(col), &ok)/100.0;
+
+        if(!ok || (0==col && (val<0.0 || val>1.0)) || (1==col && (val<0.0 || val>2.0)))
+        {
+            setText(col, prevStr);
+            startRename(col);
+        }
+    }
+
+    int compare(QListViewItem *i, int col, bool) const
+    {
+        double a(text(col).toDouble()),
+               b(i->text(col).toDouble());
+
+        return equal(a, b)
+                ? 0
+                : a<b
+                    ? -1
+                    : 1;
+    }
+
+    double prevVal() const { return prev; }
+
+    private:
+
+    double prev;
 };
 
 CGradientPreview::CGradientPreview(QWidget *p)
@@ -357,7 +456,8 @@ static void insertSliderStyleEntries(QComboBox *combo)
 
 QtCurveConfig::QtCurveConfig(QWidget *parent)
              : QtCurveConfigBase(parent),
-               exportDialog(NULL)
+               exportDialog(NULL),
+               lastCategory(NULL)
 {
     titleLabel->setText("QtCurve " VERSION " - (C) Craig Drummond, 2003-2008");
     insertShadeEntries(shadeSliders, false);
@@ -412,7 +512,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(lvAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(sliderAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(tabAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
-    connect(activeTabAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(activeTabAppearance, SIGNAL(activated(int)), SLOT(activeTabAppearanceChanged()));
     connect(toolbarSeparators, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(splitters, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(fixParentlessDialogs, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -486,6 +586,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
 
     loadStyles(subMenu);
     setupGradientsTab();
+    setupStack();
 }
 
 QtCurveConfig::~QtCurveConfig()
@@ -615,6 +716,16 @@ void QtCurveConfig::stripedProgressChanged()
     updateChanged();
 }
 
+void QtCurveConfig::activeTabAppearanceChanged()
+{
+    int current(activeTabAppearance->currentItem());
+
+    if(colorSelTab->isChecked() && APPEARANCE_GRADIENT!=current && APPEARANCE_INVERTED!=current)
+        colorSelTab->setChecked(false);
+    colorSelTab->setEnabled(APPEARANCE_GRADIENT==current || APPEARANCE_INVERTED==current);
+    updateChanged();
+}
+
 void QtCurveConfig::passwordCharClicked()
 {
     int              cur(toInt(passwordChar->text()));
@@ -624,74 +735,49 @@ void QtCurveConfig::passwordCharClicked()
         setPasswordChar(dlg.currentChar());
 }
 
-//
-// QString.toDouble returns ok=true for "xx" ???
-static double toDouble(const QString &str, bool *ok)
+void QtCurveConfig::setupStack()
 {
-    if(ok)
-    {
-        QString stripped(str.stripWhiteSpace());
-        int     size(stripped.length());
+    int i=0;
+    lastCategory=new CStackItem(stackList, i18n("General"), i++);
+    new CStackItem(stackList, i18n("Splitters"), i++);
+    new CStackItem(stackList, i18n("Sliders and Scrollbars"), i++);
+    new CStackItem(stackList, i18n("Progressbars"), i++);
+    new CStackItem(stackList, i18n("Default Button"),i++);
+    new CStackItem(stackList, i18n("Mouse-over"), i++);
+    new CStackItem(stackList, i18n("Listviews"), i++);
+    new CStackItem(stackList, i18n("Tabs"), i++);
+    new CStackItem(stackList, i18n("Checks and Radios"), i++);
+    new CStackItem(stackList, i18n("Titlebars"), i++);
+    new CStackItem(stackList, i18n("Menus and Toolbars"), i++);
+    new CStackItem(stackList, i18n("Advanced Settings"), i++);
+    new CStackItem(stackList, i18n("Custom Gradients"), i++);
+    new CStackItem(stackList, i18n("Custom Shades"), i++);
 
-        for(int i=0; i<size; ++i)
-            if(!stripped[i].isNumber() && stripped[i]!='.')
-            {
-                *ok=false;
-                return 0.0;
-            }
-    }
-
-    return str.toDouble(ok);
+    stackList->header()->hide();
+    stackList->setSelected(lastCategory, true);
+    stackList->setCurrentItem(lastCategory);
+    connect(stackList, SIGNAL(selectionChanged()), SLOT(changeStack()));
 }
 
-class CGradItem : public QListViewItem
+void QtCurveConfig::changeStack()
 {
-    public:
+    CStackItem *item=(CStackItem *)(stackList->selectedItem());
 
-    CGradItem(QListView *p, const QString &a, const QString &b)
-        : QListViewItem(p, a, b)
+    if(item)
+        lastCategory=item;
+    else
     {
-        setRenameEnabled(0, true);
-        setRenameEnabled(1, true);
-    }
-
-    virtual ~CGradItem() { }
-
-    void okRename(int col)
-    {
-        QString prevStr(text(col));
-
-        prev=prevStr.toDouble();
-        QListViewItem::okRename(col);
-
-        bool    ok(false);
-        double  val=toDouble(text(col), &ok)/100.0;
-
-        if(!ok || (0==col && (val<0.0 || val>1.0)) || (1==col && (val<0.0 || val>2.0)))
+        item=lastCategory;
+        if(item)
         {
-            setText(col, prevStr);
-            startRename(col);
+            stackList->setSelected(item, true);
+            stackList->setCurrentItem(item);
         }
     }
 
-    int compare(QListViewItem *i, int col, bool) const
-    {
-        double a(text(col).toDouble()),
-               b(i->text(col).toDouble());
-
-        return equal(a, b)
-                ? 0
-                : a<b
-                    ? -1
-                    : 1;
-    }
-
-    double prevVal() const { return prev; }
-
-    private:
-
-    double prev;
-};
+    if(item)
+        stack->raiseWidget(item->stack());
+}
 
 void QtCurveConfig::gradChanged(int i)
 {
@@ -799,7 +885,7 @@ void QtCurveConfig::addGradStop()
 
 void QtCurveConfig::removeGradStop()
 {
-    QListViewItem *cur=gradStops->currentItem();
+    QListViewItem *cur=gradStops->selectedItem();
 
     if(cur)
     {
@@ -828,7 +914,7 @@ void QtCurveConfig::removeGradStop()
 
 void QtCurveConfig::updateGradStop()
 {
-    QListViewItem *i=gradStops->currentItem();
+    QListViewItem *i=gradStops->selectedItem();
 
     CustomGradientCont::iterator cg=customGradient.find((EAppearance)gradCombo->currentItem());
 
