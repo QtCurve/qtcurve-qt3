@@ -27,6 +27,7 @@
 20. If lightening popup menus, and not bordering menuitems, then remove 1
     pix border arund popup menus.
 21. Change default to not border menuitems.
+22. Re-arrange config GUI.
 
 0.58
 ----
