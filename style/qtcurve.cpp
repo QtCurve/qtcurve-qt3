@@ -6151,17 +6151,27 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &r, const QColorGroup &
         p->setBrush(itsMenuitemCols[ORIGINAL_SHADE]);
         p->drawRect(r);
     }
-    if(!opts.fillProgress && QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
+    if(QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
     {
-        p->setPen(midColor(cg.background(), itsMenuitemCols[QT_STD_BORDER]));
+        QRect rb(r);
+
+        if(opts.fillProgress)
+        {
+            const QColor *use(backgroundColors(cg));
+
+            p->setPen(use[QT_STD_BORDER]);
+            rb.addCoords(1, 1, -1, -1);
+        }
+        else
+            p->setPen(midColor(cg.background(), itsMenuitemCols[QT_STD_BORDER]));
         if(!(round&CORNER_TL) || !drawFull)
-            p->drawPoint(r.x(), r.y());
+            p->drawPoint(rb.x(), rb.y());
         if(!(round&CORNER_BL) || !drawFull)
-            p->drawPoint(r.x(), r.y()+r.height()-1);
+            p->drawPoint(rb.x(), rb.y()+rb.height()-1);
         if(!(round&CORNER_TR) || !drawFull)
-            p->drawPoint(r.x()+r.width()-1, r.y());
+            p->drawPoint(rb.x()+rb.width()-1, rb.y());
         if(!(round&CORNER_BR) || !drawFull)
-            p->drawPoint(r.x()+r.width()-1, r.y()+r.height()-1);
+            p->drawPoint(rb.x()+rb.width()-1, rb.y()+rb.height()-1);
     }
 }
 
