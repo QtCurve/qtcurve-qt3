@@ -35,7 +35,6 @@
 #include <qregexp.h>
 #include <qsettings.h>
 #include <qwidgetstack.h>
-#include <qheader.h>
 #include <klocale.h>
 #include <kcolorbutton.h>
 #include <kconfig.h>
@@ -757,9 +756,9 @@ void QtCurveConfig::setupStack()
     new CStackItem(stackList, i18n("Custom Gradients"), i++);
     new CStackItem(stackList, i18n("Custom Shades"), i++);
 
-    stackList->header()->hide();
     stackList->setSelected(lastCategory, true);
     stackList->setCurrentItem(lastCategory);
+    stackList->setResizeMode(QListView::LastColumn);
     connect(stackList, SIGNAL(selectionChanged()), SLOT(changeStack()));
 }
 
@@ -991,6 +990,7 @@ void QtCurveConfig::setupGradientsTab()
     stopValue->setRange(0, 200, 5);
     removeButton->setEnabled(false);
     updateButton->setEnabled(false);
+    gradStops->setResizeMode(QListView::AllColumns);
     connect(gradCombo, SIGNAL(activated(int)), SLOT(gradChanged(int)));
     connect(previewColor, SIGNAL(changed(const QColor &)), gradPreview, SLOT(setColor(const QColor &)));
     connect(gradStops, SIGNAL(itemRenamed(QListViewItem *, int)), SLOT(itemChanged(QListViewItem *, int)));

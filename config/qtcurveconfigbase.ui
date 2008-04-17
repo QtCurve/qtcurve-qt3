@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>688</width>
+            <width>752</width>
             <height>504</height>
         </rect>
     </property>
@@ -44,7 +44,7 @@
         <widget class="QListView" row="1" column="0">
             <column>
                 <property name="text">
-                    <string></string>
+                    <string>Category</string>
                 </property>
                 <property name="clickable">
                     <bool>true</bool>
@@ -63,6 +63,12 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                 </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>150</width>
+                    <height>0</height>
+                </size>
             </property>
         </widget>
         <widget class="KPushButton" row="2" column="0">
@@ -1550,7 +1556,7 @@
                                 </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
-                                        <hsizetype>0</hsizetype>
+                                        <hsizetype>1</hsizetype>
                                         <vsizetype>7</vsizetype>
                                         <horstretch>0</horstretch>
                                         <verstretch>0</verstretch>
