@@ -98,6 +98,7 @@ class QtCurveStyle : public HighContrastStyle
         APP_KONTACT,
         APP_OPERA,
         APP_SYSTEMSETTINGS,
+        APP_KATE,
         APP_OTHER
     };
 

@@ -845,6 +845,8 @@ void QtCurveStyle::polish(QApplication *app)
         itsThemedApp=APP_KONTACT;
     else if ("konqueror"==appName)
         itsThemedApp=APP_KONQUEROR;
+    else if ("kate"==appName)
+        itsThemedApp=APP_KATE;
     else if ("kpresenter"==appName)
         itsThemedApp=APP_KPRESENTER;
     else if ("soffice.bin"==appName)
@@ -1117,6 +1119,16 @@ void QtCurveStyle::polish(QWidget *widget)
        0==qstrcmp(widget->parentWidget()->className(), "Kontact::MainWindow"))
         ((QHBox *)widget)->setLineWidth(0);
 
+    if (opts.squareScrollViews && widget &&
+        (::qt_cast<const QScrollView *>(widget) ||
+        (widget->parentWidget() && ::qt_cast<const QFrame *>(widget) &&
+            widget->parentWidget()->inherits("KateView"))) &&
+        ((QFrame *)widget)->lineWidth()>1)
+        ((QFrame *)widget)->setLineWidth(opts.gtkScrollViews ? 1 : 2);
+    else if (opts.lighterPopupMenuBgnd && !opts.borderMenuitems &&
+        widget && ::qt_cast<const QPopupMenu *>(widget))
+        ((QFrame *)widget)->setLineWidth(1);
+
     if (::qt_cast<QRadioButton *>(widget) || ::qt_cast<QCheckBox *>(widget))
     {
         bool framelessGroupBoxCheckBox=(opts.framelessGroupBoxes && isCheckBoxOfGroupBox(widget));
@@ -1309,10 +1321,8 @@ void QtCurveStyle::polish(QWidget *widget)
                 itsAnimationTimer->start(PROGRESS_ANIMATION, false);
         }
     }
-#ifdef QTC_HIGHLIGHT_SCROLVIEWS
-    else if(::qt_cast<QScrollView*>(widget))
+    else if(opts.highlightScrollViews && ::qt_cast<QScrollView*>(widget))
         widget->installEventFilter(this);
-#endif
     else if(!qstrcmp(widget->className(), "KonqFrameStatusBar"))
     {
         // This disables the white background of the KonquerorFrameStatusBar.
@@ -1377,7 +1387,6 @@ void QtCurveStyle::polish(QWidget *widget)
            widget->inherits("KCMultiWidget") && widget->parentWidget()->inherits("QViewportWidget"))
             ((QScrollView *)(widget->parentWidget()->parentWidget()))->setLineWidth(0);
     }
-
 
     KStyle::polish(widget);
 }
@@ -1466,10 +1475,8 @@ void QtCurveStyle::unPolish(QWidget *widget)
         itsProgAnimWidgets.remove(widget);
         widget->removeEventFilter(this);
     }
-#ifdef QTC_HIGHLIGHT_SCROLVIEWS
-    else if(::qt_cast<QScrollView*>(widget))
+    else if(opts.highlightScrollViews && ::qt_cast<QScrollView*>(widget))
         widget->removeEventFilter(this);
-#endif
     else if(0==qstrcmp(widget->name(), kdeToolbarWidget))
     {
         widget->removeEventFilter(this);
@@ -1826,13 +1833,11 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
 
     switch(event->type())
     {
-#ifdef QTC_HIGHLIGHT_SCROLVIEWS
         case QEvent::FocusIn:
         case QEvent::FocusOut:
-            if(object->isWidgetType() && ::qt_cast<QScrollView*>(object))
+            if(opts.highlightScrollViews && object->isWidgetType() && ::qt_cast<QScrollView*>(object))
                 ((QWidget *)object)->repaint(false);
             break;
-#endif
         case QEvent::Hide:
         case QEvent::Show:
             if(::qt_cast<QListBox *>(object) &&
@@ -2486,24 +2491,13 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
         p->fillRect(rx, cg.background());
     p->fillRect(QRect(rx.x()+2, rx.y()+2, rx.x()+rx.width()-3, rx.y()+rx.height()-3), cg.base());
 
-    p->setPen(APPEARANCE_FLAT!=opts.appearance || highlight
-                ? midColor(cg.base(), use[3])
-                : cg.base());
-    p->drawLine(r.x()+1, r.y()+1, r.x()+1, r.y()+r.height()-2);
-    p->drawLine(r.x()+1, r.y()+1, r.x()+r.width()-(isSpin ? 0 : 2), r.y()+1);
-
-    p->setPen(flags&Style_Enabled ? midColor(cg.base(), use[0]) : cg.base());
-    p->drawLine(r.x()+r.width()-(isSpin && highlight ? 3 : 2), r.y()+1,
-                r.x()+r.width()-(isSpin && highlight ? 3 : 2), r.y()+r.height()-2);
-    p->drawLine(r.x()+1, r.y()+r.height()-2, r.x()+r.width()-(isSpin ? 0 : 2), r.y()+r.height()-2);
-
     if(highlight && isSpin)
-    {
-        p->setPen(use[QT_STD_BORDER]);
-        p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-2, r.y()+r.height()-1);
-    }
+        if(reverse)
+            r.addCoords(1, 0, 0, 0);
+        else
+            r.addCoords(0, 0, -1, 0);
 
-    drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal), round, use);
+    drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal), round, use, WIDGET_OTHER, true, BORDER_SUNKEN);
 
     if(doEtch)
     {
@@ -3174,21 +3168,39 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
             if(APP_OPENOFFICE==itsThemedApp || data.lineWidth()>0 || data.isDefault())
             {
-                const QColor *use(
-#ifdef QTC_HIGHLIGHT_SCROLVIEWS
-                                    flags&Style_HasFocus ? itsMenuitemCols :
-#endif
+                const QWidget *widget=p && p->device() ? dynamic_cast<const QWidget *>(p->device()) : 0L;
+                bool          sv(widget && ::qt_cast<const QScrollView *>(widget)),
+                              square(opts.squareScrollViews &&
+                                     (sv ||
+                                      (widget && widget->parentWidget() && ::qt_cast<const QFrame *>(widget) &&
+                                       widget->parentWidget()->inherits("KateView"))));
+                const QColor *use(opts.highlightScrollViews && !square && flags&Style_HasFocus ? itsMenuitemCols :
                                     backgroundColors(cg));
 
-                itsFormMode=itsIsTransKicker;
-                drawBorder(cg.background(), p, r, cg,
-                           (SFlags)(flags|Style_Horizontal|Style_Enabled),
-                           ROUNDED_ALL, use, WIDGET_OTHER, APP_KICKER!=itsThemedApp, itsIsTransKicker
-                                                                           ? BORDER_FLAT
-                                                                           : flags&Style_Sunken
-                                                                               ? BORDER_SUNKEN
-                                                                               : BORDER_RAISED);
-                itsFormMode=false;
+                if(square)
+                {
+                    p->setPen(use[QT_STD_BORDER]);
+                    p->drawRect(r);
+                }
+                else
+                {
+                    itsFormMode=itsIsTransKicker;
+                    if(sv && opts.sunkenScrollViews && ((QFrame *)widget)->lineWidth()>2)
+                    {
+                        if(!opts.highlightScrollViews)
+                            flags&=~Style_HasFocus;
+                        drawEntryField(p, r, cg, flags, (flags&Style_Enabled) && (flags&Style_HasFocus), ROUNDED_ALL);
+                    }
+                    else
+                        drawBorder(cg.background(), p, r, cg,
+                                   (SFlags)(flags|Style_Horizontal|Style_Enabled),
+                                   ROUNDED_ALL, use, WIDGET_OTHER, APP_KICKER!=itsThemedApp, itsIsTransKicker
+                                                                                   ? BORDER_FLAT
+                                                                                   : flags&Style_Sunken
+                                                                                       ? BORDER_SUNKEN
+                                                                                       : BORDER_RAISED);
+                    itsFormMode=false;
+                }
             }
             else
                 QCommonStyle::drawPrimitive(pe, p, r, cg, flags, data);
@@ -3198,8 +3210,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             const QColor *use(backgroundColors(cg));
 
             drawBorder(cg.background(), p, r, cg,
-                        (SFlags)(flags|Style_Horizontal|Style_Enabled),
-                        ROUNDED_ALL, use, WIDGET_OTHER, true, BORDER_RAISED, false);
+                       (SFlags)(flags|Style_Horizontal|Style_Enabled),
+                       ROUNDED_ALL, use, WIDGET_OTHER, true, BORDER_RAISED, false);
             break;
         }
         case PE_PanelPopup:
@@ -3485,6 +3497,20 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         }
         case PE_PanelLineEdit:
         {
+            if(opts.squareScrollViews)
+            {
+                const QWidget *widget=p && p->device() ? dynamic_cast<const QWidget *>(p->device()) : 0L;
+
+                if(widget && ::qt_cast<const QScrollView *>(widget))
+                {
+                    const QColor *use(backgroundColors(cg));
+
+                    p->setPen(use[QT_STD_BORDER]);
+                    p->drawRect(r);
+                    break;
+                }
+            }
+
             bool isReadOnly(false),
                  isEnabled(true);
             // panel is highlighted by default if it has focus, but if we have access to the
@@ -5742,13 +5768,19 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
         case PM_ButtonDefaultIndicator:
             return 0;
         case PM_DefaultFrameWidth:
-            if (opts.lighterPopupMenuBgnd && !opts.borderMenuitems &&
-                widget && ::qt_cast<QPopupMenu *>(widget))
-                return 1;
+            if(APP_KATE==itsThemedApp && widget && widget->parentWidget() && widget->parentWidget()->parentWidget() &&
+               ::qt_cast<const QWidgetStack *>(widget) &&
+               ::qt_cast<const QTabWidget *>(widget->parentWidget()) &&
+               ::qt_cast<const QVBox *>(widget->parentWidget()->parentWidget()))
+                return 0;
+
+            if (opts.squareScrollViews && widget && ::qt_cast<const QScrollView *>(widget))
+                return opts.gtkScrollViews ? 1 : 2;
 
             if(QTC_DO_EFFECT && widget && !isFormWidget(widget) &&
-               (::qt_cast<const QLineEdit *>(widget) || ::qt_cast<QDateTimeEditBase*>(widget) ||
-                ::qt_cast<QTextEdit*>(widget)))
+               (::qt_cast<const QLineEdit *>(widget) || ::qt_cast<const QDateTimeEditBase*>(widget) ||
+                ::qt_cast<const QTextEdit*>(widget)) ||
+                (opts.sunkenScrollViews && ::qt_cast<const QScrollView*>(widget)))
                 return 3;
             else
                 return 2;
@@ -6296,18 +6328,38 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
                 {
                     QColor top,
                            bot,
-                           baseTopCol(opts.colorSelTab && sel && tab
-                                       ? midColor(base, itsMenuitemCols[0], QTC_COLOR_SEL_TAB_FACTOR) : base);
+                           baseTopCol(base),
+                           baseBotCol(base);
                     bool   inc(selected || tab || APPEARANCE_INVERTED!=app ? increase : !increase);
+
+                    if(opts.colorSelTab && sel && tab)
+                    {
+                        if(WIDGET_TAB_BOT==w)
+                            baseBotCol=midColor(base, itsMenuitemCols[0], QTC_COLOR_SEL_TAB_FACTOR);
+                        else
+                            baseTopCol=midColor(base, itsMenuitemCols[0], QTC_COLOR_SEL_TAB_FACTOR);
+
+                        if((WIDGET_TAB_TOP==w && APPEARANCE_INVERTED!=app) ||
+                            (WIDGET_TAB_BOT==w && APPEARANCE_INVERTED==app))
+                        {
+                            shadeTop=SHADE_COLOR_SEL_TAP_TOP;
+                            shadeBot=1.0;
+                        }
+                        else
+                        {
+                            shadeTop=1.0;
+                            shadeBot=SHADE_COLOR_SEL_TAP_TOP;
+                        }
+                    }
 
                     if(equal(1.0, shadeTop))
                         top=baseTopCol;
                     else
                         shade(baseTopCol, &top, shadeTop);
                     if(equal(1.0, shadeBot))
-                        bot=base;
+                        bot=baseBotCol;
                     else
-                        shade(base, &bot, shadeBot);
+                        shade(baseBotCol, &bot, shadeBot);
 
                     if(WIDGET_TAB_BOT==w)
                         inc=!inc;

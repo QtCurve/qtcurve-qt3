@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>686</width>
-            <height>495</height>
+            <width>688</width>
+            <height>504</height>
         </rect>
     </property>
     <property name="caption">
@@ -44,7 +44,7 @@
         <widget class="QListView" row="1" column="0">
             <column>
                 <property name="text">
-                    <string> </string>
+                    <string></string>
                 </property>
                 <property name="clickable">
                     <bool>true</bool>
@@ -713,9 +713,6 @@
                         <property name="text">
                             <string>Selection appearance (KDE4 &amp; Gtk2):</string>
                         </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>This controls the % that widgets will be highlighted by when the mouse hovers over them</string>
-                        </property>
                     </widget>
                     <widget class="QComboBox" row="1" column="1">
                         <property name="name">
@@ -777,6 +774,68 @@
                 </property>
                 <attribute name="id">
                     <number>7</number>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QCheckBox" row="0" column="0">
+                        <property name="name">
+                            <cstring>gtkScrollViews</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Scrollbars on the outside</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="1" column="0">
+                        <property name="name">
+                            <cstring>highlightScrollViews</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Highlight on focus (KDE)</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="2" column="0">
+                        <property name="name">
+                            <cstring>squareScrollViews</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Don't round</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="3" column="0">
+                        <property name="name">
+                            <cstring>sunkenScrollViews</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw etched when button effect set to etched/shadow.</string>
+                        </property>
+                    </widget>
+                    <spacer row="4" column="0">
+                        <property name="name">
+                            <cstring>spacer28_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>7</width>
+                                <height>16</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>WStackPage</cstring>
+                </property>
+                <attribute name="id">
+                    <number>8</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -868,7 +927,7 @@
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>8</number>
+                    <number>9</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -960,7 +1019,7 @@
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>9</number>
+                    <number>10</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1020,7 +1079,7 @@
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>10</number>
+                    <number>11</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1308,7 +1367,7 @@
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>11</number>
+                    <number>12</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1350,14 +1409,6 @@
 &lt;p&gt;If you enable this option, QtCurve will try to 'fix' this by assigning the dialogs a parent.&lt;/p&gt;
 
 &lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; This may brake some applications, as it wiill alter the behaviour of dialogs in a way the application has not intended. Therefore, please use with care.&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
-                        <property name="name">
-                            <cstring>gtkScrollViews</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Gtk style scrollviews</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
@@ -1441,7 +1492,7 @@
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>12</number>
+                    <number>13</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1597,7 +1648,7 @@
                                             <string>Position:</string>
                                         </property>
                                     </widget>
-                                    <widget class="KDoubleNumInput" row="0" column="1" rowspan="1" colspan="4">
+                                    <widget class="KIntNumInput" row="0" column="1" rowspan="1" colspan="4">
                                         <property name="name">
                                             <cstring>stopPosition</cstring>
                                         </property>
@@ -1608,7 +1659,7 @@
                                             <string>%</string>
                                         </property>
                                     </widget>
-                                    <widget class="KDoubleNumInput" row="1" column="1" rowspan="1" colspan="4">
+                                    <widget class="KIntNumInput" row="1" column="1" rowspan="1" colspan="4">
                                         <property name="name">
                                             <cstring>stopValue</cstring>
                                         </property>
@@ -1710,7 +1761,7 @@
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>13</number>
+                    <number>14</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1919,6 +1970,10 @@
     <tabstop>lvAppearance</tabstop>
     <tabstop>selectionAppearance</tabstop>
     <tabstop>lvLines</tabstop>
+    <tabstop>gtkScrollViews</tabstop>
+    <tabstop>highlightScrollViews</tabstop>
+    <tabstop>squareScrollViews</tabstop>
+    <tabstop>sunkenScrollViews</tabstop>
     <tabstop>activeTabAppearance</tabstop>
     <tabstop>highlightTab</tabstop>
     <tabstop>colorSelTab</tabstop>
@@ -1948,7 +2003,6 @@
     <tabstop>toolbarAppearance</tabstop>
     <tabstop>toolbarSeparators</tabstop>
     <tabstop>gtkComboMenus</tabstop>
-    <tabstop>gtkScrollViews</tabstop>
     <tabstop>gtkButtonOrder</tabstop>
     <tabstop>mapKdeIcons</tabstop>
     <tabstop>fixParentlessDialogs</tabstop>

@@ -28,6 +28,8 @@
     pix border arund popup menus.
 21. Change default to not border menuitems.
 22. Re-arrange config GUI.
+23. Remove some frames from kate.
+24. Scrolview options: allow sunken, highlight, and square.
 
 0.58
 ----

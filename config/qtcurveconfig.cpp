@@ -558,6 +558,9 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(scrollbarType, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(shading, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(gtkScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(squareScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(highlightScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(sunkenScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gtkComboMenus, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gtkButtonOrder, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(mapKdeIcons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -745,6 +748,7 @@ void QtCurveConfig::setupStack()
     new CStackItem(stackList, i18n("Default Button"),i++);
     new CStackItem(stackList, i18n("Mouse-over"), i++);
     new CStackItem(stackList, i18n("Listviews"), i++);
+    new CStackItem(stackList, i18n("Scrollviews"), i++);
     new CStackItem(stackList, i18n("Tabs"), i++);
     new CStackItem(stackList, i18n("Checks and Radios"), i++);
     new CStackItem(stackList, i18n("Titlebars"), i++);
@@ -949,13 +953,13 @@ void QtCurveConfig::stopSelected()
 
     if(i)
     {
-        stopPosition->setValue(i->text(0).toDouble());
-        stopValue->setValue(i->text(1).toDouble());
+        stopPosition->setValue(i->text(0).toInt());
+        stopValue->setValue(i->text(1).toInt());
     }
     else
     {
-        stopPosition->setValue(0.0);
-        stopValue->setValue(0.0);
+        stopPosition->setValue(0);
+        stopValue->setValue(0);
     }
 }
 
@@ -983,8 +987,8 @@ void QtCurveConfig::setupGradientsTab()
     gradStops->setDefaultRenameAction(QListView::Reject);
     gradStops->setAllColumnsShowFocus(true);
     gradStops->setSortColumn(0);
-    stopPosition->setRange(0.0, 100.0, 5.0);
-    stopValue->setRange(0.0, 200.0, 5.0);
+    stopPosition->setRange(0, 100, 5);
+    stopValue->setRange(0, 200, 5);
     removeButton->setEnabled(false);
     updateButton->setEnabled(false);
     connect(gradCombo, SIGNAL(activated(int)), SLOT(gradChanged(int)));
@@ -1187,6 +1191,9 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.customCheckRadioColor=customCheckRadioColor->color();
     opts.shading=(EShading)shading->currentItem();
     opts.gtkScrollViews=gtkScrollViews->isChecked();
+    opts.highlightScrollViews=highlightScrollViews->isChecked();
+    opts.squareScrollViews=squareScrollViews->isChecked();
+    opts.sunkenScrollViews=sunkenScrollViews->isChecked();
     opts.gtkComboMenus=gtkComboMenus->isChecked();
     opts.gtkButtonOrder=gtkButtonOrder->isChecked();
     opts.mapKdeIcons=mapKdeIcons->isChecked();
@@ -1279,6 +1286,9 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
 
     shading->setCurrentItem(opts.shading);
     gtkScrollViews->setChecked(opts.gtkScrollViews);
+    highlightScrollViews->setChecked(opts.highlightScrollViews);
+    squareScrollViews->setChecked(opts.squareScrollViews);
+    sunkenScrollViews->setChecked(opts.sunkenScrollViews);
     gtkComboMenus->setChecked(opts.gtkComboMenus);
     gtkButtonOrder->setChecked(opts.gtkButtonOrder);
     mapKdeIcons->setChecked(opts.mapKdeIcons);
@@ -1349,6 +1359,9 @@ bool QtCurveConfig::settingsChanged()
 
          shading->currentItem()!=(int)currentStyle.shading ||
          gtkScrollViews->isChecked()!=currentStyle.gtkScrollViews ||
+         highlightScrollViews->isChecked()!=currentStyle.highlightScrollViews ||
+         squareScrollViews->isChecked()!=currentStyle.squareScrollViews ||
+         sunkenScrollViews->isChecked()!=currentStyle.sunkenScrollViews ||
          gtkComboMenus->isChecked()!=currentStyle.gtkComboMenus ||
          gtkButtonOrder->isChecked()!=currentStyle.gtkButtonOrder ||
          mapKdeIcons->isChecked()!=currentStyle.mapKdeIcons ||
