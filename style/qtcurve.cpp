@@ -3017,7 +3017,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 {
                     p->setPen(use[QTC_CR_MO_FILL]);
                     p->drawArc(QRect(x+1, y+1, QTC_RADIO_SIZE-2, QTC_RADIO_SIZE-2), 0, 360*16);
-                    p->drawArc(QRect(x+2, y+2, QTC_RADIO_SIZE-4, QTC_RADIO_SIZE-4), 0, 360*16);
+//                     p->drawArc(QRect(x+2, y+2, QTC_RADIO_SIZE-4, QTC_RADIO_SIZE-4), 0, 360*16);
 //                     p->drawArc(QRect(x+3, y+3, QTC_RADIO_SIZE-6, QTC_RADIO_SIZE-6), 0, 360*16);
                     p->drawPoint(x+2, y+4);
                     p->drawPoint(x+4, y+2);
@@ -3048,8 +3048,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
 
                 p->drawPixmap(rect.x(), rect.y(),
-                              *getPixmap(use[opts.coloredMouseOver && sflags&Style_MouseOver ? 4 : QT_BORDER(flags&Style_Enabled)],
-                                         PIX_RADIO_BORDER, 0.8));
+                              *getPixmap(use[QT_BORDER(flags&Style_Enabled)], PIX_RADIO_BORDER, 0.8));
 
                 if(QApplication::NormalColor!=QApplication::colorSpec() || itsFormMode)
                 {
@@ -5499,10 +5498,10 @@ QRect QtCurveStyle::querySubControlMetrics(ComplexControl control, const QWidget
                 const QComboBox *cb(::qt_cast<const QComboBox *>(widget));
 
                 if(cb && cb->editable())
-                    r=QRect((r.x()+r.width()-1)-18, r.y(), 19, r.height());
+                    r=QRect(r.x()+r.width()-19, r.y(), 19, r.height());
             }
-            else if (reverse && SC_ComboBoxEditField==sc)
-                r.addCoords(-1, 0, -2, 0);
+            else if (SC_ComboBoxEditField==sc && !QTC_DO_EFFECT)
+                r.addCoords(0, 0, -1, 0);
             return r;
         }
         case CC_ScrollBar:
