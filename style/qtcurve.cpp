@@ -602,10 +602,34 @@ static bool readQt4(QPalette &pal, QFont &font, int &contrast)
 {
     if(useQt4Settings())
     {
-        QFile file(xdgConfigFolder()+QString("Trolltech.conf"));
+        static QPalette qt4Pal;
+        static QFont    qt4Font;
+        static bool     read(false);
 
-        if(file.exists())
-            return readQt4(file, pal, font, contrast);
+        if(read)
+        {
+            pal=qt4Pal;
+            font=qt4Font;
+        }
+        else
+        {
+            QFile file(xdgConfigFolder()+QString("Trolltech.conf"));
+
+            read=true;
+            qt4Pal=pal;
+            qt4Font=font;
+            if(file.exists())
+            {
+                bool ok=readQt4(file, pal, font, contrast);
+
+                if(ok)
+                {
+                    qt4Pal=pal;
+                    qt4Font=font;
+                }
+                return ok;
+            }
+        }
     }
     return false;
 }
@@ -4391,27 +4415,36 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             break;
         case CE_ProgressBarGroove:
         {
-            QRect rx(r);
-            bool  doEtch(QTC_DO_EFFECT);
+            QRect  rx(r);
+            bool   doEtch(QTC_DO_EFFECT);
+            QColor col;
 
             if(doEtch)
                 rx.addCoords(1, 1, -1, -1);
 
-            if(opts.gradientPbGroove)
-                drawBevelGradient(flags & Style_Enabled ? cg.base() : cg.background(), false, p, rx, true,
-                                  getWidgetShade(WIDGET_TROUGH, true, false, opts.progressAppearance),
-                                  getWidgetShade(WIDGET_TROUGH, false, false, opts.progressAppearance),
-                                  false, APPEARANCE_GRADIENT, WIDGET_TROUGH);
-            else
+            switch(opts.progressGrooveColor)
             {
-                p->setBrush(flags & Style_Enabled ? cg.base() : cg.background());
-                p->drawRect(rx);
+                default:
+                case ECOLOR_BASE:
+                    col=cg.base();
+                    break;
+                case ECOLOR_BACKGROUND:
+                    col=cg.background();
+                    break;
+                case ECOLOR_DARK:
+                    col=itsBackgroundCols[2];
             }
+
+            drawBevelGradient(col, true, p, rx, true,
+                                getWidgetShade(WIDGET_PBAR_TROUGH, true, false, opts.progressGrooveAppearance),
+                                getWidgetShade(WIDGET_PBAR_TROUGH, false, false, opts.progressGrooveAppearance),
+                                false, opts.progressGrooveAppearance, WIDGET_PBAR_TROUGH);
 
             const QColor *use(backgroundColors(cg));
 
             drawBorder(cg.background(), p, rx, cg, (SFlags)(flags|Style_Horizontal),
-                       ROUNDED_ALL, use, WIDGET_OTHER, true, opts.gradientPbGroove ? BORDER_FLAT : BORDER_SUNKEN);
+                       ROUNDED_ALL, use, WIDGET_OTHER, true,
+                       IS_FLAT(opts.progressGrooveAppearance) && ECOLOR_DARK!=opts.progressGrooveColor ? BORDER_SUNKEN : BORDER_FLAT);
 
             if(doEtch)
                 drawEtch(p, r, cg, false);
@@ -6130,25 +6163,27 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &r, const QColorGroup &
         }
     }
 
+    const QColor *use=flags&Style_Enabled || ECOLOR_BACKGROUND==opts.progressGrooveColor ? itsMenuitemCols : itsBackgroundCols;
+
     if(drawFull || opts.fillProgress)
     {
         flags|=Style_Raised|Style_Horizontal;
 
-        drawLightBevel(cg.background(), p, r, cg, flags, round, itsMenuitemCols[ORIGINAL_SHADE],
-                       itsMenuitemCols, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
+        drawLightBevel(cg.background(), p, r, cg, flags, round, use[ORIGINAL_SHADE],
+                       use, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
 
         if(drawStripe && opts.stripedProgress)
         {
             p->setClipRegion(outer);
-            drawLightBevel(cg.background(), p, r, cg, flags, round, itsMenuitemCols[1],
-                           itsMenuitemCols, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
+            drawLightBevel(cg.background(), p, r, cg, flags, round, use[1],
+                           use, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
             p->setClipping(false);
         }
     }
     else
     {
-        p->setPen(itsMenuitemCols[QT_STD_BORDER]);
-        p->setBrush(itsMenuitemCols[ORIGINAL_SHADE]);
+        p->setPen(use[QT_STD_BORDER]);
+        p->setBrush(use[ORIGINAL_SHADE]);
         p->drawRect(r);
     }
     if(QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
@@ -6163,7 +6198,7 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &r, const QColorGroup &
             rb.addCoords(1, 1, -1, -1);
         }
         else
-            p->setPen(midColor(cg.background(), itsMenuitemCols[QT_STD_BORDER]));
+            p->setPen(midColor(cg.background(), use[QT_STD_BORDER]));
         if(!(round&CORNER_TL) || !drawFull)
             p->drawPoint(rb.x(), rb.y());
         if(!(round&CORNER_BL) || !drawFull)

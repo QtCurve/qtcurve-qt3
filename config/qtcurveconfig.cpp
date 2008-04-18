@@ -358,7 +358,7 @@ static void insertShadeEntries(QComboBox *combo, bool withDarken, bool checkRadi
 static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true)
 {
     for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
-        combo->insertItem(i18n("Custom %1").arg((i-APPEARANCE_CUSTOM1)+1));
+        combo->insertItem(i18n("Custom gradient %1").arg((i-APPEARANCE_CUSTOM1)+1));
 
     combo->insertItem(i18n("Flat"));
     combo->insertItem(i18n("Raised"));
@@ -387,9 +387,9 @@ static void insertDefBtnEntries(QComboBox *combo)
     combo->insertItem(i18n("Corner indicator"));
     combo->insertItem(i18n("Font color thin border"));
     combo->insertItem(i18n("Selected background thick border"));
-    combo->insertItem(i18n("Tint with selected background"));
-    combo->insertItem(i18n("Add a slight glow"));
-    combo->insertItem(i18n("None"));
+    combo->insertItem(i18n("Selected background tinting"));
+    combo->insertItem(i18n("A slight glow"));
+    combo->insertItem(i18n("No indicator"));
 }
 
 static void insertScrollbarEntries(QComboBox *combo)
@@ -453,6 +453,13 @@ static void insertSliderStyleEntries(QComboBox *combo)
     combo->insertItem(i18n("Triangular"));
 }
 
+static void insertEColorEntries(QComboBox *combo)
+{
+    combo->insertItem(i18n("Base color"));
+    combo->insertItem(i18n("Background color"));
+    combo->insertItem(i18n("Darkened background color"));
+}
+
 QtCurveConfig::QtCurveConfig(QWidget *parent)
              : QtCurveConfigBase(parent),
                exportDialog(NULL),
@@ -470,6 +477,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(tabAppearance, false, false);
     insertAppearanceEntries(activeTabAppearance, false, false);
     insertAppearanceEntries(progressAppearance);
+    insertAppearanceEntries(progressGrooveAppearance);
     insertAppearanceEntries(menuitemAppearance);
     insertAppearanceEntries(titlebarAppearance, true, false);
     insertAppearanceEntries(selectionAppearance, true, false);
@@ -487,6 +495,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertShadingEntries(shading);
     insertStripeEntries(stripedProgress);
     insertSliderStyleEntries(sliderStyle);
+    insertEColorEntries(progressGrooveColor);
 
     highlightFactor->setMinValue(MIN_HIGHLIGHT_FACTOR);
     highlightFactor->setMaxValue(MAX_HIGHLIGHT_FACTOR);
@@ -518,7 +527,6 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(fillSlider, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(sliderStyle, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(roundMbTopOnly, SIGNAL(toggled(bool)), SLOT(updateChanged()));
-    connect(gradientPbGroove, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(fillProgress, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(darkerBorders, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(comboSplitter, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -529,6 +537,8 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(stdSidebarButtons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(borderMenuitems, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(progressAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(progressGrooveAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(progressGrooveColor, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(menuitemAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(titlebarAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(selectionAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
@@ -965,8 +975,8 @@ void QtCurveConfig::stopSelected()
 void QtCurveConfig::setupGradientsTab()
 {
     for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
-        gradCombo->insertItem(i18n("Custom %1").arg((i-APPEARANCE_CUSTOM1)+1));
-    gradCombo->insertItem(i18n("Sunken"));
+        gradCombo->insertItem(i18n("Custom gradient %1").arg((i-APPEARANCE_CUSTOM1)+1));
+    gradCombo->insertItem(i18n("Custom sunken gradient"));
 
     gradCombo->setCurrentItem(APPEARANCE_CUSTOM1);
 
@@ -1173,7 +1183,6 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.fillSlider=fillSlider->isChecked();
     opts.sliderStyle=(ESliderStyle)sliderStyle->currentItem();
     opts.roundMbTopOnly=roundMbTopOnly->isChecked();
-    opts.gradientPbGroove=gradientPbGroove->isChecked();
     opts.fillProgress=fillProgress->isChecked();
     opts.darkerBorders=darkerBorders->isChecked();
     opts.comboSplitter=comboSplitter->isChecked();
@@ -1184,6 +1193,8 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.stdSidebarButtons=stdSidebarButtons->isChecked();
     opts.borderMenuitems=borderMenuitems->isChecked();
     opts.progressAppearance=(EAppearance)progressAppearance->currentItem();
+    opts.progressGrooveAppearance=(EAppearance)progressGrooveAppearance->currentItem();
+    opts.progressGrooveColor=(EColor)progressGrooveColor->currentItem();
     opts.menuitemAppearance=(EAppearance)menuitemAppearance->currentItem();
     opts.titlebarAppearance=(EAppearance)titlebarAppearance->currentItem();
     opts.selectionAppearance=(EAppearance)selectionAppearance->currentItem();
@@ -1267,7 +1278,6 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     fillSlider->setChecked(opts.fillSlider);
     sliderStyle->setCurrentItem(opts.sliderStyle);
     roundMbTopOnly->setChecked(opts.roundMbTopOnly);
-    gradientPbGroove->setChecked(opts.gradientPbGroove);
     fillProgress->setChecked(opts.fillProgress);
     darkerBorders->setChecked(opts.darkerBorders);
     comboSplitter->setChecked(opts.comboSplitter);
@@ -1278,6 +1288,8 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     stdSidebarButtons->setChecked(opts.stdSidebarButtons);
     borderMenuitems->setChecked(opts.borderMenuitems);
     progressAppearance->setCurrentItem(opts.progressAppearance);
+    progressGrooveAppearance->setCurrentItem(opts.progressGrooveAppearance);
+    progressGrooveColor->setCurrentItem(opts.progressGrooveColor);
     menuitemAppearance->setCurrentItem(opts.menuitemAppearance);
     titlebarAppearance->setCurrentItem(opts.titlebarAppearance);
     selectionAppearance->setCurrentItem(opts.selectionAppearance);
@@ -1326,7 +1338,6 @@ bool QtCurveConfig::settingsChanged()
          fillSlider->isChecked()!=currentStyle.fillSlider ||
          sliderStyle->currentItem()!=currentStyle.sliderStyle ||
          roundMbTopOnly->isChecked()!=currentStyle.roundMbTopOnly ||
-         gradientPbGroove->isChecked()!=currentStyle.gradientPbGroove ||
          fillProgress->isChecked()!=currentStyle.fillProgress ||
          darkerBorders->isChecked()!=currentStyle.darkerBorders ||
          comboSplitter->isChecked()!=currentStyle.comboSplitter ||
@@ -1351,6 +1362,8 @@ bool QtCurveConfig::settingsChanged()
          tabAppearance->currentItem()!=currentStyle.tabAppearance ||
          activeTabAppearance->currentItem()!=currentStyle.activeTabAppearance ||
          progressAppearance->currentItem()!=currentStyle.progressAppearance ||
+         progressGrooveAppearance->currentItem()!=currentStyle.progressGrooveAppearance ||
+         progressGrooveColor->currentItem()!=currentStyle.progressGrooveColor ||
          menuitemAppearance->currentItem()!=currentStyle.menuitemAppearance ||
          titlebarAppearance->currentItem()!=currentStyle.titlebarAppearance ||
          selectionAppearance->currentItem()!=currentStyle.selectionAppearance ||
