@@ -118,6 +118,9 @@
                         <property name="text">
                             <string>Combo splitter</string>
                         </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This option controls whether a line is drawn near non-editable combo box arrows.</string>
+                        </property>
                     </widget>
                     <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="2">
                         <property name="name">
@@ -133,6 +136,9 @@
                         </property>
                         <property name="text">
                             <string>Standard buttons for sidebars</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Select this to have the sidebar buttons in konqueror, kate, kaffeine, ktorrent, drawn as per normal buttons - otherwise they will be drawn in a more flat style.</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
@@ -306,6 +312,9 @@
                         <property name="name">
                             <cstring>sliderAppearance</cstring>
                         </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This appearance setting affects both scrollbar sliders, and other sliders.</string>
+                        </property>
                     </widget>
                     <widget class="QLabel" row="0" column="0">
                         <property name="name">
@@ -335,6 +344,9 @@
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This color setting affects both scrollbar sliders, and other sliders.</string>
+                        </property>
                     </widget>
                     <widget class="KColorButton" row="1" column="2">
                         <property name="name">
@@ -356,6 +368,9 @@
                         <property name="name">
                             <cstring>sliderStyle</cstring>
                         </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This setting only affects standard sliders - i.e. not scrollbar sliders. 'Triangular' is a very similar style to plastik's sliders.</string>
+                        </property>
                     </widget>
                     <widget class="QComboBox" row="4" column="1">
                         <property name="name">
@@ -368,6 +383,15 @@
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                             </sizepolicy>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This controls the position, and number, of buttons on a scrollbar.
+
+KDE - 1 button at the top/left, and two at the bottom/right
+Windows - 1 botton at each end
+Platinum -  no buttons at the top/left, two at bottom/right
+Next - two buttons at the top/left, none at bottom/right
+None - no buttons, only the slider</string>
                         </property>
                     </widget>
                     <widget class="QComboBox" row="5" column="1">
@@ -457,9 +481,6 @@
                     <widget class="QComboBox" row="0" column="1">
                         <property name="name">
                             <cstring>progressAppearance</cstring>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The setting here affects the general appearance - and will be applied to buttons, scrollbars, sliders, combo boxes, and spin buttons.</string>
                         </property>
                     </widget>
                     <widget class="QComboBox" row="0" column="2">
@@ -663,9 +684,6 @@
                         <property name="name">
                             <cstring>coloredMouseOver</cstring>
                         </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The setting here affects the general appearance - and will be applied to buttons, scrollbars, sliders, combo boxes, and spin buttons.</string>
-                        </property>
                     </widget>
                     <spacer row="0" column="2">
                         <property name="name">
@@ -816,7 +834,7 @@
                             <cstring>squareScrollViews</cstring>
                         </property>
                         <property name="text">
-                            <string>Don't round</string>
+                            <string>Always draw with a square frame - regardless of the general round setting.</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="3" column="0">
@@ -991,7 +1009,7 @@
                             <cstring>crHighlight</cstring>
                         </property>
                         <property name="text">
-                            <string>Highlight background</string>
+                            <string>Highlight text background</string>
                         </property>
                     </widget>
                     <spacer row="0" column="3">
@@ -1402,14 +1420,10 @@
                             <cstring>inactiveHighlight</cstring>
                         </property>
                         <property name="text">
-                            <string>Use blended background/highlight colour for highlight of inactive elements</string>
+                            <string>Use blended background/highlight color for highlight of inactive elements</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>&lt;h2&gt;&lt;font color="#ff0000"&gt;Warning: Experimental!&lt;/font&gt;&lt;/h1&gt;&lt;p&gt;&lt;p&gt;Some applications - such as Kate, Kaffeine, and GIMP - produce dialogs that have no 'parent'. This causes the dialog to recieve an entry in the taskbar, and allows the dialog to be minimised independantly of the main application window.&lt;/p&gt;
-
-&lt;p&gt;If you enable this option, QtCurve will try to 'fix' this by assigning the dialogs a parent.&lt;/p&gt;
-
-&lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; This may brake some applications, as it wiill alter the behaviour of dialogs in a way the application has not intended. Therefore, please use with care.&lt;/p&gt;</string>
+                            <string>Selecting this option will cause the highlight colour of inactive items (e.g. those in inactive windows) to be drawn using a blen of the background and highlight colors.</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
@@ -1499,6 +1513,9 @@
                         </property>
                         <property name="text">
                             <string>Gtk style comboboxes (KDE4)</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>In Gtk, the list that is attached to a combo-box appears in the same style as a popup-menu. KDE4 has the ability to mimic this look.</string>
                         </property>
                     </widget>
                 </grid>
