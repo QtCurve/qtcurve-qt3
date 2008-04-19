@@ -6441,14 +6441,14 @@ void QtCurveStyle::drawCustomGradient(QPainter *p, const QRect &r, bool horiz, c
         if(0==i)
         {
             lastPos=(int)(((rev ? 1.0-(*it).pos : (*it).pos)*size)+0.5);
-            shade(base, &bot, (*it).val);
+            shade(base, &bot, rev ? 1.0+(1.0-(*it).val) : (*it).val);
         }
         else
         {
             QColor top(bot);
             int    pos((int)(((rev ? 1.0-(*it).pos : (*it).pos)*size)+0.5));
 
-            shade(base, &bot, (*it).val);
+            shade(base, &bot, rev ? 1.0+(1.0-(*it).val) : (*it).val);
 
             if(rev)
                 drawGradient(bot, top, true, p,
