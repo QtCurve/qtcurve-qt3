@@ -1958,7 +1958,10 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                  lightBorder(QTC_DRAW_LIGHT_BORDER(sunken , w, app)),
                  doColouredMouseOver(!sunken && doBorder &&
                                     opts.coloredMouseOver && flags&Style_MouseOver &&
-                                    WIDGET_UNCOLOURED_MO_BUTTON!=w &&
+                                    !(flags&QTC_DW_CLOSE_BUTTON) &&
+#ifdef QTC_DONT_COLOUR_MOUSEOVER_TBAR_BUTTONS
+                                    !(flags&QTC_STD_TOOLBUTTON) &&
+#endif
                                     (!IS_SLIDER(w) || (WIDGET_SB_SLIDER==w && opts.coloredMouseOver)) &&
                                     (flags&QTC_CHECK_BUTTON || flags&QTC_TOGGLE_BUTTON || !sunken)),
                  plastikMouseOver(doColouredMouseOver && (MO_PLASTIK==opts.coloredMouseOver || WIDGET_SB_SLIDER==w)),
@@ -2739,14 +2742,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                            getFill(flags, use), use, true, true,
                            flags&QTC_NO_ETCH_BUTTON
                                 ? WIDGET_NO_ETCH_BTN
-                                : flags&QTC_DW_CLOSE_BUTTON
-#ifdef QTC_DONT_COLOUR_MOUSEOVER_TBAR_BUTTONS
-                                   || flags&QTC_STD_TOOLBUTTON
-#endif
-                                    ? WIDGET_UNCOLOURED_MO_BUTTON
-                                    : flags&Style_ButtonDefault && flags&Style_Enabled
-                                        ? WIDGET_DEF_BUTTON
-                                        : WIDGET_STD_BUTTON);
+                                : flags&Style_ButtonDefault && flags&Style_Enabled
+                                    ? WIDGET_DEF_BUTTON
+                                    : WIDGET_STD_BUTTON);
 
             if(IND_COLORED==opts.defBtnIndicator && flags&Style_ButtonDefault && flags&Style_Enabled)
             {
