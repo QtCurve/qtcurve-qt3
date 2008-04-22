@@ -21,7 +21,7 @@
   Boston, MA 02110-1301, USA.
 */
 
-#define QTC_COMMON_ONLY_COVERTERS
+#define QTC_COMMON_FUNCTIONS
 #define QTC_CONFIG_DIALOG
 
 #include <qtcurveconfigbase.h>
@@ -29,7 +29,33 @@
 #include "common.h"
 
 class QPopupMenu;
+class QListViewItem;
+class KDoubleNumInput;
 class CExportThemeDialog;
+class CStackItem;
+
+class CGradientPreview : public QWidget
+{
+    Q_OBJECT
+
+    public:
+
+    CGradientPreview(QWidget *p);
+
+    QSize sizeHint() const;
+    QSize minimumSizeHint() const;
+    void paintEvent(QPaintEvent *);
+    void setGrad(const GradientCont &s);
+
+    public slots:
+
+    void setColor(const QColor &col);
+
+    private:
+
+    QColor       color;
+    GradientCont stops;
+};
 
 class QtCurveConfig : public QtCurveConfigBase
 {
@@ -61,17 +87,33 @@ class QtCurveConfig : public QtCurveConfigBase
     void exportStyle();
     void exportTheme();
     void emboldenToggled();
-    void dbiChanged();
+    void defBtnIndicatorChanged();
+    void buttonEffectChanged();
+    void coloredMouseOverChanged();
     void shadeSlidersChanged();
     void shadeMenubarsChanged();
     void shadeCheckRadioChanged();
     void customMenuTextColorChanged();
     void stripedProgressChanged();
-    void tabAppearanceChanged();
+    void activeTabAppearanceChanged();
     void passwordCharClicked();
+
+    void changeStack();
+    void gradChanged(int i);
+    void itemChanged(QListViewItem *i, int col);
+    void addGradStop();
+    void removeGradStop();
+    void updateGradStop();
+    void stopSelected();
 
     private:
 
+    void setupStack();
+    void setupGradientsTab();
+    void setupShadesTab();
+    void setupShade(KDoubleNumInput *w, int shade);
+    void populateShades(const Options &opts);
+    bool diffShades(const Options &opts);
     void setPasswordChar(int ch);
     void loadStyle(const QString &file);
     void setOptions(Options &opts);
@@ -84,6 +126,10 @@ class QtCurveConfig : public QtCurveConfigBase
                        defaultStyle;
     QMap<int, QString> styles;
     CExportThemeDialog *exportDialog;
+    CGradientPreview   *gradPreview;
+    CustomGradientCont customGradient;
+    KDoubleNumInput    *shadeVals[NUM_STD_SHADES];
+    CStackItem         *lastCategory;
 };
 
 #endif

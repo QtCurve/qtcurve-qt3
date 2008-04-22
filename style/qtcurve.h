@@ -98,6 +98,7 @@ class QtCurveStyle : public HighContrastStyle
         APP_KONTACT,
         APP_OPERA,
         APP_SYSTEMSETTINGS,
+        APP_KATE,
         APP_OTHER
     };
 
@@ -131,7 +132,8 @@ class QtCurveStyle : public HighContrastStyle
     void drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &r, const QColorGroup &cg,
                         SFlags flags, int round, const QColor &fill, const QColor *custom=NULL,
                         bool doBorder=true, bool doCorners=true, EWidget w=WIDGET_OTHER) const;
-    void drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool top, bool bot, bool raised=false) const;
+    void drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, EWidget w) const;
+    void drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised=false) const;
     void drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, const QColorGroup &cg,
                     SFlags flags, int round, const QColor *custom=NULL, EWidget w=WIDGET_OTHER,
                     bool doCorners=true, EBorder borderProfile=BORDER_FLAT, bool blendBorderColors=true, int borderVal=QT_STD_BORDER) const;
@@ -178,6 +180,8 @@ class QtCurveStyle : public HighContrastStyle
     void drawBevelGradient(const QColor &base, bool increase, QPainter *p, QRect const &r,
                            bool horiz, double shadeTop, double shadeBot, bool sel, EAppearance bevApp,
                            EWidget w=WIDGET_OTHER) const;
+    void drawCustomGradient(QPainter *p, const QRect &r, bool horiz, const QColor &base,
+                            CustomGradientCont::const_iterator &cg, bool rev=false) const;
     void drawGradient(const QColor &top, const QColor &bot, bool increase, QPainter *p,
                       const QRect &r, bool horiz=true) const;
     void drawSbSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, bool slider=false) const;
