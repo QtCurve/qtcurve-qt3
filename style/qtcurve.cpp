@@ -6235,13 +6235,6 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
 
             QPainter pixPainter(pix);
 
-            if(tab)
-            {
-                shadeBot=1.0;
-                if(WIDGET_TAB_BOT==w)
-                    shadeTop=INVERT_SHADE(shadeTop);
-            }
-
             if(!selected && (IS_GLASS(app) || APPEARANCE_SPLIT_GRADIENT==app))
             {
                 double shadeTopA(/*WIDGET_TAB_BOT==w
