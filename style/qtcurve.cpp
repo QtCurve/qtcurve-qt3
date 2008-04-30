@@ -433,12 +433,12 @@ inline int app2App(EAppearance app, bool sel)
 #define QTC_PIXMAP_DIMENSION 10
 
 static int     double2int(double d) { return (int)(d*100); }
-static QString createKey(int size, QRgb color, bool horiz, bool increase=false, int app=0,
-                         EWidget w=WIDGET_OTHER, double shadeTop=0.0, double shadeBot=0.0)
+static QString createKey(int size, QRgb color, bool horiz, bool increase, int app,
+                         EWidget w, double shadeTop, double shadeBot, const Options &opts)
 {
     QString key;
 
-    if(WIDGET_DEF_BUTTON==w && !IS_GLASS(app)) // Glass uses different shading for def button...
+    if(WIDGET_DEF_BUTTON==w && (!IS_GLASS(app) || IND_COLORED!=opts.defBtnIndicator)) // Glass uses different shading for def button...
         w=WIDGET_STD_BUTTON;
 
     QTextOStream(&key) << size << color << horiz << increase << app << (int)w
@@ -2742,7 +2742,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                            getFill(flags, use), use, true, true,
                            flags&QTC_NO_ETCH_BUTTON
                                 ? WIDGET_NO_ETCH_BTN
-                                : flags&Style_ButtonDefault && flags&Style_Enabled
+                                : flags&Style_ButtonDefault && flags&Style_Enabled && IND_COLORED!=opts.defBtnIndicator
                                     ? WIDGET_DEF_BUTTON
                                     : WIDGET_STD_BUTTON);
 
@@ -6225,7 +6225,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, bool increase, QPainter
         QRect   r(0, 0, horiz ? QTC_PIXMAP_DIMENSION : origRect.width(),
                         horiz ? origRect.height() : QTC_PIXMAP_DIMENSION);
         QString key(createKey(horiz ? r.height() : r.width(), base.rgb(), horiz, increase,
-                              app2App(app, sel), w, shadeTop, shadeBot));
+                              app2App(app, sel), w, shadeTop, shadeBot, opts));
         QPixmap *pix(itsPixmapCache.find(key));
         bool    inCache(true);
 
