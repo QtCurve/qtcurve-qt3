@@ -151,30 +151,48 @@ static QString kdeHome()
                 : env;
 }
 
+static void getStyles(const QString &dir, const char *sub, QStringList &styles)
+{
+    QDir d(dir+sub);
+
+    if(d.exists())
+    {
+        d.setNameFilter(QTC_THEME_PREFIX"*"QTC_THEME_SUFFIX);
+
+        QStringList                entries(d.entryList());
+        QStringList::ConstIterator it(entries.begin()),
+                                   end(entries.end());
+
+        for(; it!=end; ++it)
+        {
+            QString style((*it).left((*it).findRev(QTC_THEME_SUFFIX)));
+
+            if(!styles.contains(style))
+                styles.append(style);
+        }
+    }
+}
+
 static void getStyles(const QString &dir, QStringList &styles)
 {
-    QDir d(dir+QTC_THEME_DIR);
+    getStyles(dir, QTC_THEME_DIR, styles);
+    getStyles(dir, QTC_THEME_DIR4, styles);
+}
 
-    d.setNameFilter(QTC_THEME_PREFIX"*"QTC_THEME_SUFFIX);
+static QString themeFile(const QString &dir, const QString &n, const char *sub)
+{
+    QString name(dir+sub+n+QTC_THEME_SUFFIX);
 
-    QStringList                entries(d.entryList());
-    QStringList::ConstIterator it(entries.begin()),
-                               end(entries.end());
-
-    for(; it!=end; ++it)
-    {
-        QString style((*it).left((*it).findRev(QTC_THEME_SUFFIX)));
-
-        if(!styles.contains(style))
-            styles.append(style);
-    }
+    return QFile(name).exists() ? name : QString();
 }
 
 static QString themeFile(const QString &dir, const QString &n)
 {
-    QString name(dir+QTC_THEME_DIR+n+QTC_THEME_SUFFIX);
+    QString name(themeFile(dir, n, QTC_THEME_DIR));
 
-    return QFile(name).exists() ? name : QString();
+    if(name.isEmpty())
+        name=themeFile(dir, n, QTC_THEME_DIR4);
+    return name;
 }
 
 class QtCurveStylePlugin : public QStylePlugin
