@@ -1296,6 +1296,9 @@ void QtCurveStyle::polish(QWidget *widget)
         {
             widget->setName(kdeToolbarWidget);
             widget->setBackgroundMode(NoBackground);  // We paint whole background.
+
+            if(!enableFilter)
+                widget->installEventFilter(this);
         }
 
         // This bit stolen form polyester...
