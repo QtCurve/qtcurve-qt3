@@ -6025,12 +6025,13 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
         case SH_Slider_SnapToValue:
         case SH_PrintDialog_RightAlignButtons:
         case SH_FontDialog_SelectAssociatedText:
-        case SH_MenuBar_AltKeyNavigation:
         case SH_PopupMenu_MouseTracking:
         case SH_PopupMenu_SpaceActivatesItem:
         case SH_ComboBox_ListMouseTracking:
         case SH_ScrollBar_MiddleClickAbsolutePosition:
             return 1;
+        case SH_MenuBar_AltKeyNavigation:
+            return 0;
         case SH_LineEdit_PasswordCharacter:
             if(opts.passwordChar)
             {
