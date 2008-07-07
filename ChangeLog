@@ -1,8 +1,7 @@
 0.59.4
 ------
-1. Dont darken dock widget titlebar.
-2. Left align dock widget titles - more KDE4 like. (Right align for RTL)
-3. Dont activate menubar when Alt key is pressed alone - matches Gtk.
+1. Left align dock widget titles - more KDE4 like. (Right align for RTL)
+2. Dont activate menubar when Alt key is pressed alone - matches Gtk.
 
 0.59.3
 ------
