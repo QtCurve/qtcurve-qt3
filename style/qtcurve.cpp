@@ -2750,9 +2750,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
             }
 
-            drawLightBevel(flags&QTC_DW_CLOSE_BUTTON
+            drawLightBevel(/*flags&QTC_DW_CLOSE_BUTTON
                             ? cg.background().dark(QTC_DW_BGND)
-                            : cg.background(),
+                            : */cg.background(),
                            p, r, cg, glassMod ? flags : flags|Style_Horizontal,
 #if KDE_VERSION >= 0x30200
                            (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe) ||
@@ -3675,7 +3675,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             int  x, y, w, h;
 
             r.rect(&x, &y, &w, &h);
-            p->fillRect(r, cg.background().dark(QTC_DW_BGND));
+            p->fillRect(r, cg.background()); // .dark(QTC_DW_BGND));
             if (w > 2 && h > 2)
             {
                 QWidget  *wid(const_cast<QWidget*>(widget));
@@ -3703,10 +3703,10 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                     pix.resize(w, h);
 
                 p2.begin(&pix);
-                p2.fillRect(pix.rect(), cg.background().dark(QTC_DW_BGND));
+                p2.fillRect(pix.rect(), cg.background()); // .dark(QTC_DW_BGND));
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
-                p2.drawText(pix.rect(), AlignCenter,
+                p2.drawText(pix.rect(), AlignVCenter|(QApplication::reverseLayout() ? AlignRight : AlignLeft),
                             elliditide(title, QFontMetrics(fnt), pix.width()));
                 p2.end();
 
@@ -4810,7 +4810,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(isDWClose)
             {
-                p->fillRect(r, cg.background().dark(QTC_DW_BGND));
+                p->fillRect(r, cg.background()); // .dark(QTC_DW_BGND));
                 if(!(flags&Style_MouseOver) && !(active & SC_ToolButton))
                     break;
                 bflags|=QTC_DW_CLOSE_BUTTON;
