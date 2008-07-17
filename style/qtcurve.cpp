@@ -3706,7 +3706,9 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                 p2.fillRect(pix.rect(), cg.background().dark(QTC_DW_BGND));
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
-                p2.drawText(pix.rect(), AlignVCenter|(QApplication::reverseLayout() ? AlignRight : AlignLeft),
+                QRect textRect(pix.rect());
+                textRect.addCoords(2, 0, -2, 0);
+                p2.drawText(textRect, AlignVCenter|(QApplication::reverseLayout() ? AlignRight : AlignLeft),
                             elliditide(title, QFontMetrics(fnt), pix.width()));
                 p2.end();
 
