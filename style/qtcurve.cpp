@@ -3096,7 +3096,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(QApplication::NormalColor!=QApplication::colorSpec() || itsFormMode)
                 {
                     p->setPen(QPen(use[opts.coloredMouseOver && sflags&Style_MouseOver ? 4 : QT_BORDER(flags&Style_Enabled)], 1));
-                    p->drawArc(r, 0, 5760);
+                    p->drawArc(rect, 0, 5760);
                 }
 
                 if(set)
