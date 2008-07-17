@@ -3096,7 +3096,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(QApplication::NormalColor!=QApplication::colorSpec() || itsFormMode)
                 {
                     p->setPen(QPen(use[opts.coloredMouseOver && sflags&Style_MouseOver ? 4 : QT_BORDER(flags&Style_Enabled)], 1));
-                    p->drawArc(r, 0, 5760);
+                    p->drawArc(rect, 0, 5760);
                 }
 
                 if(set)
@@ -3706,7 +3706,9 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                 p2.fillRect(pix.rect(), cg.background().dark(QTC_DW_BGND));
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
-                p2.drawText(pix.rect(), AlignCenter,
+                QRect textRect(pix.rect());
+                textRect.addCoords(2, 0, -2, 0);
+                p2.drawText(textRect, AlignVCenter|(QApplication::reverseLayout() ? AlignRight : AlignLeft),
                             elliditide(title, QFontMetrics(fnt), pix.width()));
                 p2.end();
 
@@ -6025,12 +6027,13 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
         case SH_Slider_SnapToValue:
         case SH_PrintDialog_RightAlignButtons:
         case SH_FontDialog_SelectAssociatedText:
-        case SH_MenuBar_AltKeyNavigation:
         case SH_PopupMenu_MouseTracking:
         case SH_PopupMenu_SpaceActivatesItem:
         case SH_ComboBox_ListMouseTracking:
         case SH_ScrollBar_MiddleClickAbsolutePosition:
             return 1;
+        case SH_MenuBar_AltKeyNavigation:
+            return 0;
         case SH_LineEdit_PasswordCharacter:
             if(opts.passwordChar)
             {

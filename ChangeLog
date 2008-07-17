@@ -1,3 +1,8 @@
+0.59.4
+------
+1. Left align dock widget titles - more KDE4 like. (Right align for RTL)
+2. Dont activate menubar when Alt key is pressed alone - matches Gtk.
+
 0.59.3
 ------
 1. Fix background drawng of sliders on toolbars (such as in Kaffeine), when
