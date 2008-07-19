@@ -1,3 +1,8 @@
+0.59.5
+------
+1. In config dialog, rename the 'Fill' progressbar option to 'No border',
+   and place it on the 'Bar' line.
+
 0.59.4
 ------
 1. Left align dock widget titles - more KDE4 like. (Right align for RTL)
