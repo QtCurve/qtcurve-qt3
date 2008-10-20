@@ -221,6 +221,7 @@ class QtCurveStyle : public HighContrastStyle
     QPixmap *      getPixmap(const QColor col, EPixmap pix, double shade=1.0) const;
     void           setSbType();
     bool           isFormWidget(const QWidget *w) const { return itsKhtmlWidgets.contains(w); }
+    void           resetHover();
 
     private slots:
 
@@ -228,6 +229,7 @@ class QtCurveStyle : public HighContrastStyle
     void progressBarDestroyed(QObject *bar);
     void sliderThumbMoved(int val);
     void khtmlWidgetDestroyed(QObject *o);
+    void hoverWidgetDestroyed(QObject *o);
 
     private:
 

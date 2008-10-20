@@ -54,7 +54,7 @@ Srollbars:
 
 For some reason Scrollbars in KHTML seem to lose the bottom/left pixels. As if KHTML expects
 the scrollbar to be 1 pixel smaller/thinner than it actually is. To 'fix' this, the pixelMetric
-function will return 1 scrollbar with 1 greater than standard for form widgets, or where widget==NULL
+function will return 1 scrollbar with 1 greater than standard for form widgets, or where widget==0L
 
 In the CC_ScrollBar draw code, the rects used for each component are shrunk by 1, in the appropriate
 dimension, so as to draw the scrollbar at the correct size.
@@ -133,6 +133,25 @@ static void adjust(QRect &r, int dx1, int dy1, int dx2, int dy2)
     x2 += dx2;
     y2 += dy2;
     r.setCoords(x1, y1, x2, y2);
+}
+
+inline bool isSpecialHover(QWidget *w)
+{
+    return w && (
+#if QT_VERSION >= 0x030200
+                    ::qt_cast<QRadioButton *>(w) ||
+                    ::qt_cast<QCheckBox *>(w) ||
+#endif
+                    ::qt_cast<QScrollBar *>(w) ||
+#if KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
+                    ::qt_cast<QToolButton *>(w) ||
+
+#endif
+                    ::qt_cast<QHeader *>(w) ||
+                    ::qt_cast<QSpinWidget *>(w) ||
+                    ::qt_cast<QComboBox *>(w) ||
+                    ::qt_cast<QTabBar *>(w)
+                );
 }
 
 static QString readEnvPath(const char *env)
@@ -315,7 +334,7 @@ static bool isKhtmlFormWidget(const QWidget *widget)
 
     //Form widgets are in the KHTMLView, but that has 2 further inner levels
     //of widgets - QClipperWidget, and outside of that, QViewportWidget
-    QWidget *potentialClipPort(widget ? widget->parentWidget() : NULL);
+    QWidget *potentialClipPort(widget ? widget->parentWidget() : 0L);
 
     if (!potentialClipPort || potentialClipPort->isTopLevel())
         return false;
@@ -722,12 +741,12 @@ HighContrastStyle::HighContrastStyle()
 }
 
 QtCurveStyle::QtCurveStyle(const QString &name)
-            : itsSliderCols(NULL),
-              itsDefBtnCols(NULL),
-              itsMouseOverCols(NULL),
-              itsSidebarButtonsCols(NULL),
-              itsActiveMdiColors(NULL),
-              itsMdiColors(NULL),
+            : itsSliderCols(0L),
+              itsDefBtnCols(0L),
+              itsMouseOverCols(0L),
+              itsSidebarButtonsCols(0L),
+              itsActiveMdiColors(0L),
+              itsMdiColors(0L),
               itsThemedApp(APP_OTHER),
               itsPixmapCache(150000, 499),
 #if KDE_VERSION >= 0x30200
@@ -736,10 +755,10 @@ QtCurveStyle::QtCurveStyle(const QString &name)
               itsHover(HOVER_NONE),
               itsOldPos(-1, -1),
               itsFormMode(false),
-              itsHoverWidget(NULL),
+              itsHoverWidget(0L),
               itsHoverSect(QTC_NO_SECT),
-              itsHoverTab(NULL),
-              itsMactorPal(NULL),
+              itsHoverTab(0L),
+              itsMactorPal(0L),
               itsActive(true),
               itsIsSpecialHover(false)
 {
@@ -1116,6 +1135,9 @@ void QtCurveStyle::polish(QWidget *widget)
         itsKhtmlWidgets[widget]=true;
         connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(khtmlWidgetDestroyed(QObject *)));
     }
+
+    if(enableFilter && isSpecialHover(widget))
+        connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(hoverWidgetDestroyed(QObject *)));
 
     if(widget->parentWidget() && ::qt_cast<QScrollView *>(widget) && ::qt_cast<QComboBox *>(widget->parentWidget()))
     {
@@ -1578,14 +1600,7 @@ bool QtCurveStyle::appIsNotEmbedded(QDialog *dlg)
 bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
 {
     if(itsHoverWidget && object==itsHoverWidget && (QEvent::Destroy==event->type() || QEvent::Hide==event->type()))
-    {
-        itsOldPos.setX(-1);
-        itsOldPos.setY(-1);
-        itsHoverWidget=NULL;
-        itsIsSpecialHover=false;
-        itsHoverSect=QTC_NO_SECT;
-        itsHover=HOVER_NONE;
-    }
+        resetHover();
 
     if(object->parent() && 0==qstrcmp(object->name(), kdeToolbarWidget))
     {
@@ -1672,7 +1687,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
         {
             QWidget  *widget((QWidget*)object);
             QObject  *child(object->child("_tabbar"));
-            QTabBar  *tb(child ? ::qt_cast<QTabBar *>(child) : NULL);
+            QTabBar  *tb(child ? ::qt_cast<QTabBar *>(child) : 0L);
             QPainter painter(widget);
             QRect    r(widget->rect());
             int      tbHeight(tb ? tb->height()-1 : 28);
@@ -1903,7 +1918,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
                 {
                     if(::qt_cast<QTabBar*>(object) && static_cast<QWidget*>(object)->isEnabled())
                     {
-                        itsHoverTab=NULL;
+                        itsHoverTab=0L;
                         itsHoverWidget->repaint(false);
                     }
                     else if(!itsHoverWidget->hasMouseTracking() ||
@@ -1914,36 +1929,16 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
                     }
                 }
                 else
-                    itsHoverWidget=NULL;
+                    itsHoverWidget=0L;
 
-                if(itsHoverWidget && !itsIsSpecialHover &&
-                    (
-#if QT_VERSION >= 0x030200
-                    ::qt_cast<QRadioButton *>(itsHoverWidget) ||
-                    ::qt_cast<QCheckBox *>(itsHoverWidget) ||
-#endif
-                    ::qt_cast<QScrollBar *>(itsHoverWidget) ||
-#if KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
-                    ::qt_cast<QToolButton *>(itsHoverWidget) ||
-
-#endif
-                    ::qt_cast<QHeader *>(itsHoverWidget) ||
-                    ::qt_cast<QSpinWidget *>(itsHoverWidget) ||
-                    ::qt_cast<QComboBox *>(itsHoverWidget) ||
-                    ::qt_cast<QTabBar *>(itsHoverWidget)))
-
+                if(itsHoverWidget && !itsIsSpecialHover && isSpecialHover(itsHoverWidget))
                     itsIsSpecialHover=true;
             }
             break;
         case QEvent::Leave:
             if(itsHoverWidget && object==itsHoverWidget)
             {
-                itsOldPos.setX(-1);
-                itsOldPos.setY(-1);
-                itsHoverWidget=NULL;
-                itsHoverSect=QTC_NO_SECT;
-                itsHover=HOVER_NONE;
-                itsHoverTab=NULL;
+                resetHover();
                 ((QWidget *)object)->repaint(false);
             }
             break;
@@ -2282,7 +2277,7 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
         {
             QColor  largeArcMid(midColor(border, bgnd)),
                     aaColor(midColor(custom ? custom[3] : itsBackgroundCols[3], bgnd));
-            QPixmap *pix=itsFormMode ? getPixelPixmap(border) : NULL;
+            QPixmap *pix=itsFormMode ? getPixelPixmap(border) : 0L;
 
             if(round&CORNER_TL)
             {
@@ -2607,7 +2602,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             {
                 bool    isFirst(false), isLast(false), isTable(false);
                 QHeader *header(p && p->device() ? dynamic_cast<QHeader*>(p->device())
-                                                 : NULL);
+                                                 : 0L);
 
                 if (header)
                 {
@@ -2659,7 +2654,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                         p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-2, r.y()+r.height()-1);
                 }
 
-                const QColor *border(borderColors(flags, NULL));
+                const QColor *border(borderColors(flags, 0L));
 
                 if(flags&Style_Horizontal)
                 {
@@ -2852,7 +2847,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
             if(item)
             {
-                const QColor *bc(borderColors(flags, NULL)),
+                const QColor *bc(borderColors(flags, 0L)),
                              *btn(buttonColors(cg)),
                              *use(bc ? bc : btn);
                 int          x(r.x()+1), y(r.y()+2);
@@ -2921,7 +2916,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 sflags&=~Style_MouseOver;
 
             bool  glow(doEtch && MO_GLOW==opts.coloredMouseOver && sflags&Style_MouseOver && sflags&Style_Enabled);
-            const QColor *bc(borderColors(sflags, NULL)),
+            const QColor *bc(borderColors(sflags, 0L)),
                          *btn(buttonColors(cg)),
                          *use(bc ? bc : btn),
                          &bgnd(sflags&Style_Enabled && !sunken
@@ -2982,7 +2977,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
             if(item)
             {
-                const QColor *bc(borderColors(flags, NULL)),
+                const QColor *bc(borderColors(flags, 0L)),
                              *btn(buttonColors(cg)),
                              *use(bc ? bc : btn),
                              &on(flags&Style_Enabled
@@ -3025,7 +3020,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(sunken || (!itsFormMode && HOVER_NONE==itsHover))
                     sflags&=~Style_MouseOver;
 
-                const QColor *bc(borderColors(sflags, NULL)),
+                const QColor *bc(borderColors(sflags, 0L)),
                              *btn(buttonColors(cg)),
                              *use(bc ? bc : btn);
                 const QColor &on(sflags&Style_Enabled
@@ -3732,7 +3727,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             drawSliderGroove(p, r, cg, flags, widget);
             break;
         case KPE_SliderHandle:
-            drawSliderHandle(p, r, cg, flags, widget ? ::qt_cast<QSlider *>(widget) : NULL);
+            drawSliderHandle(p, r, cg, flags, widget ? ::qt_cast<QSlider *>(widget) : 0L);
             break;
         case KPE_ListViewExpander:
         {
@@ -3872,7 +3867,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                 ? (top ? ROUNDED_TOPLEFT : ROUNDED_BOTTOMLEFT)
                                 : lastTab
                                     ? (top ? ROUNDED_TOPRIGHT : ROUNDED_BOTTOMRIGHT)
-                                    : ROUNDED_NONE, NULL, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT, true,
+                                    : ROUNDED_NONE, 0L, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT, true,
                        active && !opts.colorSelTab ? BORDER_RAISED : BORDER_FLAT, false);
             p->setClipping(false);
 
@@ -4800,7 +4795,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             }
 
             const QToolBar *tb(widget->parentWidget()
-                                   ? ::qt_cast<const QToolBar *>(widget->parentWidget()) : NULL);
+                                   ? ::qt_cast<const QToolBar *>(widget->parentWidget()) : 0L);
             bool onControlButtons(false),
                  onExtender(!tb &&
                             widget->parentWidget() &&
@@ -4868,7 +4863,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                        toolbutton->pos());
                 else if(widget->parent())
                 {
-                    QToolBar *tb(NULL);
+                    QToolBar *tb(0L);
 
                     if(::qt_cast<const QToolBar *>(widget->parent()))
                         tb=(QToolBar*)widget->parent();
@@ -5389,7 +5384,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             if((controls & SC_SliderGroove)&& groove.isValid())
                 drawSliderGroove(paint, groove, cg, flags, widget);
             if((controls & SC_SliderHandle)&& handle.isValid())
-                drawSliderHandle(paint, handle, cg, flags, widget ? ::qt_cast<QSlider *>(widget) : NULL,  tb);
+                drawSliderHandle(paint, handle, cg, flags, widget ? ::qt_cast<QSlider *>(widget) : 0L,  tb);
             if(controls & SC_SliderTickmarks)
                 QCommonStyle::drawComplexControl(control, paint, widget, r, cg, flags, SC_SliderTickmarks,
                                                  active, data);
@@ -6822,7 +6817,7 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
             used.addCoords(0, pos, 0, 0);
         }
         if(used.height()>0 && used.width()>0)
-            drawLightBevel(p, used, cg, flags|Style_Down, ROUNDED_ALL, usedCol, NULL,
+            drawLightBevel(p, used, cg, flags|Style_Down, ROUNDED_ALL, usedCol, 0L,
                            true, true, WIDGET_SLIDER_TROUGH);
     }
 }
@@ -7514,6 +7509,17 @@ void QtCurveStyle::setSbType()
     }
 }
 
+void QtCurveStyle::resetHover()
+{
+    itsIsSpecialHover=false;
+    itsOldPos.setX(-1);
+    itsOldPos.setY(-1);
+    itsHoverWidget=0L;
+    itsHoverSect=QTC_NO_SECT;
+    itsHover=HOVER_NONE;
+    itsHoverTab=0L;
+}
+
 void QtCurveStyle::updateProgressPos()
 {
     // Taken from lipstik!
@@ -7557,6 +7563,12 @@ void QtCurveStyle::sliderThumbMoved(int)
 void QtCurveStyle::khtmlWidgetDestroyed(QObject *o)
 {
     itsKhtmlWidgets.remove(static_cast<const QWidget *>(o));
+}
+
+void QtCurveStyle::hoverWidgetDestroyed(QObject *o)
+{
+    if(o==itsHoverWidget)
+        resetHover();
 }
 
 #include "qtcurve.moc"
