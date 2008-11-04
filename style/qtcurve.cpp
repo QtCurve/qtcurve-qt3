@@ -834,9 +834,9 @@ QtCurveStyle::QtCurveStyle(const QString &name)
 
     setMenuColors(QApplication::palette().active());
 
-    if(opts.lighterPopupMenuBgnd)
+    if(USE_LIGHTER_POPUP_MENU)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
-                                         POPUPMENU_LIGHT_FACTOR);
+                                         opts.lighterPopupMenuBgnd);
 
     switch(opts.shadeCheckRadio)
     {
@@ -1066,9 +1066,9 @@ void QtCurveStyle::polish(QPalette &pal)
         shadeColors(midColor(itsMenuitemCols[ORIGINAL_SHADE],
                    itsButtonCols[ORIGINAL_SHADE]), itsSidebarButtonsCols);
 
-    if(opts.lighterPopupMenuBgnd && newGray)
+    if(USE_LIGHTER_POPUP_MENU && newGray)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
-                                         POPUPMENU_LIGHT_FACTOR);
+                                         opts.lighterPopupMenuBgnd);
 
     const QColorGroup      &actGroup(pal.active()),
                            &inactGroup(pal.inactive()),
@@ -1149,9 +1149,9 @@ void QtCurveStyle::polish(QWidget *widget)
 
 #if 0
         if(opts.gtkComboMenus)
-            act.setColor(QColorGroup::Base, opts.lighterPopupMenuBgnd ? itsLighterPopupMenuBgndCol : itsBackgroundCols[ORIGINAL_SHADE]);
+            act.setColor(QColorGroup::Base, USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : itsBackgroundCols[ORIGINAL_SHADE]);
         act.setColor(QColorGroup::Background, opts.gtkComboMenus
-                                            ? opts.lighterPopupMenuBgnd ? itsLighterPopupMenuBgndCol : itsBackgroundCols[ORIGINAL_SHADE]
+                                            ? USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : itsBackgroundCols[ORIGINAL_SHADE]
                                             : QApplication::palette().active().base());
 #endif
         act.setColor(QColorGroup::Foreground, itsBackgroundCols[QT_STD_BORDER]);
@@ -1189,7 +1189,7 @@ void QtCurveStyle::polish(QWidget *widget)
             widget->parentWidget()->inherits("KateView"))) &&
         ((QFrame *)widget)->lineWidth()>1)
         ((QFrame *)widget)->setLineWidth(opts.gtkScrollViews ? 1 : 2);
-    else if (opts.lighterPopupMenuBgnd && !opts.borderMenuitems &&
+    else if (USE_LIGHTER_POPUP_MENU && !opts.borderMenuitems &&
         widget && ::qt_cast<const QPopupMenu *>(widget))
         ((QFrame *)widget)->setLineWidth(1);
 
@@ -3258,9 +3258,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             p->setPen(use[QT_STD_BORDER]);
             p->setBrush(NoBrush);
             p->drawRect(r);
-            if(opts.lighterPopupMenuBgnd)
+            if(USE_LIGHTER_POPUP_MENU)
             {
-                p->setPen(/*opts.lighterPopupMenuBgnd ? */itsLighterPopupMenuBgndCol/* : cg.background()*/);
+                p->setPen(/*USE_LIGHTER_POPUP_MENU ? */itsLighterPopupMenuBgndCol/* : cg.background()*/);
                 p->drawRect(QRect(r.x()+1, r.y()+1, r.width()-2, r.height()-2));
             }
             else
@@ -3445,8 +3445,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     {
                         //p->fillRect(r, Qt::black);
                         drawMenuItem(p, r, cg, false, ROUNDED_ALL,
-                                     opts.lighterPopupMenuBgnd ? itsLighterPopupMenuBgndCol
-                                                               : itsBackgroundCols[ORIGINAL_SHADE], itsMenuitemCols);
+                                     USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol
+                                                            : itsBackgroundCols[ORIGINAL_SHADE], itsMenuitemCols);
                         item->paintContents(p);
                         break;
                     }
@@ -4188,14 +4188,14 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
             if((flags & Style_Active)&&(flags & Style_Enabled))
                 drawMenuItem(p, r, cg, false, ROUNDED_ALL,
-                             opts.lighterPopupMenuBgnd ? itsLighterPopupMenuBgndCol
-                                                       : itsBackgroundCols[ORIGINAL_SHADE], itsMenuitemCols);
+                             USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol
+                                                    : itsBackgroundCols[ORIGINAL_SHADE], itsMenuitemCols);
             else if(widget->erasePixmap() && !widget->erasePixmap()->isNull())
                 p->drawPixmap(x, y, *widget->erasePixmap(), x, y, w, h);
             else
             {
-                p->fillRect(r, opts.lighterPopupMenuBgnd ? itsLighterPopupMenuBgndCol
-                                                         : itsBackgroundCols[ORIGINAL_SHADE]);
+                p->fillRect(r, USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol
+                                                      : itsBackgroundCols[ORIGINAL_SHADE]);
 
                 if(opts.menuStripe)
                     drawBevelGradient(itsBackgroundCols[QTC_MENU_STRIPE_SHADE], true, p,
