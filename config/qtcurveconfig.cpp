@@ -355,7 +355,7 @@ static void insertShadeEntries(QComboBox *combo, bool withDarken, bool checkRadi
     }
 }
 
-static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true)
+static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true, bool fade=false)
 {
     for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
         combo->insertItem(i18n("Custom gradient %1").arg((i-APPEARANCE_CUSTOM1)+1));
@@ -370,7 +370,11 @@ static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=
     {
         combo->insertItem(i18n("Split gradient"));
         if(bev)
+        {
             combo->insertItem(i18n("Bevelled"));
+            if(fade)
+                combo->insertItem(i18n("Fade out (popup menuitems)"));
+        }
     }
 }
 

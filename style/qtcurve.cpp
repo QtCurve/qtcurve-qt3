@@ -6096,7 +6096,25 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &
 {
     int fill=opts.useHighlightForMenu && (!mbi || itsMenuitemCols==cols) ? ORIGINAL_SHADE : 4;
 
-    if(mbi || opts.borderMenuitems)
+    if(!mbi && APPEARANCE_FADE==opts.menuitemAppearance)
+    {
+        bool  reverse=QApplication::reverseLayout();
+        int   roundOffet=QTC_ROUNDED ? 1 : 0;
+        QRect main(r.x()+(reverse ? 1+MENUITEM_FADE_SIZE : roundOffet+1), r.y()+roundOffet+1,
+                   r.width()-(1+MENUITEM_FADE_SIZE), r.height()-(3+roundOffet)),
+              fade(reverse ? r.x()+1 : r.width()-MENUITEM_FADE_SIZE, r.y()+1, MENUITEM_FADE_SIZE, r.height()-2);
+
+        p->fillRect(main, cols[fill]);
+        if(QTC_ROUNDED)
+        {
+            main.addCoords(-1, -1, 1, 1);
+            drawBorder(itsLighterPopupMenuBgndCol, p, main, cg, Style_Horizontal|Style_Raised, reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
+                       cols, WIDGET_MENU_ITEM, false, BORDER_FLAT, false, fill);
+        }
+
+        drawGradient(reverse ? cols[fill] : itsLighterPopupMenuBgndCol, reverse ? itsLighterPopupMenuBgndCol : cols[fill], false, p, fade, false);
+    }
+    else if(mbi || opts.borderMenuitems)
     {
         int  flags(Style_Raised);
         bool stdColor(!mbi || SHADE_BLEND_SELECTED!=opts.shadeMenubars);

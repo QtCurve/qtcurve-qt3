@@ -4,6 +4,7 @@
 2. New focus rect options - standard, highlight, background.
 3. Add the ability to specify popup menu light factor.
 4. Add option to use darkened background colour for menuitem selection.
+5. Add 'fade' to menuitem appearance.
 
 0.59.5
 ------
