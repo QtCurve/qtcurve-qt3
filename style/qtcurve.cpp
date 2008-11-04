@@ -4189,7 +4189,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             if((flags & Style_Active)&&(flags & Style_Enabled))
                 drawMenuItem(p, r, cg, false, ROUNDED_ALL,
                              USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol
-                                                    : itsBackgroundCols[ORIGINAL_SHADE], itsMenuitemCols);
+                                                    : itsBackgroundCols[ORIGINAL_SHADE],
+                             opts.useHighlightForMenu ? itsMenuitemCols : itsBackgroundCols);
             else if(widget->erasePixmap() && !widget->erasePixmap()->isNull())
                 p->drawPixmap(x, y, *widget->erasePixmap(), x, y, w, h);
             else
@@ -4265,12 +4266,12 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             }
             else if(popupmenu->isCheckable() && mi->isChecked())
                 drawPrimitive(PE_CheckMark, p, cr, cg,
-                              (flags &(Style_Enabled|Style_Active))| Style_On|QTC_MENU_ITEM);
+                              (flags &(Style_Enabled|(opts.useHighlightForMenu ? Style_Active : 0)))| Style_On|QTC_MENU_ITEM);
 
             QColor textcolor,
                    embosscolor;
 
-            if(flags&Style_Active)
+            if(flags&Style_Active && opts.useHighlightForMenu)
             {
                 if(!(flags & Style_Enabled))
                 {
@@ -4365,7 +4366,11 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             }
 
             if(mi->popup())
+            {
+                if(!opts.useHighlightForMenu)
+                    flags&=~Style_Active;
                 drawArrow(p, sr, cg, flags, reverse ? PE_ArrowLeft : PE_ArrowRight, false, true);
+            }
             break;
         }
         case CE_MenuBarItem:
@@ -4388,7 +4393,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             if(active)
                 drawMenuItem(p, r, cg, true, down && opts.roundMbTopOnly ? ROUNDED_TOP : ROUNDED_ALL,
                              itsMenubarCols[ORIGINAL_SHADE],
-                             opts.colorMenubarMouseOver || down ? itsMenuitemCols : itsBackgroundCols);
+                             opts.useHighlightForMenu && (opts.colorMenubarMouseOver || down)
+                                ? itsMenuitemCols : itsBackgroundCols);
 
             if(data.isDefault())
                 break;
@@ -4400,7 +4406,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                      mi->pixmap(), QString::null);
             else
             {
-                const QColor *col=(opts.colorMenubarMouseOver && active) || (!opts.colorMenubarMouseOver && down)
+                const QColor *col=((opts.colorMenubarMouseOver && active) || (!opts.colorMenubarMouseOver && down)) && opts.useHighlightForMenu
                                 ? opts.customMenuTextColor
                                     ? &opts.customMenuSelTextColor
                                     : &cg.highlightedText()
@@ -6088,6 +6094,8 @@ void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColor
 void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &cg,
                                 bool mbi, int round, const QColor &bgnd, const QColor *cols) const
 {
+    int fill=opts.useHighlightForMenu && (!mbi || itsMenuitemCols==cols) ? ORIGINAL_SHADE : 4;
+
     if(mbi || opts.borderMenuitems)
     {
         int  flags(Style_Raised);
@@ -6095,25 +6103,26 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &
 
         flags|=Style_Horizontal;
 
-        if(stdColor)
+        if(stdColor && opts.borderMenuitems)
             drawLightBevel(bgnd, p, r, cg, flags, round, cols[ORIGINAL_SHADE],
                            cols, stdColor, !(mbi && IS_GLASS(opts.menubarAppearance)), WIDGET_MENU_ITEM);
         else
         {
             QRect fr(r);
+            int   border=opts.borderMenuitems ? 0 : fill;
 
             fr.addCoords(1, 1, -1, -1);
 
             if(fr.width()>0 && fr.height()>0)
-                drawBevelGradient(cols[ORIGINAL_SHADE], true, p, fr, true,
+                drawBevelGradient(cols[fill], true, p, fr, true,
                                   getWidgetShade(WIDGET_MENU_ITEM, true, false, opts.menuitemAppearance),
                                   getWidgetShade(WIDGET_MENU_ITEM, false, false, opts.menuitemAppearance),
                                   false, opts.menuitemAppearance, WIDGET_MENU_ITEM);
-            drawBorder(bgnd, p, r, cg, flags, round, cols, WIDGET_OTHER, false, BORDER_FLAT, false, 0);
+            drawBorder(bgnd, p, r, cg, flags, round, cols, WIDGET_OTHER, false, BORDER_FLAT, false, border);
         }
     }
     else
-        drawBevelGradient(cols[ORIGINAL_SHADE], true, p, r, true,
+        drawBevelGradient(cols[fill], true, p, r, true,
                           getWidgetShade(WIDGET_MENU_ITEM, true, false, opts.menuitemAppearance),
                           getWidgetShade(WIDGET_MENU_ITEM, false, false, opts.menuitemAppearance),
                           false, opts.menuitemAppearance, WIDGET_MENU_ITEM);
