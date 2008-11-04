@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>754</width>
-            <height>509</height>
+            <width>727</width>
+            <height>522</height>
         </rect>
     </property>
     <property name="caption">
@@ -1167,23 +1167,6 @@ None - no buttons, only the slider</string>
                             <cstring>handles</cstring>
                         </property>
                     </widget>
-                    <spacer row="3" column="2">
-                        <property name="name">
-                            <cstring>spacer5</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>72</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <spacer row="0" column="4">
                         <property name="name">
                             <cstring>spacer4</cstring>
@@ -1198,6 +1181,23 @@ None - no buttons, only the slider</string>
                             <size>
                                 <width>121</width>
                                 <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="3" column="2">
+                        <property name="name">
+                            <cstring>spacer5</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>40</height>
                             </size>
                         </property>
                     </spacer>
@@ -1282,7 +1282,7 @@ None - no buttons, only the slider</string>
                                     <string>Custom text colors (active/normal):</string>
                                 </property>
                             </widget>
-                            <widget class="KColorButton" row="3" column="3">
+                            <widget class="KColorButton" row="3" column="4">
                                 <property name="name">
                                     <cstring>customMenuNormTextColor</cstring>
                                 </property>
@@ -1290,7 +1290,7 @@ None - no buttons, only the slider</string>
                                     <string></string>
                                 </property>
                             </widget>
-                            <widget class="KColorButton" row="3" column="4">
+                            <widget class="KColorButton" row="3" column="5">
                                 <property name="name">
                                     <cstring>customMenuSelTextColor</cstring>
                                 </property>
@@ -1298,7 +1298,7 @@ None - no buttons, only the slider</string>
                                     <string></string>
                                 </property>
                             </widget>
-                            <widget class="KColorButton" row="1" column="4">
+                            <widget class="KColorButton" row="1" column="5">
                                 <property name="name">
                                     <cstring>customMenubarsColor</cstring>
                                 </property>
@@ -1306,15 +1306,7 @@ None - no buttons, only the slider</string>
                                     <string></string>
                                 </property>
                             </widget>
-                            <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="5">
-                                <property name="name">
-                                    <cstring>roundMbTopOnly</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Round selected menubar items on top only</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="5">
+                            <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="6">
                                 <property name="name">
                                     <cstring>shadeMenubarOnlyWhenActive</cstring>
                                 </property>
@@ -1322,41 +1314,7 @@ None - no buttons, only the slider</string>
                                     <string>Apply coloration to active window only</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="6" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_4_2_4</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Menuitem appearance:</string>
-                                </property>
-                            </widget>
-                            <widget class="QComboBox" row="6" column="1" rowspan="1" colspan="4">
-                                <property name="name">
-                                    <cstring>menuitemAppearance</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="10" column="0">
-                                <property name="name">
-                                    <cstring>menuStripe</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Menu stripe (KDE):</string>
-                                </property>
-                            </widget>
-                            <widget class="QComboBox" row="10" column="1" rowspan="1" colspan="4">
-                                <property name="name">
-                                    <cstring>menuStripeAppearance</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="3">
-                                <property name="name">
-                                    <cstring>borderMenuitems</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Border menuitems</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="5">
+                            <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="6">
                                 <property name="name">
                                     <cstring>menubarMouseOver</cstring>
                                 </property>
@@ -1380,7 +1338,7 @@ None - no buttons, only the slider</string>
                                     <string>Menubar appearance:</string>
                                 </property>
                             </widget>
-                            <widget class="QComboBox" row="1" column="1" rowspan="1" colspan="3">
+                            <widget class="QComboBox" row="1" column="1" rowspan="1" colspan="4">
                                 <property name="name">
                                     <cstring>shadeMenubars</cstring>
                                 </property>
@@ -1393,28 +1351,17 @@ None - no buttons, only the slider</string>
                                     </sizepolicy>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="8" column="0" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>textLabel1_7</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Popup-menu background:</string>
-                                </property>
-                            </widget>
-                            <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="4">
+                            <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="5">
                                 <property name="name">
                                     <cstring>menubarAppearance</cstring>
                                 </property>
                             </widget>
-                            <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="5">
+                            <widget class="QComboBox" row="12" column="1" rowspan="1" colspan="5">
                                 <property name="name">
-                                    <cstring>thinnerMenuItems</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Thinner menu items</string>
+                                    <cstring>menuStripeAppearance</cstring>
                                 </property>
                             </widget>
-                            <widget class="KIntNumInput" row="8" column="2">
+                            <widget class="KIntNumInput" row="10" column="2">
                                 <property name="name">
                                     <cstring>lighterPopupMenuBgnd</cstring>
                                 </property>
@@ -1422,7 +1369,7 @@ None - no buttons, only the slider</string>
                                     <string>%</string>
                                 </property>
                             </widget>
-                            <spacer row="8" column="3">
+                            <spacer row="10" column="3" rowspan="1" colspan="2">
                                 <property name="name">
                                     <cstring>spacer4_2_2</cstring>
                                 </property>
@@ -1439,6 +1386,75 @@ None - no buttons, only the slider</string>
                                     </size>
                                 </property>
                             </spacer>
+                            <widget class="QLabel" row="10" column="0" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>textLabel1_7</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Popup-menu background:</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="12" column="0">
+                                <property name="name">
+                                    <cstring>menuStripe</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Menu stripe (KDE):</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="11" column="0" rowspan="1" colspan="6">
+                                <property name="name">
+                                    <cstring>thinnerMenuItems</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Thinner menu items</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="6">
+                                <property name="name">
+                                    <cstring>roundMbTopOnly</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Round selected menubar items on top only</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="7" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1_4_2_4</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Menuitem appearance:</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>borderMenuitems</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Border menuitems</string>
+                                </property>
+                            </widget>
+                            <widget class="QComboBox" row="7" column="1" rowspan="1" colspan="5">
+                                <property name="name">
+                                    <cstring>menuitemAppearance</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="5">
+                                <property name="name">
+                                    <cstring>colorMenubarMouseOver</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Color menubar items on mouse-over</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="4">
+                                <property name="name">
+                                    <cstring>useHighlightForMenu</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use 'highlight' color for active menuitems</string>
+                                </property>
+                            </widget>
                         </grid>
                     </widget>
                 </grid>
@@ -2018,8 +2034,6 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <tabstops>
     <tabstop>stackList</tabstop>
     <tabstop>appearance</tabstop>
@@ -2076,9 +2090,11 @@ None - no buttons, only the slider</string>
     <tabstop>customMenuNormTextColor</tabstop>
     <tabstop>customMenuSelTextColor</tabstop>
     <tabstop>menubarMouseOver</tabstop>
+    <tabstop>colorMenubarMouseOver</tabstop>
     <tabstop>roundMbTopOnly</tabstop>
     <tabstop>menuitemAppearance</tabstop>
     <tabstop>borderMenuitems</tabstop>
+    <tabstop>useHighlightForMenu</tabstop>
     <tabstop>lighterPopupMenuBgnd</tabstop>
     <tabstop>thinnerMenuItems</tabstop>
     <tabstop>menuStripe</tabstop>
@@ -2111,6 +2127,7 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
@@ -2120,6 +2137,9 @@ None - no buttons, only the slider</string>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>

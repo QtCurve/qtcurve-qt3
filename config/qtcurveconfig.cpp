@@ -584,6 +584,8 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(passwordChar, SIGNAL(clicked()), SLOT(passwordCharClicked()));
     connect(framelessGroupBoxes, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(inactiveHighlight, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(colorMenubarMouseOver, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(useHighlightForMenu, SIGNAL(toggled(bool)), SLOT(updateChanged()));
 
     defaultSettings(&defaultStyle);
     if(!readConfig(NULL, &currentStyle, &defaultStyle))
@@ -1218,6 +1220,8 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.framelessGroupBoxes=framelessGroupBoxes->isChecked();
     opts.inactiveHighlight=inactiveHighlight->isChecked();
     opts.customGradient=customGradient;
+    opts.colorMenubarMouseOver=colorMenubarMouseOver->isChecked();
+    opts.useHighlightForMenu=useHighlightForMenu->isChecked();
 
     if(customShading->isChecked())
     {
@@ -1299,6 +1303,8 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     selectionAppearance->setCurrentItem(opts.selectionAppearance);
     shadeCheckRadio->setCurrentItem(opts.shadeCheckRadio);
     customCheckRadioColor->setColor(opts.customCheckRadioColor);
+    colorMenubarMouseOver->setChecked(opts.colorMenubarMouseOver);
+    useHighlightForMenu->setChecked(opts.useHighlightForMenu);
 
     shading->setCurrentItem(opts.shading);
     gtkScrollViews->setChecked(opts.gtkScrollViews);
@@ -1371,6 +1377,8 @@ bool QtCurveConfig::settingsChanged()
          selectionAppearance->currentItem()!=currentStyle.selectionAppearance ||
          toolbarSeparators->currentItem()!=currentStyle.toolbarSeparators ||
          splitters->currentItem()!=currentStyle.splitters ||
+         colorMenubarMouseOver->isChecked()!=currentStyle.colorMenubarMouseOver ||
+         useHighlightForMenu->isChecked()!=currentStyle.useHighlightForMenu ||
 
          shading->currentItem()!=(int)currentStyle.shading ||
          gtkScrollViews->isChecked()!=currentStyle.gtkScrollViews ||
