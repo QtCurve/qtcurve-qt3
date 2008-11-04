@@ -3453,18 +3453,15 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
             }
 #endif
-#ifndef QTC_PLAIN_FOCUS_ONLY
-            if(opts.stdFocus)
+            if(FOCUS_STANDARD==opts.focus)
             {
-#endif
                 p->setPen(Qt::black);
                 p->drawWinFocusRect(r);
-#ifndef QTC_PLAIN_FOCUS_ONLY
             }
             else
             {
                 //Figuring out in what beast we are painting...
-                const QColor *use(backgroundColors(cg));
+                const QColor *use(FOCUS_BACKGROUND==opts.focus ? backgroundColors(cg) : itsMenuitemCols);
                 QWidget      *widget(dynamic_cast<QWidget*>(p->device()));
 
                 if(r.width()<4 || r.height()<4 ||
@@ -3478,7 +3475,6 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     drawBorder(cg.background(), p, r, cg, Style_Horizontal,
                                ROUNDED_ALL, use, WIDGET_FOCUS, false, BORDER_FLAT, true, QT_FOCUS);
             }
-#endif
             break;
         case PE_ArrowUp:
         case PE_ArrowDown:

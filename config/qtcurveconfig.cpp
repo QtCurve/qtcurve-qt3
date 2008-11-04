@@ -460,6 +460,14 @@ static void insertEColorEntries(QComboBox *combo)
     combo->insertItem(i18n("Darkened background color"));
 }
 
+static void insertFocusEntries(QComboBox *combo)
+{
+    combo->insertItem(i18n("Standard (dotted)"));
+    combo->insertItem(i18n("Highlight color"));
+    combo->insertItem(i18n("Background color, and fill (Gtk2 & KDE4 only)"));
+    combo->insertItem(i18n("Background color"));
+}
+
 QtCurveConfig::QtCurveConfig(QWidget *parent)
              : QtCurveConfigBase(parent),
                exportDialog(NULL),
@@ -496,6 +504,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertStripeEntries(stripedProgress);
     insertSliderStyleEntries(sliderStyle);
     insertEColorEntries(progressGrooveColor);
+    insertFocusEntries(focus);
 
     highlightFactor->setMinValue(MIN_HIGHLIGHT_FACTOR);
     highlightFactor->setMaxValue(MAX_HIGHLIGHT_FACTOR);
@@ -544,12 +553,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(selectionAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(shadeCheckRadio, SIGNAL(activated(int)), SLOT(shadeCheckRadioChanged()));
     connect(customCheckRadioColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
-
-#ifdef QTC_PLAIN_FOCUS_ONLY
-    delete stdFocus;
-#else
-    connect(stdFocus, SIGNAL(toggled(bool)), SLOT(updateChanged()));
-#endif
+    connect(focus, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(lvLines, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(drawStatusBarFrames, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(buttonEffect, SIGNAL(activated(int)), SLOT(buttonEffectChanged()));
@@ -1142,9 +1146,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.round=(ERound)round->currentItem();
     opts.toolbarBorders=(ETBarBorder)toolbarBorders->currentItem();
     opts.appearance=(EAppearance)appearance->currentItem();
-#ifndef QTC_PLAIN_FOCUS_ONLY
-    opts.stdFocus=stdFocus->isChecked();
-#endif
+    opts.focus=(EFocus)focus->currentItem();
     opts.lvLines=lvLines->isChecked();
     opts.drawStatusBarFrames=drawStatusBarFrames->isChecked();
     opts.buttonEffect=(EEffect)buttonEffect->currentItem();
@@ -1234,9 +1236,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     sliderThumbs->setCurrentItem(opts.sliderThumbs);
     handles->setCurrentItem(opts.handles);
     appearance->setCurrentItem(opts.appearance);
-#ifndef QTC_PLAIN_FOCUS_ONLY
-    stdFocus->setChecked(opts.stdFocus);
-#endif
+    focus->setCurrentItem(opts.focus);
     lvLines->setChecked(opts.lvLines);
     drawStatusBarFrames->setChecked(opts.drawStatusBarFrames);
     buttonEffect->setCurrentItem(opts.buttonEffect);
@@ -1318,9 +1318,7 @@ bool QtCurveConfig::settingsChanged()
     return round->currentItem()!=currentStyle.round ||
          toolbarBorders->currentItem()!=currentStyle.toolbarBorders ||
          appearance->currentItem()!=(int)currentStyle.appearance ||
-#ifndef QTC_PLAIN_FOCUS_ONLY
-         stdFocus->isChecked()!=currentStyle.stdFocus ||
-#endif
+         focus->currentItem()!=(int)currentStyle.focus ||
          lvLines->isChecked()!=currentStyle.lvLines ||
          drawStatusBarFrames->isChecked()!=currentStyle.drawStatusBarFrames ||
          buttonEffect->currentItem()!=(int)currentStyle.buttonEffect ||

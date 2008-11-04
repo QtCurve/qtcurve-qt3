@@ -165,17 +165,6 @@
                             <string>Draw statusbar frames</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>stdFocus</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Dotted focus rectangle</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>Some applications, such as Qt Designer, and Krita, make use of 'dock windows' These have a handle strip along the top - enabling this option will draw the name of the window in the handle strip.</string>
-                        </property>
-                    </widget>
                     <widget class="QComboBox" row="0" column="1">
                         <property name="name">
                             <cstring>appearance</cstring>
@@ -233,6 +222,19 @@
                     <widget class="QComboBox" row="2" column="1">
                         <property name="name">
                             <cstring>buttonEffect</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_6</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Focus rectangle:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="3" column="1">
+                        <property name="name">
+                            <cstring>focus</cstring>
                         </property>
                     </widget>
                 </grid>
@@ -1998,7 +2000,7 @@ None - no buttons, only the slider</string>
     <tabstop>appearance</tabstop>
     <tabstop>round</tabstop>
     <tabstop>buttonEffect</tabstop>
-    <tabstop>stdFocus</tabstop>
+    <tabstop>focus</tabstop>
     <tabstop>drawStatusBarFrames</tabstop>
     <tabstop>framelessGroupBoxes</tabstop>
     <tabstop>vArrows</tabstop>
