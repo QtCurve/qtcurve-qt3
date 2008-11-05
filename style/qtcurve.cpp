@@ -3372,7 +3372,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                       PE_ArrowDown==pe ? ROUNDED_BOTTOM :
                       PE_ArrowUp==pe ? ROUNDED_TOP : ROUNDED_NONE;
 
-            if(flags&Style_Down)
+            if(flags&Style_Down && SCROLLBAR_OXYGEN!=opts.scrollbarType)
                 ar.addCoords(1, 1, 1, 1);
 
             switch(opts.scrollbarType)
@@ -3380,6 +3380,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 default:
                 case SCROLLBAR_WINDOWS:
                     break;
+                case SCROLLBAR_OXYGEN:
                 case SCROLLBAR_KDE:
                 case SCROLLBAR_PLATINUM:
                     if(PE_ArrowLeft==pe && r.x()>3)
@@ -3410,8 +3411,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     }
                     break;
             }
-            drawLightBevel(p, br, cg, flags|Style_Raised,
-                           round, getFill(flags, use), use, true, true, WIDGET_SB_BUTTON);
+            if(SCROLLBAR_OXYGEN!=opts.scrollbarType)
+                drawLightBevel(p, br, cg, flags|Style_Raised,
+                               round, getFill(flags, use), use, true, true, WIDGET_SB_BUTTON);
 
             drawPrimitive(pe, p, ar, cg, flags);
             break;
@@ -5117,7 +5119,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
         {
             const QScrollBar *sb((const QScrollBar *)widget);
             bool             hw(itsHoverWidget && itsHoverWidget==sb),
-                             useThreeButtonScrollBar(SCROLLBAR_KDE==opts.scrollbarType),
+                             useThreeButtonScrollBar(QTC_THREEBUTTON_SBAR),
                              horiz(Qt::Horizontal==sb->orientation()),
                              maxed(sb->minValue() == sb->maxValue()),
                              atMin(maxed || sb->value()==sb->minValue()),
@@ -5172,7 +5174,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 }
 
 #ifndef QTC_SIMPLE_SCROLLBARS
-                if(sbRect.isValid() && SCROLLBAR_NONE==opts.scrollbarType)
+                if(sbRect.isValid() && (SCROLLBAR_NONE==opts.scrollbarType || SCROLLBAR_OXYGEN==opts.scrollbarType))
                     if(horiz)
                         sbRect.addCoords(0, 0, -1, 0);
                     else
@@ -5180,15 +5182,21 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 #endif
             }
 
-            if (useThreeButtonScrollBar)
+            else if (useThreeButtonScrollBar)
                 if (horiz)
                     subline2.moveBy(-addline.width(), 0);
                 else
                     subline2.moveBy(0, -addline.height());
 
+            if(SCROLLBAR_OXYGEN==opts.scrollbarType)
+                if(horiz)
+                    sbRect.addCoords(subline.width()-1, 0, -(addline.width()+subline2.width()-1), 0);
+                else
+                    sbRect.addCoords(0, subline.height()-1, 0, -(addline.height()+subline2.height()-1));
+
             // Draw trough...
             const QColor *trough(itsBackgroundCols); // backgroundColors(cg));
-            bool  noButtons(SCROLLBAR_NONE==opts.scrollbarType);
+            bool  noButtons(SCROLLBAR_NONE==opts.scrollbarType || SCROLLBAR_OXYGEN==opts.scrollbarType);
             QRect s2(subpage), a2(addpage);
 
 #ifndef QTC_SIMPLE_SCROLLBARS
@@ -5203,7 +5211,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             p->setClipRegion(QRegion(s2)+QRegion(addpage));
             drawLightBevel(p, sbRect, cg, sflags|Style_Down,
 #ifndef QTC_SIMPLE_SCROLLBARS
-                           SCROLLBAR_NONE==opts.scrollbarType ? ROUNDED_ALL :
+                           SCROLLBAR_NONE==opts.scrollbarType || SCROLLBAR_OXYGEN==opts.scrollbarType ? ROUNDED_ALL :
 #endif
                            ROUNDED_NONE,
                            trough[2], trough, true, true, WIDGET_TROUGH);
@@ -5270,6 +5278,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     if(atMax)
                         switch(opts.scrollbarType)
                         {
+                            case SCROLLBAR_OXYGEN:
                             case SCROLLBAR_KDE:
                             case SCROLLBAR_WINDOWS:
                             case SCROLLBAR_PLATINUM:
@@ -5283,6 +5292,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     if(atMin)
                         switch(opts.scrollbarType)
                         {
+                            case SCROLLBAR_OXYGEN:
                             case SCROLLBAR_KDE:
                             case SCROLLBAR_WINDOWS:
                             case SCROLLBAR_NEXT:
@@ -5558,7 +5568,7 @@ QRect QtCurveStyle::querySubControlMetrics(ComplexControl control, const QWidget
         case CC_ScrollBar:
         {
             // Taken from kstyle.cpp, and modified so as to allow for no scrollbar butttons...
-            bool  threeButtonScrollBar(SCROLLBAR_KDE==opts.scrollbarType),
+            bool  threeButtonScrollBar(QTC_THREEBUTTON_SBAR),
                   platinumScrollBar(SCROLLBAR_PLATINUM==opts.scrollbarType),
                   nextScrollBar(SCROLLBAR_NEXT==opts.scrollbarType),
                   noButtons(SCROLLBAR_NONE==opts.scrollbarType);
@@ -6585,7 +6595,7 @@ void QtCurveStyle::drawSbSliderHandle(QPainter *p, const QRect &orig, const QCol
 
     drawLightBevel(p, r, cg, flags, slider
 #ifndef QTC_SIMPLE_SCROLLBARS
-                        || SCROLLBAR_NONE==opts.scrollbarType
+                        || SCROLLBAR_NONE==opts.scrollbarType || SCROLLBAR_OXYGEN==opts.scrollbarType
 #endif
                         ? ROUNDED_ALL : ROUNDED_NONE,
                    getFill(flags, use), use, true, false, WIDGET_SB_SLIDER);
@@ -7251,7 +7261,7 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
 
             if(sb)  // So, are we over add button, sub button, slider, or none?
             {
-                bool  useThreeButtonScrollBar(SCROLLBAR_KDE==opts.scrollbarType);
+                bool  useThreeButtonScrollBar(QTC_THREEBUTTON_SBAR);
                 QRect subline(querySubControlMetrics(CC_ScrollBar, itsHoverWidget,
                                                      SC_ScrollBarSubLine)),
                       addline(querySubControlMetrics(CC_ScrollBar, itsHoverWidget,
@@ -7520,6 +7530,7 @@ void QtCurveStyle::setSbType()
 {
     switch(opts.scrollbarType)
     {
+        case SCROLLBAR_OXYGEN:
         case SCROLLBAR_KDE:
             this->setScrollBarType(KStyle::ThreeButtonScrollBar);
             break;
