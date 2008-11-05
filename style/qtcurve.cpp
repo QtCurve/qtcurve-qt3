@@ -4187,7 +4187,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             r.rect(&x, &y, &w, &h);
 
             if((flags & Style_Active)&&(flags & Style_Enabled))
-                drawMenuItem(p, r, cg, false, ROUNDED_ALL,
+                drawMenuItem(p, r, flags, cg, false, ROUNDED_ALL,
                              USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol
                                                     : itsBackgroundCols[ORIGINAL_SHADE],
                              opts.useHighlightForMenu ? itsMenuitemCols : itsBackgroundCols);
@@ -4391,7 +4391,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             }
 
             if(active)
-                drawMenuItem(p, r, cg, true, down && opts.roundMbTopOnly ? ROUNDED_TOP : ROUNDED_ALL,
+                drawMenuItem(p, r, flags, cg, true, down && opts.roundMbTopOnly ? ROUNDED_TOP : ROUNDED_ALL,
                              itsMenubarCols[ORIGINAL_SHADE],
                              opts.useHighlightForMenu && (opts.colorMenubarMouseOver || down)
                                 ? itsMenuitemCols : itsBackgroundCols);
@@ -6091,11 +6091,16 @@ void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColor
     KStyle::drawItem(p, r2, flags, cg, enabled, pixmap, text, len, penColor);
 }
 
-void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &cg,
+void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QColorGroup &cg,
                                 bool mbi, int round, const QColor &bgnd, const QColor *cols) const
 {
-    int fill=opts.useHighlightForMenu && (!mbi || itsMenuitemCols==cols) ? ORIGINAL_SHADE : 4;
+    int fill=opts.useHighlightForMenu && (!mbi || itsMenuitemCols==cols) ? ORIGINAL_SHADE : 4,
+        border=opts.borderMenuitems ? 0 : fill;
 
+    if(itsMenuitemCols!=cols && mbi && !((flags&Style_Enabled) && (flags&Style_Active) && (flags&Style_Down)) &&
+       !opts.colorMenubarMouseOver && (opts.borderMenuitems || !IS_FLAT(opts.menuitemAppearance)))
+        fill=ORIGINAL_SHADE;
+               
     if(!mbi && APPEARANCE_FADE==opts.menuitemAppearance)
     {
         bool  reverse=QApplication::reverseLayout();
@@ -6122,12 +6127,11 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &
         flags|=Style_Horizontal;
 
         if(stdColor && opts.borderMenuitems)
-            drawLightBevel(bgnd, p, r, cg, flags, round, cols[ORIGINAL_SHADE],
+            drawLightBevel(bgnd, p, r, cg, flags, round, cols[fill],
                            cols, stdColor, !(mbi && IS_GLASS(opts.menubarAppearance)), WIDGET_MENU_ITEM);
         else
         {
             QRect fr(r);
-            int   border=opts.borderMenuitems ? 0 : fill;
 
             fr.addCoords(1, 1, -1, -1);
 

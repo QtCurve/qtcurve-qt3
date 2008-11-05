@@ -173,7 +173,7 @@ class QtCurveStyle : public HighContrastStyle
 
     bool appIsNotEmbedded(QDialog *dlg);
     bool eventFilter(QObject *object, QEvent *event);
-    void drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &cg,
+    void drawMenuItem(QPainter *p, const QRect &r, int flags, const QColorGroup &cg,
                       bool mbi, int round, const QColor &bgnd, const QColor *cols) const;
     void drawProgress(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, int round,
                       const QWidget *widget) const;
