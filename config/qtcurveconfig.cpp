@@ -455,6 +455,8 @@ static void insertSliderStyleEntries(QComboBox *combo)
 {
     combo->insertItem(i18n("Plain"));
     combo->insertItem(i18n("Round"));
+    combo->insertItem(i18n("Plain - rotated"));
+    combo->insertItem(i18n("Round - rotated"));
     combo->insertItem(i18n("Triangular"));
 }
 
