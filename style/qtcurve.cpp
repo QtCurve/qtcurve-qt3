@@ -5190,9 +5190,9 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(SCROLLBAR_OXYGEN==opts.scrollbarType)
                 if(horiz)
-                    sbRect.addCoords(subline.width()-1, 0, -(addline.width()+subline2.width()-1), 0);
+                    sbRect.addCoords(subline.width(), 0, -(addline.width()+subline2.width()), 0);
                 else
-                    sbRect.addCoords(0, subline.height()-1, 0, -(addline.height()+subline2.height()-1));
+                    sbRect.addCoords(0, subline.height(), 0, -(addline.height()+subline2.height()));
 
             // Draw trough...
             const QColor *trough(itsBackgroundCols); // backgroundColors(cg));
@@ -5278,7 +5278,6 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     if(atMax)
                         switch(opts.scrollbarType)
                         {
-                            case SCROLLBAR_OXYGEN:
                             case SCROLLBAR_KDE:
                             case SCROLLBAR_WINDOWS:
                             case SCROLLBAR_PLATINUM:
@@ -5292,7 +5291,6 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     if(atMin)
                         switch(opts.scrollbarType)
                         {
-                            case SCROLLBAR_OXYGEN:
                             case SCROLLBAR_KDE:
                             case SCROLLBAR_WINDOWS:
                             case SCROLLBAR_NEXT:
