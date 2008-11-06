@@ -64,19 +64,7 @@
 class QTimer;
 class QSlider;
 
-class HighContrastStyle : public KStyle
-{
-    Q_OBJECT
-
-    public:
-
-    HighContrastStyle();
-    virtual ~HighContrastStyle() { }
-
-    const char * className();
-};
-
-class QtCurveStyle : public HighContrastStyle
+class QtCurveStyle : public KStyle
 {
     Q_OBJECT
 

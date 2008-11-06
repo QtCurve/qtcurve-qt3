@@ -109,6 +109,9 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <qstyleplugin.h>
 #include <qgroupbox.h>
 #include <qdir.h>
+// Need access to classname from within QMetaObject...
+#define private public
+#include <qmetaobject.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <fixx11h.h>
@@ -730,18 +733,9 @@ static void drawArrow(QPainter *p, const QRect &r, const QColor &col, QStyle::Pr
     p->restore();
 }
 
-//
-// OO.o 2.x checks to see whether the used theme "inherits" from HighContrastStyle,
-// if so it uses the highlightedText color to draw highlighted menubar and popup menu
-// items. Otherwise it uses the standard color. So faking this inheritance, solves this
-// problem.
-HighContrastStyle::HighContrastStyle()
-                 : KStyle(AllowMenuTransparency, WindowsStyleScrollBar)
-{
-}
-
 QtCurveStyle::QtCurveStyle(const QString &name)
-            : itsSliderCols(0L),
+            : KStyle(AllowMenuTransparency, WindowsStyleScrollBar),
+              itsSliderCols(0L),
               itsDefBtnCols(0L),
               itsMouseOverCols(0L),
               itsSidebarButtonsCols(0L),
@@ -781,6 +775,19 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
     if(opts.contrast<0 || opts.contrast>10)
         opts.contrast=7;
+
+    //
+    // OO.o 2.x checks to see whether the used theme "inherits" from HighContrastStyle,
+    // if so it uses the highlightedText color to draw highlighted menubar and popup menu
+    // items. Otherwise it uses the standard color. Changing the metaobject's class name
+    // works around this...
+    if(opts.useHighlightForMenu)
+    {
+        QMetaObject *meta=(QMetaObject *)metaObject();
+
+        meta->classname="HighContrastStyle";
+    }
+    
     itsPixmapCache.setAutoDelete(true);
 
     if ((SHADE_CUSTOM==opts.shadeMenubars || SHADE_BLEND_SELECTED==opts.shadeMenubars) &&
@@ -3411,7 +3418,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     }
                     break;
             }
-            if(SCROLLBAR_OXYGEN!=opts.scrollbarType)
+            if(SCROLLBAR_OXYGEN==opts.scrollbarType)
+                p->fillRect(br, itsBackgroundCols[ORIGINAL_SHADE]);
+            else
                 drawLightBevel(p, br, cg, flags|Style_Raised,
                                round, getFill(flags, use), use, true, true, WIDGET_SB_BUTTON);
 
@@ -3470,7 +3479,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                    (widget && (dynamic_cast<QScrollView*>(widget->parent()) ||
                                dynamic_cast<QListBox*>(widget->parent()))))
                 {
-                    p->setPen(use[QT_FOCUS]);
+                    p->setPen(use[3]);
                     p->drawRect(r);
                 }
                 else
