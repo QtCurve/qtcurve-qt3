@@ -5,7 +5,7 @@
 3. Add the ability to specify popup menu light factor.
 4. Add option to use darkened background colour for menuitem selection.
 5. Add 'fade' to menuitem appearance.
-6. Add new scrollbar type - oxygen.
+6. Option to have flat scrollbar buttons.
 7. New slider styles - plain rotated, and round rotated.
 
 0.59.5

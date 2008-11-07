@@ -402,7 +402,6 @@ static void insertScrollbarEntries(QComboBox *combo)
     combo->insertItem(i18n("Windows"));
     combo->insertItem(i18n("Platinum"));
     combo->insertItem(i18n("Next"));
-    combo->insertItem(i18n("Oxygen"));
     combo->insertItem(i18n("No buttons"));
 }
 
@@ -585,6 +584,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(squareScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(highlightScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(sunkenScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(flatSbarButtons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gtkComboMenus, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gtkButtonOrder, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(mapKdeIcons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -1220,6 +1220,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.highlightScrollViews=highlightScrollViews->isChecked();
     opts.squareScrollViews=squareScrollViews->isChecked();
     opts.sunkenScrollViews=sunkenScrollViews->isChecked();
+    opts.flatSbarButtons=flatSbarButtons->isChecked();
     opts.gtkComboMenus=gtkComboMenus->isChecked();
     opts.gtkButtonOrder=gtkButtonOrder->isChecked();
     opts.mapKdeIcons=mapKdeIcons->isChecked();
@@ -1318,6 +1319,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     highlightScrollViews->setChecked(opts.highlightScrollViews);
     squareScrollViews->setChecked(opts.squareScrollViews);
     sunkenScrollViews->setChecked(opts.sunkenScrollViews);
+    flatSbarButtons->setChecked(opts.flatSbarButtons);
     gtkComboMenus->setChecked(opts.gtkComboMenus);
     gtkButtonOrder->setChecked(opts.gtkButtonOrder);
     mapKdeIcons->setChecked(opts.mapKdeIcons);
@@ -1392,6 +1394,7 @@ bool QtCurveConfig::settingsChanged()
          highlightScrollViews->isChecked()!=currentStyle.highlightScrollViews ||
          squareScrollViews->isChecked()!=currentStyle.squareScrollViews ||
          sunkenScrollViews->isChecked()!=currentStyle.sunkenScrollViews ||
+         flatSbarButtons->isChecked()!=currentStyle.flatSbarButtons ||
          gtkComboMenus->isChecked()!=currentStyle.gtkComboMenus ||
          gtkButtonOrder->isChecked()!=currentStyle.gtkButtonOrder ||
          mapKdeIcons->isChecked()!=currentStyle.mapKdeIcons ||

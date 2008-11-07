@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>727</width>
-            <height>522</height>
+            <width>754</width>
+            <height>565</height>
         </rect>
     </property>
     <property name="caption">
@@ -465,6 +465,14 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="text">
                             <string>Fill used part of groove</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="4" column="2" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>flatSbarButtons</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Flat</string>
                         </property>
                     </widget>
                 </grid>
@@ -2034,6 +2042,8 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <tabstops>
     <tabstop>stackList</tabstop>
     <tabstop>appearance</tabstop>
@@ -2053,6 +2063,7 @@ None - no buttons, only the slider</string>
     <tabstop>sliderStyle</tabstop>
     <tabstop>fillSlider</tabstop>
     <tabstop>scrollbarType</tabstop>
+    <tabstop>flatSbarButtons</tabstop>
     <tabstop>sliderThumbs</tabstop>
     <tabstop>progressAppearance</tabstop>
     <tabstop>stripedProgress</tabstop>
@@ -2127,7 +2138,6 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
@@ -2137,9 +2147,6 @@ None - no buttons, only the slider</string>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
