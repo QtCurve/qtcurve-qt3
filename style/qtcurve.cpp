@@ -775,19 +775,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
     if(opts.contrast<0 || opts.contrast>10)
         opts.contrast=7;
-
-    //
-    // OO.o 2.x checks to see whether the used theme "inherits" from HighContrastStyle,
-    // if so it uses the highlightedText color to draw highlighted menubar and popup menu
-    // items. Otherwise it uses the standard color. Changing the metaobject's class name
-    // works around this...
-    if(opts.useHighlightForMenu)
-    {
-        QMetaObject *meta=(QMetaObject *)metaObject();
-
-        meta->classname="HighContrastStyle";
-    }
-    
+   
     itsPixmapCache.setAutoDelete(true);
 
     if ((SHADE_CUSTOM==opts.shadeMenubars || SHADE_BLEND_SELECTED==opts.shadeMenubars) &&
@@ -954,6 +942,18 @@ void QtCurveStyle::polish(QApplication *app)
 
     if(APP_OPENOFFICE==itsThemedApp)
     {
+        //
+        // OO.o 2.x checks to see whether the used theme "inherits" from HighContrastStyle,
+        // if so it uses the highlightedText color to draw highlighted menubar and popup menu
+        // items. Otherwise it uses the standard color. Changing the metaobject's class name
+        // works around this...
+        if(opts.useHighlightForMenu)
+        {
+            QMetaObject *meta=(QMetaObject *)metaObject();
+
+            meta->classname="HighContrastStyle";
+        }
+
         if(opts.scrollbarType==SCROLLBAR_NEXT)
             opts.scrollbarType=SCROLLBAR_KDE;
         else if(opts.scrollbarType==SCROLLBAR_NONE)
@@ -4196,12 +4196,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             maxpmw=QMAX(maxpmw, constMenuPixmapWidth);
             r.rect(&x, &y, &w, &h);
 
-            if((flags & Style_Active)&&(flags & Style_Enabled))
-                drawMenuItem(p, r, flags, cg, false, ROUNDED_ALL,
-                             USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol
-                                                    : itsBackgroundCols[ORIGINAL_SHADE],
-                             opts.useHighlightForMenu ? itsMenuitemCols : itsBackgroundCols);
-            else if(widget->erasePixmap() && !widget->erasePixmap()->isNull())
+            if(widget->erasePixmap() && !widget->erasePixmap()->isNull())
                 p->drawPixmap(x, y, *widget->erasePixmap(), x, y, w, h);
             else
             {
@@ -4216,6 +4211,12 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                       getWidgetShade(WIDGET_OTHER, false, false, opts.menuStripeAppearance),
                                       false, opts.menuStripeAppearance, WIDGET_OTHER);
             }
+
+            if((flags&Style_Active) && (flags&Style_Enabled))
+                drawMenuItem(p, r, flags, cg, false, ROUNDED_ALL,
+                             USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol
+                                                    : itsBackgroundCols[ORIGINAL_SHADE],
+                             opts.useHighlightForMenu ? itsMenuitemCols : itsBackgroundCols);
 
             if(!mi)
                 break;
