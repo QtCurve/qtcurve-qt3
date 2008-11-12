@@ -5306,7 +5306,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 if(!(controls&SC_ScrollBarSlider))
                     p->setClipRegion(QRegion(s2)+QRegion(addpage));
 #ifdef QTC_INCREASE_SB_SLIDER
-                else
+                else if(!opts.flatSbarButtons)
                 {
                     if(atMax)
                         switch(opts.scrollbarType)
