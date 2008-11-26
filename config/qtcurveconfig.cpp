@@ -494,6 +494,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(progressGrooveAppearance);
     insertAppearanceEntries(menuitemAppearance, true, true, true);
     insertAppearanceEntries(titlebarAppearance, true, false);
+    insertAppearanceEntries(titlebarButtonAppearance);
     insertAppearanceEntries(selectionAppearance, true, false);
     insertAppearanceEntries(menuStripeAppearance, true, false);
     insertLineEntries(handles, false);
@@ -560,6 +561,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(progressGrooveColor, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(menuitemAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(titlebarAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(titlebarButtonAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(selectionAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(shadeCheckRadio, SIGNAL(activated(int)), SLOT(shadeCheckRadioChanged()));
     connect(customCheckRadioColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
@@ -1212,6 +1214,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.progressGrooveColor=(EColor)progressGrooveColor->currentItem();
     opts.menuitemAppearance=(EAppearance)menuitemAppearance->currentItem();
     opts.titlebarAppearance=(EAppearance)titlebarAppearance->currentItem();
+    opts.titlebarButtonAppearance=(EAppearance)titlebarButtonAppearance->currentItem();
     opts.selectionAppearance=(EAppearance)selectionAppearance->currentItem();
     opts.shadeCheckRadio=(EShade)shadeCheckRadio->currentItem();
     opts.customCheckRadioColor=customCheckRadioColor->color();
@@ -1308,6 +1311,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     progressGrooveColor->setCurrentItem(opts.progressGrooveColor);
     menuitemAppearance->setCurrentItem(opts.menuitemAppearance);
     titlebarAppearance->setCurrentItem(opts.titlebarAppearance);
+    titlebarButtonAppearance->setCurrentItem(opts.titlebarButtonAppearance);
     selectionAppearance->setCurrentItem(opts.selectionAppearance);
     shadeCheckRadio->setCurrentItem(opts.shadeCheckRadio);
     customCheckRadioColor->setColor(opts.customCheckRadioColor);
@@ -1383,6 +1387,7 @@ bool QtCurveConfig::settingsChanged()
          progressGrooveColor->currentItem()!=currentStyle.progressGrooveColor ||
          menuitemAppearance->currentItem()!=currentStyle.menuitemAppearance ||
          titlebarAppearance->currentItem()!=currentStyle.titlebarAppearance ||
+         titlebarButtonAppearance->currentItem()!=currentStyle.titlebarButtonAppearance ||
          selectionAppearance->currentItem()!=currentStyle.selectionAppearance ||
          toolbarSeparators->currentItem()!=currentStyle.toolbarSeparators ||
          splitters->currentItem()!=currentStyle.splitters ||
