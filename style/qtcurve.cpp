@@ -5457,12 +5457,13 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if (controls&SC_TitleBarLabel)
             {
-                QRect ir(visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarLabel), widget));
+                QRect       ir(visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarLabel), widget));
+                EAppearance app=isActive ? opts.titlebarAppearance : opts.inactiveTitlebarAppearance;
 
                 drawBevelGradient(cols[ORIGINAL_SHADE], true, p, r, true,
-                                  getWidgetShade(WIDGET_MDI_WINDOW, true, false, opts.titlebarAppearance),
-                                  getWidgetShade(WIDGET_MDI_WINDOW, false, false, opts.titlebarAppearance),
-                                  false, opts.titlebarAppearance, WIDGET_MDI_WINDOW);
+                                  getWidgetShade(WIDGET_MDI_WINDOW, true, false, app),
+                                  getWidgetShade(WIDGET_MDI_WINDOW, false, false, app),
+                                  false, app, WIDGET_MDI_WINDOW);
                 ir.addCoords(2, 0, -4, 0);
 
                 QString titleString(elliditide(widget->caption(), QFontMetrics(widget->font()), ir.width()));

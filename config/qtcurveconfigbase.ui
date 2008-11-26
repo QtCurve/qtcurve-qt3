@@ -1106,7 +1106,7 @@ None - no buttons, only the slider</string>
                             </size>
                         </property>
                     </spacer>
-                    <spacer row="2" column="1">
+                    <spacer row="3" column="1">
                         <property name="name">
                             <cstring>spacer27</cstring>
                         </property>
@@ -1119,10 +1119,28 @@ None - no buttons, only the slider</string>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>430</height>
+                                <height>380</height>
                             </size>
                         </property>
                     </spacer>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel15_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Button Appearance:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="2" column="1">
+                        <property name="name">
+                            <cstring>titlebarButtonAppearance</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="0" column="1">
+                        <property name="name">
+                            <cstring>titlebarAppearance</cstring>
+                        </property>
+                    </widget>
                     <widget class="QLabel" row="0" column="0">
                         <property name="name">
                             <cstring>textLabel15</cstring>
@@ -1133,20 +1151,15 @@ None - no buttons, only the slider</string>
                     </widget>
                     <widget class="QLabel" row="1" column="0">
                         <property name="name">
-                            <cstring>textLabel15_2</cstring>
+                            <cstring>textLabel15_3</cstring>
                         </property>
                         <property name="text">
-                            <string>Button Appearance:</string>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="0" column="1">
-                        <property name="name">
-                            <cstring>titlebarAppearance</cstring>
+                            <string>Titlebar Appearance:</string>
                         </property>
                     </widget>
                     <widget class="QComboBox" row="1" column="1">
                         <property name="name">
-                            <cstring>titlebarButtonAppearance</cstring>
+                            <cstring>inactiveTitlebarAppearance</cstring>
                         </property>
                     </widget>
                 </grid>
@@ -2102,6 +2115,8 @@ None - no buttons, only the slider</string>
     <tabstop>xCheck</tabstop>
     <tabstop>crHighlight</tabstop>
     <tabstop>titlebarAppearance</tabstop>
+    <tabstop>inactiveTitlebarAppearance</tabstop>
+    <tabstop>titlebarButtonAppearance</tabstop>
     <tabstop>toolbarBorders</tabstop>
     <tabstop>handles</tabstop>
     <tabstop>menubarAppearance</tabstop>
