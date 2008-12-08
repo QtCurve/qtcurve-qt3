@@ -2282,7 +2282,7 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
             p->drawLine(r.x()+r.width()-1, r.y()+1, r.x()+r.width()-1, r.y()+r.height()-2);
         }
 
-        if(!opts.fillProgress || WIDGET_PROGRESSBAR!=w)
+        //if(!opts.fillProgress || WIDGET_PROGRESSBAR!=w)
         {
             QColor  largeArcMid(midColor(border, bgnd)),
                     aaColor(midColor(custom ? custom[3] : itsBackgroundCols[3], bgnd));
@@ -4758,11 +4758,11 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
         case SR_ProgressBarContents:
             return opts.fillProgress
                     ? QTC_DO_EFFECT
-                        ? QRect(wrect.left()+1, wrect.top()+1, wrect.width()-2, wrect.height()-2)
-                        : wrect
+                        ? wrect
+                        : QRect(wrect.left()-1, wrect.top()-1, wrect.width()+2, wrect.height()+2)
                     : QTC_DO_EFFECT
-                        ? QRect(wrect.left()+3, wrect.top()+3, wrect.width()-6, wrect.height()-6)
-                        : QRect(wrect.left()+2, wrect.top()+2, wrect.width()-4, wrect.height()-4);
+                        ? QRect(wrect.left()+2, wrect.top()+2, wrect.width()-4, wrect.height()-4)
+                        : QRect(wrect.left()+1, wrect.top()+1, wrect.width()-2, wrect.height()-2);
         case SR_ProgressBarLabel:
         case SR_ProgressBarGroove:
             return wrect;
@@ -6194,12 +6194,13 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QC
                           false, opts.menuitemAppearance, WIDGET_MENU_ITEM);
 }
 
-void QtCurveStyle::drawProgress(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
+void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup &cg, SFlags flags,
                                 int round, const QWidget *widget) const
 {
-    if(r.width()<1)
+    if(rx.width()<1)
         return;
 
+    QRect   r(rx.x()+1, rx.y()+1, rx.width()-2, rx.height()-2);
     int     minWidth(3);
     bool    drawFull(r.width()>minWidth),
             drawStripe(r.width()>(minWidth*1.5));
@@ -6255,16 +6256,18 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &r, const QColorGroup &
 
     flags|=Style_Raised|Style_Horizontal;
 
-    drawLightBevel(cg.background(), p, r, cg, flags, opts.fillProgress ? ROUNDED_ALL : round, use[ORIGINAL_SHADE],
-                    use, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
+    drawLightBevel(cg.background(), p, r, cg, flags, round, use[ORIGINAL_SHADE],
+                    use, false, true, WIDGET_PROGRESSBAR);
 
     if(drawStripe && opts.stripedProgress)
     {
         p->setClipRegion(outer);
         drawLightBevel(cg.background(), p, r, cg, flags, round, use[1],
-                        use, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
+                        use, false, true, WIDGET_PROGRESSBAR);
         p->setClipping(false);
     }
+
+    drawBorder(cg.background(), p, r, cg, flags, opts.fillProgress ? ROUNDED_ALL : round, use, WIDGET_PROGRESSBAR, true, BORDER_FLAT, false, QT_PBAR_BORDER);
 
     if(!opts.fillProgress && QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
     {
