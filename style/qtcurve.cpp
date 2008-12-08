@@ -2204,8 +2204,10 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
     QColor       border(flags&Style_ButtonDefault && IND_FONT_COLOR==opts.defBtnIndicator &&
                         flags&Style_Enabled
                           ? cg.buttonText()
-                          : cols[!(flags&Style_Enabled) && (WIDGET_BUTTON(w) || WIDGET_SLIDER_TROUGH==w || flags&QTC_CHECK_BUTTON)
-                                    ? QT_DISABLED_BORDER : borderVal]);
+                          : cols[WIDGET_PROGRESS==w
+                                    ? QT_PBAR_BORDER
+                                    : !(flags&Style_Enabled) && (WIDGET_BUTTON(w) || WIDGET_SLIDER_TROUGH==w || flags&QTC_CHECK_BUTTON)
+                                        ? QT_DISABLED_BORDER : borderVal]);
 
     switch(borderProfile)
     {
@@ -6251,28 +6253,20 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &r, const QColorGroup &
 
     const QColor *use=flags&Style_Enabled || ECOLOR_BACKGROUND==opts.progressGrooveColor ? itsMenuitemCols : itsBackgroundCols;
 
-    if(drawFull || opts.fillProgress)
-    {
-        flags|=Style_Raised|Style_Horizontal;
+    flags|=Style_Raised|Style_Horizontal;
 
-        drawLightBevel(cg.background(), p, r, cg, flags, round, use[ORIGINAL_SHADE],
-                       use, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
+    drawLightBevel(cg.background(), p, r, cg, flags, opts.fillProgress ? ROUNDED_ALL : round, use[ORIGINAL_SHADE],
+                    use, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
 
-        if(drawStripe && opts.stripedProgress)
-        {
-            p->setClipRegion(outer);
-            drawLightBevel(cg.background(), p, r, cg, flags, round, use[1],
-                           use, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
-            p->setClipping(false);
-        }
-    }
-    else
+    if(drawStripe && opts.stripedProgress)
     {
-        p->setPen(use[QT_STD_BORDER]);
-        p->setBrush(use[ORIGINAL_SHADE]);
-        p->drawRect(r);
+        p->setClipRegion(outer);
+        drawLightBevel(cg.background(), p, r, cg, flags, round, use[1],
+                        use, !opts.fillProgress, true, WIDGET_PROGRESSBAR);
+        p->setClipping(false);
     }
-    if(QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
+
+    if(!opts.fillProgress && QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
     {
         QRect rb(r);
 

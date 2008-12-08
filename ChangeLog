@@ -7,6 +7,7 @@
 5. Add 'fade' to menuitem appearance.
 6. Option to have flat scrollbar buttons.
 7. New slider styles - plain rotated, and round rotated.
+8. Draw border around filled progress.
 
 0.59.5
 ------
