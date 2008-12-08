@@ -2204,7 +2204,7 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
     QColor       border(flags&Style_ButtonDefault && IND_FONT_COLOR==opts.defBtnIndicator &&
                         flags&Style_Enabled
                           ? cg.buttonText()
-                          : cols[WIDGET_PROGRESS==w
+                          : cols[WIDGET_PROGRESSBAR==w
                                     ? QT_PBAR_BORDER
                                     : !(flags&Style_Enabled) && (WIDGET_BUTTON(w) || WIDGET_SLIDER_TROUGH==w || flags&QTC_CHECK_BUTTON)
                                         ? QT_DISABLED_BORDER : borderVal]);
