@@ -4489,7 +4489,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
             if(0==steps)//Busy indicator
             {
-                static const int barWidth(10);
+                static const int barWidth(PROGRESS_CHUNK_WIDTH*3.4);
 
                 int progress(pb->progress() % (2*(r.width()-barWidth)));
 
@@ -5889,7 +5889,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
         case PM_TabBarTabOverlap:
             return 1;
         case PM_ProgressBarChunkWidth:
-            return 4;
+            return PROGRESS_CHUNK_WIDTH*3.4;
         case PM_DockWindowSeparatorExtent:
             return 4;
         case PM_DockWindowHandleExtent:
