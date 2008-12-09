@@ -2938,7 +2938,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             EWidget      wid=opts.crRaised ? WIDGET_STD_BUTTON : WIDGET_TROUGH;
             EAppearance  app=opts.crRaised ? opts.appearance : APPEARANCE_GRADIENT;
             bool         drawSunken=opts.crRaised ? sunken : false,
-                         lb=opts.crRaised && QTC_DRAW_LIGHT_BORDER(drawSunken, widget, app);
+                         lb=opts.crRaised && !drawSunken && !IS_GLASS(app);
 
             if(IS_FLAT(opts.appearance))
                 p->fillRect(QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), bgnd);
@@ -2976,7 +2976,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 p->setBrush(Qt::NoBrush);
                 p->setPen(topCol);
-                if(!opts.crRaised || drawSunken)
+                if(!opts.crRaised || drawSunken || glow)
                 {
                     p->drawLine(r.x()+1, r.y(), r.x()+r.width()-2, r.y());
                     p->drawLine(r.x(), r.y()+1, r.x(), r.y()+r.height()-2);
@@ -3061,7 +3061,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 EWidget      wid=opts.crRaised ? WIDGET_STD_BUTTON : WIDGET_TROUGH;
                 EAppearance  app=opts.crRaised ? opts.appearance : APPEARANCE_GRADIENT;
                 bool         drawSunken=opts.crRaised ? sunken : false,
-                             lb=opts.crRaised && QTC_DRAW_LIGHT_BORDER(drawSunken, widget, app);
+                             lb=opts.crRaised && !drawSunken && !IS_GLASS(app);
 
                 p->save();
                 p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
@@ -3106,7 +3106,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                     p->setBrush(Qt::NoBrush);
                     p->setPen(topCol);
-                    if(!opts.crRaised || drawSunken)
+                    if(!opts.crRaised || drawSunken || glow)
                     {
                         p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 45*16, 180*16);
                         p->setPen(botCol);
