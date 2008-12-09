@@ -201,7 +201,7 @@ class QtCurveStyle : public KStyle
     void           readMdiPositions() const;
 #endif
     bool           redrawHoverWidget(const QPoint &pos);
-    const QColor & getFill(SFlags flags, const QColor *use) const;
+    const QColor & getFill(SFlags flags, const QColor *use, bool cr=false) const;
     const QColor & getListViewFill(SFlags flags, const QColor *use) const;
     const QColor & getTabFill(bool current,  bool highlight, const QColor *use) const;
 

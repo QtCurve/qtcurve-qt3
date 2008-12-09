@@ -2928,19 +2928,26 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             const QColor *bc(borderColors(sflags, 0L)),
                          *btn(buttonColors(cg)),
                          *use(bc ? bc : btn),
-                         &bgnd(sflags&Style_Enabled && !sunken
-                                ? MO_NONE==opts.coloredMouseOver && !opts.crHighlight && sflags&Style_MouseOver
-                                    ? use[QTC_CR_MO_FILL]
-                                    : cg.base()
-                                : cg.background());
+                         &bgnd(opts.crRaised
+                                ? getFill(flags, btn, true)
+                                : sflags&Style_Enabled && !sunken
+                                    ? MO_NONE==opts.coloredMouseOver && !opts.crHighlight && sflags&Style_MouseOver
+                                        ? use[QTC_CR_MO_FILL]
+                                        : cg.base()
+                                    : cg.background());
+            EWidget      wid=opts.crRaised ? WIDGET_STD_BUTTON : WIDGET_TROUGH;
+            EAppearance  app=opts.crRaised ? opts.appearance : APPEARANCE_GRADIENT;
+            bool         drawSunken=opts.crRaised ? sunken : false,
+                         lb=opts.crRaised && QTC_DRAW_LIGHT_BORDER(drawSunken, widget, app);
 
             if(IS_FLAT(opts.appearance))
                 p->fillRect(QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), bgnd);
             else
-                drawBevelGradient(bgnd, false, p, QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), true,
-                                    getWidgetShade(WIDGET_TROUGH, true, false, APPEARANCE_GRADIENT),
-                                    getWidgetShade(WIDGET_TROUGH, false, false, APPEARANCE_GRADIENT),
-                                    false, APPEARANCE_GRADIENT, WIDGET_TROUGH);
+                drawBevelGradient(bgnd, opts.crRaised ? !sunken : false, p,
+                                  QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), true,
+                                  getWidgetShade(wid, true, drawSunken, app),
+                                  getWidgetShade(wid, false, drawSunken, app),
+                                  drawSunken, app, wid);
 
             if(MO_NONE!=opts.coloredMouseOver && !glow && sflags&Style_MouseOver && sflags&Style_Enabled)
             {
@@ -2948,9 +2955,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 p->drawRect(QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2));
                 // p->drawRect(QRect(rect.x()+2, rect.y()+2, rect.width()-4, rect.height()-4));
             }
-            else
+            else if(!opts.crRaised || lb)
             {
-                p->setPen(midColor(sflags&Style_Enabled ? cg.base() : cg.background(), use[3]));
+                p->setPen(lb ? use[APPEARANCE_DULL_GLASS==app ? 1 : 0] : midColor(sflags&Style_Enabled ? cg.base() : cg.background(), use[3]));
                 p->drawLine(rect.x()+1, rect.y()+1, rect.x()+1, rect.y()+rect.height()-2);
                 p->drawLine(rect.x()+1, rect.y()+1, rect.x()+rect.width()-2, rect.y()+1);
             }
@@ -2969,9 +2976,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 p->setBrush(Qt::NoBrush);
                 p->setPen(topCol);
-                p->drawLine(r.x()+1, r.y(), r.x()+r.width()-2, r.y());
-                p->drawLine(r.x(), r.y()+1, r.x(), r.y()+r.height()-2);
-                p->setPen(botCol);
+                if(!opts.crRaised || drawSunken)
+                {
+                    p->drawLine(r.x()+1, r.y(), r.x()+r.width()-2, r.y());
+                    p->drawLine(r.x(), r.y()+1, r.x(), r.y()+r.height()-2);
+                    p->setPen(botCol);
+                }
                 p->drawLine(r.x()+1, r.y()+r.height()-1, r.x()+r.width()-2, r.y()+r.height()-1);
                 p->drawLine(r.x()+r.width()-1, r.y()+1, r.x()+r.width()-1, r.y()+r.height()-2);
             }
@@ -3037,15 +3047,21 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                          ? cg.highlightedText()
                                          : itsCheckRadioCol
                                      : cg.mid()),
-                             &bgnd(sflags&Style_Enabled && !sunken
-                                    ? MO_NONE==opts.coloredMouseOver && !opts.crHighlight && sflags&Style_MouseOver
-                                        ? use[QTC_CR_MO_FILL]
-                                        : cg.base()
-                                    : cg.background());
+                             &bgnd(opts.crRaised
+                                    ? getFill(flags, btn, true)
+                                    : sflags&Style_Enabled && !sunken
+                                        ? MO_NONE==opts.coloredMouseOver && !opts.crHighlight && sflags&Style_MouseOver
+                                            ? use[QTC_CR_MO_FILL]
+                                            : cg.base()
+                                        : cg.background());
                 bool         glow(doEtch && MO_GLOW==opts.coloredMouseOver && sflags&Style_MouseOver && sflags&Style_Enabled),
                              set(sflags&Style_On),
                              coloredMo(MO_NONE!=opts.coloredMouseOver && !glow &&
                                        sflags&Style_MouseOver && sflags&Style_Enabled);
+                EWidget      wid=opts.crRaised ? WIDGET_STD_BUTTON : WIDGET_TROUGH;
+                EAppearance  app=opts.crRaised ? opts.appearance : APPEARANCE_GRADIENT;
+                bool         drawSunken=opts.crRaised ? sunken : false,
+                             lb=opts.crRaised && QTC_DRAW_LIGHT_BORDER(drawSunken, widget, app);
 
                 p->save();
                 p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
@@ -3055,10 +3071,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(IS_FLAT(opts.appearance))
                     p->fillRect(QRect(x+1, y+1, rect.width()-2, rect.height()-2), bgnd);
                 else
-                    drawBevelGradient(bgnd, false, p, QRect(x+1, y+1, rect.width()-2, rect.height()-2), true,
-                                      getWidgetShade(WIDGET_TROUGH, true, false, APPEARANCE_GRADIENT),
-                                      getWidgetShade(WIDGET_TROUGH, false, false, APPEARANCE_GRADIENT),
-                                      false, APPEARANCE_GRADIENT, WIDGET_TROUGH);
+                    drawBevelGradient(bgnd, opts.crRaised ? !sunken : false, p,
+                                      QRect(x+1, y+1, rect.width()-2, rect.height()-2), true,
+                                      getWidgetShade(wid, true, drawSunken, app),
+                                      getWidgetShade(wid, false, drawSunken, app),
+                                      drawSunken, app, wid);
 
                 if(coloredMo)
                 {
@@ -3089,8 +3106,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                     p->setBrush(Qt::NoBrush);
                     p->setPen(topCol);
-                    p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 45*16, 180*16);
-                    p->setPen(botCol);
+                    if(!opts.crRaised || drawSunken)
+                    {
+                        p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 45*16, 180*16);
+                        p->setPen(botCol);
+                    }
                     p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 225*16, 180*16);
                 }
 
@@ -3105,8 +3125,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 if(set)
                     p->drawPixmap(rect.x(), rect.y(), *getPixmap(on, PIX_RADIO_ON, 1.0));
-                if(!coloredMo && (QApplication::NormalColor==QApplication::colorSpec() || itsFormMode))
-                    p->drawPixmap(rect.x(), rect.y(), *getPixmap(btn[sflags&Style_MouseOver ? 3 : 4], PIX_RADIO_LIGHT));
+                if(!coloredMo && (!opts.crRaised || lb) && (QApplication::NormalColor==QApplication::colorSpec() || itsFormMode))
+                    p->drawPixmap(rect.x(), rect.y(), *getPixmap(btn[lb ? (APPEARANCE_DULL_GLASS==app ? 1 : 0)
+                                                                        : (sflags&Style_MouseOver ? 3 : 4)], PIX_RADIO_LIGHT));
                 p->restore();
             }
             break;
@@ -7463,17 +7484,17 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
     return false;
 }
 
-const QColor & QtCurveStyle::getFill(SFlags flags, const QColor *use) const
+const QColor & QtCurveStyle::getFill(SFlags flags, const QColor *use, bool cr) const
 {
     return !(flags&Style_Enabled)
                ? use[ORIGINAL_SHADE]
                : flags&Style_Down
                    ? use[4]
                    : flags&Style_MouseOver
-                         ? flags&(Style_On | Style_Sunken)
+                         ? !cr && (flags&(Style_On | Style_Sunken))
                                ? use[SHADE_4_HIGHLIGHT]
                                : use[SHADE_ORIG_HIGHLIGHT]
-                         : flags&(Style_On | Style_Sunken)
+                         : !cr && (flags&(Style_On | Style_Sunken))
                                ? use[4]
                                : use[ORIGINAL_SHADE];
 }

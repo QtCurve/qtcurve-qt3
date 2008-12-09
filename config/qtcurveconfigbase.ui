@@ -997,7 +997,7 @@ None - no buttons, only the slider</string>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QComboBox" row="0" column="1">
+                    <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>shadeCheckRadio</cstring>
                         </property>
@@ -1010,7 +1010,7 @@ None - no buttons, only the slider</string>
                             </sizepolicy>
                         </property>
                     </widget>
-                    <widget class="KColorButton" row="0" column="2">
+                    <widget class="KColorButton" row="0" column="3">
                         <property name="name">
                             <cstring>customCheckRadioColor</cstring>
                         </property>
@@ -1026,7 +1026,7 @@ None - no buttons, only the slider</string>
                             <string>Coloration:</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
+                    <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>xCheck</cstring>
                         </property>
@@ -1034,7 +1034,7 @@ None - no buttons, only the slider</string>
                             <string>'X' style checkmarks</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
+                    <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>crHighlight</cstring>
                         </property>
@@ -1042,7 +1042,7 @@ None - no buttons, only the slider</string>
                             <string>Highlight text background</string>
                         </property>
                     </widget>
-                    <spacer row="0" column="3">
+                    <spacer row="0" column="4">
                         <property name="name">
                             <cstring>spacer25</cstring>
                         </property>
@@ -1054,12 +1054,12 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>39</width>
-                                <height>7</height>
+                                <width>211</width>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
-                    <spacer row="3" column="1">
+                    <spacer row="4" column="2">
                         <property name="name">
                             <cstring>spacer26</cstring>
                         </property>
@@ -1071,11 +1071,19 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>5</width>
-                                <height>16</height>
+                                <width>20</width>
+                                <height>360</height>
                             </size>
                         </property>
                     </spacer>
+                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>crRaised</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Raised</string>
+                        </property>
+                    </widget>
                 </grid>
             </widget>
             <widget class="QWidget">
@@ -2114,6 +2122,7 @@ None - no buttons, only the slider</string>
     <tabstop>customCheckRadioColor</tabstop>
     <tabstop>xCheck</tabstop>
     <tabstop>crHighlight</tabstop>
+    <tabstop>crRaised</tabstop>
     <tabstop>titlebarAppearance</tabstop>
     <tabstop>inactiveTitlebarAppearance</tabstop>
     <tabstop>titlebarButtonAppearance</tabstop>
