@@ -6288,7 +6288,7 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup 
         p->setClipping(false);
     }
 
-    drawBorder(cg.background(), p, r, cg, flags, opts.fillProgress ? ROUNDED_ALL : round, use, WIDGET_PROGRESSBAR, true, BORDER_FLAT, false, QT_PBAR_BORDER);
+    drawBorder(cg.background(), p, r, cg, flags, opts.fillProgress ? ROUNDED_ALL : round, use, WIDGET_PROGRESSBAR, false, BORDER_FLAT, false, QT_PBAR_BORDER);
 
     if(!opts.fillProgress && QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
     {
