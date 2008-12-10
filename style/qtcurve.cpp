@@ -7539,6 +7539,18 @@ QPixmap * QtCurveStyle::getPixelPixmap(const QColor col) const
     return pix;
 }
 
+static QImage rotateImage(const QImage &img, double angle=90.0)
+{
+    QWMatrix matrix;
+    matrix.translate(img.width()/2, img.height()/2);
+    matrix.rotate(angle);
+
+    QRect newRect(matrix.mapRect(QRect(0, 0, img.width(), img.height())));
+
+    return img.xForm(QWMatrix(matrix.m11(), matrix.m12(), matrix.m21(), matrix.m22(),
+                              matrix.dx() - newRect.left(), matrix.dy() - newRect.top()));
+}
+
 QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) const
 {
     QRgb    rgb(col.rgb());
@@ -7575,10 +7587,10 @@ QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) con
                 img.loadFromData(qembed_findData("slider_light.png"));
                 break;
             case PIX_SLIDER_V:
-                img.loadFromData(qembed_findData("slider_v.png"));
+                img=rotateImage(img.loadFromData(qembed_findData("slider.png")));
                 break;
             case PIX_SLIDER_LIGHT_V:
-                img.loadFromData(qembed_findData("slider_light_v.png"));
+                img=rotateImage(img.loadFromData(qembed_findData("slider_light.png"))).mirror(true, false);
                 break;
         }
 
