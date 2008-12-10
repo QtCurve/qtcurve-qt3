@@ -3068,9 +3068,19 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_GRADIENT;
                 bool         drawSunken=opts.crButton ? sunken : false,
                              lightBorder=QTC_DRAW_LIGHT_BORDER(drawSunken, wid, app),
-                             drawLight=opts.crButton && !drawSunken && (lightBorder || !IS_GLASS(app));
+                             drawLight=opts.crButton && !drawSunken && (lightBorder || !IS_GLASS(app)),
+                             doneShadow=false;
 
                 p->save();
+
+                if(doEtch && !glow && opts.crButton && !drawSunken && EFFECT_SHADOW==opts.buttonEffect)
+                {
+                    p->setBrush(Qt::NoBrush);
+                    p->setPen(shade(cg.background(), QTC_ETCHED_DARK));
+                    p->drawArc(QRect(r.x()+1, r.y()+1, QTC_RADIO_SIZE, QTC_RADIO_SIZE), 0, 360*16);
+                    doneShadow=true;
+                }
+
                 p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
                                ? shade(cg.background(), opts.highlightFactor) : cg.background());
 
@@ -3102,7 +3112,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 p->setClipping(false);
 
-                if(doEtch)
+                if(doEtch && !doneShadow)
                 {
                     QColor topCol(glow
                                     ? itsMouseOverCols[QTC_GLOW_MO]
@@ -3113,7 +3123,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                     p->setBrush(Qt::NoBrush);
                     p->setPen(topCol);
-                    if(!opts.crButton || EFFECT_SHADOW!=opts.buttonEffect || drawSunken || glow)
+                    if(drawSunken || glow)
                     {
                         p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 45*16, 180*16);
                         p->setPen(botCol);
