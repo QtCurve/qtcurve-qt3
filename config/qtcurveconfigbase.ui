@@ -1078,10 +1078,10 @@ None - no buttons, only the slider</string>
                     </spacer>
                     <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
                         <property name="name">
-                            <cstring>crRaised</cstring>
+                            <cstring>crButton</cstring>
                         </property>
                         <property name="text">
-                            <string>Raised</string>
+                            <string>Button like</string>
                         </property>
                     </widget>
                 </grid>
@@ -2122,7 +2122,7 @@ None - no buttons, only the slider</string>
     <tabstop>customCheckRadioColor</tabstop>
     <tabstop>xCheck</tabstop>
     <tabstop>crHighlight</tabstop>
-    <tabstop>crRaised</tabstop>
+    <tabstop>crButton</tabstop>
     <tabstop>titlebarAppearance</tabstop>
     <tabstop>inactiveTitlebarAppearance</tabstop>
     <tabstop>titlebarButtonAppearance</tabstop>
