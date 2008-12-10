@@ -7597,10 +7597,12 @@ QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) con
                 img.loadFromData(qembed_findData("slider_light.png"));
                 break;
             case PIX_SLIDER_V:
-                img=rotateImage(img.loadFromData(qembed_findData("slider.png")));
+                img.loadFromData(qembed_findData("slider.png"));
+                img=rotateImage(img);
                 break;
             case PIX_SLIDER_LIGHT_V:
-                img=rotateImage(img.loadFromData(qembed_findData("slider_light.png"))).mirror(true, false);
+                img.loadFromData(qembed_findData("slider_light.png"));
+                img=rotateImage(img).mirror(true, false);
                 break;
         }
 
