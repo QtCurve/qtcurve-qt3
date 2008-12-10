@@ -2938,7 +2938,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             EWidget      wid=opts.crButton ? WIDGET_STD_BUTTON : WIDGET_TROUGH;
             EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_GRADIENT;
             bool         drawSunken=opts.crButton ? sunken : false,
-                         lb=opts.crButton && !drawSunken && !IS_GLASS(app);
+                         lightBorder=QTC_DRAW_LIGHT_BORDER(drawSunken, wid, app),
+                         drawLight=opts.crButton && !drawSunken && (lightBorder || !IS_GLASS(app));
 
             if(IS_FLAT(opts.appearance))
                 p->fillRect(QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), bgnd);
@@ -2955,11 +2956,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 p->drawRect(QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2));
                 // p->drawRect(QRect(rect.x()+2, rect.y()+2, rect.width()-4, rect.height()-4));
             }
-            else if(!opts.crButton || lb)
+            else if(!opts.crButton || drawLight)
             {
-                p->setPen(lb ? btn[APPEARANCE_DULL_GLASS==app ? 1 : 0] : midColor(sflags&Style_Enabled ? cg.base() : cg.background(), use[3]));
-                p->drawLine(rect.x()+1, rect.y()+1, rect.x()+1, rect.y()+rect.height()-2);
-                p->drawLine(rect.x()+1, rect.y()+1, rect.x()+rect.width()-2, rect.y()+1);
+                p->setPen(drawLight ? btn[QTC_LIGHT_BORDER(app)] : midColor(sflags&Style_Enabled ? cg.base() : cg.background(), use[3]));
+                if(lightBorder)
+                    p->drawRect(QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2));
+                else
+                {
+                    p->drawLine(rect.x()+1, rect.y()+1, rect.x()+1, rect.y()+rect.height()-2);
+                    p->drawLine(rect.x()+1, rect.y()+1, rect.x()+rect.width()-2, rect.y()+1);
+                }
             }
 
             drawBorder(cg.background(), p, rect, cg, (SFlags)(sflags|Style_Horizontal|QTC_CHECK_BUTTON),
@@ -3061,7 +3067,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 EWidget      wid=opts.crButton ? WIDGET_STD_BUTTON : WIDGET_TROUGH;
                 EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_GRADIENT;
                 bool         drawSunken=opts.crButton ? sunken : false,
-                             lb=opts.crButton && !drawSunken && !IS_GLASS(app);
+                             lightBorder=QTC_DRAW_LIGHT_BORDER(drawSunken, wid, app),
+                             drawLight=opts.crButton && !drawSunken && (lightBorder || !IS_GLASS(app));
 
                 p->save();
                 p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
@@ -3125,9 +3132,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 if(set)
                     p->drawPixmap(rect.x(), rect.y(), *getPixmap(on, PIX_RADIO_ON, 1.0));
-                if(!coloredMo && (!opts.crButton || lb) && (QApplication::NormalColor==QApplication::colorSpec() || itsFormMode))
-                    p->drawPixmap(rect.x(), rect.y(), *getPixmap(btn[lb ? (APPEARANCE_DULL_GLASS==app ? 1 : 0)
-                                                                        : (sflags&Style_MouseOver ? 3 : 4)], PIX_RADIO_LIGHT));
+                if(!coloredMo && (!opts.crButton || drawLight) && (QApplication::NormalColor==QApplication::colorSpec() || itsFormMode))
+                    p->drawPixmap(rect.x(), rect.y(),
+                                  *getPixmap(btn[drawLight ? QTC_LIGHT_BORDER(app)
+                                                           : (sflags&Style_MouseOver ? 3 : 4)],
+                                             lightBorder ? PIX_RADIO_INNER : PIX_RADIO_LIGHT));
                 p->restore();
             }
             break;
@@ -7546,6 +7555,9 @@ QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) con
         {
             case PIX_RADIO_BORDER:
                 img.loadFromData(qembed_findData("radio_frame.png"));
+                break;
+            case PIX_RADIO_INNER:
+                img.loadFromData(qembed_findData("radio_inner.png"));
                 break;
             case PIX_RADIO_LIGHT:
                 img.loadFromData(qembed_findData("radio_light.png"));

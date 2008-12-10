@@ -55,4 +55,4 @@ pixmaps.h
 
 To regenerate this, run the following:
 
-    qembed radio_frame.png radio_light.png radio_on.png check_on.png slider.png slider_light.png slider_v.png slider_light_v.png check_x_on.png > pixmaps.h
+    qembed radio_frame.png radio_inner.png radio_light.png radio_on.png check_on.png slider.png slider_light.png slider_v.png slider_light_v.png check_x_on.png > pixmaps.h
