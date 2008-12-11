@@ -10,6 +10,7 @@
  8. Increase size of busy progressbar.
  9. Draw border around filled progress.
 10. Option to have button-like checks/radios.
+11. Use base for light part of lineedit border, and background for scrollview.
 
 0.59.5
 ------

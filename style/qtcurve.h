@@ -129,7 +129,7 @@ class QtCurveStyle : public KStyle
                      SubControl button) const;
     void drawWindowIcon(QPainter *painter, const QColor &color, const QRect &r, bool sunken, int margin, SubControl button) const;
     void drawEntryField(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
-                        bool highlight, int round, EWidget=WIDGET_OTHER) const;
+                        bool highlight, int round, EWidget=WIDGET_ENTRY) const;
     void drawArrow(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
                    QStyle::PrimitiveElement pe,  bool small=false, bool checkActive=false) const;
     void drawPrimitive(PrimitiveElement, QPainter *, const QRect &, const QColorGroup &,

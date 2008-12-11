@@ -2208,6 +2208,7 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
                                     ? QT_PBAR_BORDER
                                     : !(flags&Style_Enabled) && (WIDGET_BUTTON(w) || WIDGET_SLIDER_TROUGH==w || flags&QTC_CHECK_BUTTON)
                                         ? QT_DISABLED_BORDER : borderVal]);
+    bool        hasFocus(cols==itsMenuitemCols /* CPD USED TO INDICATE FOCUS! */);
 
     switch(borderProfile)
     {
@@ -2223,12 +2224,16 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
                          : cg.background());
             p->drawLine(r.x()+1, r.y()+1, r.x()+1, r.y()+r.height()-2);
             p->drawLine(r.x()+1, r.y()+1, r.x()+r.width()-2, r.y()+1);
-            p->setPen(flags&Style_Enabled && (BORDER_SUNKEN==borderProfile || APPEARANCE_FLAT!=app)
-                         ? blendBorderColors
-                               ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
-                                                                   ? QT_FRAME_DARK_SHADOW : 0]) // Was base???
-                               : cols[BORDER_RAISED==borderProfile ? QT_FRAME_DARK_SHADOW : 0]
-                         : cg.background());
+            p->setPen(WIDGET_SCROLLVIEW==w && !hasFocus
+                        ? cg.background()
+                        : WIDGET_ENTRY==w && !hasFocus
+                            ? cg.base()
+                            : flags&Style_Enabled && (BORDER_SUNKEN==borderProfile || APPEARANCE_FLAT!=app)
+                                ? blendBorderColors
+                                    ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
+                                                                        ? QT_FRAME_DARK_SHADOW : 0]) // Was base???
+                                    : cols[BORDER_RAISED==borderProfile ? QT_FRAME_DARK_SHADOW : 0]
+                                : cg.background());
             p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-2, r.y()+r.height()-2);
             p->drawLine(r.x()+1, r.y()+r.height()-2, r.x()+r.width()-2, r.y()+r.height()-2);
     }
@@ -2519,7 +2524,7 @@ void QtCurveStyle::drawWindowIcon(QPainter *painter, const QColor &color, const 
 void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGroup &cg,
                                   SFlags flags, bool highlight, int round, EWidget w) const
 {
-    const QColor *use(highlight ? itsMenuitemCols : buttonColors(cg));
+    const QColor *use(highlight ? itsMenuitemCols : backgroundColors(cg));
     bool         isSpin(WIDGET_SPIN==w),
                  doEtch(!itsFormMode && !isSpin && WIDGET_COMBO!=w && QTC_DO_EFFECT),
                  reverse(QApplication::reverseLayout());
@@ -2549,7 +2554,7 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
         else
             r.addCoords(0, 0, -1, 0);
 
-    drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal), round, use, WIDGET_OTHER, true, BORDER_SUNKEN);
+    drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal), round, use, WIDGET_SCROLLVIEW==w ? w : WIDGET_ENTRY, true, BORDER_SUNKEN);
 
     if(doEtch)
     {
@@ -3275,16 +3280,13 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     {
                         if(!opts.highlightScrollViews)
                             flags&=~Style_HasFocus;
-                        drawEntryField(p, r, cg, flags, (flags&Style_Enabled) && (flags&Style_HasFocus), ROUNDED_ALL);
+                        drawEntryField(p, r, cg, flags, (flags&Style_Enabled) && (flags&Style_HasFocus), ROUNDED_ALL, WIDGET_SCROLLVIEW);
                     }
                     else
                         drawBorder(cg.background(), p, r, cg,
                                    (SFlags)(flags|Style_Horizontal|Style_Enabled),
-                                   ROUNDED_ALL, use, WIDGET_OTHER, APP_KICKER!=itsThemedApp, itsIsTransKicker
-                                                                                   ? BORDER_FLAT
-                                                                                   : flags&Style_Sunken
-                                                                                       ? BORDER_SUNKEN
-                                                                                       : BORDER_RAISED);
+                                   ROUNDED_ALL, use, sv ? WIDGET_SCROLLVIEW : WIDGET_OTHER, APP_KICKER!=itsThemedApp,
+                                   itsIsTransKicker ? BORDER_FLAT : (flags&Style_Sunken ? BORDER_SUNKEN : BORDER_RAISED) );
                     itsFormMode=false;
                 }
             }
@@ -3582,27 +3584,25 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         }
         case PE_PanelLineEdit:
         {
-            if(opts.squareScrollViews)
+            const QWidget *widget=p && p->device() ? dynamic_cast<const QWidget *>(p->device()) : 0L;
+            bool          scrollView=widget && ::qt_cast<const QScrollView *>(widget);
+
+            if(opts.squareScrollViews && scrollView)
             {
-                const QWidget *widget=p && p->device() ? dynamic_cast<const QWidget *>(p->device()) : 0L;
+                const QColor *use(backgroundColors(cg));
 
-                if(widget && ::qt_cast<const QScrollView *>(widget))
-                {
-                    const QColor *use(backgroundColors(cg));
-
-                    p->setPen(use[QT_STD_BORDER]);
-                    p->drawRect(r);
-                    break;
-                }
+                p->setPen(use[QT_STD_BORDER]);
+                p->drawRect(r);
+                break;
             }
 
             bool isReadOnly(false),
                  isEnabled(true);
             // panel is highlighted by default if it has focus, but if we have access to the
             // widget itself we can try to avoid highlighting in case it's readOnly or disabled.
-            if (p->device() && dynamic_cast<QLineEdit*>(p->device()))
+            if (!scrollView && widget && dynamic_cast<const QLineEdit*>(widget))
             {
-                QLineEdit *lineEdit(dynamic_cast<QLineEdit*>(p->device()));
+                const QLineEdit *lineEdit(dynamic_cast<const QLineEdit*>(widget));
                 isReadOnly = lineEdit->isReadOnly();
                 isEnabled = lineEdit->isEnabled();
 
@@ -3619,8 +3619,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             if (p->device() && dynamic_cast<QPixmap*>(p->device()))
                 itsFormMode=true;
 
+            if(scrollView && !opts.highlightScrollViews)
+                flags&=~Style_HasFocus;
+
             drawEntryField(p, r, cg, flags, !isReadOnly && isEnabled && (flags&Style_HasFocus),
-                           ROUNDED_ALL);
+                           ROUNDED_ALL, scrollView ? WIDGET_SCROLLVIEW : WIDGET_ENTRY);
             itsFormMode=false;
             break;
         }
