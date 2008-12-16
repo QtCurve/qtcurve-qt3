@@ -505,11 +505,11 @@ static QString createKey(QRgb color, EPixmap p)
     return key;
 }
 
-static void readPal(QString &line, QPalette::ColorGroup grp, QPalette &pal)
+static bool readPal(QString &line, QPalette::ColorGroup grp, QPalette &pal)
 {
     QStringList cols(QStringList::split(", ", line.mid(line.find("=#")+1)));
 
-    if(17==cols.count())
+    if(cols.count()>=17)
     {
         QStringList::ConstIterator it(cols.begin()),
                                    end(cols.end());
@@ -536,7 +536,9 @@ static void readPal(QString &line, QPalette::ColorGroup grp, QPalette &pal)
             default:
                 break;
         }
+        return true;
     }
+    return false;
 }
 
 static void setRgb(QColor *col, const QStringList &rgb)
@@ -582,7 +584,9 @@ static void parseWindowLine(const QString &line, QValueList<int> &data)
 static bool readQt4(QFile &f, QPalette &pal, QFont &font, int &contrast)
 {
     bool inSect(false),
-         gotPal(false),
+         gotActPal(false),
+         gotDisPal(false),
+         gotInActPal(false),
          gotFont(false),
          gotContrast(false);
 
@@ -596,25 +600,15 @@ static bool readQt4(QFile &f, QPalette &pal, QFont &font, int &contrast)
 
             if(inSect)
             {
-                gotPal=true;
-                if(0==line.find("Palette\\active=#", false))
-                {
-                    readPal(line, QPalette::Active, pal);
-                    gotPal=true;
-                }
-                else if(0==line.find("Palette\\disabled=#", false))
-                {
-                    readPal(line, QPalette::Disabled, pal);
-                    gotPal=true;
-                }
-                else if(0==line.find("Palette\\inactive=#", false))
-                {
-                    readPal(line, QPalette::Inactive, pal);
-                    gotPal=true;
-                }
-                else if(0==line.find("font=\"", false))
+                if(0==line.find("Palette\\active=#", 0, false))
+                    gotActPal=readPal(line, QPalette::Active, pal);
+                else if(0==line.find("Palette\\disabled=#", 0, false))
+                    gotDisPal=readPal(line, QPalette::Disabled, pal);
+                else if(0==line.find("Palette\\inactive=#", 0, false))
+                    gotInActPal=readPal(line, QPalette::Inactive, pal);
+                else if(0==line.find("font=\"", 0, false))
                     gotFont=font.fromString(line.mid(6, line.findRev('\"')-6));
-                else if(0==line.find("KDE\\contrast=", false))
+                else if(0==line.find("KDE\\contrast=", 0, false))
                 {
                     contrast=line.mid(13).toInt();
                     gotContrast=true;
@@ -622,13 +616,14 @@ static bool readQt4(QFile &f, QPalette &pal, QFont &font, int &contrast)
                 else if (0==line.find('['))
                     break;
             }
-            else if(0==line.find("[Qt]", false))
+            else if(0==line.find("[Qt]", 0, false))
+            
                 inSect=true;
         }
         f.close();
     }
 
-    return gotPal && gotFont && gotContrast;
+    return gotActPal && gotDisPal && gotInActPal && gotFont && gotContrast;
 }
 
 static bool useQt4Settings()
@@ -653,11 +648,12 @@ static bool readQt4(QPalette &pal, QFont &font, int &contrast)
         }
         else
         {
-            QFile file(xdgConfigFolder()+QString("Trolltech.conf"));
+            QFile file(xdgConfigFolder()+QString("/Trolltech.conf"));
 
             read=true;
             qt4Pal=pal;
             qt4Font=font;
+
             if(file.exists())
             {
                 bool ok=readQt4(file, pal, font, contrast);
