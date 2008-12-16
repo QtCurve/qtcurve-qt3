@@ -758,79 +758,130 @@ None - no buttons, only the slider</string>
                 <attribute name="id">
                     <number>6</number>
                 </attribute>
-                <grid>
+                <widget class="QLabel">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>textLabel12</cstring>
                     </property>
-                    <widget class="QLabel" row="0" column="0">
-                        <property name="name">
-                            <cstring>textLabel12</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Header appearance:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_8_2_2_3_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Selection appearance (KDE4 &amp; Gtk2):</string>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="1" column="1">
-                        <property name="name">
-                            <cstring>selectionAppearance</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="0" column="1">
-                        <property name="name">
-                            <cstring>lvAppearance</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>lvLines</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Join items with lines (KDE)</string>
-                        </property>
-                    </widget>
-                    <spacer row="0" column="2">
-                        <property name="name">
-                            <cstring>spacer21</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>36</width>
-                                <height>5</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <spacer row="3" column="1">
-                        <property name="name">
-                            <cstring>spacer22</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>7</width>
-                                <height>19</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </grid>
+                    <property name="geometry">
+                        <rect>
+                            <x>11</x>
+                            <y>11</y>
+                            <width>249</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Header appearance:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1_8_2_2_3_2</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>11</x>
+                            <y>43</y>
+                            <width>249</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Selection appearance (KDE4 &amp; Gtk2):</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox">
+                    <property name="name">
+                        <cstring>selectionAppearance</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>266</x>
+                            <y>43</y>
+                            <width>92</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QComboBox">
+                    <property name="name">
+                        <cstring>lvAppearance</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>266</x>
+                            <y>11</y>
+                            <width>92</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>lvLines</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>11</x>
+                            <y>507</y>
+                            <width>574</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Join items with lines (KDE)</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer21</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>221</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>364</x>
+                            <y>21</y>
+                            <width>221</width>
+                            <height>16</height>
+                        </rect>
+                    </property>
+                </spacer>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer22</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>16</width>
+                            <height>426</height>
+                        </size>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>308</x>
+                            <y>103</y>
+                            <width>16</width>
+                            <height>426</height>
+                        </rect>
+                    </property>
+                </spacer>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -851,7 +902,7 @@ None - no buttons, only the slider</string>
                             <string>Scrollbars on the outside</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="1" column="0">
+                    <widget class="QCheckBox" row="0" column="0">
                         <property name="name">
                             <cstring>highlightScrollViews</cstring>
                         </property>
@@ -859,7 +910,7 @@ None - no buttons, only the slider</string>
                             <string>Highlight on focus (KDE)</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="2" column="0">
+                    <widget class="QCheckBox" row="0" column="0">
                         <property name="name">
                             <cstring>squareScrollViews</cstring>
                         </property>
@@ -867,7 +918,7 @@ None - no buttons, only the slider</string>
                             <string>Always draw with a square frame - regardless of the general round setting.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="3" column="0">
+                    <widget class="QCheckBox" row="0" column="0">
                         <property name="name">
                             <cstring>sunkenScrollViews</cstring>
                         </property>
@@ -875,7 +926,7 @@ None - no buttons, only the slider</string>
                             <string>Draw etched when button effect set to etched/shadow.</string>
                         </property>
                     </widget>
-                    <spacer row="4" column="0">
+                    <spacer row="0" column="0">
                         <property name="name">
                             <cstring>spacer28_2</cstring>
                         </property>
@@ -1114,23 +1165,6 @@ None - no buttons, only the slider</string>
                             </size>
                         </property>
                     </spacer>
-                    <spacer row="3" column="1">
-                        <property name="name">
-                            <cstring>spacer27</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>380</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <widget class="QLabel" row="2" column="0">
                         <property name="name">
                             <cstring>textLabel15_2</cstring>
@@ -1168,6 +1202,31 @@ None - no buttons, only the slider</string>
                     <widget class="QComboBox" row="1" column="1">
                         <property name="name">
                             <cstring>inactiveTitlebarAppearance</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="4" column="1">
+                        <property name="name">
+                            <cstring>spacer27</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>293</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>colorTitlebarOnly</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Color titlebar only (KDE4)</string>
                         </property>
                     </widget>
                 </grid>
@@ -2076,6 +2135,8 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <tabstops>
     <tabstop>stackList</tabstop>
     <tabstop>appearance</tabstop>
@@ -2126,6 +2187,7 @@ None - no buttons, only the slider</string>
     <tabstop>titlebarAppearance</tabstop>
     <tabstop>inactiveTitlebarAppearance</tabstop>
     <tabstop>titlebarButtonAppearance</tabstop>
+    <tabstop>colorTitlebarOnly</tabstop>
     <tabstop>toolbarBorders</tabstop>
     <tabstop>handles</tabstop>
     <tabstop>menubarAppearance</tabstop>
@@ -2173,7 +2235,6 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
@@ -2183,9 +2244,6 @@ None - no buttons, only the slider</string>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
