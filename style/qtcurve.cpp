@@ -628,9 +628,10 @@ static bool readQt4(QFile &f, QPalette &pal, QFont &font, int &contrast)
 
 static bool useQt4Settings()
 {
-    static const char *vers=getenv("KDE_SESSION_VERSION");
+    static const char *vers = getenv("KDE_SESSION_VERSION");
+    static bool       use   = vers && atoi(vers)>=4;
 
-    return vers && atoi(vers)>=4;
+    return use;
 }
 
 static bool readQt4(QPalette &pal, QFont &font, int &contrast)
