@@ -13,6 +13,7 @@
 11. Use base for light part of lineedit border, and background for scrollview.
 12. Nicer 'V' arrows.
 13. Fix reading of Qt4 palette.
+14. Add option to specify appearance of inactive titlebars.
 
 0.59.5
 ------
