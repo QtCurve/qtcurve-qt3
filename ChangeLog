@@ -12,7 +12,7 @@
 10. Option to have button-like checks/radios.
 11. Use base for light part of lineedit border, and background for scrollview.
 12. Nicer 'V' arrows.
-13. Fix reading of Qt4 palette.
+13. Fix reading of Qt4 palette, for Qt3 apps.
 14. Add option to specify appearance of inactive titlebars.
 
 0.59.5
