@@ -410,6 +410,7 @@ static void insertRoundEntries(QComboBox *combo)
     combo->insertItem(i18n("Square"));
     combo->insertItem(i18n("Slightly rounded"));
     combo->insertItem(i18n("Fully rounded"));
+//    combo->insertItem(i18n("Extra rounded (KDE4 & Gtk2)"));
 }
 
 static void insertMouseOverEntries(QComboBox *combo)

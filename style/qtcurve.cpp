@@ -2237,8 +2237,8 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
 
     if(QTC_ROUNDED && ROUNDED_NONE!=round)
     {
-        bool largeArc(WIDGET_FOCUS!=w && ROUND_FULL==opts.round && !(flags&QTC_CHECK_BUTTON) &&
-                      r.width()>=QTC_MIN_BTN_SIZE && r.height()>=QTC_MIN_BTN_SIZE &&
+        bool largeArc(WIDGET_FOCUS!=w && QTC_FULLLY_ROUNDED && !(flags&QTC_CHECK_BUTTON) &&
+                      r.width()>=QTC_MIN_ROUND_FULL_SIZE && r.height()>=QTC_MIN_ROUND_FULL_SIZE &&
                       !(flags&QTC_DW_CLOSE_BUTTON));
 
         p->setPen(border);
@@ -3273,10 +3273,10 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 else
                 {
                     itsFormMode=itsIsTransKicker;
+                    if(sv && !opts.highlightScrollViews)
+                        flags&=~Style_HasFocus;
                     if(sv && opts.sunkenScrollViews && ((QFrame *)widget)->lineWidth()>2)
                     {
-                        if(!opts.highlightScrollViews)
-                            flags&=~Style_HasFocus;
                         drawEntryField(p, r, cg, flags, (flags&Style_Enabled) && (flags&Style_HasFocus), ROUNDED_ALL, WIDGET_SCROLLVIEW);
                     }
                     else
@@ -3980,7 +3980,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 }
 
                 // Round top-left corner...
-                if(ROUND_FULL==opts.round && APP_TORA!=itsThemedApp && firstTab && !active && !cornerWidget && !reverse) // && !isFirstKTabCtlTab)
+                if(QTC_FULLLY_ROUNDED && APP_TORA!=itsThemedApp && firstTab && !active && !cornerWidget && !reverse) // && !isFirstKTabCtlTab)
                 {
                     p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                     p->drawPoint(r.x()+1, r.y()+r.height()-1);
@@ -4033,7 +4033,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->setClipping(false);
                 }
 
-                if(ROUND_FULL==opts.round && APP_TORA!=itsThemedApp && firstTab && !bottomCornerWidget)// && !isFirstKTabCtlTab)
+                if(QTC_FULLLY_ROUNDED && APP_TORA!=itsThemedApp && firstTab && !bottomCornerWidget)// && !isFirstKTabCtlTab)
                 {
                     p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                     p->drawPoint(r.x(), reverse ? r.y()+r.width()-1 : r.y());
@@ -4737,7 +4737,7 @@ void QtCurveStyle::drawControlMask(ControlElement control, QPainter *p, const QW
         case CE_PushButton:
         case CE_MenuBarItem:
         {
-            int offset(r.width()<QTC_MIN_BTN_SIZE || r.height()<QTC_MIN_BTN_SIZE ? 1 : 2);
+            int offset(r.width()<QTC_MIN_ROUND_FULL_SIZE || r.height()<QTC_MIN_ROUND_FULL_SIZE ? 1 : 2);
 
             p->fillRect(r, color0);
             p->fillRect(r.x()+1, r.y()+1, r.width()-2, r.height()-2, color1);
@@ -6697,7 +6697,7 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
 {
     bool horiz(SLIDER_TRIANGULAR==opts.sliderStyle ? r.height()>r.width() : r.width()>r.height());
 
-    if(SLIDER_TRIANGULAR==opts.sliderStyle || ((SLIDER_ROUND==opts.sliderStyle || SLIDER_ROUND_ROTATED==opts.sliderStyle) && ROUND_FULL==opts.round))
+    if(SLIDER_TRIANGULAR==opts.sliderStyle || ((SLIDER_ROUND==opts.sliderStyle || SLIDER_ROUND_ROTATED==opts.sliderStyle) && QTC_FULLLY_ROUNDED))
     {
         const QColor     *use(sliderColors(/*cg, */flags));
         const QColor     &fill(getFill(flags, use));
