@@ -14,6 +14,7 @@
 12. Nicer 'V' arrows.
 13. Fix reading of Qt4 palette, for Qt3 apps.
 14. Add option to specify appearance of inactive titlebars.
+15. Round internal corners of plain colored mouse over effect.
 
 0.59.5
 ------
