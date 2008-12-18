@@ -12,9 +12,9 @@
 10. Option to have button-like checks/radios.
 11. Use base for light part of lineedit border, and background for scrollview.
 12. Nicer 'V' arrows.
-13. Fix reading of Qt4 palette, for Qt3 apps.
-14. Add option to specify appearance of inactive titlebars.
-15. Round internal corners of plain colored mouse over effect.
+13. Add option to specify appearance of inactive titlebars.
+14. Round internal corners of plain colored mouse over effect.
+15. Remove reading of Qt3 palette - this 'hack' only worked for pure Qt apps.
 
 0.59.5
 ------

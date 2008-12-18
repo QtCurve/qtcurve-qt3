@@ -581,94 +581,12 @@ static void parseWindowLine(const QString &line, QValueList<int> &data)
 }
 #endif
 
-static bool readQt4(QFile &f, QPalette &pal, QFont &font, int &contrast)
-{
-    bool inSect(false),
-         gotActPal(false),
-         gotDisPal(false),
-         gotInActPal(false),
-         gotFont(false),
-         gotContrast(false);
-
-    if(f.open(IO_ReadOnly))
-    {
-        QTextStream in(&f);
-
-        while (!in.atEnd())
-        {
-            QString line(in.readLine());
-
-            if(inSect)
-            {
-                if(0==line.find("Palette\\active=#", 0, false))
-                    gotActPal=readPal(line, QPalette::Active, pal);
-                else if(0==line.find("Palette\\disabled=#", 0, false))
-                    gotDisPal=readPal(line, QPalette::Disabled, pal);
-                else if(0==line.find("Palette\\inactive=#", 0, false))
-                    gotInActPal=readPal(line, QPalette::Inactive, pal);
-                else if(0==line.find("font=\"", 0, false))
-                    gotFont=font.fromString(line.mid(6, line.findRev('\"')-6));
-                else if(0==line.find("KDE\\contrast=", 0, false))
-                {
-                    contrast=line.mid(13).toInt();
-                    gotContrast=true;
-                }
-                else if (0==line.find('['))
-                    break;
-            }
-            else if(0==line.find("[Qt]", 0, false))
-            
-                inSect=true;
-        }
-        f.close();
-    }
-
-    return gotActPal && gotDisPal && gotInActPal && gotFont && gotContrast;
-}
-
 static bool useQt4Settings()
 {
     static const char *vers = getenv("KDE_SESSION_VERSION");
     static bool       use   = vers && atoi(vers)>=4;
 
     return use;
-}
-
-static bool readQt4(QPalette &pal, QFont &font, int &contrast)
-{
-    if(useQt4Settings())
-    {
-        static QPalette qt4Pal;
-        static QFont    qt4Font;
-        static bool     read(false);
-
-        if(read)
-        {
-            pal=qt4Pal;
-            font=qt4Font;
-        }
-        else
-        {
-            QFile file(xdgConfigFolder()+QString("/Trolltech.conf"));
-
-            read=true;
-            qt4Pal=pal;
-            qt4Font=font;
-
-            if(file.exists())
-            {
-                bool ok=readQt4(file, pal, font, contrast);
-
-                if(ok)
-                {
-                    qt4Pal=pal;
-                    qt4Font=font;
-                }
-                return ok;
-            }
-        }
-    }
-    return false;
 }
 
 static bool isCheckBoxOfGroupBox(const QObject *w)
@@ -965,42 +883,31 @@ void QtCurveStyle::polish(QPalette &pal)
        pal.active().background()!=itsMactorPal->active().background())
         return;
 
-    QPalette  pal4;
-    QFont     font;
     QSettings settings;
-    int       contrast(7);
+    int       contrast(settings.readNumEntry("/Qt/KDE/contrast", 7));
     bool      newContrast(false);
 
-    if(readQt4(pal4, font, contrast))
+    if(!opts.inactiveHighlight)// Read in Qt3 palette... Required for the inactive settings...
     {
-        pal=pal4;
-        QApplication::setFont(font);
-    }
-    else
-    {
-        contrast=settings.readNumEntry("/Qt/KDE/contrast", 7);
-        if(!opts.inactiveHighlight)// Read in Qt3 palette... Required for the inactive settings...
+        QStringList active(settings.readListEntry("/Qt/Palette/active")),
+                    inactive(settings.readListEntry("/Qt/Palette/inactive"));
+
+        // Only set if: the active highlight is the same, and the inactive highlight is different.
+        // If the user has no ~/.qt/qtrc, then QSettings will return a default palette. However, the palette
+        // passed in to this ::polish function will be the KDE one - which maybe different. Hence, we need to
+        // check that Qt active == KDE active, before reading inactive...
+        if (QColorGroup::NColorRoles==active.count() &&
+            QColorGroup::NColorRoles==inactive.count() &&
+            QColor(active[QColorGroup::Highlight])==pal.color(QPalette::Active, QColorGroup::Highlight) &&
+            QColor(active[QColorGroup::HighlightedText])==pal.color(QPalette::Active, QColorGroup::HighlightedText))
         {
-            QStringList active(settings.readListEntry("/Qt/Palette/active")),
-                        inactive(settings.readListEntry("/Qt/Palette/inactive"));
+            QColor h(inactive[QColorGroup::Highlight]),
+                t(inactive[QColorGroup::HighlightedText]);
 
-            // Only set if: the active highlight is the same, and the inactive highlight is different.
-            // If the user has no ~/.qt/qtrc, then QSettings will return a default palette. However, the palette
-            // passed in to this ::polish function will be the KDE one - which maybe different. Hence, we need to
-            // check that Qt active == KDE active, before reading inactive...
-            if (QColorGroup::NColorRoles==active.count() &&
-                QColorGroup::NColorRoles==inactive.count() &&
-                QColor(active[QColorGroup::Highlight])==pal.color(QPalette::Active, QColorGroup::Highlight) &&
-                QColor(active[QColorGroup::HighlightedText])==pal.color(QPalette::Active, QColorGroup::HighlightedText))
+            if(h!=pal.color(QPalette::Inactive, QColorGroup::Highlight) || t!=QPalette::Inactive, QColorGroup::HighlightedText)
             {
-                QColor h(inactive[QColorGroup::Highlight]),
-                    t(inactive[QColorGroup::HighlightedText]);
-
-                if(h!=pal.color(QPalette::Inactive, QColorGroup::Highlight) || t!=QPalette::Inactive, QColorGroup::HighlightedText)
-                {
-                    pal.setColor(QPalette::Inactive, QColorGroup::Highlight, h);
-                    pal.setColor(QPalette::Inactive, QColorGroup::HighlightedText, t);
-                }
+                pal.setColor(QPalette::Inactive, QColorGroup::Highlight, h);
+                pal.setColor(QPalette::Inactive, QColorGroup::HighlightedText, t);
             }
         }
     }
