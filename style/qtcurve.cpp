@@ -2030,7 +2030,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                     }
                 }
             }
-            else if(colouredMouseOver && 0!=round)
+            else if(colouredMouseOver && 0!=round && QTC_FULLLY_ROUNDED)
             {
                 p->setPen(itsMouseOverCols[QTC_MO_STD_LIGHT(w, sunken)]);
 
