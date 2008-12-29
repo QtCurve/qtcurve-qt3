@@ -1,3 +1,21 @@
+0.60
+----
+ 1. Add more safety checks for destruction of hover widgets.
+ 2. New focus rect options - standard, highlight, background.
+ 3. Add the ability to specify popup menu light factor.
+ 4. Add option to use darkened background colour for menuitem selection.
+ 5. Add 'fade' to menuitem appearance.
+ 6. Option to have flat scrollbar buttons.
+ 7. New slider styles - plain rotated, and round rotated.
+ 8. Increase size of busy progressbar.
+ 9. Draw border around filled progress.
+10. Option to have button-like checks/radios.
+11. Use base for light part of lineedit border, and background for scrollview.
+12. Nicer 'V' arrows.
+13. Add option to specify appearance of inactive titlebars.
+14. Round internal corners of plain colored mouse over effect.
+15. Remove reading of Qt3 palette - this 'hack' only worked for pure Qt apps.
+
 0.59.5
 ------
 1. In config dialog, rename the 'Fill' progressbar option to 'No border',

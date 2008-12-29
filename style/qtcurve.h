@@ -64,19 +64,7 @@
 class QTimer;
 class QSlider;
 
-class HighContrastStyle : public KStyle
-{
-    Q_OBJECT
-
-    public:
-
-    HighContrastStyle();
-    virtual ~HighContrastStyle() { }
-
-    const char * className();
-};
-
-class QtCurveStyle : public HighContrastStyle
+class QtCurveStyle : public KStyle
 {
     Q_OBJECT
 
@@ -141,7 +129,7 @@ class QtCurveStyle : public HighContrastStyle
                      SubControl button) const;
     void drawWindowIcon(QPainter *painter, const QColor &color, const QRect &r, bool sunken, int margin, SubControl button) const;
     void drawEntryField(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
-                        bool highlight, int round, EWidget=WIDGET_OTHER) const;
+                        bool highlight, int round, EWidget=WIDGET_ENTRY) const;
     void drawArrow(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
                    QStyle::PrimitiveElement pe,  bool small=false, bool checkActive=false) const;
     void drawPrimitive(PrimitiveElement, QPainter *, const QRect &, const QColorGroup &,
@@ -173,7 +161,7 @@ class QtCurveStyle : public HighContrastStyle
 
     bool appIsNotEmbedded(QDialog *dlg);
     bool eventFilter(QObject *object, QEvent *event);
-    void drawMenuItem(QPainter *p, const QRect &r, const QColorGroup &cg,
+    void drawMenuItem(QPainter *p, const QRect &r, int flags, const QColorGroup &cg,
                       bool mbi, int round, const QColor &bgnd, const QColor *cols) const;
     void drawProgress(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, int round,
                       const QWidget *widget) const;
@@ -213,7 +201,7 @@ class QtCurveStyle : public HighContrastStyle
     void           readMdiPositions() const;
 #endif
     bool           redrawHoverWidget(const QPoint &pos);
-    const QColor & getFill(SFlags flags, const QColor *use) const;
+    const QColor & getFill(SFlags flags, const QColor *use, bool cr=false) const;
     const QColor & getListViewFill(SFlags flags, const QColor *use) const;
     const QColor & getTabFill(bool current,  bool highlight, const QColor *use) const;
 
@@ -221,6 +209,7 @@ class QtCurveStyle : public HighContrastStyle
     QPixmap *      getPixmap(const QColor col, EPixmap pix, double shade=1.0) const;
     void           setSbType();
     bool           isFormWidget(const QWidget *w) const { return itsKhtmlWidgets.contains(w); }
+    void           resetHover();
 
     private slots:
 
@@ -228,6 +217,7 @@ class QtCurveStyle : public HighContrastStyle
     void progressBarDestroyed(QObject *bar);
     void sliderThumbMoved(int val);
     void khtmlWidgetDestroyed(QObject *o);
+    void hoverWidgetDestroyed(QObject *o);
 
     private:
 
