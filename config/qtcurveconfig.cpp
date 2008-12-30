@@ -1,5 +1,5 @@
 /*
-  QtCurve (C) Craig Drummond, 2003 - 2008 Craig.Drummond@lycos.co.uk
+  QtCurve (C) Craig Drummond, 2003 - 2009 Craig.Drummond@lycos.co.uk
 
   ----
 
@@ -480,7 +480,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
                exportDialog(NULL),
                lastCategory(NULL)
 {
-    titleLabel->setText("QtCurve " VERSION " - (C) Craig Drummond, 2003-2008");
+    titleLabel->setText("QtCurve " VERSION " - (C) Craig Drummond, 2003-2009");
     insertShadeEntries(shadeSliders, false);
     insertShadeEntries(shadeMenubars, true);
     insertShadeEntries(shadeCheckRadio, false, true);
