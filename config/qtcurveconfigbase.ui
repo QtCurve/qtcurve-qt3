@@ -94,62 +94,7 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <spacer row="10" column="1">
-                        <property name="name">
-                            <cstring>spacer9</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>16</width>
-                                <height>228</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>comboSplitter</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Combo splitter</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>This option controls whether a line is drawn near non-editable combo box arrows.</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>darkerBorders</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Darker borders</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>stdSidebarButtons</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Standard buttons for sidebars</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>Select this to have the sidebar buttons in konqueror, kate, kaffeine, ktorrent, drawn as per normal buttons - otherwise they will be drawn in a more flat style.</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>vArrows</cstring>
-                        </property>
-                        <property name="text">
-                            <string>'V' style arrows</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
+                    <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>framelessGroupBoxes</cstring>
                         </property>
@@ -157,7 +102,7 @@
                             <string>Frameless groupboxes</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>drawStatusBarFrames</cstring>
                         </property>
@@ -165,7 +110,7 @@
                             <string>Draw statusbar frames</string>
                         </property>
                     </widget>
-                    <widget class="QComboBox" row="0" column="1">
+                    <widget class="QComboBox" row="0" column="2">
                         <property name="name">
                             <cstring>appearance</cstring>
                         </property>
@@ -173,7 +118,7 @@
                             <string>The setting here affects the general appearance - and will be applied to buttons, scrollbars, sliders, combo boxes, and spin buttons.</string>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="0" column="0">
+                    <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>textLabel1</cstring>
                         </property>
@@ -181,7 +126,7 @@
                             <string>Appearance:</string>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="1" column="0">
+                    <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>textLabel2_4</cstring>
                         </property>
@@ -189,7 +134,7 @@
                             <string>Roundedness:</string>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="2" column="0">
+                    <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>textLabel3</cstring>
                         </property>
@@ -197,12 +142,12 @@
                             <string>Button effect:</string>
                         </property>
                     </widget>
-                    <widget class="QComboBox" row="1" column="1">
+                    <widget class="QComboBox" row="1" column="2">
                         <property name="name">
                             <cstring>round</cstring>
                         </property>
                     </widget>
-                    <spacer row="0" column="2">
+                    <spacer row="0" column="3">
                         <property name="name">
                             <cstring>spacer10_2</cstring>
                         </property>
@@ -219,12 +164,12 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QComboBox" row="2" column="1">
+                    <widget class="QComboBox" row="2" column="2">
                         <property name="name">
                             <cstring>buttonEffect</cstring>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="3" column="0">
+                    <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>textLabel1_6</cstring>
                         </property>
@@ -232,9 +177,100 @@
                             <string>Focus rectangle:</string>
                         </property>
                     </widget>
-                    <widget class="QComboBox" row="3" column="1">
+                    <widget class="QComboBox" row="3" column="2">
                         <property name="name">
                             <cstring>focus</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="12" column="2">
+                        <property name="name">
+                            <cstring>spacer9</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>120</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>darkerBorders</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Darker borders</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>vArrows</cstring>
+                        </property>
+                        <property name="text">
+                            <string>'V' style arrows</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>stdSidebarButtons</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Standard buttons for sidebars</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Select this to have the sidebar buttons in konqueror, kate, kaffeine, ktorrent, drawn as per normal buttons - otherwise they will be drawn in a more flat style.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="10" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>comboSplitter</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Combo splitter</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This option controls whether a line is drawn near non-editable combo box arrows.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="6" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>groupBoxLine</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw line after title</string>
+                        </property>
+                    </widget>
+                    <spacer row="6" column="0">
+                        <property name="name">
+                            <cstring>spacer31</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Fixed</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>32</width>
+                                <height>4</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="11" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>fadeLines</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw fading lines (KDE4 &amp; Gtk2)</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+ </string>
                         </property>
                     </widget>
                 </grid>
@@ -2135,8 +2171,6 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <tabstops>
     <tabstop>stackList</tabstop>
     <tabstop>appearance</tabstop>
@@ -2145,9 +2179,11 @@ None - no buttons, only the slider</string>
     <tabstop>focus</tabstop>
     <tabstop>drawStatusBarFrames</tabstop>
     <tabstop>framelessGroupBoxes</tabstop>
+    <tabstop>groupBoxLine</tabstop>
     <tabstop>vArrows</tabstop>
     <tabstop>stdSidebarButtons</tabstop>
     <tabstop>darkerBorders</tabstop>
+    <tabstop>fadeLines</tabstop>
     <tabstop>comboSplitter</tabstop>
     <tabstop>splitters</tabstop>
     <tabstop>sliderAppearance</tabstop>
@@ -2235,6 +2271,7 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
@@ -2244,6 +2281,9 @@ None - no buttons, only the slider</string>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>

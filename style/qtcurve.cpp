@@ -1321,7 +1321,8 @@ void QtCurveStyle::polish(QWidget *widget)
         // Sometimes get drawing errors with framless flat groupboxes - so make them all non-flat!
         ((QGroupBox *)widget)->setFlat(false);
         // Also, to fix krusader's config dialog, set all groupboxes to have no frame.
-        ((QGroupBox *)widget)->setFrameShape(QFrame::NoFrame);
+        if(!opts.groupBoxLine)
+            ((QGroupBox *)widget)->setFrameShape(QFrame::NoFrame);
     }
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
     {
@@ -3154,7 +3155,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         }
         case PE_GroupBoxFrame:
         case PE_PanelGroupBox:
-            if (!opts.framelessGroupBoxes)
+            if(opts.framelessGroupBoxes && opts.groupBoxLine)
+            {
+                p->setPen(backgroundColors(cg)[QT_STD_BORDER]);
+                p->drawLine(r.x(), r.y(), r.x()+r.width()-1,  r.y());                    
+            }
+            else if (!opts.framelessGroupBoxes)
                 if(APP_OPENOFFICE==itsThemedApp || data.lineWidth()>0 || data.isDefault())
                 {
                     const QColor *use(backgroundColors(cg));
