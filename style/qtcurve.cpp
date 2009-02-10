@@ -2678,9 +2678,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
             }
 
-            drawLightBevel(flags&QTC_DW_CLOSE_BUTTON
+            drawLightBevel(/*flags&QTC_DW_CLOSE_BUTTON
                             ? cg.background().dark(QTC_DW_BGND)
-                            : cg.background(),
+                            : */cg.background(),
                            p, r, cg, glassMod ? flags : flags|Style_Horizontal,
 #if KDE_VERSION >= 0x30200
                            (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe) ||
@@ -3643,14 +3643,20 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
         case KPE_DockWindowHandle:
         {
             int  x, y, w, h;
+            bool horizontal(flags & Style_Horizontal);
 
             r.rect(&x, &y, &w, &h);
-            p->fillRect(r, cg.background().dark(QTC_DW_BGND));
+            p->fillRect(r, cg.background()); // .dark(QTC_DW_BGND));
+            p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+            if(horizontal)
+                p->drawLine(r.right()-1, r.top()-1, r.right()-1, r.bottom());
+            else
+                p->drawLine(r.left(), r.bottom()-1, r.right(), r.bottom()-1);
+
             if (w > 2 && h > 2)
             {
                 QWidget  *wid(const_cast<QWidget*>(widget));
-                bool     horizontal(flags & Style_Horizontal),
-                         hasClose(dynamic_cast<const QDockWindow *>(wid->parentWidget()) &&
+                bool     hasClose(dynamic_cast<const QDockWindow *>(wid->parentWidget()) &&
                                   ((QDockWindow *)(wid->parentWidget()))->area() &&
                                   ((QDockWindow *)(wid->parentWidget()))->isCloseEnabled());
                 QFont    fnt(QApplication::font(wid));
@@ -3673,7 +3679,9 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                     pix.resize(w, h);
 
                 p2.begin(&pix);
-                p2.fillRect(pix.rect(), cg.background().dark(QTC_DW_BGND));
+                p2.fillRect(pix.rect(), cg.background()); // .dark(QTC_DW_BGND));
+                p2.setPen(itsBackgroundCols[QT_STD_BORDER]);
+                p2.drawLine(pix.rect().left(), pix.rect().bottom()-1, pix.rect().right(), pix.rect().bottom()-1);
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
                 QRect textRect(pix.rect());
@@ -4789,7 +4797,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(isDWClose)
             {
-                p->fillRect(r, cg.background().dark(QTC_DW_BGND));
+                p->fillRect(r, cg.background());//.dark(QTC_DW_BGND));
                 if(!(flags&Style_MouseOver) && !(active & SC_ToolButton))
                     break;
                 bflags|=QTC_DW_CLOSE_BUTTON;
