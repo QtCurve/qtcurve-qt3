@@ -519,11 +519,11 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
 
     highlightFactor->setMinValue(MIN_HIGHLIGHT_FACTOR);
     highlightFactor->setMaxValue(MAX_HIGHLIGHT_FACTOR);
-    highlightFactor->setValue(((int)(DEFAULT_HIGHLIGHT_FACTOR*100))-100);
+    highlightFactor->setValue(DEFAULT_HIGHLIGHT_FACTOR);
 
     lighterPopupMenuBgnd->setMinValue(MIN_LIGHTER_POPUP_MENU);
     lighterPopupMenuBgnd->setMaxValue(MAX_LIGHTER_POPUP_MENU);
-    lighterPopupMenuBgnd->setValue(((int)(DEF_POPUPMENU_LIGHT_FACTOR*100))-100);
+    lighterPopupMenuBgnd->setValue(DEF_POPUPMENU_LIGHT_FACTOR);
 
     connect(lighterPopupMenuBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(menuStripe, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -1181,7 +1181,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.fixParentlessDialogs=fixParentlessDialogs->isChecked();
     opts.animatedProgress=animatedProgress->isChecked();
     opts.stripedProgress=(EStripe)stripedProgress->currentItem();
-    opts.lighterPopupMenuBgnd=((double)(lighterPopupMenuBgnd->value()+100))/100.0;
+    opts.lighterPopupMenuBgnd=lighterPopupMenuBgnd->value();
     opts.menuStripe=menuStripe->isChecked();
     opts.menuStripeAppearance=(EAppearance)menuStripeAppearance->currentItem();
     opts.embolden=embolden->isChecked();
@@ -1202,7 +1202,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.splitters=(ELine)splitters->currentItem();
     opts.customSlidersColor=customSlidersColor->color();
     opts.customMenubarsColor=customMenubarsColor->color();
-    opts.highlightFactor=((double)(highlightFactor->value()+100))/100.0;
+    opts.highlightFactor=highlightFactor->value();
     opts.customMenuNormTextColor=customMenuNormTextColor->color();
     opts.customMenuSelTextColor=customMenuSelTextColor->color();
     opts.customMenuTextColor=customMenuTextColor->isChecked();
@@ -1262,7 +1262,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
 {
     round->setCurrentItem(opts.round);
     scrollbarType->setCurrentItem(opts.scrollbarType);
-    lighterPopupMenuBgnd->setValue((int)(opts.lighterPopupMenuBgnd*100)-100);
+    lighterPopupMenuBgnd->setValue(opts.lighterPopupMenuBgnd);
     menuStripe->setChecked(opts.menuStripe);
     menuStripeAppearance->setCurrentItem(opts.menuStripeAppearance);
     toolbarBorders->setCurrentItem(opts.toolbarBorders);
@@ -1293,7 +1293,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     splitters->setCurrentItem(opts.splitters);
     shadeSliders->setCurrentItem(opts.shadeSliders);
     shadeMenubars->setCurrentItem(opts.shadeMenubars);
-    highlightFactor->setValue((int)(opts.highlightFactor*100)-100);
+    highlightFactor->setValue(opts.highlightFactor);
     customSlidersColor->setColor(opts.customSlidersColor);
     customMenubarsColor->setColor(opts.customMenubarsColor);
     customMenuNormTextColor->setColor(opts.customMenuNormTextColor);
@@ -1371,7 +1371,7 @@ bool QtCurveConfig::settingsChanged()
          fixParentlessDialogs->isChecked()!=currentStyle.fixParentlessDialogs ||
          animatedProgress->isChecked()!=currentStyle.animatedProgress ||
          stripedProgress->currentItem()!=currentStyle.stripedProgress ||
-         (lighterPopupMenuBgnd->value()+100)!=(int)(currentStyle.lighterPopupMenuBgnd*100) ||
+         lighterPopupMenuBgnd->value()!=currentStyle.lighterPopupMenuBgnd ||
          menuStripe->isChecked()!=currentStyle.menuStripe ||
          menuStripeAppearance->currentItem()!=currentStyle.menuStripeAppearance ||
          embolden->isChecked()!=currentStyle.embolden ||
@@ -1432,7 +1432,7 @@ bool QtCurveConfig::settingsChanged()
 
          toInt(passwordChar->text())!=currentStyle.passwordChar ||
 
-         (highlightFactor->value()+100)!=(int)(currentStyle.highlightFactor*100) ||
+         highlightFactor->value()!=currentStyle.highlightFactor ||
          customMenuTextColor->isChecked()!=currentStyle.customMenuTextColor ||
          (SHADE_CUSTOM==currentStyle.shadeSliders &&
                customSlidersColor->color()!=currentStyle.customSlidersColor) ||

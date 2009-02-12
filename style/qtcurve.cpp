@@ -746,7 +746,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
 
     if(USE_LIGHTER_POPUP_MENU)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
-                                         opts.lighterPopupMenuBgnd);
+                                         QTC_TO_FACTOR(opts.lighterPopupMenuBgnd));
 
     switch(opts.shadeCheckRadio)
     {
@@ -979,7 +979,7 @@ void QtCurveStyle::polish(QPalette &pal)
 
     if(USE_LIGHTER_POPUP_MENU && newGray)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
-                                         opts.lighterPopupMenuBgnd);
+                                         QTC_TO_FACTOR(opts.lighterPopupMenuBgnd));
 
     const QColorGroup      &actGroup(pal.active()),
                            &inactGroup(pal.inactive()),
@@ -1039,7 +1039,7 @@ static const char * kdeToolbarWidget="kde toolbar widget";
 
 void QtCurveStyle::polish(QWidget *widget)
 {
-    bool enableFilter(!equal(opts.highlightFactor, 1.0) || opts.coloredMouseOver);
+    bool enableFilter(opts.highlightFactor || opts.coloredMouseOver);
 
     if(::isKhtmlFormWidget(widget))
     {
@@ -3006,7 +3006,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
 
                 p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
-                               ? shade(cg.background(), opts.highlightFactor) : cg.background());
+                               ? shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)) : cg.background());
 
                 p->setClipRegion(QRegion(clipRegion));
                 if(IS_FLAT(opts.appearance))
@@ -3133,7 +3133,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             const QColor *border(borderColors(flags, use));
 
             p->fillRect(r, QColor(flags&Style_MouseOver
-                                      ? shade(cg.background(), opts.highlightFactor)
+                                      ? shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor))
                                       : cg.background()));
 
             switch(opts.splitters)
@@ -4603,7 +4603,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
                     r-=visualRect(subRect(SR_CheckBoxIndicator, widget), widget);
                     p->setClipRegion(r);
-                    p->fillRect(checkbox->rect(), shade(cg.background(), opts.highlightFactor));
+                    p->fillRect(checkbox->rect(), shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)));
                     p->setClipping(false);
                 }
                 int alignment(QApplication::reverseLayout() ? AlignRight : AlignLeft);
@@ -4646,7 +4646,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
                     r-=visualRect(subRect(SR_RadioButtonIndicator, widget), widget);
                     p->setClipRegion(r);
-                    p->fillRect(radiobutton->rect(), shade(cg.background(), opts.highlightFactor));
+                    p->fillRect(radiobutton->rect(), shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)));
                     p->setClipping(false);
                 }
 
@@ -6950,14 +6950,15 @@ void QtCurveStyle::shadeColors(const QColor &base, QColor *vals) const
 {
     QTC_SHADES
 
-    bool useCustom(NUM_STD_SHADES==opts.customShades.size());
+    bool   useCustom(NUM_STD_SHADES==opts.customShades.size());
+    double hl=QTC_TO_FACTOR(opts.highlightFactor);
 
     for(int i=0; i<NUM_STD_SHADES; ++i)
         shade(base, &vals[i], useCustom ? opts.customShades[i] : QTC_SHADE(opts.contrast, i));
 
-    shade(base, &vals[SHADE_ORIG_HIGHLIGHT], opts.highlightFactor);
-    shade(vals[4], &vals[SHADE_4_HIGHLIGHT], opts.highlightFactor);
-    shade(vals[2], &vals[SHADE_2_HIGHLIGHT], opts.highlightFactor);
+    shade(base, &vals[SHADE_ORIG_HIGHLIGHT], hl);
+    shade(vals[4], &vals[SHADE_4_HIGHLIGHT], hl);
+    shade(vals[2], &vals[SHADE_2_HIGHLIGHT], hl);
     vals[ORIGINAL_SHADE]=base;
 }
 
