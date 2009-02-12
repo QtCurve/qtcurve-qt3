@@ -673,7 +673,6 @@ QtCurveStyle::QtCurveStyle(const QString &name)
 {
     QString rcFile;
 
-    defaultSettings(&opts);
     if(!name.isEmpty())
     {
         rcFile=themeFile(kdeHome(), name);
@@ -686,7 +685,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
         }
     }
 
-    readConfig(rcFile, &opts, &opts);
+    readConfig(rcFile, &opts);
     opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
     if(opts.contrast<0 || opts.contrast>10)
         opts.contrast=7;
