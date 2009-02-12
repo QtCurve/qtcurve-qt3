@@ -3,7 +3,20 @@
 1. Only draw coloured border for moused-over items if they are enabled!
 2. Add option to draw line after frameless groupbox title.
 3. Dont darken background of dock widget titlebars, just draw a line underneath.
-4. Add 'none' to toolbar handle style.
+4. Add 'none' to toolbar handles and splitters style.
+5. Change defaults:
+        Button effect: Shadow
+        Mouse over: Glow
+        Default button indicator: Glow
+        V arrows
+        Flat toolbars
+        Use highlight colour for focus
+        Flat scrollbar buttons
+        No combo line
+        Sunken toolbar handles
+        Only lighten popupmenus by 2%
+        Flat active tab
+        Don't shade sliders
 
 0.60
 ----
