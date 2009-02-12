@@ -3138,6 +3138,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
             switch(opts.splitters)
             {
+                case LINE_NONE:
+                    break;
                 default:
                 case LINE_DOTS:
                     drawDots(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 5);
@@ -6909,6 +6911,8 @@ void QtCurveStyle::drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, 
 
     switch(handles)
     {
+        case LINE_NONE:
+            break;
         case LINE_DOTS:
             drawDots(p, r, !(flags & Style_Horizontal), 2,
                      APP_KICKER==itsThemedApp ? 1 : tb ? 5 : 3, border,
