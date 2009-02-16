@@ -17,6 +17,8 @@
         Only lighten popupmenus by 2%
         Flat active tab
         Don't shade sliders
+        Don't darken menubars
+        Use darkened background for progressbars
 
 0.60
 ----
