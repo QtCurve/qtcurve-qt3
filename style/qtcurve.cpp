@@ -3158,8 +3158,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         case PE_PanelGroupBox:
             if(opts.framelessGroupBoxes && opts.groupBoxLine)
             {
+                QRect r2(r);
+                if(p && p->device() && dynamic_cast<QGroupBox *>(p->device()) &&
+                   (!((QGroupBox *)(p->device()))->title().isEmpty() || ((QGroupBox *)(p->device()))->isCheckable()))
+                    r2.addCoords(8, 0, -8, 0);
                 p->setPen(backgroundColors(cg)[QT_STD_BORDER]);
-                p->drawLine(r.x(), r.y(), r.x()+r.width()-1,  r.y());                    
+                p->drawLine(r2.x(), r2.y(), r2.x()+r2.width()-1,  r2.y());                    
             }
             else if (!opts.framelessGroupBoxes)
                 if(APP_OPENOFFICE==itsThemedApp || data.lineWidth()>0 || data.isDefault())
