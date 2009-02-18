@@ -2,7 +2,7 @@
 #define __QTCURVE_H__
 
 /*
-  QtCurve (C) Craig Drummond, 2003 - 2007 Craig.Drummond@lycos.co.uk
+  QtCurve (C) Craig Drummond, 2003 - 2009 craig_p_drummond@yahoo.co.uk
 
   ----
 
@@ -204,7 +204,7 @@ class QtCurveStyle : public KStyle
     const QColor & getFill(SFlags flags, const QColor *use, bool cr=false) const;
     const QColor & getListViewFill(SFlags flags, const QColor *use) const;
     const QColor & getTabFill(bool current,  bool highlight, const QColor *use) const;
-
+    const QColor & menuStripeCol() const;
     QPixmap *      getPixelPixmap(const QColor col) const;
     QPixmap *      getPixmap(const QColor col, EPixmap pix, double shade=1.0) const;
     void           setSbType();

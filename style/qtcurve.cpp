@@ -1,5 +1,5 @@
 /*
-  QtCurve (C) Craig Drummond, 2003 - 2008 Craig.Drummond@lycos.co.uk
+  QtCurve (C) Craig Drummond, 2003 - 2009 craig_p_drummond@yahoo.co.uk
 
   ----
 
@@ -673,7 +673,6 @@ QtCurveStyle::QtCurveStyle(const QString &name)
 {
     QString rcFile;
 
-    defaultSettings(&opts);
     if(!name.isEmpty())
     {
         rcFile=themeFile(kdeHome(), name);
@@ -686,7 +685,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
         }
     }
 
-    readConfig(rcFile, &opts, &opts);
+    readConfig(rcFile, &opts);
     opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
     if(opts.contrast<0 || opts.contrast>10)
         opts.contrast=7;
@@ -746,7 +745,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
 
     if(USE_LIGHTER_POPUP_MENU)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
-                                         opts.lighterPopupMenuBgnd);
+                                         QTC_TO_FACTOR(opts.lighterPopupMenuBgnd));
 
     switch(opts.shadeCheckRadio)
     {
@@ -979,7 +978,7 @@ void QtCurveStyle::polish(QPalette &pal)
 
     if(USE_LIGHTER_POPUP_MENU && newGray)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
-                                         opts.lighterPopupMenuBgnd);
+                                         QTC_TO_FACTOR(opts.lighterPopupMenuBgnd));
 
     const QColorGroup      &actGroup(pal.active()),
                            &inactGroup(pal.inactive()),
@@ -1039,7 +1038,7 @@ static const char * kdeToolbarWidget="kde toolbar widget";
 
 void QtCurveStyle::polish(QWidget *widget)
 {
-    bool enableFilter(!equal(opts.highlightFactor, 1.0) || opts.coloredMouseOver);
+    bool enableFilter(opts.highlightFactor || opts.coloredMouseOver);
 
     if(::isKhtmlFormWidget(widget))
     {
@@ -1321,7 +1320,8 @@ void QtCurveStyle::polish(QWidget *widget)
         // Sometimes get drawing errors with framless flat groupboxes - so make them all non-flat!
         ((QGroupBox *)widget)->setFlat(false);
         // Also, to fix krusader's config dialog, set all groupboxes to have no frame.
-        ((QGroupBox *)widget)->setFrameShape(QFrame::NoFrame);
+        if(!opts.groupBoxLine)
+            ((QGroupBox *)widget)->setFrameShape(QFrame::NoFrame);
     }
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
     {
@@ -2046,7 +2046,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     }
 
     if(doBorder)
-        if(!sunken &&
+        if(!sunken && flags&Style_Enabled &&
             ((((doEtch && WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w) || (WIDGET_COMBO==w)) &&
              MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
              (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator)))
@@ -2677,9 +2677,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
             }
 
-            drawLightBevel(flags&QTC_DW_CLOSE_BUTTON
+            drawLightBevel(/*flags&QTC_DW_CLOSE_BUTTON
                             ? cg.background().dark(QTC_DW_BGND)
-                            : cg.background(),
+                            : */cg.background(),
                            p, r, cg, glassMod ? flags : flags|Style_Horizontal,
 #if KDE_VERSION >= 0x30200
                            (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe) ||
@@ -3005,7 +3005,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
 
                 p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
-                               ? shade(cg.background(), opts.highlightFactor) : cg.background());
+                               ? shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)) : cg.background());
 
                 p->setClipRegion(QRegion(clipRegion));
                 if(IS_FLAT(opts.appearance))
@@ -3132,11 +3132,13 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             const QColor *border(borderColors(flags, use));
 
             p->fillRect(r, QColor(flags&Style_MouseOver
-                                      ? shade(cg.background(), opts.highlightFactor)
+                                      ? shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor))
                                       : cg.background()));
 
             switch(opts.splitters)
             {
+                case LINE_NONE:
+                    break;
                 default:
                 case LINE_DOTS:
                     drawDots(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 5);
@@ -3154,7 +3156,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         }
         case PE_GroupBoxFrame:
         case PE_PanelGroupBox:
-            if (!opts.framelessGroupBoxes)
+            if(opts.framelessGroupBoxes && opts.groupBoxLine)
+            {
+                QRect r2(r);
+                if(p && p->device() && dynamic_cast<QGroupBox *>(p->device()) &&
+                   (!((QGroupBox *)(p->device()))->title().isEmpty() || ((QGroupBox *)(p->device()))->isCheckable()))
+                    r2.addCoords(8, 0, -8, 0);
+                p->setPen(backgroundColors(cg)[QT_STD_BORDER]);
+                p->drawLine(r2.x(), r2.y(), r2.x()+r2.width()-1,  r2.y());                    
+            }
+            else if (!opts.framelessGroupBoxes)
                 if(APP_OPENOFFICE==itsThemedApp || data.lineWidth()>0 || data.isDefault())
                 {
                     const QColor *use(backgroundColors(cg));
@@ -3637,14 +3648,20 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
         case KPE_DockWindowHandle:
         {
             int  x, y, w, h;
+            bool horizontal(flags & Style_Horizontal);
 
             r.rect(&x, &y, &w, &h);
-            p->fillRect(r, cg.background().dark(QTC_DW_BGND));
+            p->fillRect(r, cg.background()); // .dark(QTC_DW_BGND));
+            p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+            if(horizontal)
+                p->drawLine(r.right()-1, r.top()-1, r.right()-1, r.bottom());
+            else
+                p->drawLine(r.left(), r.bottom()-1, r.right(), r.bottom()-1);
+
             if (w > 2 && h > 2)
             {
                 QWidget  *wid(const_cast<QWidget*>(widget));
-                bool     horizontal(flags & Style_Horizontal),
-                         hasClose(dynamic_cast<const QDockWindow *>(wid->parentWidget()) &&
+                bool     hasClose(dynamic_cast<const QDockWindow *>(wid->parentWidget()) &&
                                   ((QDockWindow *)(wid->parentWidget()))->area() &&
                                   ((QDockWindow *)(wid->parentWidget()))->isCloseEnabled());
                 QFont    fnt(QApplication::font(wid));
@@ -3667,7 +3684,9 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                     pix.resize(w, h);
 
                 p2.begin(&pix);
-                p2.fillRect(pix.rect(), cg.background().dark(QTC_DW_BGND));
+                p2.fillRect(pix.rect(), cg.background()); // .dark(QTC_DW_BGND));
+                p2.setPen(itsBackgroundCols[QT_STD_BORDER]);
+                p2.drawLine(pix.rect().left(), pix.rect().bottom()-1, pix.rect().right(), pix.rect().bottom()-1);
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
                 QRect textRect(pix.rect());
@@ -4167,7 +4186,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                                       : itsBackgroundCols[ORIGINAL_SHADE]);
 
                 if(opts.menuStripe)
-                    drawBevelGradient(itsBackgroundCols[QTC_MENU_STRIPE_SHADE], true, p,
+                    drawBevelGradient(menuStripeCol(), true, p,
                                       QRect(reverse ? r.right()-maxpmw : r.x(),
                                             r.y(), maxpmw, r.height()), false,
                                       getWidgetShade(WIDGET_OTHER, true, false, opts.menuStripeAppearance),
@@ -4587,7 +4606,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
                     r-=visualRect(subRect(SR_CheckBoxIndicator, widget), widget);
                     p->setClipRegion(r);
-                    p->fillRect(checkbox->rect(), shade(cg.background(), opts.highlightFactor));
+                    p->fillRect(checkbox->rect(), shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)));
                     p->setClipping(false);
                 }
                 int alignment(QApplication::reverseLayout() ? AlignRight : AlignLeft);
@@ -4630,7 +4649,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
                     r-=visualRect(subRect(SR_RadioButtonIndicator, widget), widget);
                     p->setClipRegion(r);
-                    p->fillRect(radiobutton->rect(), shade(cg.background(), opts.highlightFactor));
+                    p->fillRect(radiobutton->rect(), shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)));
                     p->setClipping(false);
                 }
 
@@ -4783,7 +4802,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(isDWClose)
             {
-                p->fillRect(r, cg.background().dark(QTC_DW_BGND));
+                p->fillRect(r, cg.background());//.dark(QTC_DW_BGND));
                 if(!(flags&Style_MouseOver) && !(active & SC_ToolButton))
                     break;
                 bflags|=QTC_DW_CLOSE_BUTTON;
@@ -6895,6 +6914,8 @@ void QtCurveStyle::drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, 
 
     switch(handles)
     {
+        case LINE_NONE:
+            break;
         case LINE_DOTS:
             drawDots(p, r, !(flags & Style_Horizontal), 2,
                      APP_KICKER==itsThemedApp ? 1 : tb ? 5 : 3, border,
@@ -6932,14 +6953,15 @@ void QtCurveStyle::shadeColors(const QColor &base, QColor *vals) const
 {
     QTC_SHADES
 
-    bool useCustom(NUM_STD_SHADES==opts.customShades.size());
+    bool   useCustom(NUM_STD_SHADES==opts.customShades.size());
+    double hl=QTC_TO_FACTOR(opts.highlightFactor);
 
     for(int i=0; i<NUM_STD_SHADES; ++i)
         shade(base, &vals[i], useCustom ? opts.customShades[i] : QTC_SHADE(opts.contrast, i));
 
-    shade(base, &vals[SHADE_ORIG_HIGHLIGHT], opts.highlightFactor);
-    shade(vals[4], &vals[SHADE_4_HIGHLIGHT], opts.highlightFactor);
-    shade(vals[2], &vals[SHADE_2_HIGHLIGHT], opts.highlightFactor);
+    shade(base, &vals[SHADE_ORIG_HIGHLIGHT], hl);
+    shade(vals[4], &vals[SHADE_4_HIGHLIGHT], hl);
+    shade(vals[2], &vals[SHADE_2_HIGHLIGHT], hl);
     vals[ORIGINAL_SHADE]=base;
 }
 
@@ -7446,6 +7468,13 @@ const QColor & QtCurveStyle::getTabFill(bool current, bool highlight, const QCol
             : highlight
                 ? use[SHADE_2_HIGHLIGHT]
                 : use[2];
+}
+
+const QColor & QtCurveStyle::menuStripeCol() const
+{
+    return opts.lighterPopupMenuBgnd<0
+                ? itsLighterPopupMenuBgndCol
+                : itsBackgroundCols[QTC_MENU_STRIPE_SHADE];
 }
 
 QPixmap * QtCurveStyle::getPixelPixmap(const QColor col) const

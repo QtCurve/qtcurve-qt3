@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>754</width>
-            <height>565</height>
+            <width>728</width>
+            <height>543</height>
         </rect>
     </property>
     <property name="caption">
@@ -94,69 +94,6 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <spacer row="10" column="1">
-                        <property name="name">
-                            <cstring>spacer9</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>16</width>
-                                <height>228</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>comboSplitter</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Combo splitter</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>This option controls whether a line is drawn near non-editable combo box arrows.</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>darkerBorders</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Darker borders</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>stdSidebarButtons</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Standard buttons for sidebars</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>Select this to have the sidebar buttons in konqueror, kate, kaffeine, ktorrent, drawn as per normal buttons - otherwise they will be drawn in a more flat style.</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>vArrows</cstring>
-                        </property>
-                        <property name="text">
-                            <string>'V' style arrows</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
-                        <property name="name">
-                            <cstring>framelessGroupBoxes</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Frameless groupboxes</string>
-                        </property>
-                    </widget>
                     <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>drawStatusBarFrames</cstring>
@@ -236,6 +173,121 @@
                         <property name="name">
                             <cstring>focus</cstring>
                         </property>
+                    </widget>
+                    <spacer row="11" column="1">
+                        <property name="name">
+                            <cstring>spacer9</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>120</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>darkerBorders</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Darker borders</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>vArrows</cstring>
+                        </property>
+                        <property name="text">
+                            <string>'V' style arrows</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>stdSidebarButtons</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Standard buttons for sidebars</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Select this to have the sidebar buttons in konqueror, kate, kaffeine, ktorrent, drawn as per normal buttons - otherwise they will be drawn in a more flat style.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>comboSplitter</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Combo splitter</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This option controls whether a line is drawn near non-editable combo box arrows.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="10" column="0">
+                        <property name="name">
+                            <cstring>fadeLines</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw fading lines (KDE4 &amp; Gtk2)</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+ </string>
+                        </property>
+                    </widget>
+                    <widget class="QFrame" row="5" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>frame4</cstring>
+                        </property>
+                        <property name="frameShape">
+                            <enum>StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                            <enum>Raised</enum>
+                        </property>
+                        <property name="lineWidth">
+                            <number>0</number>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>0</number>
+                            </property>
+                            <property name="spacing">
+                                <number>0</number>
+                            </property>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>framelessGroupBoxes</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Frameless groupboxes,</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>groupBoxLine</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>draw line after title</string>
+                                </property>
+                            </widget>
+                        </hbox>
                     </widget>
                 </grid>
             </widget>
@@ -758,130 +810,79 @@ None - no buttons, only the slider</string>
                 <attribute name="id">
                     <number>6</number>
                 </attribute>
-                <widget class="QLabel">
+                <grid>
                     <property name="name">
-                        <cstring>textLabel12</cstring>
+                        <cstring>unnamed</cstring>
                     </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>11</x>
-                            <y>11</y>
-                            <width>249</width>
-                            <height>26</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Header appearance:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel1_8_2_2_3_2</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>11</x>
-                            <y>43</y>
-                            <width>249</width>
-                            <height>26</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Selection appearance (KDE4 &amp; Gtk2):</string>
-                    </property>
-                </widget>
-                <widget class="QComboBox">
-                    <property name="name">
-                        <cstring>selectionAppearance</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>266</x>
-                            <y>43</y>
-                            <width>92</width>
-                            <height>26</height>
-                        </rect>
-                    </property>
-                </widget>
-                <widget class="QComboBox">
-                    <property name="name">
-                        <cstring>lvAppearance</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>266</x>
-                            <y>11</y>
-                            <width>92</width>
-                            <height>26</height>
-                        </rect>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>lvLines</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>11</x>
-                            <y>507</y>
-                            <width>574</width>
-                            <height>22</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Join items with lines (KDE)</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer21</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>221</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>364</x>
-                            <y>21</y>
-                            <width>221</width>
-                            <height>16</height>
-                        </rect>
-                    </property>
-                </spacer>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer22</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>16</width>
-                            <height>426</height>
-                        </size>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>308</x>
-                            <y>103</y>
-                            <width>16</width>
-                            <height>426</height>
-                        </rect>
-                    </property>
-                </spacer>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel12</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Header appearance:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_8_2_2_3_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Selection appearance (KDE4 &amp; Gtk2):</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="1" column="1">
+                        <property name="name">
+                            <cstring>selectionAppearance</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="0" column="1">
+                        <property name="name">
+                            <cstring>lvAppearance</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="0" column="2">
+                        <property name="name">
+                            <cstring>spacer21</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>221</width>
+                                <height>16</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="3" column="1">
+                        <property name="name">
+                            <cstring>spacer22</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>16</width>
+                                <height>241</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>lvLines</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Join items with lines (KDE)</string>
+                        </property>
+                    </widget>
+                </grid>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -890,11 +891,11 @@ None - no buttons, only the slider</string>
                 <attribute name="id">
                     <number>7</number>
                 </attribute>
-                <grid>
+                <vbox>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QCheckBox" row="0" column="0">
+                    <widget class="QCheckBox">
                         <property name="name">
                             <cstring>gtkScrollViews</cstring>
                         </property>
@@ -902,7 +903,7 @@ None - no buttons, only the slider</string>
                             <string>Scrollbars on the outside</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="0" column="0">
+                    <widget class="QCheckBox">
                         <property name="name">
                             <cstring>highlightScrollViews</cstring>
                         </property>
@@ -910,7 +911,7 @@ None - no buttons, only the slider</string>
                             <string>Highlight on focus (KDE)</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="0" column="0">
+                    <widget class="QCheckBox">
                         <property name="name">
                             <cstring>squareScrollViews</cstring>
                         </property>
@@ -918,7 +919,7 @@ None - no buttons, only the slider</string>
                             <string>Always draw with a square frame - regardless of the general round setting.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="0" column="0">
+                    <widget class="QCheckBox">
                         <property name="name">
                             <cstring>sunkenScrollViews</cstring>
                         </property>
@@ -926,7 +927,7 @@ None - no buttons, only the slider</string>
                             <string>Draw etched when button effect set to etched/shadow.</string>
                         </property>
                     </widget>
-                    <spacer row="0" column="0">
+                    <spacer>
                         <property name="name">
                             <cstring>spacer28_2</cstring>
                         </property>
@@ -938,12 +939,12 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>7</width>
-                                <height>16</height>
+                                <width>16</width>
+                                <height>272</height>
                             </size>
                         </property>
                     </spacer>
-                </grid>
+                </vbox>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -2135,8 +2136,14 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
+<connections>
+    <connection>
+        <sender>framelessGroupBoxes</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>groupBoxLine</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>stackList</tabstop>
     <tabstop>appearance</tabstop>
@@ -2145,9 +2152,11 @@ None - no buttons, only the slider</string>
     <tabstop>focus</tabstop>
     <tabstop>drawStatusBarFrames</tabstop>
     <tabstop>framelessGroupBoxes</tabstop>
+    <tabstop>groupBoxLine</tabstop>
     <tabstop>vArrows</tabstop>
     <tabstop>stdSidebarButtons</tabstop>
     <tabstop>darkerBorders</tabstop>
+    <tabstop>fadeLines</tabstop>
     <tabstop>comboSplitter</tabstop>
     <tabstop>splitters</tabstop>
     <tabstop>sliderAppearance</tabstop>
@@ -2235,6 +2244,7 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
@@ -2244,6 +2254,9 @@ None - no buttons, only the slider</string>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
