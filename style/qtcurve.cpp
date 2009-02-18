@@ -4186,7 +4186,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                                       : itsBackgroundCols[ORIGINAL_SHADE]);
 
                 if(opts.menuStripe)
-                    drawBevelGradient(itsBackgroundCols[QTC_MENU_STRIPE_SHADE], true, p,
+                    drawBevelGradient(menuStripeCol(), true, p,
                                       QRect(reverse ? r.right()-maxpmw : r.x(),
                                             r.y(), maxpmw, r.height()), false,
                                       getWidgetShade(WIDGET_OTHER, true, false, opts.menuStripeAppearance),
@@ -7468,6 +7468,13 @@ const QColor & QtCurveStyle::getTabFill(bool current, bool highlight, const QCol
             : highlight
                 ? use[SHADE_2_HIGHLIGHT]
                 : use[2];
+}
+
+const QColor & QtCurveStyle::menuStripeCol() const
+{
+    return opts.lighterPopupMenuBgnd<0
+                ? itsLighterPopupMenuBgndCol
+                : itsBackgroundCols[QTC_MENU_STRIPE_SHADE];
 }
 
 QPixmap * QtCurveStyle::getPixelPixmap(const QColor col) const
