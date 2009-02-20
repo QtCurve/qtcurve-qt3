@@ -366,11 +366,11 @@ QColor shade(const QColor &a, float k)
 }
 
 static void drawLines(QPainter *p, const QRect &r, bool horiz, int nLines, int offset,
-                      const QColor *cols, int startOffset, int dark,, ELine type)
+                      const QColor *cols, int startOffset, int dark, ELine type)
 {
     int space((nLines*2)+(LINE_DASHES!=type ? (nLines-1) : 0)),
         step(LINE_DASHES!=type ? 3 : 2),
-        etchedDisp(LINE_SUNKEN==type ? 1 : 0)
+        etchedDisp(LINE_SUNKEN==type ? 1 : 0),
         x(horiz ? r.x(): r.x()+((r.width()-space)>>1)),
         y(horiz ? r.y()+((r.height()-space)>>1): r.y()),
         x2(r.x()+r.width()-1),
@@ -3654,9 +3654,9 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             p->fillRect(r, cg.background()); // .dark(QTC_DW_BGND));
             p->setPen(itsBackgroundCols[QT_STD_BORDER]);
             if(horizontal)
-                p->drawLine(r.right()-1, r.top()-1, r.right()-1, r.bottom());
+                p->drawLine(r.right(), r.top()-1, r.right(), r.bottom());
             else
-                p->drawLine(r.left(), r.bottom()-1, r.right(), r.bottom()-1);
+                p->drawLine(r.left(), r.bottom(), r.right(), r.bottom());
 
             if (w > 2 && h > 2)
             {
@@ -3686,11 +3686,11 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                 p2.begin(&pix);
                 p2.fillRect(pix.rect(), cg.background()); // .dark(QTC_DW_BGND));
                 p2.setPen(itsBackgroundCols[QT_STD_BORDER]);
-                p2.drawLine(pix.rect().left(), pix.rect().bottom()-1, pix.rect().right(), pix.rect().bottom()-1);
+                p2.drawLine(pix.rect().left(), pix.rect().bottom(), pix.rect().right(), pix.rect().bottom());
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
                 QRect textRect(pix.rect());
-                textRect.addCoords(2, 0, -2, 0);
+                textRect.addCoords(2, -3, -2, 0);
                 p2.drawText(textRect, AlignVCenter|(QApplication::reverseLayout() ? AlignRight : AlignLeft),
                             elliditide(title, QFontMetrics(fnt), pix.width()));
                 p2.end();
