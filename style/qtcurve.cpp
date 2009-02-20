@@ -366,11 +366,11 @@ QColor shade(const QColor &a, float k)
 }
 
 static void drawLines(QPainter *p, const QRect &r, bool horiz, int nLines, int offset,
-                      const QColor *cols, int startOffset, int dark, int etchedDisp=1,
-                      bool light=true)
+                      const QColor *cols, int startOffset, int dark, ELine type)
 {
-    int space((nLines*2)+(etchedDisp || !light ? (nLines-1) : 0)),
-        step(etchedDisp || !light ? 3 : 2),
+    int space((nLines*2)+(LINE_DASHES!=type ? (nLines-1) : 0)),
+        step(LINE_DASHES!=type ? 3 : 2),
+        etchedDisp(LINE_SUNKEN==type ? 1 : 0),
         x(horiz ? r.x(): r.x()+((r.width()-space)>>1)),
         y(horiz ? r.y()+((r.height()-space)>>1): r.y()),
         x2(r.x()+r.width()-1),
@@ -384,13 +384,15 @@ static void drawLines(QPainter *p, const QRect &r, bool horiz, int nLines, int o
 
         p->setPen(cols[dark]);
         for(i=0; i<space; i+=step)
-            p->drawLine(x+offset, y+i, x2-(offset+etchedDisp), y+i);
+            p->drawLine(x+offset, y+i, x2-offset, y+i);
 
-        if(light)
+        if(LINE_FLAT!=type)
         {
+            x+=etchedDisp;
+            x2+=etchedDisp;
             p->setPen(cols[0]);
             for(i=1; i<space; i+=step)
-                p->drawLine(x+offset+etchedDisp, y+i, x2-offset, y+i);
+                p->drawLine(x+offset, y+i, x2-offset, y+i);
         }
     }
     else
@@ -400,13 +402,15 @@ static void drawLines(QPainter *p, const QRect &r, bool horiz, int nLines, int o
 
         p->setPen(cols[dark]);
         for(i=0; i<space; i+=step)
-            p->drawLine(x+i, y+offset, x+i, y2-(offset+etchedDisp));
+            p->drawLine(x+i, y+offset, x+i, y2-offset);
 
-        if(light)
+        if(LINE_FLAT!=type)
         {
+            y+=etchedDisp;
+            y2+=etchedDisp;
             p->setPen(cols[0]);
             for(i=1; i<space; i+=step)
-                p->drawLine(x+i, y+offset+etchedDisp, x+i, y2-offset);
+                p->drawLine(x+i, y+offset, x+i, y2-offset);
         }
     }
 }
@@ -3143,14 +3147,10 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 case LINE_DOTS:
                     drawDots(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 5);
                     break;
-                case LINE_SUNKEN:
-                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 3);
-                    break;
                 case LINE_FLAT:
-                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 3, border, 0, 3, 0, false);
-                    break;
+                case LINE_SUNKEN:
                 case LINE_DASHES:
-                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 3, 0);
+                    drawLines(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 3, border, 0, 3, opts.splitters);
             }
             break;
         }
@@ -3654,9 +3654,9 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             p->fillRect(r, cg.background()); // .dark(QTC_DW_BGND));
             p->setPen(itsBackgroundCols[QT_STD_BORDER]);
             if(horizontal)
-                p->drawLine(r.right()-1, r.top()-1, r.right()-1, r.bottom());
+                p->drawLine(r.right(), r.top()-1, r.right(), r.bottom());
             else
-                p->drawLine(r.left(), r.bottom()-1, r.right(), r.bottom()-1);
+                p->drawLine(r.left(), r.bottom(), r.right(), r.bottom());
 
             if (w > 2 && h > 2)
             {
@@ -3686,11 +3686,11 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                 p2.begin(&pix);
                 p2.fillRect(pix.rect(), cg.background()); // .dark(QTC_DW_BGND));
                 p2.setPen(itsBackgroundCols[QT_STD_BORDER]);
-                p2.drawLine(pix.rect().left(), pix.rect().bottom()-1, pix.rect().right(), pix.rect().bottom()-1);
+                p2.drawLine(pix.rect().left(), pix.rect().bottom(), pix.rect().right(), pix.rect().bottom());
                 p2.setPen(cg.text());
                 p2.setFont(fnt);
                 QRect textRect(pix.rect());
-                textRect.addCoords(2, 0, -2, 0);
+                textRect.addCoords(2, -3, -2, 0);
                 p2.drawText(textRect, AlignVCenter|(QApplication::reverseLayout() ? AlignRight : AlignLeft),
                             elliditide(title, QFontMetrics(fnt), pix.width()));
                 p2.end();
@@ -6621,10 +6621,10 @@ void QtCurveStyle::drawSbSliderHandle(QPainter *p, const QRect &orig, const QCol
         switch(opts.sliderThumbs)
         {
             case LINE_FLAT:
-                drawLines(p, r, !(flags & Style_Horizontal), 3, 5, markers, 0, 5, 0, false);
+                drawLines(p, r, !(flags & Style_Horizontal), 3, 5, markers, 0, 5, opts.sliderThumbs);
                 break;
             case LINE_SUNKEN:
-                drawLines(p, r, !(flags & Style_Horizontal), 4, 3, markers, 0, 3);
+                drawLines(p, r, !(flags & Style_Horizontal), 4, 3, markers, 0, 3, opts.sliderThumbs);
                 break;
             case LINE_DOTS:
             default:
@@ -6927,25 +6927,25 @@ void QtCurveStyle::drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, 
                 QRect r1(r.x()+(tb ? 2 : (r.width()-6)/2), r.y(), 3, r.height());
 
                 drawLines(p, r1, true, (r.height()-8)/2,
-                          tb ? 0 : (r.width()-5)/2, border, 0, 5, 0);
+                          tb ? 0 : (r.width()-5)/2, border, 0, 5, handles);
             }
             else
             {
                 QRect r1(r.x(), r.y()+(tb ? 2 : (r.height()-6)/2), r.width(), 3);
 
                 drawLines(p, r1, false, (r.width()-8)/2,
-                          tb ? 0 : (r.height()-5)/2, border, 0, 5, 0);
+                          tb ? 0 : (r.height()-5)/2, border, 0, 5, handles);
             }
             break;
         case LINE_FLAT:
             drawLines(p, r, !(flags & Style_Horizontal), 2,
                       APP_KICKER==itsThemedApp ? 1 : tb ? 4 : 2, border,
-                      APP_KICKER==itsThemedApp ? 1 : tb ? -2 : 0, 4, 0, false);
+                      APP_KICKER==itsThemedApp ? 1 : tb ? -2 : 0, 4, handles);
             break;
         default:
             drawLines(p, r, !(flags & Style_Horizontal), 2,
                       APP_KICKER==itsThemedApp ? 1 : tb ? 4 : 2, border,
-                      APP_KICKER==itsThemedApp ? 1 : tb ? -2 : 0, 3);
+                      APP_KICKER==itsThemedApp ? 1 : tb ? -2 : 0, 3, handles);
     }
 }
 

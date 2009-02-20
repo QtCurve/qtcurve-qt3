@@ -1,3 +1,10 @@
+0.61.1
+------
+1. Fix setting of default style. Fixes odd behaviour of config dialog!
+2. Fix position of dark part of sunken lines.
+3. Improve KDE dock widget titles.
+4. Read in custom gradients and shades from any system config file.
+
 0.61
 ----
 1. Only draw coloured border for moused-over items if they are enabled!
