@@ -2150,7 +2150,8 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
                         ? cg.background()
                         : WIDGET_ENTRY==w && !hasFocus
                             ? cg.base()
-                            : flags&Style_Enabled && (BORDER_SUNKEN==borderProfile || APPEARANCE_FLAT!=app)
+                            : flags&Style_Enabled && (BORDER_SUNKEN==borderProfile || APPEARANCE_FLAT!=app ||
+                                                      WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w)
                                 ? blendBorderColors
                                     ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
                                                                         ? QT_FRAME_DARK_SHADOW : 0]) // Was base???
