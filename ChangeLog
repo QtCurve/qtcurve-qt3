@@ -1,6 +1,7 @@
 0.61.2
 ------
 1. Fix setting of options if no qtcurvestylerc is found!
+2. Fix border of tabs.
 
 0.61.1
 ------
