@@ -2847,8 +2847,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                         : cg.base()
                                     : cg.background());
             EWidget      wid=opts.crButton ? WIDGET_STD_BUTTON : WIDGET_TROUGH;
-            EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_GRADIENT;
-            bool         drawSunken=opts.crButton ? sunken : true,
+            EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_INVERTED;
+            bool         drawSunken=opts.crButton ? sunken : false,
                          lightBorder=QTC_DRAW_LIGHT_BORDER(drawSunken, wid, app),
                          drawLight=opts.crButton && !drawSunken && (lightBorder || !IS_GLASS(app));
 
@@ -2973,8 +2973,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                              coloredMo(MO_NONE!=opts.coloredMouseOver && !glow &&
                                        sflags&Style_MouseOver && sflags&Style_Enabled);
                 EWidget      wid=opts.crButton ? WIDGET_STD_BUTTON : WIDGET_TROUGH;
-                EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_GRADIENT;
-                bool         drawSunken=opts.crButton ? sunken : true,
+                EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_INVERTED;
+                bool         drawSunken=opts.crButton ? sunken : false,
                              lightBorder=QTC_DRAW_LIGHT_BORDER(drawSunken, wid, app),
                              drawLight=opts.crButton && !drawSunken && (lightBorder || !IS_GLASS(app)),
                              doneShadow=false;
@@ -5194,7 +5194,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 #endif
 
             p->setClipRegion(QRegion(s2)+QRegion(addpage));
-            drawLightBevel(p, sbRect, cg, sflags|Style_Down,
+            sflags&=~(Style_Down|Style_On|Style_Sunken);
+            drawLightBevel(p, sbRect, cg, sflags/*|Style_Down*/,
 #ifndef QTC_SIMPLE_SCROLLBARS
                            SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons ? ROUNDED_ALL :
 #endif
@@ -6245,7 +6246,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p,
         bool        tab(WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w),
                     selected(tab ? false : sel);
         EAppearance app(selected
-                            ? APPEARANCE_INVERTED
+                            ? opts.sunkenAppearance
                             : WIDGET_LISTVIEW_HEADER==w && APPEARANCE_BEVELLED==bevApp
                                 ? APPEARANCE_LV_BEVELLED
                                 : APPEARANCE_BEVELLED!=bevApp || WIDGET_BUTTON(w) || WIDGET_LISTVIEW_HEADER==w ||
@@ -6254,7 +6255,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p,
                                     : APPEARANCE_GRADIENT);
         QRect       r(0, 0, horiz ? QTC_PIXMAP_DIMENSION : origRect.width(),
                       horiz ? origRect.height() : QTC_PIXMAP_DIMENSION);
-        QString     key(createKey(horiz ? r.height() : r.width(), base.rgb(), horiz, app
+        QString     key(createKey(horiz ? r.height() : r.width(), base.rgb(), horiz, app,
                                   tab && sel && opts.colorSelTab ? CACHE_COL_SEL_TAB : CACHE_STD));
         QPixmap     *pix(itsPixmapCache.find(key));
         bool        inCache(true);

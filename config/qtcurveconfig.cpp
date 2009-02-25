@@ -495,6 +495,8 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(activeTabAppearance, false, false);
     insertAppearanceEntries(progressAppearance);
     insertAppearanceEntries(progressGrooveAppearance);
+    insertAppearanceEntries(grooveAppearance);
+    insertAppearanceEntries(sunkenAppearance);
     insertAppearanceEntries(menuitemAppearance, true, true, true);
     insertAppearanceEntries(titlebarAppearance, true, false);
     insertAppearanceEntries(inactiveTitlebarAppearance, true, false);
@@ -563,6 +565,8 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(borderMenuitems, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(progressAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(progressGrooveAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(grooveAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(sunkenAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(progressGrooveColor, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(menuitemAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(titlebarAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
@@ -1221,6 +1225,8 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.borderMenuitems=borderMenuitems->isChecked();
     opts.progressAppearance=(EAppearance)progressAppearance->currentItem();
     opts.progressGrooveAppearance=(EAppearance)progressGrooveAppearance->currentItem();
+    opts.grooveAppearance=(EAppearance)grooveAppearance->currentItem();
+    opts.sunkenAppearance=(EAppearance)sunkenAppearance->currentItem();
     opts.progressGrooveColor=(EColor)progressGrooveColor->currentItem();
     opts.menuitemAppearance=(EAppearance)menuitemAppearance->currentItem();
     opts.titlebarAppearance=(EAppearance)titlebarAppearance->currentItem();
@@ -1323,6 +1329,8 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     borderMenuitems->setChecked(opts.borderMenuitems);
     progressAppearance->setCurrentItem(opts.progressAppearance);
     progressGrooveAppearance->setCurrentItem(opts.progressGrooveAppearance);
+    grooveAppearance->setCurrentItem(opts.grooveAppearance);
+    sunkenAppearance->setCurrentItem(opts.sunkenAppearance);
     progressGrooveColor->setCurrentItem(opts.progressGrooveColor);
     menuitemAppearance->setCurrentItem(opts.menuitemAppearance);
     titlebarAppearance->setCurrentItem(opts.titlebarAppearance);
@@ -1404,6 +1412,8 @@ bool QtCurveConfig::settingsChanged()
          activeTabAppearance->currentItem()!=currentStyle.activeTabAppearance ||
          progressAppearance->currentItem()!=currentStyle.progressAppearance ||
          progressGrooveAppearance->currentItem()!=currentStyle.progressGrooveAppearance ||
+         grooveAppearance->currentItem()!=currentStyle.grooveAppearance ||
+         sunkenAppearance->currentItem()!=currentStyle.sunkenAppearance ||
          progressGrooveColor->currentItem()!=currentStyle.progressGrooveColor ||
          menuitemAppearance->currentItem()!=currentStyle.menuitemAppearance ||
          titlebarAppearance->currentItem()!=currentStyle.titlebarAppearance ||
