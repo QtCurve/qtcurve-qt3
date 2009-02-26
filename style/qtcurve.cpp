@@ -858,6 +858,9 @@ void QtCurveStyle::polish(QApplication *app)
     else
         itsThemedApp=APP_OTHER;
 
+    if(APP_OTHER==itsThemedApp && opts.groupBoxLine && "ksysguard"==appName)
+        opts.groupBoxLine=false;
+
     if(APP_OPENOFFICE==itsThemedApp)
     {
         //
