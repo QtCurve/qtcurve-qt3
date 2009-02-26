@@ -6274,24 +6274,26 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p,
             int                              numStops(grad->stops.size()),
                                              lastPos(0),
                                              size(horiz ? r.height() : r.width());
-            bool                             colorTab(sel && tab && opts.colorSelTab && 2==numStops);
+            bool                             topTab(WIDGET_TAB_TOP==w),
+                                             botTab(WIDGET_TAB_BOT==w);
             QColor                           prev;
 
             for(int i=0; it!=end; ++it, ++i)
             {
                 QColor col;
-                int    pos((int)(((WIDGET_TAB_BOT==w ? 1.0-(*it).pos : (*it).pos)*size)+0.5));
+                int    pos((int)(((botTab ? 1.0-(*it).pos : (*it).pos)*size)+0.5));
 
-                if(sel && tab && i==numStops-1)
+                if(sel && (topTab || botTab) && i==numStops-1)
                     col=base;
                 else
                 {
-                    double val=WIDGET_TAB_BOT==w ? INVERT_SHADE((*it).val) : (*it).val;
-                    shade(colorTab && tab && 0==i
-                            ? midColor(base, itsMenuitemCols[0], QTC_COLOR_SEL_TAB_FACTOR)
-                            : base,
-                          &col, WIDGET_TAB_BOT==w ? QMAX(val, 0.9) : val);
+                    double val=botTab ? INVERT_SHADE((*it).val) : (*it).val;
+                    
+                    shade(base, &col, WIDGET_TAB_BOT==w ? QMAX(val, 0.9) : val);
                 }
+
+                if(sel && opts.colorSelTab && (topTab || botTab) && 0==i)
+                    col=tint(col, itsMenuitemCols[0], QTC_COLOR_SEL_TAB_FACTOR);
 
                 if(i)
                     drawGradient(prev, col, &pixPainter,
