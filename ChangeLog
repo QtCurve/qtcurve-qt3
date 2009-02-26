@@ -4,6 +4,10 @@
    work in the same vein as custom gradients.
 2. Add scrollbar/slider groove and 'sunken' appearance options.
 
+0.61.3
+------
+Fix settings for sliderThumbs, handles, toolbarSeparators, and splitters.
+
 0.61.2
 ------
 1. Fix setting of options if no qtcurvestylerc is found!
