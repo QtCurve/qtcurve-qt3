@@ -279,8 +279,9 @@ void CGradientPreview::paintEvent(QPaintEvent *)
 
     if(stops.size())
     {
-        GradientStopCont::const_iterator it(stops.begin()),
-                                         end(stops.end());
+        GradientStopCont                 st(stops.fix());
+        GradientStopCont::const_iterator it(st.begin()),
+                                         end(st.end());
         QColor                           bot;
         bool                             horiz(true);
         int                              lastPos(horiz ? r.y() : r.x()),
