@@ -1,3 +1,7 @@
+0.61.4
+------
+1. Fix gradient of faded menuitems when not using lighter background.
+
 0.61.3
 ------
 1. Fix settings for sliderThumbs, handles, toolbarSeparators, and splitters.
