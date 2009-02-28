@@ -693,7 +693,10 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
     if(opts.contrast<0 || opts.contrast>10)
         opts.contrast=7;
-   
+
+    /* Doesn't seem to work well for KDE3 apps :-( */
+    opts.groupBoxLine=false;
+
     itsPixmapCache.setAutoDelete(true);
 
     if ((SHADE_CUSTOM==opts.shadeMenubars || SHADE_BLEND_SELECTED==opts.shadeMenubars) &&
@@ -857,9 +860,6 @@ void QtCurveStyle::polish(QApplication *app)
     }
     else
         itsThemedApp=APP_OTHER;
-
-    if(APP_OTHER==itsThemedApp && opts.groupBoxLine && "ksysguard"==appName)
-        opts.groupBoxLine=false;
 
     if(APP_OPENOFFICE==itsThemedApp)
     {
