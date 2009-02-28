@@ -6112,8 +6112,8 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QC
                        cols, WIDGET_MENU_ITEM, false, BORDER_FLAT, false, fill);
         }
 
-        drawGradient(reverse ? cols[fill] : itsLighterPopupMenuBgndCol, reverse ? itsLighterPopupMenuBgndCol : cols[fill],
-                     p, fade, false);
+        QColor bgnd(USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : itsBackgroundCols[ORIGINAL_SHADE]);
+        drawGradient(reverse ? bgnd : cols[fill], reverse ? cols[fill] : bgnd, p, fade, false);
     }
     else if(mbi || opts.borderMenuitems)
     {
