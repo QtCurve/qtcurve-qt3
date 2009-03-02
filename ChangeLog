@@ -1,3 +1,8 @@
+0.61.4
+------
+1. Fix gradient of faded menuitems when not using lighter background.
+2. Disable usage of group box lines - has too many issues.
+
 0.61.3
 ------
 1. Fix settings for sliderThumbs, handles, toolbarSeparators, and splitters.

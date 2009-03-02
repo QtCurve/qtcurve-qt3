@@ -234,7 +234,7 @@
                             <cstring>fadeLines</cstring>
                         </property>
                         <property name="text">
-                            <string>Draw fading lines (KDE4 &amp; Gtk2)</string>
+                            <string>Draw fading lines (KDE4 &amp;&amp; Gtk2)</string>
                         </property>
                         <property name="accel">
                             <string>Alt+ </string>
@@ -284,7 +284,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>draw line after title</string>
+                                    <string>draw line after title (KDE4 &amp;&amp; Gtk2)</string>
                                 </property>
                             </widget>
                         </hbox>
@@ -827,7 +827,7 @@ None - no buttons, only the slider</string>
                             <cstring>textLabel1_8_2_2_3_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Selection appearance (KDE4 &amp; Gtk2):</string>
+                            <string>Selection appearance (KDE4 &amp;&amp; Gtk2):</string>
                         </property>
                     </widget>
                     <widget class="QComboBox" row="1" column="1">
