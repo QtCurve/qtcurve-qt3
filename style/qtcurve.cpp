@@ -3424,20 +3424,29 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             }
             else
             {
-                //Figuring out in what beast we are painting...
                 const QColor *use(FOCUS_BACKGROUND==opts.focus ? backgroundColors(cg) : itsMenuitemCols);
-                QWidget      *widget(dynamic_cast<QWidget*>(p->device()));
 
-                if(r.width()<4 || r.height()<4 ||
-                   (widget && (dynamic_cast<QScrollView*>(widget->parent()) ||
-                               dynamic_cast<QListBox*>(widget->parent()))))
+                if(FOCUS_LINE==opts.focus)
                 {
-                    p->setPen(use[3]);
-                    p->drawRect(r);
-                }
+                    p->setPen(use[QT_FOCUS]);
+                    p->drawLine(r.x(), r.y()+r.height()-1, r.x()+r.width()-1, r.y()+r.height()-1);
+                }                
                 else
-                    drawBorder(cg.background(), p, r, cg, Style_Horizontal,
-                               ROUNDED_ALL, use, WIDGET_FOCUS, false, BORDER_FLAT, true, QT_FOCUS);
+                {
+                    //Figuring out in what beast we are painting...
+                    QWidget      *widget(dynamic_cast<QWidget*>(p->device()));
+
+                    if(r.width()<4 || r.height()<4 ||
+                       (widget && (dynamic_cast<QScrollView*>(widget->parent()) ||
+                                   dynamic_cast<QListBox*>(widget->parent()))))
+                    {
+                        p->setPen(use[3]);
+                        p->drawRect(r);
+                    }
+                    else
+                        drawBorder(cg.background(), p, r, cg, Style_Horizontal,
+                                   ROUNDED_ALL, use, WIDGET_FOCUS, false, BORDER_FLAT, true, QT_FOCUS);
+                }
             }
             break;
         case PE_ArrowUp:
@@ -6292,8 +6301,8 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p,
                     shade(base, &col, WIDGET_TAB_BOT==w ? QMAX(val, 0.9) : val);
                 }
 
-                if(sel && opts.colorSelTab && (topTab || botTab) && 0==i)
-                    col=tint(col, itsMenuitemCols[0], QTC_COLOR_SEL_TAB_FACTOR);
+                if(sel && opts.colorSelTab && (topTab || botTab) && i<numStops-1)
+                    col=tint(col, itsMenuitemCols[0], (1.0-(*it).pos)*QTC_COLOR_SEL_TAB_FACTOR);
 
                 if(i)
                     drawGradient(prev, col, &pixPainter,

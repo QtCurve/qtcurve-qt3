@@ -478,6 +478,7 @@ static void insertFocusEntries(QComboBox *combo)
     combo->insertItem(i18n("Highlight color"));
     combo->insertItem(i18n("Highlight color, and fill (Gtk2 & KDE4 only)"));
     combo->insertItem(i18n("Background color"));
+    combo->insertItem(i18n("Line drawn with highlight color"));
 }
 
 QtCurveConfig::QtCurveConfig(QWidget *parent)
