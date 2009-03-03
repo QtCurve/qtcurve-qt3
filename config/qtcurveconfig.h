@@ -83,6 +83,8 @@ class QtCurveConfig : public QtCurveConfigBase
 
     void setStyle(int s);
     void updateChanged();
+    void focusChanged();
+    void roundChanged();
     void importStyle();
     void exportStyle();
     void exportTheme();
