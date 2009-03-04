@@ -4245,45 +4245,15 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 drawPrimitive(PE_CheckMark, p, cr, cg,
                               (flags &(Style_Enabled|(opts.useHighlightForMenu ? Style_Active : 0)))| Style_On|QTC_MENU_ITEM);
 
-            QColor textcolor,
-                   embosscolor;
-
-            if(flags&Style_Active && opts.useHighlightForMenu)
-            {
-                if(!(flags & Style_Enabled))
-                {
-                    textcolor=cg.text();
-                    embosscolor=cg.light();
-                }
-                else
-                {
-                    textcolor=cg.highlightedText();
-                    embosscolor=cg.midlight().light();
-                }
-            }
-            else if(!(flags & Style_Enabled))
-            {
-                textcolor=cg.text();
-                embosscolor=cg.light();
-            }
-            else
-            {
-                textcolor=cg.foreground();
-                embosscolor=cg.light();
-            }
-            p->setPen(textcolor);
+            p->setPen(!(flags & Style_Enabled)
+                        ? cg.text()
+                        : flags&Style_Active && opts.useHighlightForMenu
+                            ? cg.highlightedText()
+                            : cg.foreground());
 
             if(mi->custom())
             {
                 p->save();
-                if(!(flags & Style_Enabled))
-                {
-                    p->setPen(cg.light());
-                    mi->custom()->paint(p, cg,(flags & Style_Enabled)?(flags & Style_Active): 0,
-                                        flags & Style_Enabled, ir.x()+1, ir.y()+1, ir.width()-1,
-                                        ir.height()-1);
-                    p->setPen(textcolor);
-                }
                 mi->custom()->paint(p, cg,(flags & Style_Enabled)?(flags & Style_Active): 0,
                                     flags & Style_Enabled, ir.x(), ir.y(), ir.width(), ir.height());
                 p->restore();
@@ -4297,37 +4267,10 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
                 // draw accelerator/tab-text
                 if(t>=0)
-                {
-                    int alignFlag(AlignVCenter | ShowPrefix | DontClip | SingleLine);
+                    p->drawText(tr, AlignVCenter|ShowPrefix|DontClip|SingleLine|(reverse ? AlignLeft : AlignRight),
+                                text.mid(t+1));
 
-                    alignFlag |=(reverse ? AlignLeft : AlignRight);
-
-                    if(!(flags & Style_Enabled))
-                    {
-                        p->setPen(embosscolor);
-                        tr.moveBy(1, 1);
-                        p->drawText(tr, alignFlag, text.mid(t +1));
-                        tr.moveBy(-1,-1);
-                        p->setPen(textcolor);
-                    }
-
-                    p->drawText(tr, alignFlag, text.mid(t +1));
-                }
-
-                int alignFlag(AlignVCenter | ShowPrefix | DontClip | SingleLine);
-
-                alignFlag |=(reverse ? AlignRight : AlignLeft);
-
-                if(!(flags & Style_Enabled))
-                {
-                    p->setPen(embosscolor);
-                    ir.moveBy(1, 1);
-                    p->drawText(ir, alignFlag, text, t);
-                    ir.moveBy(-1,-1);
-                    p->setPen(textcolor);
-                }
-
-                p->drawText(ir, alignFlag, text, t);
+                p->drawText(ir, AlignVCenter|ShowPrefix|DontClip|SingleLine|(reverse ? AlignRight : AlignLeft), text, t);
             } 
             else if(mi->pixmap())
             {
@@ -6025,6 +5968,7 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
         case SH_ScrollView_FrameOnlyAroundContents:
             return opts.gtkScrollViews;
         case SH_EtchDisabledText:
+            return 0;
         case SH_Slider_SnapToValue:
         case SH_PrintDialog_RightAlignButtons:
         case SH_FontDialog_SelectAssociatedText:
