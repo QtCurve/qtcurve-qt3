@@ -1738,12 +1738,9 @@ None - no buttons, only the slider</string>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox" row="2" column="0">
+                            <widget class="QComboBox" row="2" column="0">
                                 <property name="name">
-                                    <cstring>gradLightBorder</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Light border</string>
+                                    <cstring>gradBorder</cstring>
                                 </property>
                             </widget>
                             <widget class="QListView" row="0" column="0" rowspan="2" colspan="1">
@@ -2254,7 +2251,7 @@ None - no buttons, only the slider</string>
     <tabstop>passwordChar</tabstop>
     <tabstop>gradCombo</tabstop>
     <tabstop>gradStops</tabstop>
-    <tabstop>gradLightBorder</tabstop>
+    <tabstop>gradBorder</tabstop>
     <tabstop>stopPosition</tabstop>
     <tabstop>stopValue</tabstop>
     <tabstop>addButton</tabstop>

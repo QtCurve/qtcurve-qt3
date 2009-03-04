@@ -482,6 +482,13 @@ static void insertFocusEntries(QComboBox *combo)
     combo->insertItem(i18n("Line drawn with highlight color"));
 }
 
+static void insertGradBorderEntries(QComboBox *combo)
+{
+    combo->insertItem(i18n("No border"));
+    combo->insertItem(i18n("Light border"));
+    combo->insertItem(i18n("3D border"));
+}
+
 QtCurveConfig::QtCurveConfig(QWidget *parent)
              : QtCurveConfigBase(parent),
                exportDialog(NULL),
@@ -523,6 +530,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertSliderStyleEntries(sliderStyle);
     insertEColorEntries(progressGrooveColor);
     insertFocusEntries(focus);
+    insertGradBorderEntries(gradBorder);
 
     highlightFactor->setMinValue(MIN_HIGHLIGHT_FACTOR);
     highlightFactor->setMaxValue(MAX_HIGHLIGHT_FACTOR);
@@ -842,7 +850,7 @@ void QtCurveConfig::gradChanged(int i)
     if(it!=customGradient.end())
     {
         gradPreview->setGrad((*it).second.stops);
-        gradLightBorder->setChecked((*it).second.lightBorder);
+        gradBorder->setCurrentItem((*it).second.border);
 
         GradientStopCont::const_iterator git((*it).second.stops.begin()),
                                          gend((*it).second.stops.end());
@@ -854,10 +862,10 @@ void QtCurveConfig::gradChanged(int i)
     else
     {
         gradPreview->setGrad(GradientStopCont());
-        gradLightBorder->setChecked(false);
+        gradBorder->setCurrentItem(GB_3D);
     }
 
-    gradLightBorder->setEnabled(QTC_NUM_CUSTOM_GRAD!=i);
+    gradBorder->setEnabled(QTC_NUM_CUSTOM_GRAD!=i);
 }
 
 void QtCurveConfig::itemChanged(QListViewItem *i, int col)
@@ -893,7 +901,7 @@ void QtCurveConfig::addGradStop()
     {
         Gradient cust;
 
-        cust.lightBorder=gradLightBorder->isChecked();
+        cust.border=(EGradientBorder)gradBorder->currentItem();
         cust.stops.insert(GradientStop(stopPosition->value()/100.0, stopValue->value()/100.0));
         customGradient[(EAppearance)gradCombo->currentItem()]=cust;
         gradChanged(gradCombo->currentItem());

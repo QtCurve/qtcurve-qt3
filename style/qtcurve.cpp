@@ -1880,6 +1880,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     bool         bevelledButton(WIDGET_BUTTON(w) && APPEARANCE_BEVELLED==app),
                  sunken(flags &(Style_Down|Style_On|Style_Sunken)),
                  lightBorder(QTC_DRAW_LIGHT_BORDER(sunken , w, app)),
+                 draw3d(!lightBorder && QTC_DRAW_3D_BORDER(sunken, app)),
                  doColouredMouseOver(!sunken && doBorder &&
                                     opts.coloredMouseOver && flags&Style_MouseOver &&
                                     !(flags&QTC_DW_CLOSE_BUTTON) &&
@@ -1911,7 +1912,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
 
     if(!colouredMouseOver && lightBorder)
         br.addCoords(1, 1,-1,-1);
-    else if(colouredMouseOver || (!IS_GLASS(app) && !sunken && flags&Style_Raised))
+    else if(colouredMouseOver || (draw3d && flags&Style_Raised))
     {
         if(colouredMouseOver)
             p->setPen(border[QTC_MO_STD_LIGHT(w, sunken)]);
@@ -1963,7 +1964,12 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     // fill
     if(br.width()>0 && br.height()>0)
     {
+        // Adjust paint rect, so that gradient is drawn from the same coords as KDE4 and Gtk2
+        p->setClipRect(br);
+        br.addCoords(-1, -1, 1, 1);
         drawBevelGradient(fill, p, br, horiz, sunken, app, w);
+        br.addCoords(1, 1,-1,-1);
+        p->setClipping(false);
 
         if(!sunken)
             if(plastikMouseOver)
@@ -2853,7 +2859,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_INVERTED;
             bool         drawSunken=opts.crButton ? sunken : false,
                          lightBorder=QTC_DRAW_LIGHT_BORDER(drawSunken, wid, app),
-                         drawLight=opts.crButton && !drawSunken && (lightBorder || !IS_GLASS(app));
+                         draw3d=!lightBorder && QTC_DRAW_3D_BORDER(drawSunken, app),
+                         drawLight=opts.crButton && !drawSunken && (lightBorder || draw3d);
 
             if(IS_FLAT(opts.appearance))
                 p->fillRect(QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), bgnd);
@@ -2979,7 +2986,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_INVERTED;
                 bool         drawSunken=opts.crButton ? sunken : false,
                              lightBorder=QTC_DRAW_LIGHT_BORDER(drawSunken, wid, app),
-                             drawLight=opts.crButton && !drawSunken && (lightBorder || !IS_GLASS(app)),
+                             draw3d=!lightBorder && QTC_DRAW_3D_BORDER(drawSunken, app),
+                             drawLight=opts.crButton && !drawSunken && (lightBorder || draw3d),
                              doneShadow=false;
 
                 p->save();
@@ -3438,11 +3446,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }                
                 else if(r.width()<4 || r.height()<4 || view)
                 {
+                    QRect r2(r);
                     p->setPen(view ? (flags&Style_Selected ? cg.highlightedText() : cg.text())
                                    : use[FOCUS_BACKGROUND!=opts.focus && flags&Style_Selected ? 3 : QT_FOCUS]);
                     if(view)
-                        r.addCoords(0, 0, 0, -2);
-                    p->drawRect(r);
+                        r2.addCoords(0, 0, 0, -2);
+                    p->drawRect(r2);
                 }
                 else
                     drawBorder(cg.background(), p, r, cg, Style_Horizontal,
