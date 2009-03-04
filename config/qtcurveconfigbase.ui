@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>728</width>
-            <height>543</height>
+            <width>754</width>
+            <height>565</height>
         </rect>
     </property>
     <property name="caption">
@@ -1028,23 +1028,6 @@ None - no buttons, only the slider</string>
                             <string>Color</string>
                         </property>
                     </widget>
-                    <spacer row="2" column="1">
-                        <property name="name">
-                            <cstring>spacer23</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>10</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <spacer row="0" column="4">
                         <property name="name">
                             <cstring>spacer24</cstring>
@@ -1057,11 +1040,36 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>25</width>
-                                <height>8</height>
+                                <width>147</width>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
+                    <spacer row="3" column="1">
+                        <property name="name">
+                            <cstring>spacer23</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>16</width>
+                                <height>394</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="2" column="0">
+                        <property name="name">
+                            <cstring>centerTabs</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Place in center (KDE)</string>
+                        </property>
+                    </widget>
                 </grid>
             </widget>
             <widget class="QWidget">
@@ -2159,6 +2167,8 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>framelessGroupBoxes</sender>
@@ -2220,6 +2230,7 @@ None - no buttons, only the slider</string>
     <tabstop>crButton</tabstop>
     <tabstop>titlebarAppearance</tabstop>
     <tabstop>inactiveTitlebarAppearance</tabstop>
+    <tabstop>centerTabs</tabstop>
     <tabstop>titlebarButtonAppearance</tabstop>
     <tabstop>colorTitlebarOnly</tabstop>
     <tabstop>toolbarBorders</tabstop>
@@ -2269,20 +2280,12 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
