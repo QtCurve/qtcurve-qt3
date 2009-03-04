@@ -4653,15 +4653,17 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
     {
         case SR_PushButtonFocusRect:
         {
-            int dbw1(pixelMetric(PM_ButtonDefaultIndicator, widget)),
-                dbw2(dbw1*2),
-                border(3),
-                border2=(border*2);
+            if(FOCUS_FULL!=opts.focus)
+            {
+                int dbw1(pixelMetric(PM_ButtonDefaultIndicator, widget)),
+                    dbw2(dbw1*2),
+                    border(3),
+                    border2=(border*2);
 
-            rect.setRect(wrect.x()+border +dbw1, wrect.y()+border +dbw1,
-                         wrect.width()-border2-dbw2,
-                         wrect.height()-border2-dbw2);
-
+                rect.setRect(wrect.x()+border +dbw1, wrect.y()+border +dbw1,
+                             wrect.width()-border2-dbw2,
+                             wrect.height()-border2-dbw2);
+            }
 
             if(!isFormWidget(widget) && QTC_DO_EFFECT)
                 rect.addCoords(1, 1, -1, -1);
@@ -4829,7 +4831,10 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             if(toolbutton->hasFocus() && !toolbutton->focusProxy())
             {
                 QRect fr(toolbutton->rect());
-                fr.addCoords(3, 3,-3,-3);
+                if(FOCUS_FULL!=opts.focus)
+                    fr.addCoords(2, 2,-2,-2);
+                if(QTC_DO_EFFECT)
+                    fr.addCoords(1, 1,-1,-1);
                 drawPrimitive(PE_FocusRect, p, fr, cg);
             }
 
@@ -4927,22 +4932,24 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 {
                     QRect fr;
 
-                    if(opts.comboSplitter)
+                    if(FOCUS_FULL==opts.focus)
+                        fr=frame;
+                    else if(opts.comboSplitter)
                     {
                         fr=QStyle::visualRect(subRect(SR_ComboBoxFocusRect, widget), widget);
                         if(reverse)
                             fr.addCoords(3, 0, 0, 0);
                         else
                             fr.addCoords(0, 0, -2, 0);
-
-                        if(!itsFormMode && QTC_DO_EFFECT)
-                            fr.addCoords(1, 1, -1, -1);
                     }
                     else
                     {
                         fr=frame;
-                        fr.addCoords(3, 3, -3, -3);
+                        fr.addCoords(2, 2, -2, -2);
                     }
+
+                    if(!itsFormMode && QTC_DO_EFFECT)
+                        fr.addCoords(1, 1, -1, -1);
 
                     drawPrimitive(PE_FocusRect, p, fr, cg, flags | Style_FocusAtBorder,
                                   QStyleOption(cg.highlight()));
