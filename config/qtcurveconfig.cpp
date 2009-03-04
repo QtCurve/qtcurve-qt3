@@ -707,6 +707,9 @@ void QtCurveConfig::defBtnIndicatorChanged()
     else if(IND_GLOW==defBtnIndicator->currentItem() && EFFECT_NONE==buttonEffect->currentItem())
         buttonEffect->setCurrentItem(EFFECT_SHADOW);
 
+    if(IND_COLORED==defBtnIndicator->currentItem() && round->currentItem()>ROUND_FULL)
+        round->setCurrentItem(ROUND_FULL);
+
     updateChanged();
 }
 
@@ -1129,6 +1132,9 @@ void QtCurveConfig::roundChanged()
 {
     if(ROUND_MAX==round->currentItem() && FOCUS_LINE!=focus->currentItem())
         focus->setCurrentItem(FOCUS_LINE);
+
+    if(round->currentItem()>ROUND_FULL && IND_COLORED==defBtnIndicator->currentItem())
+        defBtnIndicator->setCurrentItem(IND_TINT);
 }
 
 void QtCurveConfig::importStyle()
