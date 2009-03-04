@@ -2019,7 +2019,8 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     if(doEtch)
         if( !sunken &&
             ((WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w && MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
-             (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator)))
+             (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator) ||
+              (flags&Style_HasFocus && FOCUS_FULL==opts.focus) ))
             drawGlow(p, rOrig, cg, WIDGET_DEF_BUTTON==w && flags&Style_MouseOver ? WIDGET_STD_BUTTON : w);
         else
             drawEtch(p, rOrig, cg, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) && !sunken);
@@ -4617,7 +4618,9 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
     {
         case SR_PushButtonFocusRect:
         {
-            if(FOCUS_FULL!=opts.focus)
+            if(FOCUS_FULL==opts.focus)
+                rect=wrect;
+            else
             {
                 int dbw1(pixelMetric(PM_ButtonDefaultIndicator, widget)),
                     dbw2(dbw1*2),
@@ -4631,7 +4634,6 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
 
             if(!isFormWidget(widget) && QTC_DO_EFFECT)
                 rect.addCoords(1, 1, -1, -1);
-
             return rect;
         }
 
@@ -4892,7 +4894,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     }
                 }
 
-                if((flags & Style_HasFocus) && !editable)
+                if(flags&Style_HasFocus && !editable)
                 {
                     QRect fr;
 
@@ -4905,15 +4907,14 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                             fr.addCoords(3, 0, 0, 0);
                         else
                             fr.addCoords(0, 0, -2, 0);
+                        if(!itsFormMode && QTC_DO_EFFECT)
+                                fr.addCoords(1, 1, -1, -1);
                     }
                     else
                     {
                         fr=frame;
-                        fr.addCoords(2, 2, -2, -2);
+                        fr.addCoords(3, 3, -3, -3);
                     }
-
-                    if(!itsFormMode && QTC_DO_EFFECT)
-                        fr.addCoords(1, 1, -1, -1);
 
                     drawPrimitive(PE_FocusRect, p, fr, cg, flags | Style_FocusAtBorder,
                                   QStyleOption(cg.highlight()));
@@ -4921,7 +4922,9 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             }
 
             if(doEtch)
-                if(!sunken && MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver && !editable)
+                if(!sunken && !editable &&
+                    ((MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
+                     (FOCUS_FULL==opts.focus && flags&Style_HasFocus)))
                     drawGlow(p, widget ? widget->rect() : r, cg, WIDGET_COMBO);
                 else
                     drawEtch(p, widget ? widget->rect() : r, cg,
