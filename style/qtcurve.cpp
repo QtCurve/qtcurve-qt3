@@ -499,42 +499,6 @@ static QString createKey(QRgb color, EPixmap p)
     return key;
 }
 
-static bool readPal(QString &line, QPalette::ColorGroup grp, QPalette &pal)
-{
-    QStringList cols(QStringList::split(", ", line.mid(line.find("=#")+1)));
-
-    if(cols.count()>=17)
-    {
-        QStringList::ConstIterator it(cols.begin()),
-                                   end(cols.end());
-        QColorGroup                group;
-
-        for(int i=0; it!=end, i<16; ++it, ++i)
-        {
-            QColor col;
-
-            setRgb(&col, (*it).latin1());
-            group.setColor((QColorGroup::ColorRole)i, col);
-        }
-
-        switch(grp)
-        {
-            case QPalette::Active:
-                pal.setActive(group);
-                break;
-            case QPalette::Disabled:
-                pal.setDisabled(group);
-                break;
-            case QPalette::Inactive:
-                pal.setInactive(group);
-            default:
-                break;
-        }
-        return true;
-    }
-    return false;
-}
-
 static void setRgb(QColor *col, const QStringList &rgb)
 {
     if(3==rgb.size())
