@@ -25,6 +25,7 @@
  9. Added new focus option - line.
 10. Add new round options - extra and max.
 11. Don't etch disabled items.
+12. USe text colour for focus indicator in tree/list/etc views.
 
 0.61.4
 ------

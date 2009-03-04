@@ -3424,29 +3424,29 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             }
             else
             {
-                const QColor *use(FOCUS_BACKGROUND==opts.focus ? backgroundColors(cg) : itsMenuitemCols);
+                //Figuring out in what beast we are painting...
+                QWidget *widget(dynamic_cast<QWidget*>(p->device()));
+                bool    view(widget && (dynamic_cast<QScrollView*>(widget->parent()) ||
+                                        dynamic_cast<QListBox*>(widget->parent())));
+                const QColor *use(view ? 0L : (FOCUS_BACKGROUND==opts.focus ? backgroundColors(cg) : itsMenuitemCols));
 
                 if(FOCUS_LINE==opts.focus)
                 {
-                    p->setPen(use[QT_FOCUS]);
+                    p->setPen(view ? (flags&Style_Selected ? cg.highlightedText() : cg.text())
+                                   : use[FOCUS_BACKGROUND!=opts.focus && flags&Style_Selected ? 3 : QT_FOCUS]);
                     p->drawLine(r.x(), r.y()+r.height()-1, r.x()+r.width()-1, r.y()+r.height()-1);
                 }                
-                else
+                else if(r.width()<4 || r.height()<4 || view)
                 {
-                    //Figuring out in what beast we are painting...
-                    QWidget      *widget(dynamic_cast<QWidget*>(p->device()));
-
-                    if(r.width()<4 || r.height()<4 ||
-                       (widget && (dynamic_cast<QScrollView*>(widget->parent()) ||
-                                   dynamic_cast<QListBox*>(widget->parent()))))
-                    {
-                        p->setPen(use[3]);
-                        p->drawRect(r);
-                    }
-                    else
-                        drawBorder(cg.background(), p, r, cg, Style_Horizontal,
-                                   ROUNDED_ALL, use, WIDGET_FOCUS, false, BORDER_FLAT, true, QT_FOCUS);
+                    p->setPen(view ? (flags&Style_Selected ? cg.highlightedText() : cg.text())
+                                   : use[FOCUS_BACKGROUND!=opts.focus && flags&Style_Selected ? 3 : QT_FOCUS]);
+                    if(view)
+                        r.addCoords(0, 0, 0, -2);
+                    p->drawRect(r);
                 }
+                else
+                    drawBorder(cg.background(), p, r, cg, Style_Horizontal,
+                               ROUNDED_ALL, use, WIDGET_FOCUS, false, BORDER_FLAT, true, QT_FOCUS);
             }
             break;
         case PE_ArrowUp:
