@@ -1851,13 +1851,12 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
 #ifdef QTC_DONT_COLOUR_MOUSEOVER_TBAR_BUTTONS
                                     !(flags&QTC_STD_TOOLBUTTON) &&
 #endif
-                                    (!IS_SLIDER(w) || (WIDGET_SB_SLIDER==w && opts.coloredMouseOver)) &&
                                     (flags&QTC_CHECK_BUTTON || flags&QTC_TOGGLE_BUTTON || !sunken)),
-                 plastikMouseOver(doColouredMouseOver && (MO_PLASTIK==opts.coloredMouseOver || WIDGET_SB_SLIDER==w)),
-                 colouredMouseOver(doColouredMouseOver && WIDGET_SB_SLIDER!=w &&
+                 plastikMouseOver(doColouredMouseOver && MO_PLASTIK==opts.coloredMouseOver),
+                 colouredMouseOver(doColouredMouseOver &&
                                        (MO_COLORED==opts.coloredMouseOver ||
                                               (MO_GLOW==opts.coloredMouseOver &&
-                                              ((WIDGET_COMBO!=w && !ETCH_WIDGET(w)) || itsFormMode)))),
+                                              ((WIDGET_COMBO!=w && !ETCH_WIDGET(w) && WIDGET_SB_SLIDER!=w) || itsFormMode)))),
                  doEtch(!itsFormMode && doBorder && ETCH_WIDGET(w) && !(flags&QTC_CHECK_BUTTON) &&
                         QTC_DO_EFFECT),
                  horiz(flags&Style_Horizontal);
@@ -2009,7 +2008,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
 
     if(doBorder)
         if(!sunken && flags&Style_Enabled &&
-            ((((doEtch && WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w) || (WIDGET_COMBO==w)) &&
+            ((((doEtch && WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w) || WIDGET_COMBO==w || WIDGET_SB_SLIDER==w) &&
              MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
              (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator)))
             drawBorder(bgnd, p, r, cg, flags, round, itsMouseOverCols, w, doCorners);
@@ -6328,9 +6327,9 @@ void QtCurveStyle::drawSbSliderHandle(QPainter *p, const QRect &orig, const QCol
                         ? ROUNDED_ALL : ROUNDED_NONE,
                    getFill(flags, use), use, true, false, WIDGET_SB_SLIDER);
 
-    const QColor *markers(/*opts.coloredMouseOver && flags&Style_MouseOver
-                              ? SHADE_NONE==shade ? itsMouseOverCols : itsBackgroundCols
-                              : */use);
+    const QColor *markers(opts.coloredMouseOver && flags&Style_MouseOver
+                              ? /*SHADE_NONE==shade ? */itsMouseOverCols/* : itsBackgroundCols*/
+                              : use);
     if(flags & Style_Horizontal)
         r.setX(r.x()+1);
     else
@@ -6358,14 +6357,17 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
 
     if(SLIDER_TRIANGULAR==opts.sliderStyle || ((SLIDER_ROUND==opts.sliderStyle || SLIDER_ROUND_ROTATED==opts.sliderStyle) && QTC_FULLLY_ROUNDED))
     {
-        const QColor     *use(sliderColors(/*cg, */flags));
+        const QColor     *use(sliderColors(/*cg, */flags)),
+                         *border(flags&Style_MouseOver && (MO_GLOW==opts.coloredMouseOver ||
+                                                           MO_COLORED==opts.coloredMouseOver)
+                                    ? itsMouseOverCols : use);
         const QColor     &fill(getFill(flags, use));
         int              x(r.x()),
                          y(r.y()),
                          xo(horiz ? 8 : 0),
                          yo(horiz ? 0 : 8);
         PrimitiveElement direction(horiz ? PE_ArrowDown : PE_ArrowRight);
-        bool             drawLight(/*(MO_GLOW!=opts.coloredMouseOver && MO_PLASTIK!=opts.coloredMouseOver) || */!(flags&Style_MouseOver) ||
+        bool             drawLight(MO_PLASTIK!=opts.coloredMouseOver || !(flags&Style_MouseOver) ||
                                    ((SLIDER_ROUND==opts.sliderStyle || SLIDER_ROUND_ROTATED)==opts.sliderStyle &&
                                     (SHADE_BLEND_SELECTED==opts.shadeSliders || SHADE_SELECTED==opts.shadeSliders)));
         int              size(SLIDER_TRIANGULAR==opts.sliderStyle ? 15 : 13);
@@ -6423,7 +6425,7 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
         if(IS_FLAT(opts.sliderAppearance))
         {
             p->fillRect(r, fill);
-            if(opts.coloredMouseOver && flags&Style_MouseOver)
+            if(MO_PLASTIK==opts.coloredMouseOver && flags&Style_MouseOver)
             {
                 int col(QTC_SLIDER_MO_SHADE),
                     len(QTC_SLIDER_MO_LEN);
@@ -6445,7 +6447,7 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
             drawBevelGradient(fill, p, QRect(x, y, horiz ? r.width()-1 : size, horiz ? size : r.height()-1),
                               horiz, false, opts.sliderAppearance);
 
-            if(opts.coloredMouseOver && flags&Style_MouseOver)
+            if(MO_PLASTIK==opts.coloredMouseOver && flags&Style_MouseOver)
             {
                 int col(QTC_SLIDER_MO_SHADE),
                     len(QTC_SLIDER_MO_LEN);
@@ -6498,20 +6500,20 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
                     light.setPoints(3, x+1, y+8,   x+1, y+1,  x+9, y+1);
             }
 
-            p->setPen(midColor(use[QT_STD_BORDER], cg.background()));
+            p->setPen(midColor(border[QT_STD_BORDER], cg.background()));
             p->drawPolygon(aa);
             if(drawLight)
             {
                 p->setPen(use[APPEARANCE_DULL_GLASS==opts.sliderAppearance ? 1 : 0]);
                 p->drawPolyline(light);
             }
-            p->setPen(use[QT_STD_BORDER]);
+            p->setPen(border[QT_STD_BORDER]);
             p->drawPolygon(clipRegion);
         }
         else
         {
             p->drawPixmap(x, y,
-                        *getPixmap(use[opts.coloredMouseOver && flags&Style_MouseOver ? 4 : QT_BORDER(flags&Style_Enabled)],
+                        *getPixmap(border[opts.coloredMouseOver && flags&Style_MouseOver ? 4 : QT_BORDER(flags&Style_Enabled)],
                                     horiz ? PIX_SLIDER : PIX_SLIDER_V, 0.8));
             if(drawLight)
                 p->drawPixmap(x, y, *getPixmap(use[0], horiz ? PIX_SLIDER_LIGHT : PIX_SLIDER_LIGHT_V));
