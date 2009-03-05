@@ -941,42 +941,9 @@ void QtCurveStyle::polish(QPalette &pal)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
                                          QTC_TO_FACTOR(opts.lighterPopupMenuBgnd));
 
-    const QColorGroup      &actGroup(pal.active()),
-                           &inactGroup(pal.inactive()),
-                           &disGroup(pal.disabled());
-    const QColor           *use(backgroundColors(actGroup));
-    QColorGroup            newAct(actGroup.foreground(), actGroup.button(), use[0], use[QT_STD_BORDER],
-                                  actGroup.mid(), actGroup.text(), actGroup.brightText(),
-                                  actGroup.base(), actGroup.background());
-    QColorGroup::ColorRole roles[]={QColorGroup::Midlight, QColorGroup::ButtonText,
-                                    QColorGroup::Shadow, QColorGroup::Highlight,
-                                    QColorGroup::HighlightedText,
-                                    QColorGroup::NColorRoles };
-    int                    r(0);
-
-    for(r=0; roles[r]!=QColorGroup::NColorRoles; ++r)
-        newAct.setColor(roles[r], actGroup.color(roles[r]));
-    pal.setActive(newAct);
-
-    use=backgroundColors(inactGroup);
-
-    QColorGroup newInact(inactGroup.foreground(), inactGroup.button(), use[0], use[QT_STD_BORDER],
-                         inactGroup.mid(), inactGroup.text(), inactGroup.brightText(),
-                         inactGroup.base(), inactGroup.background());
-
-    for(r=0; roles[r]!=QColorGroup::NColorRoles; ++r)
-        newInact.setColor(roles[r], inactGroup.color(roles[r]));
-    pal.setInactive(newInact);
-
-    use=backgroundColors(disGroup);
-
-    QColorGroup newDis(disGroup.foreground(), disGroup.button(), use[0], use[QT_STD_BORDER],
-                       disGroup.mid(), disGroup.text(), disGroup.brightText(),
-                       actGroup.background(), disGroup.background());
-
-    for(r=0; roles[r]!=QColorGroup::NColorRoles; ++r)
-        newDis.setColor(roles[r], disGroup.color(roles[r]));
-    pal.setDisabled(newDis);
+    pal.setActive(setColorGroup(pal.active()));
+    pal.setInactive(setColorGroup(pal.inactive()));
+    pal.setDisabled(setColorGroup(pal.disabled()));
 
     switch(opts.shadeCheckRadio)
     {
@@ -993,6 +960,25 @@ void QtCurveStyle::polish(QPalette &pal)
 
     if(itsMactorPal)
         *itsMactorPal=pal;
+}
+
+QColorGroup QtCurveStyle::setColorGroup(const QColorGroup &old)
+{
+    const QColor           *use(backgroundColors(old));
+    QColorGroup            newGrp(old.foreground(), old.button(), use[0], use[QT_STD_BORDER],
+                                  old.mid(), old.text(), old.brightText(),
+                                  old.base(), old.background());
+    QColorGroup::ColorRole roles[]={QColorGroup::Midlight, QColorGroup::ButtonText,
+                                    QColorGroup::Shadow, QColorGroup::Highlight,
+                                    QColorGroup::HighlightedText,
+                                    QColorGroup::NColorRoles };
+    int                    r(0);
+
+    for(r=0; roles[r]!=QColorGroup::NColorRoles; ++r)
+        newGrp.setColor(roles[r], old.color(roles[r]));
+    newGrp.setColor(QColorGroup::Link, old.link());
+    newGrp.setColor(QColorGroup::Link, old.linkVisited());
+    return newGrp;
 }
 
 static const char * kdeToolbarWidget="kde toolbar widget";
