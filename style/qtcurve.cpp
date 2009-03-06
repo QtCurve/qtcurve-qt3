@@ -970,14 +970,12 @@ QColorGroup QtCurveStyle::setColorGroup(const QColorGroup &old)
                                   old.base(), old.background());
     QColorGroup::ColorRole roles[]={QColorGroup::Midlight, QColorGroup::ButtonText,
                                     QColorGroup::Shadow, QColorGroup::Highlight,
-                                    QColorGroup::HighlightedText,
-                                    QColorGroup::NColorRoles };
+                                    QColorGroup::HighlightedText, QColorGroup::Link,
+                                    QColorGroup::LinkVisited, QColorGroup::NColorRoles };
     int                    r(0);
 
     for(r=0; roles[r]!=QColorGroup::NColorRoles; ++r)
         newGrp.setColor(roles[r], old.color(roles[r]));
-    newGrp.setColor(QColorGroup::Link, old.link());
-    newGrp.setColor(QColorGroup::Link, old.linkVisited());
     return newGrp;
 }
 
