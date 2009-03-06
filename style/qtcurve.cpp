@@ -5970,6 +5970,8 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
             return opts.menubarMouseOver ? 1 : 0;
         case SH_TabBar_Alignment:
             return opts.centerTabs ? AlignHCenter : AlignLeft;
+        case SH_GUIStyle:
+            return PMStyle;
         default:
             return KStyle::styleHint(stylehint, widget, option, returnData);
     }
