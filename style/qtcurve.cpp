@@ -4917,7 +4917,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     drawEtch(p, widget ? widget->rect() : r, cg,
                              !editable && EFFECT_SHADOW==opts.buttonEffect && !sunken);
 
-            p->setPen(flags & Style_Enabled ? cg.buttonText() : cg.mid());
+            p->setPen(combobox->colorGroup().buttonText());
             itsFormMode = false;
             break;
         }
