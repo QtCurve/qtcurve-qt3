@@ -711,7 +711,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     switch(opts.shadeCheckRadio)
     {
         default:
-            itsCheckRadioCol=QApplication::palette().active().text();
+            itsCheckRadioCol=QApplication::palette().active().buttonText();
             break;
         case SHADE_BLEND_SELECTED:
         case SHADE_SELECTED:
@@ -948,7 +948,7 @@ void QtCurveStyle::polish(QPalette &pal)
     switch(opts.shadeCheckRadio)
     {
         default:
-            itsCheckRadioCol=QApplication::palette().active().text();
+            itsCheckRadioCol=QApplication::palette().active().buttonText();
             break;
         case SHADE_SELECTED:
         case SHADE_BLEND_SELECTED:
@@ -2584,7 +2584,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             break;
         }
         case PE_HeaderArrow:
-            drawArrow(p, r, cg, flags, flags&Style_Up ? PE_ArrowUp : PE_ArrowDown);
+            ::drawArrow(p, r, cg.buttonText(), flags&Style_Up ? PE_ArrowUp : PE_ArrowDown, opts, false);
             break;
         case PE_ButtonBevel:
             flags|=Style_Enabled;
@@ -2698,13 +2698,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         case PE_CheckMark:
             if(flags&Style_On)
             {
-                QPixmap *pix(getPixmap(flags&Style_Enabled
-                                           ? (flags&Style_Selected && !(flags&QTC_LISTVIEW_ITEM)) ||
-                                             (flags&Style_Active && flags&QTC_MENU_ITEM)
-                                               ? cg.highlightedText()
-                                               : itsCheckRadioCol
-                                           : cg.mid(),
-                                       PIX_CHECK, 1.0));
+                QPixmap *pix(getPixmap(checkRadioCol(flags, cg), PIX_CHECK, 1.0));
 
                 p->drawPixmap(r.center().x()-(pix->width()/2), r.center().y()-(pix->height()/2),
                               *pix);
@@ -2713,11 +2707,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             {
                 int x(r.center().x()), y(r.center().y());
 
-                p->setPen(flags&Style_Enabled
-                              ? flags&Style_Selected && !(flags&QTC_LISTVIEW_ITEM)
-                                  ? cg.highlightedText()
-                                  : itsCheckRadioCol
-                              : cg.mid());
+                p->setPen(checkRadioCol(flags, cg));
                 p->drawLine(x-3, y, x+3, y);
                 p->drawLine(x-3, y+1, x+3, y+1);
             }
@@ -2875,10 +2865,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 const QColor *bc(borderColors(flags, 0L)),
                              *btn(buttonColors(cg)),
                              *use(bc ? bc : btn),
-                             &on(flags&Style_Enabled
-                                     ? itsCheckRadioCol
-                                    : cg.mid());
-
+                             &on(checkRadioCol(flags, cg));
                 int          x(r.x()), y(r.y()+2);
 
                 p->drawPixmap(x, y, *getPixmap(use[opts.coloredMouseOver && flags&Style_MouseOver ? 4 : QT_BORDER(flags&Style_Enabled)],
@@ -2918,11 +2905,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 const QColor *bc(borderColors(sflags, 0L)),
                              *btn(buttonColors(cg)),
                              *use(bc ? bc : btn);
-                const QColor &on(sflags&Style_Enabled
-                                     ? sflags&Style_Selected && !(flags&QTC_LISTVIEW_ITEM)
-                                         ? cg.highlightedText()
-                                         : itsCheckRadioCol
-                                     : cg.mid()),
+                const QColor &on(checkRadioCol(flags, cg)),
                              &bgnd(opts.crButton
                                     ? getFill(flags, btn, true)
                                     : sflags&Style_Enabled && !sunken
@@ -3337,7 +3320,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 drawLightBevel(p, br, cg, flags|Style_Raised,
                                round, getFill(flags, use), use, true, true, WIDGET_SB_BUTTON);
 
-            drawPrimitive(pe, p, ar, cg, flags);
+            ::drawArrow(p, ar, cg.buttonText(), pe, opts, false);
             break;
         }
         case PE_ScrollBarSlider:
@@ -3441,7 +3424,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(flags&Style_Sunken)
                     sr.addCoords(1, 1, 1, 1);
 
-                drawArrow(p, sr, cg, flags, PE_SpinWidgetUp==pe ? PE_ArrowUp : PE_ArrowDown, true);
+                ::drawArrow(p, sr, cg.buttonText(), PE_SpinWidgetUp==pe ? PE_ArrowUp : PE_ArrowDown, opts, true);
             }
             else
             {
@@ -4029,9 +4012,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                       //the widget
                 else
                 {
-                    drawPrimitive(PE_ArrowDown, p,
-                                  visualRect(QRect((x + w) - (dx + margin + arrowOffset), y, dx, h), r), cg,
-                                  flags, data);
+                    ::drawArrow(p, visualRect(QRect((x + w) - (dx + margin + arrowOffset), y, dx, h), r),
+                                cg.buttonText(), PE_ArrowDown, opts);
                     w-=(dx+arrowOffset);
                 }
             }
@@ -4073,8 +4055,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 }
 
                 if (cornArrow) //Draw over the icon
-                    drawPrimitive(PE_ArrowDown, p, visualRect(QRect(x + w - (6+arrowOffset), y + h - (6+arrowOffset), 7, 7), r),
-                                  cg, flags, data);
+                    ::drawArrow(p, visualRect(QRect(x + w - (6+arrowOffset), y + h - (6+arrowOffset), 7, 7), r),
+                                cg.buttonText(), PE_ArrowDown, opts);
 
                 if(xo && iw)
                 {
@@ -4206,11 +4188,11 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 drawPrimitive(PE_CheckMark, p, cr, cg,
                               (flags &(Style_Enabled|(opts.useHighlightForMenu ? Style_Active : 0)))| Style_On|QTC_MENU_ITEM);
 
-            p->setPen(!(flags & Style_Enabled)
-                        ? cg.text()
-                        : flags&Style_Active && opts.useHighlightForMenu
-                            ? cg.highlightedText()
-                            : cg.foreground());
+            QColor textCol(flags&Style_Enabled && flags&Style_Active && opts.useHighlightForMenu
+                                ? cg.highlightedText()
+                                : cg.foreground());
+
+            p->setPen(textCol);
 
             if(mi->custom())
             {
@@ -4247,11 +4229,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             }
 
             if(mi->popup())
-            {
-                if(!opts.useHighlightForMenu)
-                    flags&=~Style_Active;
-                drawArrow(p, sr, cg, flags, reverse ? PE_ArrowLeft : PE_ArrowRight, false, true);
-            }
+                ::drawArrow(p, sr, textCol, reverse ? PE_ArrowLeft : PE_ArrowRight, opts);
             break;
         }
         case CE_MenuBarItem:
@@ -4778,7 +4756,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             {
                 if(mflags &(Style_Down | Style_On | Style_Raised))
                     drawPrimitive(PE_ButtonDropDown, p, menuarea, cg, mflags, data);
-                drawPrimitive(PE_ArrowDown, p, menuarea, cg, mflags, data);
+                ::drawArrow(p, menuarea, cg.buttonText(), PE_ArrowDown, opts, true);
             }
 
             if(toolbutton->hasFocus() && !toolbutton->focusProxy())
@@ -4852,7 +4830,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             {
                 if(sunken)
                     arrow.addCoords(1, 1, 1, 1);
-                drawPrimitive(PE_ArrowDown, p, arrow, cg, flags & ~Style_MouseOver);
+                ::drawArrow(p, arrow, cg.buttonText(), PE_ArrowDown, opts);
             }
 
             if(controls&SC_ComboBoxEditField && field.isValid())
@@ -4917,7 +4895,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     drawEtch(p, widget ? widget->rect() : r, cg,
                              !editable && EFFECT_SHADOW==opts.buttonEffect && !sunken);
 
-            p->setPen(combobox->colorGroup().buttonText());
+            p->setPen(cg.buttonText());
             itsFormMode = false;
             break;
         }
@@ -7169,6 +7147,18 @@ const QColor & QtCurveStyle::menuStripeCol() const
     return opts.lighterPopupMenuBgnd<0
                 ? itsLighterPopupMenuBgndCol
                 : itsBackgroundCols[QTC_MENU_STRIPE_SHADE];
+}
+
+const QColor & QtCurveStyle::checkRadioCol(SFlags flags, const QColorGroup &cg) const
+{
+    if(flags&QTC_MENU_ITEM)
+        return flags&Style_Enabled && flags&Style_Active && opts.useHighlightForMenu
+                    ? cg.highlightedText()
+                    : cg.foreground();
+
+    return flags&Style_Enabled
+                ? itsCheckRadioCol
+                : cg.buttonText();
 }
 
 QPixmap * QtCurveStyle::getPixelPixmap(const QColor col) const

@@ -202,6 +202,7 @@ class QtCurveStyle : public KStyle
     const QColor & getListViewFill(SFlags flags, const QColor *use) const;
     const QColor & getTabFill(bool current,  bool highlight, const QColor *use) const;
     const QColor & menuStripeCol() const;
+    const QColor & checkRadioCol(SFlags flags, const QColorGroup &cg) const;
     QPixmap *      getPixelPixmap(const QColor col) const;
     QPixmap *      getPixmap(const QColor col, EPixmap pix, double shade=1.0) const;
     void           setSbType();
