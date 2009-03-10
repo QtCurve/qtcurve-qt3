@@ -1062,14 +1062,6 @@ None - no buttons, only the slider</string>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="2" column="0">
-                        <property name="name">
-                            <cstring>centerTabs</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Place in center (KDE)</string>
-                        </property>
-                    </widget>
                 </grid>
             </widget>
             <widget class="QWidget">
@@ -1256,14 +1248,6 @@ None - no buttons, only the slider</string>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>colorTitlebarOnly</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Color titlebar only (KDE4)</string>
-                        </property>
-                    </widget>
                     <widget class="QLabel" row="3" column="0">
                         <property name="name">
                             <cstring>textLabel1_13</cstring>
@@ -2180,8 +2164,6 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>framelessGroupBoxes</sender>
@@ -2236,7 +2218,6 @@ None - no buttons, only the slider</string>
     <tabstop>highlightTab</tabstop>
     <tabstop>colorSelTab</tabstop>
     <tabstop>tabAppearance</tabstop>
-    <tabstop>centerTabs</tabstop>
     <tabstop>shadeCheckRadio</tabstop>
     <tabstop>customCheckRadioColor</tabstop>
     <tabstop>xCheck</tabstop>
@@ -2246,7 +2227,6 @@ None - no buttons, only the slider</string>
     <tabstop>inactiveTitlebarAppearance</tabstop>
     <tabstop>titlebarButtonAppearance</tabstop>
     <tabstop>titlebarAlignment</tabstop>
-    <tabstop>colorTitlebarOnly</tabstop>
     <tabstop>toolbarBorders</tabstop>
     <tabstop>handles</tabstop>
     <tabstop>menubarAppearance</tabstop>
@@ -2294,12 +2274,20 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
