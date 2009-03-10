@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>728</width>
-            <height>543</height>
+            <width>754</width>
+            <height>565</height>
         </rect>
     </property>
     <property name="caption">
@@ -94,14 +94,6 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>drawStatusBarFrames</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Draw statusbar frames</string>
-                        </property>
-                    </widget>
                     <widget class="QComboBox" row="0" column="1">
                         <property name="name">
                             <cstring>appearance</cstring>
@@ -116,27 +108,6 @@
                         </property>
                         <property name="text">
                             <string>Appearance:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>textLabel2_4</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Roundedness:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="2" column="0">
-                        <property name="name">
-                            <cstring>textLabel3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Button effect:</string>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="1" column="1">
-                        <property name="name">
-                            <cstring>round</cstring>
                         </property>
                     </widget>
                     <spacer row="0" column="2">
@@ -156,25 +127,7 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QComboBox" row="2" column="1">
-                        <property name="name">
-                            <cstring>buttonEffect</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="3" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_6</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Focus rectangle:</string>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="3" column="1">
-                        <property name="name">
-                            <cstring>focus</cstring>
-                        </property>
-                    </widget>
-                    <spacer row="11" column="1">
+                    <spacer row="12" column="1">
                         <property name="name">
                             <cstring>spacer9</cstring>
                         </property>
@@ -187,11 +140,32 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>120</height>
+                                <height>130</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="2">
+                    <widget class="QLabel" row="4" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_6</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Focus rectangle:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Button effect:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="2" column="1">
+                        <property name="name">
+                            <cstring>round</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>darkerBorders</cstring>
                         </property>
@@ -199,15 +173,7 @@
                             <string>Darker borders</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>vArrows</cstring>
-                        </property>
-                        <property name="text">
-                            <string>'V' style arrows</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
+                    <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>stdSidebarButtons</cstring>
                         </property>
@@ -218,7 +184,39 @@
                             <string>Select this to have the sidebar buttons in konqueror, kate, kaffeine, ktorrent, drawn as per normal buttons - otherwise they will be drawn in a more flat style.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="2">
+                    <widget class="QComboBox" row="3" column="1">
+                        <property name="name">
+                            <cstring>buttonEffect</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="11" column="0">
+                        <property name="name">
+                            <cstring>fadeLines</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw fading lines (KDE4 &amp;&amp; Gtk2)</string>
+                        </property>
+                        <property name="accel">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel2_4</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Roundedness:</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>vArrows</cstring>
+                        </property>
+                        <property name="text">
+                            <string>'V' style arrows</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="10" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>comboSplitter</cstring>
                         </property>
@@ -229,18 +227,12 @@
                             <string>This option controls whether a line is drawn near non-editable combo box arrows.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="10" column="0">
+                    <widget class="QComboBox" row="4" column="1">
                         <property name="name">
-                            <cstring>fadeLines</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Draw fading lines (KDE4 &amp;&amp; Gtk2)</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+ </string>
+                            <cstring>focus</cstring>
                         </property>
                     </widget>
-                    <widget class="QFrame" row="5" column="0" rowspan="1" colspan="3">
+                    <widget class="QFrame" row="6" column="0" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>frame4</cstring>
                         </property>
@@ -288,6 +280,27 @@
                                 </property>
                             </widget>
                         </hbox>
+                    </widget>
+                    <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>drawStatusBarFrames</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw statusbar frames</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="1" column="1">
+                        <property name="name">
+                            <cstring>sunkenAppearance</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_12</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Sunken appearance:</string>
+                        </property>
                     </widget>
                 </grid>
             </widget>
@@ -426,74 +439,6 @@
                             <string>This setting only affects standard sliders - i.e. not scrollbar sliders. 'Triangular' is a very similar style to plastik's sliders.</string>
                         </property>
                     </widget>
-                    <widget class="QComboBox" row="4" column="1">
-                        <property name="name">
-                            <cstring>scrollbarType</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>This controls the position, and number, of buttons on a scrollbar.
-
-KDE - 1 button at the top/left, and two at the bottom/right
-Windows - 1 botton at each end
-Platinum -  no buttons at the top/left, two at bottom/right
-Next - two buttons at the top/left, none at bottom/right
-None - no buttons, only the slider</string>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="5" column="1">
-                        <property name="name">
-                            <cstring>sliderThumbs</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="4" column="0">
-                        <property name="name">
-                            <cstring>textLabel8</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Scrollbar buttons:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="5" column="0">
-                        <property name="name">
-                            <cstring>textLabel8_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Scrollbar thumbs:</string>
-                        </property>
-                    </widget>
-                    <spacer row="6" column="1">
-                        <property name="name">
-                            <cstring>spacer13</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>16</width>
-                                <height>342</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <spacer row="1" column="3">
                         <property name="name">
                             <cstring>spacer14</cstring>
@@ -519,12 +464,93 @@ None - no buttons, only the slider</string>
                             <string>Fill used part of groove</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="4" column="2" rowspan="1" colspan="2">
+                    <spacer row="7" column="1">
+                        <property name="name">
+                            <cstring>spacer13</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>210</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QComboBox" row="6" column="1">
+                        <property name="name">
+                            <cstring>sliderThumbs</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="6" column="0">
+                        <property name="name">
+                            <cstring>textLabel8_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Scrollbar thumbs:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="5" column="0">
+                        <property name="name">
+                            <cstring>textLabel8</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Scrollbar buttons:</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="5" column="2" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>flatSbarButtons</cstring>
                         </property>
                         <property name="text">
                             <string>Flat</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="5" column="1">
+                        <property name="name">
+                            <cstring>scrollbarType</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This controls the position, and number, of buttons on a scrollbar.
+
+KDE - 1 button at the top/left, and two at the bottom/right
+Windows - 1 botton at each end
+Platinum -  no buttons at the top/left, two at bottom/right
+Next - two buttons at the top/left, none at bottom/right
+None - no buttons, only the slider</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="4" column="1">
+                        <property name="name">
+                            <cstring>grooveAppearance</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="0">
+                        <property name="name">
+                            <cstring>textLabel2_5</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Groove appearance:</string>
                         </property>
                     </widget>
                 </grid>
@@ -1002,23 +1028,6 @@ None - no buttons, only the slider</string>
                             <string>Color</string>
                         </property>
                     </widget>
-                    <spacer row="2" column="1">
-                        <property name="name">
-                            <cstring>spacer23</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>10</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <spacer row="0" column="4">
                         <property name="name">
                             <cstring>spacer24</cstring>
@@ -1031,8 +1040,25 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>25</width>
-                                <height>8</height>
+                                <width>147</width>
+                                <height>16</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="3" column="1">
+                        <property name="name">
+                            <cstring>spacer23</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>16</width>
+                                <height>394</height>
                             </size>
                         </property>
                     </spacer>
@@ -1205,7 +1231,20 @@ None - no buttons, only the slider</string>
                             <cstring>inactiveTitlebarAppearance</cstring>
                         </property>
                     </widget>
-                    <spacer row="4" column="1">
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_13</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Text alignment:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="3" column="1">
+                        <property name="name">
+                            <cstring>titlebarAlignment</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="5" column="1">
                         <property name="name">
                             <cstring>spacer27</cstring>
                         </property>
@@ -1218,11 +1257,11 @@ None - no buttons, only the slider</string>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>293</height>
+                                <height>330</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                    <widget class="QCheckBox" row="4" column="0">
                         <property name="name">
                             <cstring>colorTitlebarOnly</cstring>
                         </property>
@@ -1712,12 +1751,9 @@ None - no buttons, only the slider</string>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox" row="2" column="0">
+                            <widget class="QComboBox" row="2" column="0">
                                 <property name="name">
-                                    <cstring>gradLightBorder</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Light border</string>
+                                    <cstring>gradBorder</cstring>
                                 </property>
                             </widget>
                             <widget class="QListView" row="0" column="0" rowspan="2" colspan="1">
@@ -2147,6 +2183,7 @@ None - no buttons, only the slider</string>
 <tabstops>
     <tabstop>stackList</tabstop>
     <tabstop>appearance</tabstop>
+    <tabstop>sunkenAppearance</tabstop>
     <tabstop>round</tabstop>
     <tabstop>buttonEffect</tabstop>
     <tabstop>focus</tabstop>
@@ -2164,6 +2201,7 @@ None - no buttons, only the slider</string>
     <tabstop>customSlidersColor</tabstop>
     <tabstop>sliderStyle</tabstop>
     <tabstop>fillSlider</tabstop>
+    <tabstop>grooveAppearance</tabstop>
     <tabstop>scrollbarType</tabstop>
     <tabstop>flatSbarButtons</tabstop>
     <tabstop>sliderThumbs</tabstop>
@@ -2196,6 +2234,7 @@ None - no buttons, only the slider</string>
     <tabstop>titlebarAppearance</tabstop>
     <tabstop>inactiveTitlebarAppearance</tabstop>
     <tabstop>titlebarButtonAppearance</tabstop>
+    <tabstop>titlebarAlignment</tabstop>
     <tabstop>colorTitlebarOnly</tabstop>
     <tabstop>toolbarBorders</tabstop>
     <tabstop>handles</tabstop>
@@ -2226,7 +2265,7 @@ None - no buttons, only the slider</string>
     <tabstop>passwordChar</tabstop>
     <tabstop>gradCombo</tabstop>
     <tabstop>gradStops</tabstop>
-    <tabstop>gradLightBorder</tabstop>
+    <tabstop>gradBorder</tabstop>
     <tabstop>stopPosition</tabstop>
     <tabstop>stopValue</tabstop>
     <tabstop>addButton</tabstop>

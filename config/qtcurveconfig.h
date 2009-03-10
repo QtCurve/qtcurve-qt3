@@ -45,7 +45,7 @@ class CGradientPreview : public QWidget
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
     void paintEvent(QPaintEvent *);
-    void setGrad(const GradientCont &s);
+    void setGrad(const GradientStopCont &s);
 
     public slots:
 
@@ -53,8 +53,8 @@ class CGradientPreview : public QWidget
 
     private:
 
-    QColor       color;
-    GradientCont stops;
+    QColor           color;
+    GradientStopCont stops;
 };
 
 class QtCurveConfig : public QtCurveConfigBase
@@ -83,6 +83,8 @@ class QtCurveConfig : public QtCurveConfigBase
 
     void setStyle(int s);
     void updateChanged();
+    void focusChanged();
+    void roundChanged();
     void importStyle();
     void exportStyle();
     void exportTheme();
@@ -127,7 +129,7 @@ class QtCurveConfig : public QtCurveConfigBase
     QMap<int, QString> styles;
     CExportThemeDialog *exportDialog;
     CGradientPreview   *gradPreview;
-    CustomGradientCont customGradient;
+    GradientCont       customGradient;
     KDoubleNumInput    *shadeVals[NUM_STD_SHADES];
     CStackItem         *lastCategory;
 };

@@ -111,6 +111,7 @@ class QtCurveStyle : public KStyle
 
     void polish(QApplication *app);
     void polish(QPalette &pal);
+    QColorGroup setColorGroup(const QColorGroup &old);
     void polish(QWidget *widget);
     void unPolish(QWidget *widget);
     void drawLightBevel(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
@@ -165,13 +166,9 @@ class QtCurveStyle : public KStyle
                       bool mbi, int round, const QColor &bgnd, const QColor *cols) const;
     void drawProgress(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, int round,
                       const QWidget *widget) const;
-    void drawBevelGradient(const QColor &base, bool increase, QPainter *p, QRect const &r,
-                           bool horiz, double shadeTop, double shadeBot, bool sel, EAppearance bevApp,
-                           EWidget w=WIDGET_OTHER) const;
-    void drawCustomGradient(QPainter *p, const QRect &r, bool horiz, const QColor &base,
-                            CustomGradientCont::const_iterator &cg, bool rev=false) const;
-    void drawGradient(const QColor &top, const QColor &bot, bool increase, QPainter *p,
-                      const QRect &r, bool horiz=true) const;
+    void drawBevelGradient(const QColor &base, QPainter *p, QRect const &r,
+                           bool horiz, bool sel, EAppearance bevApp, EWidget w=WIDGET_OTHER) const;
+    void drawGradient(const QColor &top, const QColor &bot, QPainter *p, const QRect &r, bool horiz=true) const;
     void drawSbSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, bool slider=false) const;
     void drawSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, QSlider *slider, bool tb=false) const;
     void drawSliderGroove(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
@@ -205,6 +202,7 @@ class QtCurveStyle : public KStyle
     const QColor & getListViewFill(SFlags flags, const QColor *use) const;
     const QColor & getTabFill(bool current,  bool highlight, const QColor *use) const;
     const QColor & menuStripeCol() const;
+    const QColor & checkRadioCol(SFlags flags, const QColorGroup &cg) const;
     QPixmap *      getPixelPixmap(const QColor col) const;
     QPixmap *      getPixmap(const QColor col, EPixmap pix, double shade=1.0) const;
     void           setSbType();
