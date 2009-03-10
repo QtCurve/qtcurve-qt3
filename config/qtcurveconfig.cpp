@@ -490,6 +490,13 @@ static void insertGradBorderEntries(QComboBox *combo)
     combo->insertItem(i18n("3D border"));
 }
 
+static void insertAlignEntries(QComboBox *combo)
+{
+    combo->insertItem(i18n("Left"));
+    combo->insertItem(i18n("Center"));
+    combo->insertItem(i18n("Right"));
+}
+
 QtCurveConfig::QtCurveConfig(QWidget *parent)
              : QtCurveConfigBase(parent),
                exportDialog(NULL),
@@ -532,6 +539,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertEColorEntries(progressGrooveColor);
     insertFocusEntries(focus);
     insertGradBorderEntries(gradBorder);
+    insertAlignEntries(titlebarAlignment);
 
     highlightFactor->setMinValue(MIN_HIGHLIGHT_FACTOR);
     highlightFactor->setMaxValue(MAX_HIGHLIGHT_FACTOR);
@@ -623,6 +631,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(useHighlightForMenu, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(groupBoxLine, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(fadeLines, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(titlebarAlignment, SIGNAL(activated(int)), SLOT(updateChanged()));
 
     defaultSettings(&defaultStyle);
     if(!readConfig(NULL, &currentStyle, &defaultStyle))
@@ -1288,6 +1297,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.useHighlightForMenu=useHighlightForMenu->isChecked();
     opts.groupBoxLine=groupBoxLine->isChecked();
     opts.fadeLines=fadeLines->isChecked();
+    opts.titlebarAlignment=(EAlign)titlebarAlignment->currentItem();
 
     if(customShading->isChecked())
     {
@@ -1378,6 +1388,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     useHighlightForMenu->setChecked(opts.useHighlightForMenu);
     groupBoxLine->setChecked(opts.groupBoxLine);
     fadeLines->setChecked(opts.fadeLines);
+    titlebarAlignment->setCurrentItem(opts.titlebarAlignment);
 
     shading->setCurrentItem(opts.shading);
     gtkScrollViews->setChecked(opts.gtkScrollViews);
@@ -1462,6 +1473,7 @@ bool QtCurveConfig::settingsChanged()
          useHighlightForMenu->isChecked()!=currentStyle.useHighlightForMenu ||
          groupBoxLine->isChecked()!=currentStyle.groupBoxLine ||
          fadeLines->isChecked()!=currentStyle.fadeLines ||
+         titlebarAlignment->currentItem()!=currentStyle.titlebarAlignment ||
 
          shading->currentItem()!=(int)currentStyle.shading ||
          gtkScrollViews->isChecked()!=currentStyle.gtkScrollViews ||

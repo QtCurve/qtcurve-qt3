@@ -1239,7 +1239,7 @@ None - no buttons, only the slider</string>
                             <cstring>inactiveTitlebarAppearance</cstring>
                         </property>
                     </widget>
-                    <spacer row="4" column="1">
+                    <spacer row="5" column="1">
                         <property name="name">
                             <cstring>spacer27</cstring>
                         </property>
@@ -1252,16 +1252,29 @@ None - no buttons, only the slider</string>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>293</height>
+                                <height>264</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>colorTitlebarOnly</cstring>
                         </property>
                         <property name="text">
                             <string>Color titlebar only (KDE4)</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_13</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Text alignment:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="3" column="1">
+                        <property name="name">
+                            <cstring>titlebarAlignment</cstring>
                         </property>
                     </widget>
                 </grid>
@@ -2223,6 +2236,7 @@ None - no buttons, only the slider</string>
     <tabstop>highlightTab</tabstop>
     <tabstop>colorSelTab</tabstop>
     <tabstop>tabAppearance</tabstop>
+    <tabstop>centerTabs</tabstop>
     <tabstop>shadeCheckRadio</tabstop>
     <tabstop>customCheckRadioColor</tabstop>
     <tabstop>xCheck</tabstop>
@@ -2230,8 +2244,8 @@ None - no buttons, only the slider</string>
     <tabstop>crButton</tabstop>
     <tabstop>titlebarAppearance</tabstop>
     <tabstop>inactiveTitlebarAppearance</tabstop>
-    <tabstop>centerTabs</tabstop>
     <tabstop>titlebarButtonAppearance</tabstop>
+    <tabstop>titlebarAlignment</tabstop>
     <tabstop>colorTitlebarOnly</tabstop>
     <tabstop>toolbarBorders</tabstop>
     <tabstop>handles</tabstop>

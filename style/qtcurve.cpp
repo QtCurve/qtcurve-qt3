@@ -5320,11 +5320,22 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 ir.addCoords(2, 0, -4, 0);
 
                 QString titleString(elliditide(widget->caption(), QFontMetrics(widget->font()), ir.width()));
+                int     alignment=AlignVCenter|SingleLine;
 
+                switch(opts.titlebarAlignment)
+                {
+                    default:
+                    case ALIGN_LEFT:
+                        return alignment|=Qt::AlignLeft;
+                    case ALIGN_CENTER:
+                        return alignment|=Qt::AlignHCenter;
+                    case ALIGN_RIGHT:
+                        return alignment|=Qt::AlignRight;
+                }
                 p->setPen(shadowCol);
-                p->drawText(ir.x()+1, ir.y()+1, ir.width(), ir.height(), AlignAuto|AlignVCenter|SingleLine, titleString);
+                p->drawText(ir.x()+1, ir.y()+1, ir.width(), ir.height(), alignment, titleString);
                 p->setPen(textCol);
-                p->drawText(ir.x(), ir.y(), ir.width(), ir.height(), AlignAuto|AlignVCenter|SingleLine, titleString);
+                p->drawText(ir.x(), ir.y(), ir.width(), ir.height(), alignment, titleString);
 
                 //controls-=SC_TitleBarLabel;
             }

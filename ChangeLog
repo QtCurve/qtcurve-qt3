@@ -31,7 +31,8 @@
 14. Only apply plastik style mouse-over scrollbars and sliders when
     plastik is set as the mouse-over style.
 15. Add option to have central tabs.
-16. When settning palette, also set link and link visited colours.
+16. Add option to specify titlebar text alignment.
+17. When setting palette, also set link and link visited colours.
 
 0.61.4
 ------
