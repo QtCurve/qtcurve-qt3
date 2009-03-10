@@ -5326,11 +5326,13 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 {
                     default:
                     case ALIGN_LEFT:
-                        return alignment|=Qt::AlignLeft;
+                        alignment|=Qt::AlignLeft;
+                        break;
                     case ALIGN_CENTER:
-                        return alignment|=Qt::AlignHCenter;
+                        alignment|=Qt::AlignHCenter;
+                        break;
                     case ALIGN_RIGHT:
-                        return alignment|=Qt::AlignRight;
+                        alignment|=Qt::AlignRight;
                 }
                 p->setPen(shadowCol);
                 p->drawText(ir.x()+1, ir.y()+1, ir.width(), ir.height(), alignment, titleString);
