@@ -1231,6 +1231,19 @@ None - no buttons, only the slider</string>
                             <cstring>inactiveTitlebarAppearance</cstring>
                         </property>
                     </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_13</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Text alignment:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="3" column="1">
+                        <property name="name">
+                            <cstring>titlebarAlignment</cstring>
+                        </property>
+                    </widget>
                     <spacer row="5" column="1">
                         <property name="name">
                             <cstring>spacer27</cstring>
@@ -1244,21 +1257,16 @@ None - no buttons, only the slider</string>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>264</height>
+                                <height>330</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QLabel" row="3" column="0">
+                    <widget class="QCheckBox" row="4" column="0">
                         <property name="name">
-                            <cstring>textLabel1_13</cstring>
+                            <cstring>colorTitlebarOnly</cstring>
                         </property>
                         <property name="text">
-                            <string>Text alignment:</string>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="3" column="1">
-                        <property name="name">
-                            <cstring>titlebarAlignment</cstring>
+                            <string>Color titlebar only (KDE4)</string>
                         </property>
                     </widget>
                 </grid>
@@ -2227,6 +2235,7 @@ None - no buttons, only the slider</string>
     <tabstop>inactiveTitlebarAppearance</tabstop>
     <tabstop>titlebarButtonAppearance</tabstop>
     <tabstop>titlebarAlignment</tabstop>
+    <tabstop>colorTitlebarOnly</tabstop>
     <tabstop>toolbarBorders</tabstop>
     <tabstop>handles</tabstop>
     <tabstop>menubarAppearance</tabstop>
