@@ -1912,7 +1912,10 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     if(br.width()>0 && br.height()>0)
     {
         // Adjust paint rect, so that gradient is drawn from the same coords as KDE4 and Gtk2
-        p->setClipRect(br);
+        if(WIDGET_PROGRESSBAR==w && opts.stripedProgress)
+            p->setClipRegion(p->clipRegion().eor(QRegion(br)));
+        else
+            p->setClipRect(br);
         br.addCoords(-1, -1, 1, 1);
         drawBevelGradient(fill, p, br, horiz, sunken, app, w);
         br.addCoords(1, 1,-1,-1);
