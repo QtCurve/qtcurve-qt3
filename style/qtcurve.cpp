@@ -2418,7 +2418,8 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
 
     if(!itsFormMode)
         p->fillRect(rx, cg.background());
-    p->fillRect(QRect(rx.x()+2, rx.y()+2, rx.x()+rx.width()-3, rx.y()+rx.height()-3), cg.base());
+    if(flags&Style_Enabled)
+        p->fillRect(QRect(rx.x()+2, rx.y()+2, rx.width()-3, rx.height()-3), cg.base());
 
     if(highlight && isSpin)
         if(reverse)
