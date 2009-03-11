@@ -3371,12 +3371,14 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 QWidget *widget(dynamic_cast<QWidget*>(p->device()));
                 bool    view(widget && (dynamic_cast<QScrollView*>(widget->parent()) ||
                                         dynamic_cast<QListBox*>(widget->parent())));
-                const QColor *use(view ? 0L : (FOCUS_BACKGROUND==opts.focus ? backgroundColors(cg) : itsMenuitemCols));
+                const QColor *use(view && flags&Style_Selected
+                                    ? 0L : (FOCUS_BACKGROUND==opts.focus ? backgroundColors(cg) : itsMenuitemCols));
 
                 if(FOCUS_LINE==opts.focus)
                 {
-                    p->setPen(view ? (flags&Style_Selected ? cg.highlightedText() : cg.text())
-                                   : use[FOCUS_BACKGROUND!=opts.focus && flags&Style_Selected ? 3 : QT_FOCUS]);
+                    p->setPen(view && flags&Style_Selected
+                                    ? cg.highlightedText()
+                                    : use[FOCUS_BACKGROUND!=opts.focus && flags&Style_Selected ? 3 : QT_FOCUS]);
                     p->drawLine(r.x(), r.y()+r.height()-1, r.x()+r.width()-1, r.y()+r.height()-1);
                 }                
                 else if(r.width()<4 || r.height()<4 || view)
