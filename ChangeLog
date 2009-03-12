@@ -1,3 +1,9 @@
+0.62.2
+------
+1. Fix crash when coloured mouse over is set to none, and focus is set to full.
+2. Make focus full like KDE4/Gtk2
+3. Fix some issues gradient issues (tabs and menuitems).
+
 0.62.1
 ------
 1. Use highlight colour for unselected focused view items.
