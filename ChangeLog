@@ -1,3 +1,7 @@
+0.62.3
+------
+1. Fix misdrawing of filled slider groove when slider is at 0.
+
 0.62.2
 ------
 1. Fix crash when coloured mouse over is set to none, and focus is set to full.
