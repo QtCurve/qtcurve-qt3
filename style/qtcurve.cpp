@@ -3388,12 +3388,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }                
                 else if(r.width()<4 || r.height()<4 || view)
                 {
-                    QRect r2(r);
+//                     QRect r2(r);
                     p->setPen(view ? (flags&Style_Selected ? cg.highlightedText() : cg.text())
                                    : use[FOCUS_BACKGROUND!=opts.focus && flags&Style_Selected ? 3 : QT_FOCUS]);
-                    if(view)
-                        r2.addCoords(0, 0, 0, -2);
-                    p->drawRect(r2);
+//                     if(view)
+//                         r2.addCoords(0, 0, 0, -2);
+                    p->drawRect(r); // r2);
                 }
                 else
                     drawBorder(cg.background(), p, r, cg, Style_Horizontal,
