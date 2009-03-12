@@ -6589,7 +6589,8 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
     drawLightBevel(p, groove, cg, flags|Style_Down, ROUNDED_ALL, itsBackgroundCols[flags&Style_Enabled ? 2 : ORIGINAL_SHADE],
                    itsBackgroundCols, true, true, WIDGET_SLIDER_TROUGH);
 
-    if(opts.fillSlider && sliderWidget->value()>0 && sliderWidget->maxValue()!=sliderWidget->minValue() && flags&Style_Enabled)
+    if(opts.fillSlider && (horiz ? sliderWidget->value()>0 : sliderWidget->value()<sliderWidget->maxValue()) && 
+       sliderWidget->maxValue()!=sliderWidget->minValue() && flags&Style_Enabled)
     {
         QRect used(groove);
         int   pos((int)(((double)(horiz ? groove.width() : groove.height()) /
