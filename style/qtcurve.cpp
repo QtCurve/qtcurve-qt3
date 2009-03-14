@@ -6586,7 +6586,7 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
             groove.addCoords(-1, 0, 1, 0);
     }
 
-    drawLightBevel(p, groove, cg, flags|Style_Down, ROUNDED_ALL, itsBackgroundCols[flags&Style_Enabled ? 2 : ORIGINAL_SHADE],
+    drawLightBevel(p, groove, cg, flags, ROUNDED_ALL, itsBackgroundCols[flags&Style_Enabled ? 2 : ORIGINAL_SHADE],
                    itsBackgroundCols, true, true, WIDGET_SLIDER_TROUGH);
 
     if(opts.fillSlider && (horiz ? sliderWidget->value()>0 : sliderWidget->value()<sliderWidget->maxValue()) && 
@@ -6611,8 +6611,7 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
             used.addCoords(0, pos, 0, 0);
         }
         if(used.height()>0 && used.width()>0)
-            drawLightBevel(p, used, cg, flags|Style_Down, ROUNDED_ALL, usedCol, 0L,
-                           true, true, WIDGET_SLIDER_TROUGH);
+            drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCol, 0L, true, true, WIDGET_SLIDER_TROUGH);
     }
 }
 
