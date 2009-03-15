@@ -7,6 +7,8 @@
    just setting GUIStyle styleHint. This fixes the 'click on menubaritem' to
    close menu issue.
 5. When menubars have a border, adjust the menubar items accordingly.
+6. When filling the used part of a slider groove, use the slider colour 
+   if set, otherwise use the highlight colour.
 
 0.62.2
 ------

@@ -6658,11 +6658,6 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
     QRect         groove(r);
     bool          horiz(Qt::Horizontal==sliderWidget->orientation()),
                   reverse(QApplication::reverseLayout());
-    const QColor  &usedCol=itsSliderCols
-                            ? itsSliderCols[ORIGINAL_SHADE]
-                            : itsMouseOverCols
-                                ? itsMouseOverCols[ORIGINAL_SHADE]
-                                : itsMenuitemCols[1];
 
     if(horiz)
     {
@@ -6688,10 +6683,13 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
     if(opts.fillSlider && (horiz ? sliderWidget->value()>0 : sliderWidget->value()<sliderWidget->maxValue()) && 
        sliderWidget->maxValue()!=sliderWidget->minValue() && flags&Style_Enabled)
     {
-        QRect used(groove);
-        int   pos((int)(((double)(horiz ? groove.width() : groove.height()) /
+        QRect        used(groove);
+        int          pos((int)(((double)(horiz ? groove.width() : groove.height()) /
                                      (sliderWidget->maxValue()-sliderWidget->minValue()))  *
-                                 (sliderWidget->value() - sliderWidget->minValue())));
+                                     (sliderWidget->value() - sliderWidget->minValue())));
+        const QColor &usedCol=itsSliderCols
+                                ? itsSliderCols[ORIGINAL_SHADE]
+                                : itsMenuitemCols[ORIGINAL_SHADE];
 
         if(horiz)
         {
