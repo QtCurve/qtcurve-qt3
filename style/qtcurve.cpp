@@ -3297,13 +3297,15 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     {
                         round=ROUNDED_NONE;
                         br.addCoords(0, 0, 1, 0);
-                        ar.addCoords(1, 0, 1, 0);
+                        if(opts.flatSbarButtons || !opts.vArrows)
+                            ar.addCoords(1, 0, 1, 0);
                     }
                     else if(PE_ArrowUp==pe && r.y()>3)
                     {
                         round=ROUNDED_NONE;
                         br.addCoords(0, 0, 0, 1);
-                        ar.addCoords(0, 1, 0, 1);
+                        if(opts.flatSbarButtons || !opts.vArrows)
+                            ar.addCoords(0, 1, 0, 1);
                     }
                     break;
                 case SCROLLBAR_NEXT:
@@ -3311,13 +3313,15 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     {
                         round=ROUNDED_NONE;
                         br.addCoords(-1, 0, 0, 0);
-                        ar.addCoords(-1, 0, 0, -1);
+                        if(opts.flatSbarButtons || !opts.vArrows)
+                            ar.addCoords(-1, 0, 0, -1);
                     }
                     else if(PE_ArrowDown==pe)
                     {
                         round=ROUNDED_NONE;
                         br.addCoords(0, -1, 0, 0);
-                        ar.addCoords(0, -1, 0, -1);
+                        if(opts.flatSbarButtons || !opts.vArrows)
+                            ar.addCoords(0, -1, 0, -1);
                     }
                     break;
             }
