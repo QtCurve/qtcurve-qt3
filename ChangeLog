@@ -6,6 +6,7 @@
 4. Override QStyle::drawItem to remove etched disabled text, as opposed to
    just setting GUIStyle styleHint. This fixes the 'click on menubaritem' to
    close menu issue.
+5. When menubars have a border, adjust the menubar items accordingly.
 
 0.62.2
 ------

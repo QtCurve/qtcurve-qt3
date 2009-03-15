@@ -4259,10 +4259,26 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             }
 
             if(active)
-                drawMenuItem(p, r, flags, cg, true, down && opts.roundMbTopOnly ? ROUNDED_TOP : ROUNDED_ALL,
+            {
+                QRect r2(r);
+
+                switch(opts.toolbarBorders)
+                {
+                    case TB_NONE:
+                        break;
+                    case TB_LIGHT:
+                    case TB_DARK:
+                        r2.addCoords(0, 1, 0, down && opts.roundMbTopOnly ? 0 : -1);
+                        break;
+                    case TB_LIGHT_ALL:
+                    case TB_DARK_ALL:
+                        r2.addCoords(1, 1, -1, down && opts.roundMbTopOnly ? 0 : -1);
+                }
+                drawMenuItem(p, r2, flags, cg, true, down && opts.roundMbTopOnly ? ROUNDED_TOP : ROUNDED_ALL,
                              itsMenubarCols[ORIGINAL_SHADE],
                              opts.useHighlightForMenu && (opts.colorMenubarMouseOver || down)
                                 ? itsMenuitemCols : itsBackgroundCols);
+            }
 
             if(data.isDefault())
                 break;
@@ -5711,6 +5727,8 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
 {
     switch(metric)
     {
+        case PM_MenuBarFrameWidth:
+            return TB_NONE==opts.toolbarBorders ? 0 : 1;
         case PM_MenuButtonIndicator:
             return 7;
         case PM_ButtonMargin:
