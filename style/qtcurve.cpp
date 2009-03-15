@@ -3297,13 +3297,15 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     {
                         round=ROUNDED_NONE;
                         br.addCoords(0, 0, 1, 0);
-                        ar.addCoords(1, 0, 1, 0);
+                        if(opts.flatSbarButtons || !opts.vArrows)
+                            ar.addCoords(1, 0, 1, 0);
                     }
                     else if(PE_ArrowUp==pe && r.y()>3)
                     {
                         round=ROUNDED_NONE;
                         br.addCoords(0, 0, 0, 1);
-                        ar.addCoords(0, 1, 0, 1);
+                        if(opts.flatSbarButtons || !opts.vArrows)
+                            ar.addCoords(0, 1, 0, 1);
                     }
                     break;
                 case SCROLLBAR_NEXT:
@@ -3311,13 +3313,15 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     {
                         round=ROUNDED_NONE;
                         br.addCoords(-1, 0, 0, 0);
-                        ar.addCoords(-1, 0, 0, -1);
+                        if(opts.flatSbarButtons || !opts.vArrows)
+                            ar.addCoords(-1, 0, 0, -1);
                     }
                     else if(PE_ArrowDown==pe)
                     {
                         round=ROUNDED_NONE;
                         br.addCoords(0, -1, 0, 0);
-                        ar.addCoords(0, -1, 0, -1);
+                        if(opts.flatSbarButtons || !opts.vArrows)
+                            ar.addCoords(0, -1, 0, -1);
                     }
                     break;
             }
@@ -6687,9 +6691,7 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
         int          pos((int)(((double)(horiz ? groove.width() : groove.height()) /
                                      (sliderWidget->maxValue()-sliderWidget->minValue()))  *
                                      (sliderWidget->value() - sliderWidget->minValue())));
-        const QColor &usedCol=itsSliderCols
-                                ? itsSliderCols[ORIGINAL_SHADE]
-                                : itsMenuitemCols[ORIGINAL_SHADE];
+        const QColor *usedCols=itsSliderCols ? itsSliderCols : itsMenuitemCols;
 
         if(horiz)
         {
@@ -6705,7 +6707,7 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
             used.addCoords(0, pos, 0, 0);
         }
         if(used.height()>0 && used.width()>0)
-            drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCol, 0L, true, true, WIDGET_SLIDER_TROUGH);
+            drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_SLIDER_TROUGH);
     }
 }
 
