@@ -1,3 +1,15 @@
+0.62.3
+------
+1. Fix misdrawing of filled slider groove when slider is at 0.
+2. Use correct appearance setting for slider groove.
+3. Fix potentional palette issues if Qt3 and KDE3 have difference palettes.
+4. Override QStyle::drawItem to remove etched disabled text, as opposed to
+   just setting GUIStyle styleHint. This fixes the 'click on menubaritem' to
+   close menu issue.
+5. When menubars have a border, adjust the menubar items accordingly.
+6. When filling the used part of a slider groove, use the slider colour 
+   if set, otherwise use the highlight colour.
+
 0.62.2
 ------
 1. Fix crash when coloured mouse over is set to none, and focus is set to full.
