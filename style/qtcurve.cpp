@@ -95,6 +95,8 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <qtimer.h>
 #include <qdatetimeedit.h>
 #include <qobjectlist.h>
+#include <qpixmapcache.h>
+#include <qbitmap.h>
 #include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -5968,8 +5970,6 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
             return opts.menubarMouseOver ? 1 : 0;
         case SH_TabBar_Alignment:
             return AlignLeft;
-        case SH_GUIStyle:
-            return PMStyle;
         default:
             return KStyle::styleHint(stylehint, widget, option, returnData);
     }
@@ -6008,7 +6008,85 @@ void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColor
         }
     }
 
-    KStyle::drawItem(p, r2, flags, cg, enabled, pixmap, text, len, penColor);
+    int x = r.x(),
+        y = r.y(),
+        w = r.width(),
+        h = r.height();
+
+    p->setPen(penColor ? *penColor : cg.foreground());
+    if (pixmap)
+    {
+        QPixmap pm(*pixmap);
+        bool    clip = (flags&Qt::DontClip) == 0;
+        if (clip)
+        {
+            if (pm.width() < w && pm.height() < h)
+                clip = false;
+            else
+            {
+                p->save();
+                QRegion cr = QRect(x, y, w, h);
+                if (p->hasClipping())
+                    cr &= p->clipRegion(QPainter::CoordPainter);
+                p->setClipRegion(cr);
+            }
+        }
+        if ((flags&Qt::AlignVCenter) == Qt::AlignVCenter)
+            y += h/2 - pm.height()/2;
+        else if ((flags&Qt::AlignBottom) == Qt::AlignBottom)
+            y += h - pm.height();
+        if ((flags&Qt::AlignRight) == Qt::AlignRight)
+            x += w - pm.width();
+        else if ((flags&Qt::AlignHCenter) == Qt::AlignHCenter)
+            x += w/2 - pm.width()/2;
+        else if (((flags&Qt::AlignLeft) != Qt::AlignLeft) && QApplication::reverseLayout()) // AlignAuto && rightToLeft
+            x += w - pm.width();
+
+        if (!enabled)
+        {
+            if (pm.mask())          // pixmap with a mask
+            {
+                if (!pm.selfMask())     // mask is not pixmap itself
+                {
+                    QPixmap pmm(*pm.mask());
+                    pmm.setMask(*((QBitmap *)&pmm));
+                    pm = pmm;
+                }
+            }
+            else if (pm.depth() == 1) // monochrome pixmap, no mask
+            {
+                pm.setMask(*((QBitmap *)&pm));
+#ifndef QT_NO_IMAGE_HEURISTIC_MASK
+            }
+            else                // color pixmap, no mask
+            {
+                QString k;
+                k.sprintf("$qt-drawitem-%x", pm.serialNumber());
+                QPixmap *mask = QPixmapCache::find(k);
+                bool del=false;
+                if (!mask)
+                {
+                    mask = new QPixmap(pm.createHeuristicMask());
+                    mask->setMask(*((QBitmap*)mask));
+                    del = !QPixmapCache::insert(k, mask);
+                }
+                pm = *mask;
+                if (del) 
+                    delete mask;
+#endif
+            }
+            p->setPen(cg.text());
+        }
+        p->drawPixmap(x, y, pm);
+        if (clip)
+            p->restore();
+    }
+    else if (!text.isNull())
+    {
+        if (!enabled)
+            p->setPen(cg.text());
+        p->drawText(x, y, w, h, flags, text, len);
+    }
 }
 
 void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QColorGroup &cg,
