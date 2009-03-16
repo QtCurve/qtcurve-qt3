@@ -1,3 +1,8 @@
+0.62.5
+------
+1. Remove menubar item size adjust code when toolbar borders are set - not
+   needed for KDE3, as it has paddnig anyway.
+
 0.62.4
 ------
 1. When drawing filled slider groove, use fill colour for border as well.
