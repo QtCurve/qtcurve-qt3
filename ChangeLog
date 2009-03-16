@@ -1,6 +1,6 @@
 0.62.5
 ------
-1. Use gradient for filled slider.
+1. Use gradient for filled slider - unless appearance is flat/raised.
 2. Remove menubar item size adjust code when toolbar borders are set - not
    needed for KDE3, as it has paddnig anyway.
 
