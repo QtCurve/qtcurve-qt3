@@ -6690,8 +6690,9 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
             pos+=(groove.height()>10 && pos<(groove.height()/2)) ? 3 : 0;
             used.addCoords(0, pos, 0, 0);
         }
+        flags&=~Style_MouseOver;
         if(used.height()>0 && used.width()>0)
-            drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_SLIDER_TROUGH);
+            drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_FILLED_SLIDER_TROUGH);
     }
 }
 

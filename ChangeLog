@@ -1,6 +1,7 @@
 0.62.5
 ------
-1. Remove menubar item size adjust code when toolbar borders are set - not
+1. Use gradient for filled slider.
+2. Remove menubar item size adjust code when toolbar borders are set - not
    needed for KDE3, as it has paddnig anyway.
 
 0.62.4
