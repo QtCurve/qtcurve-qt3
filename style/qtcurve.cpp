@@ -655,12 +655,6 @@ QtCurveStyle::QtCurveStyle(const QString &name)
 
     itsPixmapCache.setAutoDelete(true);
 
-    if ((SHADE_CUSTOM==opts.shadeMenubars || SHADE_BLEND_SELECTED==opts.shadeMenubars) &&
-        "soffice.bin"==QString(qApp->argv()[0]) && TOO_DARK(SHADE_CUSTOM==opts.shadeMenubars
-                                                       ? opts.customMenubarsColor
-                                                       : itsMenuitemCols[ORIGINAL_SHADE]))
-        opts.shadeMenubars=SHADE_DARKEN;
-
     shadeColors(QApplication::palette().active().highlight(), itsMenuitemCols);
     shadeColors(QApplication::palette().active().background(), itsBackgroundCols);
     shadeColors(QApplication::palette().active().button(), itsButtonCols);
@@ -710,6 +704,12 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     if(USE_LIGHTER_POPUP_MENU)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
                                          QTC_TO_FACTOR(opts.lighterPopupMenuBgnd));
+
+    if ((SHADE_CUSTOM==opts.shadeMenubars || SHADE_BLEND_SELECTED==opts.shadeMenubars) &&
+        "soffice.bin"==QString(qApp->argv()[0]) && TOO_DARK(SHADE_CUSTOM==opts.shadeMenubars
+                                                       ? opts.customMenubarsColor
+                                                       : itsMenuitemCols[ORIGINAL_SHADE]))
+        opts.shadeMenubars=SHADE_DARKEN;
 
     switch(opts.shadeCheckRadio)
     {
