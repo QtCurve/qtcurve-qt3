@@ -5,6 +5,7 @@
    needed for KDE3, as it has padding anyway.
 3. Don't highlight slider groove on mouse-over.
 4. Fix coloured bottom tabs.
+5. Fix faded menuitems when not lightening popupmenus.
 
 0.62.4
 ------

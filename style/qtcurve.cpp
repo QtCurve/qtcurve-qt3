@@ -6117,7 +6117,8 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QC
         if(QTC_ROUNDED)
         {
             main.addCoords(-1, -1, 1, 1);
-            drawBorder(itsLighterPopupMenuBgndCol, p, main, cg, Style_Horizontal|Style_Raised, reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
+            drawBorder(USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : itsBackgroundCols[ORIGINAL_SHADE], p, main, 
+                       cg, Style_Horizontal|Style_Raised, reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
                        cols, WIDGET_MENU_ITEM, false, BORDER_FLAT, false, fill);
         }
 
