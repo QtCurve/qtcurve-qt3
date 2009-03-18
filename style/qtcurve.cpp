@@ -6311,7 +6311,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p,
                         shade(base, &col, WIDGET_TAB_BOT==w ? QMAX(val, 0.9) : val);
                     }
 
-                    if(sel && opts.colorSelTab && i<numStops-1)
+                    if(sel && opts.colorSelTab && i>0)
                         col=tint(col, itsMenuitemCols[0], (1.0-(*it).pos)*QTC_COLOR_SEL_TAB_FACTOR);
 
                     if(i)
