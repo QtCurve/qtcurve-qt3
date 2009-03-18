@@ -4,8 +4,7 @@
 2. Remove menubar item size adjust code when toolbar borders are set - not
    needed for KDE3, as it has padding anyway.
 3. Don't highlight slider groove on mouse-over.
-4. Slightly alter listview header size.
-5. Fix coloured bottom tabs.
+4. Fix coloured bottom tabs.
 
 0.62.4
 ------
