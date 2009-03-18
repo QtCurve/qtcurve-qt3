@@ -5926,6 +5926,13 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
 
             return size;
         }
+        case CT_Header:
+        {
+            QSize size(KStyle::sizeFromContents(contents, widget, contentsSize, data));
+
+            size.setHeight(size.height()+1);
+            return size;
+        }
         case CT_ToolButton:
             if(widget->parent() && ::qt_cast<QToolBar *>(widget->parent()))
                 return QSize(contentsSize.width()+8, contentsSize.height()+8);
