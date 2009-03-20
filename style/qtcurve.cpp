@@ -5716,7 +5716,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
     switch(metric)
     {
         case PM_MenuBarFrameWidth:
-            return 0;
+            return TB_NONE==opts.toolbarBorders ? 0 : 1;
         case PM_MenuButtonIndicator:
             return 7;
         case PM_ButtonMargin:
