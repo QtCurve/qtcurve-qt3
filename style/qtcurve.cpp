@@ -655,12 +655,6 @@ QtCurveStyle::QtCurveStyle(const QString &name)
 
     itsPixmapCache.setAutoDelete(true);
 
-    if ((SHADE_CUSTOM==opts.shadeMenubars || SHADE_BLEND_SELECTED==opts.shadeMenubars) &&
-        "soffice.bin"==QString(qApp->argv()[0]) && TOO_DARK(SHADE_CUSTOM==opts.shadeMenubars
-                                                       ? opts.customMenubarsColor
-                                                       : itsMenuitemCols[ORIGINAL_SHADE]))
-        opts.shadeMenubars=SHADE_DARKEN;
-
     shadeColors(QApplication::palette().active().highlight(), itsMenuitemCols);
     shadeColors(QApplication::palette().active().background(), itsBackgroundCols);
     shadeColors(QApplication::palette().active().button(), itsButtonCols);
@@ -710,6 +704,12 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     if(USE_LIGHTER_POPUP_MENU)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
                                          QTC_TO_FACTOR(opts.lighterPopupMenuBgnd));
+
+    if ((SHADE_CUSTOM==opts.shadeMenubars || SHADE_BLEND_SELECTED==opts.shadeMenubars) &&
+        "soffice.bin"==QString(qApp->argv()[0]) && TOO_DARK(SHADE_CUSTOM==opts.shadeMenubars
+                                                       ? opts.customMenubarsColor
+                                                       : itsMenuitemCols[ORIGINAL_SHADE]))
+        opts.shadeMenubars=SHADE_DARKEN;
 
     switch(opts.shadeCheckRadio)
     {
@@ -4263,26 +4263,10 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             }
 
             if(active)
-            {
-                QRect r2(r);
-
-                switch(opts.toolbarBorders)
-                {
-                    case TB_NONE:
-                        break;
-                    case TB_LIGHT:
-                    case TB_DARK:
-                        r2.addCoords(0, 1, 0, down && opts.roundMbTopOnly ? 0 : -1);
-                        break;
-                    case TB_LIGHT_ALL:
-                    case TB_DARK_ALL:
-                        r2.addCoords(1, 1, -1, down && opts.roundMbTopOnly ? 0 : -1);
-                }
-                drawMenuItem(p, r2, flags, cg, true, down && opts.roundMbTopOnly ? ROUNDED_TOP : ROUNDED_ALL,
+                drawMenuItem(p, r, flags, cg, true, down && opts.roundMbTopOnly ? ROUNDED_TOP : ROUNDED_ALL,
                              itsMenubarCols[ORIGINAL_SHADE],
                              opts.useHighlightForMenu && (opts.colorMenubarMouseOver || down)
                                 ? itsMenuitemCols : itsBackgroundCols);
-            }
 
             if(data.isDefault())
                 break;
@@ -6133,7 +6117,8 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QC
         if(QTC_ROUNDED)
         {
             main.addCoords(-1, -1, 1, 1);
-            drawBorder(itsLighterPopupMenuBgndCol, p, main, cg, Style_Horizontal|Style_Raised, reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
+            drawBorder(USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : itsBackgroundCols[ORIGINAL_SHADE], p, main, 
+                       cg, Style_Horizontal|Style_Raised, reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
                        cols, WIDGET_MENU_ITEM, false, BORDER_FLAT, false, fill);
         }
 
@@ -6320,7 +6305,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p,
                         shade(base, &col, WIDGET_TAB_BOT==w ? QMAX(val, 0.9) : val);
                     }
 
-                    if(sel && opts.colorSelTab && i<numStops-1)
+                    if(sel && opts.colorSelTab && i>0)
                         col=tint(col, itsMenuitemCols[0], (1.0-(*it).pos)*QTC_COLOR_SEL_TAB_FACTOR);
 
                     if(i)
@@ -6663,6 +6648,7 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
     bool          horiz(Qt::Horizontal==sliderWidget->orientation()),
                   reverse(QApplication::reverseLayout());
 
+    flags&=~Style_MouseOver;
     if(horiz)
     {
         int dh=(groove.height()-5)>>1;
@@ -6707,7 +6693,7 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
             used.addCoords(0, pos, 0, 0);
         }
         if(used.height()>0 && used.width()>0)
-            drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_SLIDER_TROUGH);
+            drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_FILLED_SLIDER_TROUGH);
     }
 }
 
