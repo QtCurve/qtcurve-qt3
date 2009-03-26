@@ -5346,21 +5346,21 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                         alignment|=Qt::AlignRight;
                 }
 
-                QRect       ir(visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarLabel), widget));
+                QRect       ir(visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarLabel), widget)),
+                            textRect(full ? tb->rect().x() : ir.x(), ir.y(), full ? tb->rect().width() : ir.width(), ir.height());
                 EAppearance app=isActive ? opts.titlebarAppearance : opts.inactiveTitlebarAppearance;
 
                 drawBevelGradient(cols[ORIGINAL_SHADE], p, r, true, false, app, WIDGET_MDI_WINDOW);
                 ir.addCoords(2, 0, -4, 0);
 
-                QString titleString(elliditide(widget->caption(), QFontMetrics(widget->font()),
-                                               full ? rb->rect().width() : ir.width()));
+                QString titleString(elliditide(widget->caption(), QFontMetrics(widget->font()), textRect.width()));
 
                 if(full)
                     p->setClipRect(ir);
                 p->setPen(shadowCol);
-                p->drawText(ir.x()+1, ir.y()+1, ir.width(), ir.height(), alignment, titleString);
+                p->drawText(textRect.x()+1, textRect.y()+1, textRect.width(), textRect.height(), alignment, titleString);
                 p->setPen(textCol);
-                p->drawText(ir.x(), ir.y(), ir.width(), ir.height(), alignment, titleString);
+                p->drawText(textRect.x(), textRect.y(), textRect.width(), textRect.height(), alignment, titleString);
                 if(full)
                     p->setClipping(false);
 
