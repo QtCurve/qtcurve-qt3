@@ -5326,14 +5326,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if (controls&SC_TitleBarLabel)
             {
-                QRect       ir(visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarLabel), widget));
-                EAppearance app=isActive ? opts.titlebarAppearance : opts.inactiveTitlebarAppearance;
-
-                drawBevelGradient(cols[ORIGINAL_SHADE], p, r, true, false, app, WIDGET_MDI_WINDOW);
-                ir.addCoords(2, 0, -4, 0);
-
-                QString titleString(elliditide(widget->caption(), QFontMetrics(widget->font()), ir.width()));
-                int     alignment=AlignVCenter|SingleLine;
+                int  alignment=AlignVCenter|SingleLine;
+                bool full=false;
 
                 switch(opts.titlebarAlignment)
                 {
@@ -5344,13 +5338,31 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     case ALIGN_CENTER:
                         alignment|=Qt::AlignHCenter;
                         break;
+                    case ALIGN_FULL_CENTER:
+                        alignment|=Qt::AlignHCenter;
+                        full=true;
+                        break;
                     case ALIGN_RIGHT:
                         alignment|=Qt::AlignRight;
                 }
+
+                QRect       ir(visualRect(querySubControlMetrics(CC_TitleBar, widget, SC_TitleBarLabel), widget));
+                EAppearance app=isActive ? opts.titlebarAppearance : opts.inactiveTitlebarAppearance;
+
+                drawBevelGradient(cols[ORIGINAL_SHADE], p, r, true, false, app, WIDGET_MDI_WINDOW);
+                ir.addCoords(2, 0, -4, 0);
+
+                QString titleString(elliditide(widget->caption(), QFontMetrics(widget->font()),
+                                               full ? rb->rect().width() : ir.width()));
+
+                if(full)
+                    p->setClipRect(ir);
                 p->setPen(shadowCol);
                 p->drawText(ir.x()+1, ir.y()+1, ir.width(), ir.height(), alignment, titleString);
                 p->setPen(textCol);
                 p->drawText(ir.x(), ir.y(), ir.width(), ir.height(), alignment, titleString);
+                if(full)
+                    p->setClipping(false);
 
                 //controls-=SC_TitleBarLabel;
             }
