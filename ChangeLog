@@ -1,3 +1,9 @@
+0.62.7
+------
+1. Show 'extra' as the default round setting in the config UI, as this is
+   actually the default. Note, that KDE3 does not support this and will use
+   'full' instead.
+
 0.62.6
 ------
 1. Allow ability to specify if titlebar center alignment is for the full window
