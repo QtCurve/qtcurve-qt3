@@ -602,6 +602,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(customCheckRadioColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
     connect(focus, SIGNAL(activated(int)), SLOT(focusChanged()));
     connect(lvLines, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(lvButton, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(drawStatusBarFrames, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(buttonEffect, SIGNAL(activated(int)), SLOT(buttonEffectChanged()));
     connect(coloredMouseOver, SIGNAL(activated(int)), SLOT(coloredMouseOverChanged()));
@@ -1225,6 +1226,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.appearance=(EAppearance)appearance->currentItem();
     opts.focus=(EFocus)focus->currentItem();
     opts.lvLines=lvLines->isChecked();
+    opts.lvButton=lvButton->isChecked();
     opts.drawStatusBarFrames=drawStatusBarFrames->isChecked();
     opts.buttonEffect=(EEffect)buttonEffect->currentItem();
     opts.coloredMouseOver=(EMouseOver)coloredMouseOver->currentItem();
@@ -1326,6 +1328,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     appearance->setCurrentItem(opts.appearance);
     focus->setCurrentItem(opts.focus);
     lvLines->setChecked(opts.lvLines);
+    lvButton->setChecked(opts.lvButton);
     drawStatusBarFrames->setChecked(opts.drawStatusBarFrames);
     buttonEffect->setCurrentItem(opts.buttonEffect);
     coloredMouseOver->setCurrentItem(opts.coloredMouseOver);
@@ -1420,6 +1423,7 @@ bool QtCurveConfig::settingsChanged()
          appearance->currentItem()!=(int)currentStyle.appearance ||
          focus->currentItem()!=(int)currentStyle.focus ||
          lvLines->isChecked()!=currentStyle.lvLines ||
+         lvButton->isChecked()!=currentStyle.lvButton ||
          drawStatusBarFrames->isChecked()!=currentStyle.drawStatusBarFrames ||
          buttonEffect->currentItem()!=(int)currentStyle.buttonEffect ||
          coloredMouseOver->currentItem()!=(int)currentStyle.coloredMouseOver ||

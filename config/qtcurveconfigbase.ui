@@ -866,23 +866,6 @@ None - no buttons, only the slider</string>
                             <cstring>lvAppearance</cstring>
                         </property>
                     </widget>
-                    <spacer row="0" column="2">
-                        <property name="name">
-                            <cstring>spacer21</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>221</width>
-                                <height>16</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <spacer row="3" column="1">
                         <property name="name">
                             <cstring>spacer22</cstring>
@@ -906,6 +889,31 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="text">
                             <string>Join items with lines (KDE)</string>
+                        </property>
+                    </widget>
+                    <spacer row="0" column="3">
+                        <property name="name">
+                            <cstring>spacer21</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>30</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="0" column="2">
+                        <property name="name">
+                            <cstring>lvButton</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Button color</string>
                         </property>
                     </widget>
                 </grid>
@@ -2216,6 +2224,7 @@ None - no buttons, only the slider</string>
     <tabstop>coloredMouseOver</tabstop>
     <tabstop>highlightFactor</tabstop>
     <tabstop>lvAppearance</tabstop>
+    <tabstop>lvButton</tabstop>
     <tabstop>selectionAppearance</tabstop>
     <tabstop>lvLines</tabstop>
     <tabstop>gtkScrollViews</tabstop>

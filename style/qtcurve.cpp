@@ -2517,7 +2517,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     break;
                 }
 
-                const QColor *use(/*opts.lvButton ? */buttonColors(cg)/* : backgroundColors(cg)*/);
+                const QColor *use(opts.lvButton ? buttonColors(cg) : backgroundColors(cg));
                 
                 flags=((flags|Style_Sunken)^Style_Sunken)| Style_Raised;
 
