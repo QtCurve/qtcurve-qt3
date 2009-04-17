@@ -2494,7 +2494,6 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 bool    isFirst(false), isLast(false), isTable(false);
                 QHeader *header(p && p->device() ? dynamic_cast<QHeader*>(p->device())
                                                  : 0L);
-
                 if (header)
                 {
                     if(header->parent() && ::qt_cast<const QTable *>(header->parent()))
@@ -2513,12 +2512,13 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 else if(0==flags) // Header on popup menu?
                 {
                     const QColor *use(buttonColors(cg));
-
                     drawLightBevel(p, r, cg, flags|Style_Horizontal, ROUNDED_ALL,
                                    getFill(flags, use), use);
                     break;
                 }
 
+                const QColor *use(/*opts.lvButton ? */buttonColors(cg)/* : backgroundColors(cg)*/);
+                
                 flags=((flags|Style_Sunken)^Style_Sunken)| Style_Raised;
 
                 if(QTC_NO_SECT!=itsHoverSect && HOVER_HEADER==itsHover && itsHoverWidget)
@@ -2531,12 +2531,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 bool sunken(flags &(Style_Down | Style_On | Style_Sunken));
 
-                drawBevelGradient(getFill(flags, itsBackgroundCols), p, r, flags&Style_Horizontal,
+                drawBevelGradient(getFill(flags, use), p, r, flags&Style_Horizontal,
                                   sunken, opts.lvAppearance, WIDGET_LISTVIEW_HEADER);
 
                 if(APPEARANCE_RAISED==opts.lvAppearance)
                 {
-                    p->setPen(itsBackgroundCols[4]);
+                    p->setPen(use[4]);
                     if(flags&Style_Horizontal)
                         p->drawLine(r.x(), r.y()+r.height()-2, r.x()+r.width()-1, r.y()+r.height()-2);
                     else
@@ -2555,14 +2555,14 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                         p->setPen(border[QT_STD_BORDER]);
                     }
                     else
-                        p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+                        p->setPen(use[QT_STD_BORDER]);
                     p->drawLine(r.x(), r.y()+r.height()-1, r.x()+r.width()-1, r.y()+r.height()-1);
 
                     if(!isFirst)
                     {
-                        p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+                        p->setPen(use[QT_STD_BORDER]);
                         p->drawLine(r.x(), r.y()+5, r.x(), r.y()+r.height()-6);
-                        p->setPen(itsBackgroundCols[0]);
+                        p->setPen(use[0]);
                         p->drawLine(r.x()+1, r.y()+5, r.x()+1, r.y()+r.height()-6);
                     }
                 }
@@ -2575,15 +2575,15 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                         p->setPen(border[QT_STD_BORDER]);
                     }
                     else
-                        p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+                        p->setPen(use[QT_STD_BORDER]);
                     p->drawLine(r.x()+r.width()-1, r.y(), r.x()+r.width()-1, r.y()+r.height()-1);
 
                     if(!isLast)
                     {
-                        p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+                        p->setPen(use[QT_STD_BORDER]);
                         p->drawLine(r.x()+5, r.y()+r.height()-2, r.x()+r.width()-6,
                                     r.y()+r.height()-2);
-                        p->setPen(itsBackgroundCols[0]);
+                        p->setPen(use[0]);
                         p->drawLine(r.x()+5, r.y()+r.height()-1, r.x()+r.width()-6,
                                     r.y()+r.height()-1);
                     }
