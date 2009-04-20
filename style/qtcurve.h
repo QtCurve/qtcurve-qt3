@@ -193,6 +193,7 @@ class QtCurveStyle : public KStyle
     const QColor * borderColors(SFlags flags, const QColor *use) const;
     const QColor * getSidebarButtons() const;
     void           setMenuColors(const QColorGroup &cg);
+    void           setDecorationColors();
     const QColor * getMdiColors(const QColorGroup &cg, bool active) const;
 #ifdef SET_MDI_WINDOW_BUTTON_POSITIONS
     void           readMdiPositions() const;
@@ -220,9 +221,10 @@ class QtCurveStyle : public KStyle
     private:
 
     Options                    opts;
-    QColor                     itsMenuitemCols[TOTAL_SHADES+1],
+    QColor                     itsHighlightCols[TOTAL_SHADES+1],
                                itsBackgroundCols[TOTAL_SHADES+1],
                                itsMenubarCols[TOTAL_SHADES+1],
+                               itsFocusCols[TOTAL_SHADES+1],
                                *itsSliderCols,
                                *itsDefBtnCols,
                                *itsMouseOverCols,
