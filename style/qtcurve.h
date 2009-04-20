@@ -176,6 +176,7 @@ class QtCurveStyle : public KStyle
     void drawMenuOrToolBarBackground(QPainter *p, const QRect &r, const QColorGroup &cg, bool menu=true,
                                      bool horiz=true) const;
     void drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, bool tb, ELine handles) const;
+    void drawHighlight(QPainter *p, const QRect &r, const QColorGroup &cg, bool horiz, bool inc) const;
 
     private:
 

@@ -2542,20 +2542,13 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                         p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-2, r.y()+r.height()-1);
                 }
 
-                const QColor *border(borderColors(flags, 0L));
-
                 if(flags&Style_Horizontal)
                 {
-                    if(border)
-                    {
-                        p->setPen(border[ORIGINAL_SHADE]);
-                        p->drawLine(r.x(), r.y()+r.height()-2, r.x()+r.width()-1,
-                                    r.y()+r.height()-2);
-                        p->setPen(border[QT_STD_BORDER]);
-                    }
-                    else
-                        p->setPen(use[QT_STD_BORDER]);
+                    p->setPen(use[QT_STD_BORDER]);
                     p->drawLine(r.x(), r.y()+r.height()-1, r.x()+r.width()-1, r.y()+r.height()-1);
+
+                    if(itsMouseOverCols && opts.coloredMouseOver && flags&Style_MouseOver)
+                        drawHighlight(p, QRect(r.x(), r.y()+r.height()-2, r.width(), 2), cg, true, true);
 
                     if(!isFirst)
                     {
@@ -2567,14 +2560,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 }
                 else
                 {
-                    if(border)
-                    {
-                        p->setPen(border[ORIGINAL_SHADE]);
-                        p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-2, r.y()+r.height()-1);
-                        p->setPen(border[QT_STD_BORDER]);
-                    }
-                    else
-                        p->setPen(use[QT_STD_BORDER]);
+                    p->setPen(use[QT_STD_BORDER]);
                     p->drawLine(r.x()+r.width()-1, r.y(), r.x()+r.width()-1, r.y()+r.height()-1);
 
                     if(!isLast)
@@ -2586,6 +2572,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                         p->drawLine(r.x()+5, r.y()+r.height()-1, r.x()+r.width()-6,
                                     r.y()+r.height()-1);
                     }
+
+                    if(itsMouseOverCols && opts.coloredMouseOver && flags&Style_MouseOver)
+                        drawHighlight(p, QRect(r.x(), r.y()+r.height()-3, r.width(), 2), cg, true, true);
                 }
             }
             break;
@@ -3833,15 +3822,9 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->drawLine(r.x(), r.y()+r.height()-2, r.x()+r.width()-1, r.y()+r.height()-2);
 
                     if(opts.coloredMouseOver && itsHover)
-                    {
-                        p->setPen(itsMouseOverCols[ORIGINAL_SHADE]);
-                        p->drawLine(tr.x()+(firstTab ? moOffset : 1), tr.y()+1,
-                                    tr.x()+tr.width()-((lastTab ? moOffset : 0)+1), tr.y()+1);
-
-                        p->setPen(itsMouseOverCols[QT_STD_BORDER]);
-                        p->drawLine(tr.x()+(firstTab ? moOffset : 1), tr.y(),
-                                    tr.x()+tr.width()-((lastTab ? moOffset : 0)+1), tr.y());
-                    }
+                        drawHighlight(p, QRect(tr.x()+(firstTab ? moOffset : 1), tr.y(),
+                                               tr.width()-(firstTab || lastTab ? moOffset : 1), 2),
+                                      cg, true, false);
                 }
 
                 if(((!reverse && firstTab) || (lastTab && reverse)) && !cornerWidget)
@@ -3902,15 +3885,9 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->drawLine(r.x(), r.y()+1, r.x()+r.width()-1, r.y()+1);
 
                     if(opts.coloredMouseOver && itsHover)
-                    {
-                        p->setPen(itsMouseOverCols[ORIGINAL_SHADE]);
-                        p->drawLine(tr.x()+(firstTab ? moOffset : 1), tr.y()+tr.height()-2,
-                                    tr.x()+tr.width()-((lastTab ? moOffset : 0)+1), tr.y()+tr.height()-2);
-
-                        p->setPen(itsMouseOverCols[3]);
-                        p->drawLine(tr.x()+(firstTab ? moOffset : 1), tr.y()+tr.height()-1,
-                                    tr.x()+tr.width()-((lastTab ? moOffset : 0)+1), tr.y()+tr.height()-1);
-                    }
+                        drawHighlight(p, QRect(tr.x()+(firstTab ? moOffset : 1), tr.y()+tr.height()-2,
+                                               tr.width()-(firstTab || lastTab ? moOffset : 1), 2),
+                                      cg, true, true);
                 }
 
                 if(active && opts.highlightTab)
@@ -6775,6 +6752,18 @@ void QtCurveStyle::drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, 
                       APP_KICKER==itsThemedApp ? 1 : tb ? 4 : 2, border,
                       APP_KICKER==itsThemedApp ? 1 : tb ? -2 : 0, 3, handles);
     }
+}
+
+void QtCurveStyle::drawHighlight(QPainter *p, const QRect &r, const QColorGroup &cg, bool horiz, bool inc) const
+{
+    QColor col1(midColor(cg.background(), itsMouseOverCols[ORIGINAL_SHADE]));
+    QRect  r2(r);
+
+    p->setPen(inc ? col1 : itsMouseOverCols[ORIGINAL_SHADE]);
+    p->drawLine(r2.x(), r2.y(), r2.x()+(horiz ? r2.width()-1 : 0), r2.y()+(horiz ? 0 : r2.height()-1));
+    p->setPen(inc ? itsMouseOverCols[ORIGINAL_SHADE] : col1);
+    r2.addCoords(horiz ? 0 : 1, horiz ? 1 : 0, horiz ? 0 : 1, horiz ? 1 : 0);
+    p->drawLine(r2.x(), r2.y(), r2.x()+(horiz ? r2.width()-1 : 0), r2.y()+(horiz ? 0 : r2.height()-1));
 }
 
 void QtCurveStyle::shadeColors(const QColor &base, QColor *vals) const
