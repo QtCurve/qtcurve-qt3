@@ -6251,6 +6251,9 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup 
 void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p,
                                      const QRect &origRect, bool horiz, bool sel, EAppearance bevApp, EWidget w) const
 {
+    if(IS_FLAT(bevApp) && opts.colorSelTab && sel)
+        bevApp=APPEARANCE_GRADIENT;
+
     if(IS_FLAT(bevApp))
         p->fillRect(origRect, base);
     else
@@ -6305,7 +6308,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p,
                     }
 
                     if(sel && opts.colorSelTab && i>0)
-                        col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*QTC_COLOR_SEL_TAB_FACTOR);
+                        col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*(0.2+QTC_COLOR_SEL_TAB_FACTOR));
 
                     if(i)
                         drawGradient(prev, col, &pixPainter,
@@ -6333,7 +6336,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p,
                         shade(base, &col, WIDGET_TAB_BOT==w ? QMAX((*it).val, 0.9) : (*it).val);
 
                     if(sel && opts.colorSelTab && topTab && i<numStops-1)
-                        col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*QTC_COLOR_SEL_TAB_FACTOR);
+                        col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*(0.2+QTC_COLOR_SEL_TAB_FACTOR));
 
                     if(i)
                         drawGradient(prev, col, &pixPainter,
