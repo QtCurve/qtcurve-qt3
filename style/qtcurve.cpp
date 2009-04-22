@@ -2017,10 +2017,11 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
 
 void QtCurveStyle::drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, EWidget w) const
 {
-    bool   def(WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator);
+    bool   def(WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator),
+           defShade=def && (!itsDefBtnCols || itsDefBtnCols[ORIGINAL_SHADE]==itsMouseOverCols[ORIGINAL_SHADE]);
     QColor col(def && itsDefBtnCols ? itsDefBtnCols[QTC_GLOW_DEFBTN] : itsMouseOverCols[QTC_GLOW_MO]);
 
-    col=midColor(cg.background(), col, 1.5-QTC_GLOW_ALPHA(def));
+    col=midColor(cg.background(), col, 1.5-QTC_GLOW_ALPHA(defShade));
     p->setPen(col);
     p->drawLine(r.x()+2, r.y()+r.height()-1, r.x()+r.width()-3, r.y()+r.height()-1);
     p->drawLine(r.x()+r.width()-1, r.y()+2, r.x()+r.width()-1, r.y()+r.height()-3);
