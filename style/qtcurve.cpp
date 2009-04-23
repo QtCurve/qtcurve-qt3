@@ -6162,8 +6162,8 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup 
             drawStripe(r.width()>(minWidth*1.5));
     QRegion outer(r);
 
-    if(r.width()<4)
-        r.setWidth(4);
+    if(r.width()<3)
+        r.setWidth(3);
 
     if(drawStripe)
     {
