@@ -2017,26 +2017,31 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
 
 void QtCurveStyle::drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, EWidget w) const
 {
-    bool   def(WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator),
-           defShade=def && (!itsDefBtnCols || itsDefBtnCols[ORIGINAL_SHADE]==itsMouseOverCols[ORIGINAL_SHADE]);
-    QColor col(def && itsDefBtnCols ? itsDefBtnCols[QTC_GLOW_DEFBTN] : itsMouseOverCols[QTC_GLOW_MO]);
+    if(itsMouseOverCols || itsDefBtnCols)
+    {
+        bool   def(WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator),
+               defShade=def && (!itsDefBtnCols ||
+                                (itsMouseOverCols && itsDefBtnCols[ORIGINAL_SHADE]==itsMouseOverCols[ORIGINAL_SHADE]));
+        QColor col((def && itsDefBtnCols) || !itsMouseOverCols
+                        ? itsDefBtnCols[QTC_GLOW_DEFBTN] : itsMouseOverCols[QTC_GLOW_MO]);
 
-    col=midColor(cg.background(), col, 1.5-QTC_GLOW_ALPHA(defShade));
-    p->setPen(col);
-    p->drawLine(r.x()+2, r.y()+r.height()-1, r.x()+r.width()-3, r.y()+r.height()-1);
-    p->drawLine(r.x()+r.width()-1, r.y()+2, r.x()+r.width()-1, r.y()+r.height()-3);
-    p->drawLine(r.x()+3, r.y(), r.x()+r.width()-4, r.y());
-    p->drawLine(r.x(), r.y()+3, r.x(), r.y()+r.height()-4);
-    //p->setPen(midColor(col, cg.background()));
-    p->drawLine(r.x()+r.width()-1, r.y()+r.height()-3, r.x()+r.width()-3, r.y()+r.height()-1);
-    p->drawLine(r.x(), r.y()+r.height()-3, r.x()+2, r.y()+r.height()-1);
-    p->drawLine(r.x(), r.y()+2, r.x()+2, r.y());
-    p->drawLine(r.x()+r.width()-3, r.y(), r.x()+r.width()-1, r.y()+2);
-    p->setPen(midColor(col, cg.background()));
-    p->drawLine(r.x()+r.width()-1, r.y()+r.height()-2, r.x()+r.width()-2, r.y()+r.height()-1);
-    p->drawLine(r.x(), r.y()+r.height()-2, r.x()+1, r.y()+r.height()-1);
-    p->drawLine(r.x(), r.y()+1, r.x()+1, r.y());
-    p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-1, r.y()+1);
+        col=midColor(cg.background(), col, 1.5-QTC_GLOW_ALPHA(defShade));
+        p->setPen(col);
+        p->drawLine(r.x()+2, r.y()+r.height()-1, r.x()+r.width()-3, r.y()+r.height()-1);
+        p->drawLine(r.x()+r.width()-1, r.y()+2, r.x()+r.width()-1, r.y()+r.height()-3);
+        p->drawLine(r.x()+3, r.y(), r.x()+r.width()-4, r.y());
+        p->drawLine(r.x(), r.y()+3, r.x(), r.y()+r.height()-4);
+        //p->setPen(midColor(col, cg.background()));
+        p->drawLine(r.x()+r.width()-1, r.y()+r.height()-3, r.x()+r.width()-3, r.y()+r.height()-1);
+        p->drawLine(r.x(), r.y()+r.height()-3, r.x()+2, r.y()+r.height()-1);
+        p->drawLine(r.x(), r.y()+2, r.x()+2, r.y());
+        p->drawLine(r.x()+r.width()-3, r.y(), r.x()+r.width()-1, r.y()+2);
+        p->setPen(midColor(col, cg.background()));
+        p->drawLine(r.x()+r.width()-1, r.y()+r.height()-2, r.x()+r.width()-2, r.y()+r.height()-1);
+        p->drawLine(r.x(), r.y()+r.height()-2, r.x()+1, r.y()+r.height()-1);
+        p->drawLine(r.x(), r.y()+1, r.x()+1, r.y());
+        p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-1, r.y()+1);
+    }
 }
 
 void QtCurveStyle::drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised) const
