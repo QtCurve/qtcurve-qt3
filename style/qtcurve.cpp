@@ -1998,7 +1998,8 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
              MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
              (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator)))
             drawBorder(bgnd, p, r, cg, flags, round,
-                        WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator && !(flags&Style_MouseOver)
+                        WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator &&
+                        (!(flags&Style_MouseOver) || !itsMouseOverCols)
                             ? itsDefBtnCols : itsMouseOverCols, w, doCorners);
         else
             drawBorder(bgnd, p, r, cg, flags, round, cols, w, doCorners);
