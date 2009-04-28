@@ -3736,7 +3736,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             const QTabBar *tb((const QTabBar *)widget);
             int           tabIndex(tb->indexOf(data.tab()->identifier())),
                           dark(APPEARANCE_FLAT==opts.appearance ? ORIGINAL_SHADE : QT_FRAME_DARK_SHADOW),
-                          moOffset(ROUNDED_NONE==opts.round ? 1 : opts.round);
+                          moOffset(ROUNDED_NONE==opts.round || !opts.tabMouseOverTop ? 1 : opts.round);
             bool          cornerWidget(false),
                           bottomCornerWidget(false),
                           reverse(QApplication::reverseLayout()),
@@ -3823,9 +3823,10 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->drawLine(r.x(), r.y()+r.height()-2, r.x()+r.width()-1, r.y()+r.height()-2);
 
                     if(opts.coloredMouseOver && itsHover)
-                        drawHighlight(p, QRect(tr.x()+(firstTab ? moOffset : 1), tr.y(),
+                        drawHighlight(p, QRect(tr.x()+(firstTab ? moOffset : 1),
+                                               tr.y()+(opts.tabMouseOverTop ? 0 : tr.height()-3),
                                                tr.width()-(firstTab || lastTab ? moOffset : 1), 2),
-                                      cg, true, false);
+                                      cg, true, !opts.tabMouseOverTop);
                 }
 
                 if(((!reverse && firstTab) || (lastTab && reverse)) && !cornerWidget)
@@ -3886,9 +3887,10 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->drawLine(r.x(), r.y()+1, r.x()+r.width()-1, r.y()+1);
 
                     if(opts.coloredMouseOver && itsHover)
-                        drawHighlight(p, QRect(tr.x()+(firstTab ? moOffset : 1), tr.y()+tr.height()-2,
+                        drawHighlight(p, QRect(tr.x()+(firstTab ? moOffset : 1),
+                                               tr.y()+(opts.tabMouseOverTop ? tr.height()-2 : 1),
                                                tr.width()-(firstTab || lastTab ? moOffset : 1), 2),
-                                      cg, true, true);
+                                      cg, true, opts.tabMouseOverTop);
                 }
 
                 if(active && opts.highlightTab)

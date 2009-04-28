@@ -8,7 +8,7 @@
 5. Use KDE4 colors for focus and mouse-over.
 6. Removal of background focus option.
 7. Softer colouration of selected tab.
-8. Don't max/extra round progressbars.
+8. Add option to draw tab's mouse over lines at the bottom.
 
 0.62.7
 ------
