@@ -5349,10 +5349,28 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 drawBevelGradient(cols[ORIGINAL_SHADE], p, r, true, false, app, WIDGET_MDI_WINDOW);
                 ir.addCoords(2, 0, -4, 0);
 
-                QString titleString(elliditide(widget->caption(), QFontMetrics(widget->font()), textRect.width()));
+                QFontMetrics fm(QFontMetrics(widget->font()));
+                QString titleString(elliditide(widget->caption(), fm, textRect.width()));
 
                 if(full)
-                    p->setClipRect(ir);
+                {
+                    int textWidth=fm.boundingRect(titleString).width();
+                    if(ir.left()>((textRect.width()-textWidth)>>1))
+                    {
+                        alignment=Qt::AlignVCenter|Qt::AlignLeft;
+                        textRect=ir;
+                        full=false;
+                    }
+                    else if(ir.right()<((textRect.width()+textWidth)>>1))
+                    {
+                        alignment=Qt::AlignVCenter|Qt::AlignRight;
+                        textRect=ir;
+                        full=false;
+                    }
+                    else
+                        p->setClipRect(ir);
+                }
+
                 p->setPen(shadowCol);
                 p->drawText(textRect.x()+1, textRect.y()+1, textRect.width(), textRect.height(), alignment, titleString);
                 p->setPen(textCol);

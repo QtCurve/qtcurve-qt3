@@ -15,6 +15,8 @@
      Align titlebars text in center
 10. Remove 'Custom sunken gradient' setting, as this was not
     actually used.
+11. Better handling of 'full centered' titlebar texts when
+    window size is small.
 
 0.62.7
 ------
