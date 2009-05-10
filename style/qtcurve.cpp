@@ -3333,7 +3333,13 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     break;
             }
             if(opts.flatSbarButtons)
-                p->fillRect(br, itsBackgroundCols[ORIGINAL_SHADE]);
+            {
+                if(!IS_FLAT(opts.sbarBgndAppearance) && SCROLLBAR_NONE!=opts.scrollbarType)
+                    drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, r, flags&Style_Horizontal, false,
+                                      opts.sbarBgndAppearance, WIDGET_SB_BGND);
+                else
+                    p->fillRect(br, itsBackgroundCols[ORIGINAL_SHADE]);
+            }
             else
                 drawLightBevel(p, br, cg, flags|Style_Raised,
                                round, getFill(flags, use), use, true, true, WIDGET_SB_BUTTON);
@@ -5106,6 +5112,18 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 #endif
 
             p->setClipRegion(QRegion(s2)+QRegion(addpage));
+            if(opts.flatSbarButtons && !IS_FLAT(opts.sbarBgndAppearance) && SCROLLBAR_NONE!=opts.scrollbarType && QTC_ROUNDED)
+            {
+                QRect start(sbRect.x(), sbRect.y(), horiz ? 6 : sbRect.width(), horiz ? sbRect.height() : 6),
+                      end(horiz ? sbRect.x()+sbRect.width()-7 : sbRect.x(),
+                          horiz ? sbRect.y() :  sbRect.y()+sbRect.height()-7,
+                          horiz ? 6 : sbRect.width(), horiz ? sbRect.height() : 6);
+
+                drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, start, flags&Style_Horizontal, false,
+                                  opts.sbarBgndAppearance, WIDGET_SB_BGND);
+                drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, end, flags&Style_Horizontal, false,
+                                  opts.sbarBgndAppearance, WIDGET_SB_BGND);
+            }
             sflags&=~(Style_Down|Style_On|Style_Sunken);
             drawLightBevel(p, sbRect, cg, sflags/*|Style_Down*/,
 #ifndef QTC_SIMPLE_SCROLLBARS

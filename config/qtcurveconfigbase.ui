@@ -464,44 +464,6 @@
                             <string>Fill used part of groove</string>
                         </property>
                     </widget>
-                    <spacer row="7" column="1">
-                        <property name="name">
-                            <cstring>spacer13</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>210</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QComboBox" row="6" column="1">
-                        <property name="name">
-                            <cstring>sliderThumbs</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="6" column="0">
-                        <property name="name">
-                            <cstring>textLabel8_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Scrollbar thumbs:</string>
-                        </property>
-                    </widget>
                     <widget class="QLabel" row="5" column="0">
                         <property name="name">
                             <cstring>textLabel8</cstring>
@@ -551,6 +513,65 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="text">
                             <string>Groove appearance:</string>
+                        </property>
+                    </widget>
+                    <spacer row="8" column="1">
+                        <property name="name">
+                            <cstring>spacer13</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>249</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLabel" row="7" column="0">
+                        <property name="name">
+                            <cstring>textLabel8_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Scrollbar thumbs:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="7" column="1">
+                        <property name="name">
+                            <cstring>sliderThumbs</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="6" column="1">
+                        <property name="name">
+                            <cstring>sbarBgndAppearance</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="6" column="0">
+                        <property name="name">
+                            <cstring>textLabel8_2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Background</string>
                         </property>
                     </widget>
                 </grid>
@@ -2197,6 +2218,12 @@ None - no buttons, only the slider</string>
         <receiver>groupBoxLine</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>flatSbarButtons</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>sbarBgndAppearance</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>stackList</tabstop>
@@ -2222,6 +2249,7 @@ None - no buttons, only the slider</string>
     <tabstop>grooveAppearance</tabstop>
     <tabstop>scrollbarType</tabstop>
     <tabstop>flatSbarButtons</tabstop>
+    <tabstop>sbarBgndAppearance</tabstop>
     <tabstop>sliderThumbs</tabstop>
     <tabstop>progressAppearance</tabstop>
     <tabstop>stripedProgress</tabstop>
