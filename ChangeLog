@@ -17,6 +17,8 @@
     actually used.
 11. Better handling of 'full centered' titlebar texts when
     window size is small.
+12. Fix scrolbar sliders appearing rounded when round=none, sliders
+    are shaded, and flat scrollbar buttons.
 
 0.62.7
 ------

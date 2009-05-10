@@ -5093,7 +5093,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             // Draw trough...
             const QColor *trough(itsBackgroundCols); // backgroundColors(cg));
-            bool  noButtons(SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons);
+            bool  noButtons((SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons) && QTC_ROUNDED);
             QRect s2(subpage), a2(addpage);
 
 #ifndef QTC_SIMPLE_SCROLLBARS
