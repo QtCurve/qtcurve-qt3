@@ -6136,7 +6136,7 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QC
         bool  reverse=QApplication::reverseLayout();
         int   roundOffet=QTC_ROUNDED ? 1 : 0;
         QRect main(r.x()+(reverse ? 1+MENUITEM_FADE_SIZE : roundOffet+1), r.y()+roundOffet+1,
-                   r.width()-(1+MENUITEM_FADE_SIZE), r.height()-(3+roundOffet)),
+                   r.width()-(1+MENUITEM_FADE_SIZE), r.height()-(2+(roundOffet*2))),
               fade(reverse ? r.x()+1 : r.width()-MENUITEM_FADE_SIZE, r.y()+1, MENUITEM_FADE_SIZE, r.height()-2);
 
         p->fillRect(main, cols[fill]);
