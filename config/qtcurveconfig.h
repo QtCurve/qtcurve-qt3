@@ -98,6 +98,7 @@ class QtCurveConfig : public QtCurveConfigBase
     void customMenuTextColorChanged();
     void stripedProgressChanged();
     void activeTabAppearanceChanged();
+    void shadingChanged();
     void passwordCharClicked();
 
     void changeStack();

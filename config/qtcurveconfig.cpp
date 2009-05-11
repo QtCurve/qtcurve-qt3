@@ -448,6 +448,7 @@ static void insertShadingEntries(QComboBox *combo)
     combo->insertItem(i18n("Simple"));
     combo->insertItem(i18n("Use HSL color space"));
     combo->insertItem(i18n("Use HSV color space"));
+    combo->insertItem(i18n("Use HCY color space"));
 }
 
 static void insertStripeEntries(QComboBox *combo)
@@ -501,6 +502,7 @@ static void insertAlignEntries(QComboBox *combo)
 QtCurveConfig::QtCurveConfig(QWidget *parent)
              : QtCurveConfigBase(parent),
                exportDialog(NULL),
+               gradPreview(NULL),
                lastCategory(NULL)
 {
     titleLabel->setText("QtCurve " VERSION " - (C) Craig Drummond, 2003-2009");
@@ -618,7 +620,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(shadeMenubars, SIGNAL(activated(int)), SLOT(shadeMenubarsChanged()));
     connect(highlightFactor, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(scrollbarType, SIGNAL(activated(int)), SLOT(updateChanged()));
-    connect(shading, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(shading, SIGNAL(activated(int)), SLOT(shadingChanged()));
     connect(gtkScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(squareScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(highlightScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -800,6 +802,14 @@ void QtCurveConfig::activeTabAppearanceChanged()
         colorSelTab->setChecked(false);
     colorSelTab->setEnabled(!disableCol);
     updateChanged();
+}
+
+void QtCurveConfig::shadingChanged()
+{
+    ::shading=(EShading)shading->currentItem();
+    updateChanged();
+    if(gradPreview)
+        gradPreview->repaint();
 }
 
 void QtCurveConfig::passwordCharClicked()
