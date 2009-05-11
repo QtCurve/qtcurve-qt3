@@ -2684,12 +2684,13 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     bool         sunken(flags&Style_Down || flags&Style_Sunken);
                     int          offset(sunken ? 5 : 4),
                                  etchOffset(QTC_DO_EFFECT ? 1 : 0);
+                    const QColor *cols(itsMouseOverCols ? itsMouseOverCols : itsHighlightCols);
 
                     points.setPoints(3, r.x()+offset+etchOffset, r.y()+offset+etchOffset, r.x()+offset+6+etchOffset, r.y()+offset+etchOffset,
                                         r.x()+offset+etchOffset, r.y()+offset+6+etchOffset);
 
-                    p->setBrush(itsMouseOverCols[sunken ? 0 : 4]);
-                    p->setPen(itsMouseOverCols[sunken ? 0 : 4]);
+                    p->setBrush(cols[sunken ? 0 : 4]);
+                    p->setPen(cols[sunken ? 0 : 4]);
                     p->drawPolygon(points);
                     break;
                 }
