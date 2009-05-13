@@ -347,6 +347,12 @@ static bool isKhtmlFormWidget(const QWidget *widget)
     return true;
 }
 
+static void setRgb(QColor *col, const QStringList &rgb)
+{
+    if(3==rgb.size())
+        *col=QColor(rgb[0].toInt(), rgb[1].toInt(), rgb[2].toInt());
+}
+
 struct KDESettings
 {
     KDESettings()
@@ -354,9 +360,9 @@ struct KDESettings
         inactiveHighlight=false;
     }
 
-    boolean inactiveHighlight;
-    QColor  hover,
-            focus;
+    bool   inactiveHighlight;
+    QColor hover,
+           focus;
 };
 
 static KDESettings kdeSettings;
@@ -372,6 +378,8 @@ static bool readKdeGlobals()
 
     QFile  f(kdeHome(true)+"/share/config/kdeglobals");
     QColor highlight(QApplication::palette().active().highlight());
+    bool   inactiveEnabled(false),
+           changeSelectionColor(false);
 
     kdeSettings.hover=kdeSettings.focus=highlight;
     if(f.open(IO_ReadOnly))
@@ -380,9 +388,7 @@ static bool readKdeGlobals()
         bool        inPal(false),
                     inInactive(false),
                     donePal(false),
-                    doneInactive(false),
-                    inactiveEnabled(false),
-                    changeSelectionColor(false);
+                    doneInactive(false);
 
         while (!in.atEnd() && (!donePal || !doneInactive))
         {
@@ -558,12 +564,6 @@ static QString createKey(QRgb color, EPixmap p)
     QTextOStream(&key) << 'P' << color << p;
 
     return key;
-}
-
-static void setRgb(QColor *col, const QStringList &rgb)
-{
-    if(3==rgb.size())
-        *col=QColor(rgb[0].toInt(), rgb[1].toInt(), rgb[2].toInt());
 }
 
 #ifdef SET_MDI_WINDOW_BUTTON_POSITIONS
@@ -985,7 +985,7 @@ void QtCurveStyle::polish(QPalette &pal)
     if(newDefBtn)
         if(IND_TINT==opts.defBtnIndicator)
             shadeColors(tint(itsButtonCols[ORIGINAL_SHADE],
-                        itsHighlightCols[ORIGINAL_SHADE]), itsDefBtnCols);
+                        itsHighlightCols[ORIGINAL_SHADE], QTC_DEF_BNT_TINT), itsDefBtnCols);
         else if(IND_GLOW!=opts.defBtnIndicator)
             shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
                         itsButtonCols[ORIGINAL_SHADE]), itsDefBtnCols);
