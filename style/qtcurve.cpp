@@ -312,20 +312,6 @@ static bool kickerIsTrans()
 }
 #endif
 
-inline QColor midColor(const QColor &a, const QColor &b, double factor=1.0)
-{
-    return QColor((a.red()+limit(b.red()*factor))>>1, 
-                  (a.green()+limit(b.green()*factor))>>1, 
-                  (a.blue()+limit(b.blue()*factor))>>1);
-}
-
-inline QColor tint(const QColor &a, const QColor &b, double factor=0.2)
-{
-    return QColor((int)((a.red()+(factor*b.red()))/(1+factor)),
-                  (int)((a.green()+(factor*b.green()))/(1+factor)),
-                  (int)((a.blue()+(factor*b.blue()))/(1+factor)));
-}
-
 static bool isKhtmlWidget(const QWidget *w, int level=1)
 {
     return w && ((w->name() && 0==strcmp(w->name(), "__khtml")) ||
@@ -358,6 +344,77 @@ static bool isKhtmlFormWidget(const QWidget *widget)
         qstrcmp(potentialKHTML->className(), "KHTMLView"))
         return false;
 
+    return true;
+}
+
+struct KDESettings
+{
+    KDESettings()
+    {
+        inactiveHighlight=false;
+    }
+
+    boolean inactiveHighlight;
+    QColor  hover,
+            focus;
+};
+
+static KDESettings kdeSettings;
+static bool readKdeGlobals()
+{
+    static int lastCheck=0;
+
+    int now=time(NULL);
+
+    // Dont keep on reading kdeglobals file - only read if its been at least 2 seconds since the last time...
+    if(abs(now-lastCheck)<3)
+        return false;
+
+    QFile  f(kdeHome(true)+"/share/config/kdeglobals");
+    QColor highlight(QApplication::palette().active().highlight());
+
+    kdeSettings.hover=kdeSettings.focus=highlight;
+    if(f.open(IO_ReadOnly))
+    {
+        QTextStream in(&f);
+        bool        inPal(false),
+                    inInactive(false),
+                    donePal(false),
+                    doneInactive(false),
+                    inactiveEnabled(false),
+                    changeSelectionColor(false);
+
+        while (!in.atEnd() && (!donePal || !doneInactive))
+        {
+            QString line(in.readLine());
+
+            if(inPal)
+            {
+                if(0==line.find("DecorationFocus=", false))
+                    setRgb(&kdeSettings.focus, QStringList::split(",", line.mid(16)));
+                else if(0==line.find("DecorationHover=", false))
+                    setRgb(&kdeSettings.hover, QStringList::split(",", line.mid(16)));
+                else if (-1!=line.find('['))
+                    donePal=true;
+            }
+            if(inInactive)
+            {
+                if(0==line.find("ChangeSelectionColor=", false))
+                    changeSelectionColor=line.find("=true");
+                else if(0==line.find("Enable=", false))
+                    inactiveEnabled=line.find("=true");
+                else if (-1!=line.find('['))
+                    doneInactive=true;
+            }
+            else if(0==line.find("[Colors:Button]", false))
+                inPal=true;
+            else if(0==line.find("[ColorEffects:Inactive]", false))
+                inInactive=true;
+        }
+        f.close();
+    }
+
+    kdeSettings.inactiveHighlight=changeSelectionColor && inactiveEnabled;
     return true;
 }
 
@@ -685,7 +742,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     {
         itsDefBtnCols=new QColor [TOTAL_SHADES+1];
         shadeColors(tint(itsButtonCols[ORIGINAL_SHADE],
-                         itsHighlightCols[ORIGINAL_SHADE]), itsDefBtnCols);
+                         itsHighlightCols[ORIGINAL_SHADE], QTC_DEF_BNT_TINT), itsDefBtnCols);
     }
     else
     {
@@ -850,7 +907,9 @@ void QtCurveStyle::polish(QPalette &pal)
     int       contrast(settings.readNumEntry("/Qt/KDE/contrast", 7));
     bool      newContrast(false);
 
-    if(!opts.inactiveHighlight)// Read in Qt3 palette... Required for the inactive settings...
+    readKdeGlobals();
+
+    if(!kdeSettings.inactiveHighlight)// Read in Qt3 palette... Required for the inactive settings...
     {
         QStringList active(settings.readListEntry("/Qt/Palette/active")),
                     inactive(settings.readListEntry("/Qt/Palette/inactive"));
@@ -884,12 +943,13 @@ void QtCurveStyle::polish(QPalette &pal)
         newContrast=true;
     }
 
-    if(opts.inactiveHighlight)
+    if(kdeSettings.inactiveHighlight)
     {
         pal.setColor(QPalette::Inactive, QColorGroup::Highlight,
-                     midColor(pal.color(QPalette::Active, QColorGroup::Background),
-                              pal.color(QPalette::Active, QColorGroup::Highlight), INACTIVE_HIGHLIGHT_FACTOR));
-        pal.setColor(QPalette::Inactive, QColorGroup::HighlightedText, pal.color(QPalette::Active, QColorGroup::Foreground));
+                     tint(QApplication::palette().active().background(),
+                          QApplication::palette().active().highlight(), 0.4));
+        // KDE4 does not set text colour :-(
+        //pal.setColor(QPalette::Inactive, QColorGroup::HighlightedText, pal.color(QPalette::Active, QColorGroup::Foreground));
     }
 
     bool newMenu(newContrast ||
@@ -2026,7 +2086,7 @@ void QtCurveStyle::drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, 
         QColor col((def && itsDefBtnCols) || !itsMouseOverCols
                         ? itsDefBtnCols[QTC_GLOW_DEFBTN] : itsMouseOverCols[QTC_GLOW_MO]);
 
-        col=midColor(cg.background(), col, 1.5-QTC_GLOW_ALPHA(defShade));
+        col=midColorF(cg.background(), col, 1.5-QTC_GLOW_ALPHA(defShade));
         p->setPen(col);
         p->drawLine(r.x()+2, r.y()+r.height()-1, r.x()+r.width()-3, r.y()+r.height()-1);
         p->drawLine(r.x()+r.width()-1, r.y()+2, r.x()+r.width()-1, r.y()+r.height()-3);
@@ -3860,7 +3920,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 {
                     p->setPen(itsHighlightCols[0]);
                     p->drawLine(tr.left(), tr.top()+1, tr.right(), tr.top()+1);
-                    p->setPen(midColor(fill, itsHighlightCols[0], IS_FLAT(opts.activeTabAppearance) ? 1.0 : 1.2));
+                    p->setPen(midColor(fill, itsHighlightCols[0])); // , IS_FLAT(opts.activeTabAppearance) ? 1.0 : 1.2));
                     p->drawLine(tr.left(), tr.top()+2, tr.right(), tr.top()+2);
 
                     p->setClipRect(QRect(tr.x(), tr.y(), tr.width(), 3), QPainter::CoordPainter);
@@ -6913,50 +6973,16 @@ void QtCurveStyle::setMenuColors(const QColorGroup &cg)
 
 void QtCurveStyle::setDecorationColors()
 {
-    static int lastCheck=0;
-
-    int now=time(NULL);
-
-    // Dont keep on reading kdeglobals file - only read if its been at least 2 seconds since the last time...
-    if(abs(now-lastCheck)<3)
+    if(!readKdeGlobals())
         return;
-
-    QFile  f(kdeHome(true)+"/share/config/kdeglobals");
-    QColor highlight(QApplication::palette().active().highlight()),
-           hover(highlight),
-           focus(highlight);
-
-    if(f.open(IO_ReadOnly))
-    {
-        QTextStream in(&f);
-        bool        inPal(false);
-
-        while (!in.atEnd())
-        {
-            QString line(in.readLine());
-
-            if(inPal)
-            {
-                if(0==line.find("DecorationFocus=", false))
-                    setRgb(&focus, QStringList::split(",", line.mid(16)));
-                else if(0==line.find("DecorationHover=", false))
-                    setRgb(&hover, QStringList::split(",", line.mid(16)));
-                else if (-1!=line.find('['))
-                    break;
-            }
-            else if(0==line.find("[Colors:Button]", false))
-                inPal=true;
-        }
-        f.close();
-    }
 
     if(opts.coloredMouseOver)
     {
         if(!itsMouseOverCols)
             itsMouseOverCols=new QColor [TOTAL_SHADES+1];
-        shadeColors(hover, itsMouseOverCols);
+        shadeColors(kdeSettings.hover, itsMouseOverCols);
     }
-    shadeColors(focus, itsFocusCols);
+    shadeColors(kdeSettings.focus, itsFocusCols);
 }
 
 const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) const

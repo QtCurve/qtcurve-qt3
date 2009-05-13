@@ -1656,17 +1656,6 @@ None - no buttons, only the slider</string>
                             <string>Character to use for password entries:</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
-                        <property name="name">
-                            <cstring>inactiveHighlight</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Use blended background/highlight color for highlight of inactive elements</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>Selecting this option will cause the highlight colour of inactive items (e.g. those in inactive windows) to be drawn using a blen of the background and highlight colors.</string>
-                        </property>
-                    </widget>
                     <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>fixParentlessDialogs</cstring>
@@ -2309,7 +2298,6 @@ None - no buttons, only the slider</string>
     <tabstop>gtkButtonOrder</tabstop>
     <tabstop>mapKdeIcons</tabstop>
     <tabstop>fixParentlessDialogs</tabstop>
-    <tabstop>inactiveHighlight</tabstop>
     <tabstop>passwordChar</tabstop>
     <tabstop>gradCombo</tabstop>
     <tabstop>gradStops</tabstop>
