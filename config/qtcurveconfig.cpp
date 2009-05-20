@@ -527,6 +527,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(selectionAppearance, true, false);
     insertAppearanceEntries(menuStripeAppearance, true, false);
     insertAppearanceEntries(sbarBgndAppearance);
+    insertAppearanceEntries(sliderFill);
     insertLineEntries(handles, true);
     insertLineEntries(sliderThumbs, false);
     insertLineEntries(toolbarSeparators, false);
@@ -628,6 +629,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(flatSbarButtons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(titlebarBorder, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(sbarBgndAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(sliderFill, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(gtkComboMenus, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gtkButtonOrder, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(mapKdeIcons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -1307,6 +1309,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.flatSbarButtons=flatSbarButtons->isChecked();
     opts.titlebarBorder=titlebarBorder->isChecked();
     opts.sbarBgndAppearance=(EAppearance)sbarBgndAppearance->currentItem();
+    opts.sliderFill=(EAppearance)sliderFill->currentItem();
     opts.gtkComboMenus=gtkComboMenus->isChecked();
     opts.gtkButtonOrder=gtkButtonOrder->isChecked();
     opts.mapKdeIcons=mapKdeIcons->isChecked();
@@ -1420,6 +1423,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     flatSbarButtons->setChecked(opts.flatSbarButtons);
     titlebarBorder->setChecked(opts.titlebarBorder);
     sbarBgndAppearance->setCurrentItem(opts.sbarBgndAppearance);
+    sliderFill->setCurrentItem(opts.sliderFill);
     gtkComboMenus->setChecked(opts.gtkComboMenus);
     gtkButtonOrder->setChecked(opts.gtkButtonOrder);
     mapKdeIcons->setChecked(opts.mapKdeIcons);
@@ -1507,6 +1511,7 @@ bool QtCurveConfig::settingsChanged()
          flatSbarButtons->isChecked()!=currentStyle.flatSbarButtons ||
          titlebarBorder->isChecked()!=currentStyle.titlebarBorder ||
          sbarBgndAppearance->currentItem()!=currentStyle.sbarBgndAppearance ||
+         sliderFill->currentItem()!=currentStyle.sliderFill ||
          gtkComboMenus->isChecked()!=currentStyle.gtkComboMenus ||
          gtkButtonOrder->isChecked()!=currentStyle.gtkButtonOrder ||
          mapKdeIcons->isChecked()!=currentStyle.mapKdeIcons ||

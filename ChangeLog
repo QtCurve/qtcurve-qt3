@@ -18,14 +18,15 @@
 12. Use tint and mix color routines from KDE4's KColorUtils.
 13. Remove QtCurve's 'inactiveHighlight' option, and use KDE4s setting
     instead.
-14. Update gradient preview when change colour space.
-15. Remove 'Custom sunken gradient' setting, as this was not
+14. Add option to specify appearance setting of filler part of sliders.
+15. Update gradient preview when change colour space.
+16. Remove 'Custom sunken gradient' setting, as this was not
     actually used.
-16. Better handling of 'full centered' titlebar texts when
+17. Better handling of 'full centered' titlebar texts when
     window size is small.
-17. Fix scrolbar sliders appearing rounded when round=none, sliders
+18. Fix scrolbar sliders appearing rounded when round=none, sliders
     are shaded, and flat scrollbar buttons.
-18. Fix faded menuitems when not rounding.
+19. Fix faded menuitems when not rounding.
 
 0.62.7
 ------

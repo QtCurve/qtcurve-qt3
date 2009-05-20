@@ -375,14 +375,6 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QComboBox" row="0" column="1">
-                        <property name="name">
-                            <cstring>sliderAppearance</cstring>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>This appearance setting affects both scrollbar sliders, and other sliders.</string>
-                        </property>
-                    </widget>
                     <widget class="QLabel" row="0" column="0">
                         <property name="name">
                             <cstring>textLabel5</cstring>
@@ -456,14 +448,6 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>fillSlider</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Fill used part of groove</string>
-                        </property>
-                    </widget>
                     <widget class="QLabel" row="5" column="0">
                         <property name="name">
                             <cstring>textLabel8</cstring>
@@ -572,6 +556,30 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="text">
                             <string>Background</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="3" column="0">
+                        <property name="name">
+                            <cstring>fillSlider</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Fill used part of groove:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="0" column="1">
+                        <property name="name">
+                            <cstring>sliderAppearance</cstring>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This appearance setting affects both scrollbar sliders, and other sliders.</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="3" column="1">
+                        <property name="name">
+                            <cstring>sliderFill</cstring>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This appearance setting affects both scrollbar sliders, and other sliders.</string>
                         </property>
                     </widget>
                 </grid>
@@ -2206,6 +2214,8 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>framelessGroupBoxes</sender>
@@ -2217,6 +2227,12 @@ None - no buttons, only the slider</string>
         <sender>flatSbarButtons</sender>
         <signal>toggled(bool)</signal>
         <receiver>sbarBgndAppearance</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>fillSlider</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>sliderFill</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
@@ -2241,6 +2257,7 @@ None - no buttons, only the slider</string>
     <tabstop>customSlidersColor</tabstop>
     <tabstop>sliderStyle</tabstop>
     <tabstop>fillSlider</tabstop>
+    <tabstop>sliderFill</tabstop>
     <tabstop>grooveAppearance</tabstop>
     <tabstop>scrollbarType</tabstop>
     <tabstop>flatSbarButtons</tabstop>
@@ -2326,20 +2343,12 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
