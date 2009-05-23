@@ -1094,17 +1094,22 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>16</width>
-                                <height>401</height>
+                                <width>20</width>
+                                <height>340</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="2" column="0">
+                    <widget class="QLabel" row="2" column="0">
                         <property name="name">
-                            <cstring>tabMouseOverTop</cstring>
+                            <cstring>textLabel1_14</cstring>
                         </property>
                         <property name="text">
-                            <string>Draw mouse-over highlight on top</string>
+                            <string>Mouse-over:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="2" column="1">
+                        <property name="name">
+                            <cstring>tabMouseOver</cstring>
                         </property>
                     </widget>
                 </grid>
@@ -2214,8 +2219,6 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>framelessGroupBoxes</sender>
@@ -2285,7 +2288,7 @@ None - no buttons, only the slider</string>
     <tabstop>highlightTab</tabstop>
     <tabstop>colorSelTab</tabstop>
     <tabstop>tabAppearance</tabstop>
-    <tabstop>tabMouseOverTop</tabstop>
+    <tabstop>tabMouseOver</tabstop>
     <tabstop>shadeCheckRadio</tabstop>
     <tabstop>customCheckRadioColor</tabstop>
     <tabstop>xCheck</tabstop>
@@ -2343,12 +2346,20 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>

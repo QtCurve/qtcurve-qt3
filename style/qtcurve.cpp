@@ -3809,7 +3809,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             const QTabBar *tb((const QTabBar *)widget);
             int           tabIndex(tb->indexOf(data.tab()->identifier())),
                           dark(APPEARANCE_FLAT==opts.appearance ? ORIGINAL_SHADE : QT_FRAME_DARK_SHADOW),
-                          moOffset(ROUNDED_NONE==opts.round || !opts.tabMouseOverTop ? 1 : opts.round);
+                          moOffset(ROUNDED_NONE==opts.round || TAB_MO_TOP!=opts.tabMouseOver ? 1 : opts.round);
             bool          cornerWidget(false),
                           bottomCornerWidget(false),
                           reverse(QApplication::reverseLayout()),
@@ -3821,7 +3821,9 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                           active(flags & Style_Selected),
                           itsHover(itsHoverTab && itsHoverTab->isEnabled() && data.tab()==itsHoverTab &&
                                           !(flags&Style_Selected) &&
-                                          tb->currentTab()!=tabIndex);
+                                          tb->currentTab()!=tabIndex),
+                          glowMo(!active && itsHover && opts.coloredMouseOver && TAB_MO_GLOW==opts.tabMouseOver);
+            int           sizeAdjust(!active && TAB_MO_GLOW==opts.tabMouseOver ? 1 : 0);
             const QColor  &fill(getTabFill(flags&Style_Selected, itsHover, itsBackgroundCols));
 
             if(reverse)
@@ -3855,24 +3857,34 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             if(!firstTab && top && (APP_TORA==itsThemedApp || (APP_OPENOFFICE==itsThemedApp && !active)))
                 tr.addCoords(-1, 0, 0, 0);
 
-            p->setClipRect(QRect(tr.x(), top ? tr.y() : tr.y()+2, tr.width(), top ? tr.height()-2 : tr.height()),
+            QRect glowTr(tr);
+
+            if(!active && TAB_MO_GLOW==opts.tabMouseOver)
+                glowTr.addCoords(sizeAdjust, 0, -sizeAdjust, 0);
+
+            p->setClipRect(QRect(tr.x(), top ? tr.y()-sizeAdjust : tr.y()+2, tr.width(), top ? tr.height()-2+(2*sizeAdjust) : tr.height()),
                            QPainter::CoordPainter);
 
             if(APPEARANCE_INVERTED==opts.appearance && active)
-                p->fillRect(tr, cg.background());
+                p->fillRect(glowTr, cg.background());
             else
-                drawBevelGradient(fill, p, tr, true,
+                drawBevelGradient(fill, p, glowTr, true,
                                   active, active ? QTC_SEL_TAB_APP : QTC_NORM_TAB_APP, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT);
 
-            drawBorder(cg.background(), p, tr, cg, flags|Style_Horizontal|Style_Enabled,
-                           active
+            drawBorder(cg.background(), p, glowTr, cg, flags|Style_Horizontal|Style_Enabled,
+                           active  || TAB_MO_GLOW==opts.tabMouseOver
                             ? (top ? ROUNDED_TOP : ROUNDED_BOTTOM)
                             : firstTab
                                 ? (top ? ROUNDED_TOPLEFT : ROUNDED_BOTTOMLEFT)
                                 : lastTab
                                     ? (top ? ROUNDED_TOPRIGHT : ROUNDED_BOTTOMRIGHT)
-                                    : ROUNDED_NONE, 0L, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT, true,
+                                    : ROUNDED_NONE, glowMo ? itsMouseOverCols : NULL, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT, true,
                        active && !opts.colorSelTab ? BORDER_RAISED : BORDER_FLAT, false);
+            if(glowMo)
+            {
+                glowTr.addCoords(-1, -1, 1, 1);
+                drawGlow(p, glowTr, cg, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT);
+            }
             p->setClipping(false);
 
             if(top)
@@ -3895,11 +3907,11 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                     p->drawLine(r.x(), r.y()+r.height()-2, r.x()+r.width()-1, r.y()+r.height()-2);
 
-                    if(opts.coloredMouseOver && itsHover)
+                    if(opts.coloredMouseOver && itsHover && TAB_MO_GLOW!=opts.tabMouseOver)
                         drawHighlight(p, QRect(tr.x()+(firstTab ? moOffset : 1),
-                                               tr.y()+(opts.tabMouseOverTop ? 0 : tr.height()-3),
+                                               tr.y()+(TAB_MO_TOP==opts.tabMouseOver ? 0 : tr.height()-3),
                                                tr.width()-(firstTab || lastTab ? moOffset : 1), 2),
-                                      cg, true, !opts.tabMouseOverTop);
+                                      cg, true, !TAB_MO_TOP==opts.tabMouseOver);
                 }
 
                 if(((!reverse && firstTab) || (lastTab && reverse)) && !cornerWidget)
@@ -3959,11 +3971,11 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                     p->drawLine(r.x(), r.y()+1, r.x()+r.width()-1, r.y()+1);
 
-                    if(opts.coloredMouseOver && itsHover)
+                    if(opts.coloredMouseOver && itsHover && TAB_MO_GLOW!=opts.tabMouseOver)
                         drawHighlight(p, QRect(tr.x()+(firstTab ? moOffset : 1),
-                                               tr.y()+(opts.tabMouseOverTop ? tr.height()-2 : 1),
+                                               tr.y()+(TAB_MO_TOP==opts.tabMouseOver ? tr.height()-2 : 1),
                                                tr.width()-(firstTab || lastTab ? moOffset : 1), 2),
-                                      cg, true, opts.tabMouseOverTop);
+                                      cg, true, TAB_MO_TOP==opts.tabMouseOver);
                 }
 
                 if(active && opts.highlightTab)
@@ -5871,7 +5883,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
         case PM_ExclusiveIndicatorHeight:
             return QTC_DO_EFFECT && widget && !isFormWidget(widget) ? QTC_RADIO_SIZE+2 : QTC_RADIO_SIZE;
         case PM_TabBarTabOverlap:
-            return 1;
+            return TAB_MO_GLOW==opts.tabMouseOver ? 0 : 1;
         case PM_ProgressBarChunkWidth:
             return PROGRESS_CHUNK_WIDTH*3.4;
         case PM_DockWindowSeparatorExtent:
