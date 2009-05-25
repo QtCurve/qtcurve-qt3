@@ -118,6 +118,8 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <X11/Xatom.h>
 #include <fixx11h.h>
 
+#define QTC_MO_ARROW(COL) (MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver && flags&Style_Enabled ? itsMouseOverCols[QT_STD_BORDER] : COL)
+
 static const int constMenuPixmapWidth=22;
 
 static QRect adjusted(const QRect r, int xp1, int yp1, int xp2, int yp2)
@@ -1897,9 +1899,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                                     (flags&QTC_CHECK_BUTTON || flags&QTC_TOGGLE_BUTTON || !sunken)),
                  plastikMouseOver(doColouredMouseOver && MO_PLASTIK==opts.coloredMouseOver),
                  colouredMouseOver(doColouredMouseOver &&
-                                       (MO_COLORED==opts.coloredMouseOver ||
-                                              (MO_GLOW==opts.coloredMouseOver &&
-                                              ((WIDGET_COMBO!=w && !ETCH_WIDGET(w) && WIDGET_SB_SLIDER!=w) || itsFormMode)))),
+                                       (MO_COLORED==opts.coloredMouseOver || (MO_GLOW==opts.coloredMouseOver && itsFormMode))),
                  doEtch(!itsFormMode && doBorder && ETCH_WIDGET(w) && !(flags&QTC_CHECK_BUTTON) &&
                         QTC_DO_EFFECT),
                  horiz(flags&Style_Horizontal);
@@ -2523,7 +2523,7 @@ void QtCurveStyle::drawArrow(QPainter *p, const QRect &r, const QColorGroup &cg,
                                 : cg.text()
                           : cg.mid());
 
-    ::drawArrow(p, r, col, pe, opts, small);
+    ::drawArrow(p, r, p->pen()==QPen::NoPen ? col : p->pen().color(), pe, opts, small);
 }
 
 void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &r,
@@ -2647,7 +2647,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             break;
         }
         case PE_HeaderArrow:
-            ::drawArrow(p, r, cg.buttonText(), flags&Style_Up ? PE_ArrowUp : PE_ArrowDown, opts, false);
+            ::drawArrow(p, r, QTC_MO_ARROW(cg.buttonText()), flags&Style_Up ? PE_ArrowUp : PE_ArrowDown, opts, false);
             break;
         case PE_ButtonBevel:
             flags|=Style_Enabled;
@@ -3405,7 +3405,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 drawLightBevel(p, br, cg, flags|Style_Raised,
                                round, getFill(flags, use), use, true, true, WIDGET_SB_BUTTON);
 
-            ::drawArrow(p, ar, cg.buttonText(), pe, opts, false);
+            ::drawArrow(p, ar, QTC_MO_ARROW(cg.buttonText()), pe, opts, false);
             break;
         }
         case PE_ScrollBarSlider:
@@ -3510,7 +3510,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(flags&Style_Sunken)
                     sr.addCoords(1, 1, 1, 1);
 
-                ::drawArrow(p, sr, cg.buttonText(), PE_SpinWidgetUp==pe ? PE_ArrowUp : PE_ArrowDown, opts, true);
+                ::drawArrow(p, sr, QTC_MO_ARROW(cg.buttonText()), PE_SpinWidgetUp==pe ? PE_ArrowUp : PE_ArrowDown, opts, true);
             }
             else
             {
@@ -3768,12 +3768,11 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                                 ar.y()+ar.height()-2);
                 }
             }
-
-            drawArrow(p, ar, cg, flags|Style_Enabled, flags&Style_On // Collapsed = On
+            ::drawArrow(p, ar, flags&Style_Enabled ? cg.mid() : cg.text(), flags&Style_On // Collapsed = On
                                             ?  QApplication::reverseLayout()
                                                  ? PE_ArrowLeft
                                                  : PE_ArrowRight
-                                            : PE_ArrowDown);
+                                            : PE_ArrowDown, opts);
             break;
         }
         case KPE_ListViewBranch:
@@ -4101,7 +4100,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 else
                 {
                     ::drawArrow(p, visualRect(QRect((x + w) - (dx + margin + arrowOffset), y, dx, h), r),
-                                cg.buttonText(), PE_ArrowDown, opts);
+                                QTC_MO_ARROW(cg.buttonText()), PE_ArrowDown, opts);
                     w-=(dx+arrowOffset);
                 }
             }
@@ -4144,7 +4143,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
                 if (cornArrow) //Draw over the icon
                     ::drawArrow(p, visualRect(QRect(x + w - (6+arrowOffset), y + h - (6+arrowOffset), 7, 7), r),
-                                cg.buttonText(), PE_ArrowDown, opts);
+                                QTC_MO_ARROW(cg.buttonText()), PE_ArrowDown, opts);
 
                 if(xo && iw)
                 {
@@ -4844,7 +4843,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             {
                 if(mflags &(Style_Down | Style_On | Style_Raised))
                     drawPrimitive(PE_ButtonDropDown, p, menuarea, cg, mflags, data);
-                ::drawArrow(p, menuarea, cg.buttonText(), PE_ArrowDown, opts, true);
+                ::drawArrow(p, menuarea, QTC_MO_ARROW(cg.buttonText()), PE_ArrowDown, opts, true);
             }
 
             if(toolbutton->hasFocus() && !toolbutton->focusProxy())
@@ -4918,7 +4917,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             {
                 if(sunken)
                     arrow.addCoords(1, 1, 1, 1);
-                ::drawArrow(p, arrow, cg.buttonText(), PE_ArrowDown, opts);
+                ::drawArrow(p, arrow, QTC_MO_ARROW(cg.buttonText()), PE_ArrowDown, opts);
             }
 
             if(controls&SC_ComboBoxEditField && field.isValid())
