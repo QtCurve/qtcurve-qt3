@@ -5197,12 +5197,21 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                   opts.sbarBgndAppearance, WIDGET_SB_BGND);
             }
             sflags&=~(Style_Down|Style_On|Style_Sunken);
+
+            if(opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons))
+                if(horiz)
+                    sbRect.addCoords(0, QTC_THIN_SBAR_MOD, 0, -QTC_THIN_SBAR_MOD);
+                else
+                    sbRect.addCoords(QTC_THIN_SBAR_MOD, 0, -QTC_THIN_SBAR_MOD, 0);
+
             drawLightBevel(p, sbRect, cg, sflags/*|Style_Down*/,
 #ifndef QTC_SIMPLE_SCROLLBARS
                            SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons ? ROUNDED_ALL :
 #endif
                            ROUNDED_NONE,
-                           trough[2], trough, true, true, WIDGET_TROUGH);
+                           trough[2], trough, true, true,
+                           opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons)
+                            ? WIDGET_SLIDER_TROUGH : WIDGET_TROUGH);
             p->setClipping(false);
 
             if(/*(controls&SC_ScrollBarSubLine) && */subline.isValid())

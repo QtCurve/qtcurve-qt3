@@ -582,6 +582,14 @@ None - no buttons, only the slider</string>
                             <string>This appearance setting affects both scrollbar sliders, and other sliders.</string>
                         </property>
                     </widget>
+                    <widget class="QCheckBox" row="4" column="2" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>thinSbarGroove</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Thin scrollbar groove</string>
+                        </property>
+                    </widget>
                 </grid>
             </widget>
             <widget class="QWidget">
@@ -2219,6 +2227,8 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>framelessGroupBoxes</sender>
@@ -2236,6 +2246,12 @@ None - no buttons, only the slider</string>
         <sender>fillSlider</sender>
         <signal>toggled(bool)</signal>
         <receiver>sliderFill</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>flatSbarButtons</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>thinSbarGroove</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
@@ -2262,6 +2278,7 @@ None - no buttons, only the slider</string>
     <tabstop>fillSlider</tabstop>
     <tabstop>sliderFill</tabstop>
     <tabstop>grooveAppearance</tabstop>
+    <tabstop>thinSbarGroove</tabstop>
     <tabstop>scrollbarType</tabstop>
     <tabstop>flatSbarButtons</tabstop>
     <tabstop>sbarBgndAppearance</tabstop>
@@ -2346,20 +2363,12 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
