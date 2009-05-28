@@ -2576,10 +2576,14 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                         isFirst = header->mapToIndex(header->sectionAt(r.x()+header->offset())) == 0;
                 }
                 else if(0==flags) // Header on popup menu?
-                {
+                {   QWidget      *widget(p && p->device() ? dynamic_cast<QWidget*>(p->device()) : 0L);
+                    bool         menuTitle(widget && 0==qstrcmp(widget->className(), "KPopupTitle"));
                     const QColor *use(buttonColors(cg));
-                    drawLightBevel(p, r, cg, flags|Style_Horizontal, ROUNDED_ALL,
-                                   getFill(flags, use), use);
+                    QRect        r2(r);
+                    
+                    if(menuTitle)
+                        r2.addCoords(2, 2, -2, -2);
+                    drawLightBevel(p, r2, cg, flags|Style_Horizontal, ROUNDED_ALL, getFill(flags, use), use);
                     break;
                 }
 

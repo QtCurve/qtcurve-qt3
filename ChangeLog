@@ -31,6 +31,7 @@
 21. Fix scrolbar sliders appearing rounded when round=none, sliders
     are shaded, and flat scrollbar buttons.
 22. Fix faded menuitems when not rounding.
+23. Make popup menu titles more KDE4-like.
 
 0.62.7
 ------
