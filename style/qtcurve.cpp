@@ -6932,7 +6932,7 @@ const QColor * QtCurveStyle::buttonColors(const QColorGroup &cg) const
 const QColor * QtCurveStyle::sliderColors(/*const QColorGroup &cg, */ SFlags flags) const
 {
     return (flags&Style_Enabled)
-                ? SHADE_NONE!=opts.shadeSliders //&& cg.button()==itsButtonCols[ORIGINAL_SHADE]
+                ? SHADE_NONE!=opts.shadeSliders && (!opts.colorSliderMouseOver || flags&Style_MouseOver)
                         ? itsSliderCols
                         : itsButtonCols // buttonColors(cg)
                 : itsBackgroundCols;
