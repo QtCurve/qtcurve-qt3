@@ -5200,6 +5200,9 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, end, flags&Style_Horizontal, false,
                                   opts.sbarBgndAppearance, WIDGET_SB_BGND);
             }
+            if(opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons) && IS_FLAT(opts.sbarBgndAppearance))
+                p->fillRect(sbRect, cg.background());
+                
             sflags&=~(Style_Down|Style_On|Style_Sunken);
 
             if(opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons))
@@ -5318,7 +5321,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                   slider.width()-5, slider.height()-5), cg, Style_Default);
 
 #ifndef QTC_SIMPLE_SCROLLBARS
-                if(noButtons && (!atMin || !atMax))
+                if(noButtons && (!atMin || !atMax) && !opts.thinSbarGroove)
                 {
                     p->setPen(backgroundColors(cg)[QT_STD_BORDER]);
 
