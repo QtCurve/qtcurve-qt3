@@ -118,7 +118,8 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <X11/Xatom.h>
 #include <fixx11h.h>
 
-#define QTC_MO_ARROW(COL) (MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver && flags&Style_Enabled ? itsMouseOverCols[QT_STD_BORDER] : COL)
+#define QTC_MO_ARROW_X(FLAGS, COL) (MO_GLOW==opts.coloredMouseOver && FLAGS&Style_MouseOver && FLAGS&Style_Enabled ? itsMouseOverCols[QT_STD_BORDER] : COL)
+#define QTC_MO_ARROW(COL)          QTC_MO_ARROW_X(flags, COL)
 
 static const int constMenuPixmapWidth=22;
 
@@ -4905,8 +4906,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(controls&SC_ComboBoxFrame && frame.isValid())
             {
-                if(editable && HOVER_CB_ARROW!=itsHover && fillFlags&Style_MouseOver)
-                    fillFlags-=Style_MouseOver;
+                if(editable && HOVER_CB_ARROW!=itsHover)
+                    fillFlags&=~Style_MouseOver;
 
 //                 if(opts.coloredMouseOver && fillFlags&Style_MouseOver && editable && !sunken)
 //                     frame.addCoords(reverse ? 0 : 1, 0, reverse ? 1 : 0, 0);
@@ -4919,9 +4920,12 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(controls&SC_ComboBoxArrow && arrow.isValid())
             {
+                SFlags arrowFlags(flags);
                 if(sunken)
                     arrow.addCoords(1, 1, 1, 1);
-                ::drawArrow(p, arrow, QTC_MO_ARROW(cg.buttonText()), PE_ArrowDown, opts);
+                if(editable && HOVER_CB_ARROW!=itsHover)
+                    arrowFlags&=~Style_MouseOver;
+                ::drawArrow(p, arrow, QTC_MO_ARROW_X(arrowFlags, cg.buttonText()), PE_ArrowDown, opts);
             }
 
             if(controls&SC_ComboBoxEditField && field.isValid())
