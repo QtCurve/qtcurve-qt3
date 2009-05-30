@@ -287,20 +287,23 @@ void CGradientPreview::paintEvent(QPaintEvent *)
         bool                             horiz(true);
         int                              lastPos(horiz ? r.y() : r.x()),
                                          size(horiz ? r.height() : r.width());
-
+        Options                          opts;
+        
+        opts.shading=cfg->currentShading();
+            
         for(int i=0; it!=end; ++it, ++i)
         {
             if(0==i)
             {
                 lastPos=(int)(((*it).pos*size)+0.5);
-                shade(&(cfg->current()), color, &bot, (*it).val);
+                shade(&opts, color, &bot, (*it).val);
             }
             else
             {
                 QColor top(bot);
                 int    pos((int)(((*it).pos*size)+0.5));
 
-                shade(&(cfg->current()), color, &bot, (*it).val);
+                shade(&opts, color, &bot, (*it).val);
                 drawGradient(top, bot, true, &p,
                              horiz
                                 ? QRect(r.x(), lastPos, r.width(), pos-lastPos)

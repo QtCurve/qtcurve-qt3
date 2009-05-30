@@ -25,6 +25,7 @@
 #define QTC_CONFIG_DIALOG
 
 #include <qtcurveconfigbase.h>
+#include <qcombobox.h>
 #include <qmap.h>
 #include "common.h"
 
@@ -68,7 +69,7 @@ class QtCurveConfig : public QtCurveConfigBase
     QtCurveConfig(QWidget *parent);
     virtual ~QtCurveConfig();
 
-    const Options & current() const { return currentStyle; }
+    EShading currentShading() const { return (EShading)shading->currentItem(); }
 
     signals:
 
