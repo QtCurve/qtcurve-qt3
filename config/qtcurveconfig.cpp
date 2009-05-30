@@ -256,8 +256,9 @@ class CGradItem : public QListViewItem
     double prev;
 };
 
-CGradientPreview::CGradientPreview(QWidget *p)
-                : QWidget(p)
+CGradientPreview::CGradientPreview(QtCurveConfig *c, QWidget *p)
+                : QWidget(p),
+                  cfg(c)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
 }
@@ -292,14 +293,14 @@ void CGradientPreview::paintEvent(QPaintEvent *)
             if(0==i)
             {
                 lastPos=(int)(((*it).pos*size)+0.5);
-                shade(color, &bot, (*it).val);
+                shade(&(cfg->current()), color, &bot, (*it).val);
             }
             else
             {
                 QColor top(bot);
                 int    pos((int)(((*it).pos*size)+0.5));
 
-                shade(color, &bot, (*it).val);
+                shade(&(cfg->current()), color, &bot, (*it).val);
                 drawGradient(top, bot, true, &p,
                              horiz
                                 ? QRect(r.x(), lastPos, r.width(), pos-lastPos)
@@ -817,7 +818,6 @@ void QtCurveConfig::activeTabAppearanceChanged()
 
 void QtCurveConfig::shadingChanged()
 {
-    ::shading=(EShading)shading->currentItem();
     updateChanged();
     if(gradPreview)
         gradPreview->repaint();
@@ -1067,7 +1067,7 @@ void QtCurveConfig::setupGradientsTab()
 
     gradCombo->setCurrentItem(APPEARANCE_CUSTOM1);
 
-    gradPreview=new CGradientPreview(previewWidgetContainer);
+    gradPreview=new CGradientPreview(this, previewWidgetContainer);
     QVBoxLayout *layout=new QVBoxLayout(previewWidgetContainer);
     layout->addWidget(gradPreview);
     layout->setMargin(0);

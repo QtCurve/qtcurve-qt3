@@ -427,14 +427,6 @@ static bool readKdeGlobals()
     return true;
 }
 
-QColor shade(const QColor &a, double k)
-{
-    QColor mod;
-
-    shade(a, &mod, k);
-    return mod;
-}
-
 static void drawLines(QPainter *p, const QRect &r, bool horiz, int nLines, int offset,
                       const QColor *cols, int startOffset, int dark, ELine type)
 {
@@ -7461,6 +7453,19 @@ const QColor & QtCurveStyle::checkRadioCol(SFlags flags, const QColorGroup &cg) 
     return flags&Style_Enabled
                 ? itsCheckRadioCol
                 : cg.buttonText();
+}
+
+QColor QtCurveStyle::shade(const QColor &a, float k) const
+{
+    QColor mod;
+
+    ::shade(&opts, a, &mod, k);
+    return mod;
+}
+
+void QtCurveStyle::shade(const color &ca, color *cb, double k) const
+{
+    ::shade(&opts, ca, cb, k);
 }
 
 QPixmap * QtCurveStyle::getPixelPixmap(const QColor col) const
