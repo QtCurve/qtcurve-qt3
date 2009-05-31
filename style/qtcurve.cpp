@@ -3868,7 +3868,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                   active, active ? QTC_SEL_TAB_APP : QTC_NORM_TAB_APP, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT);
 
             drawBorder(cg.background(), p, glowTr, cg, flags|Style_Horizontal|Style_Enabled,
-                           active  || TAB_MO_GLOW==opts.tabMouseOver
+                           active  || TAB_MO_GLOW==opts.tabMouseOver || opts.roundAllTabs
                             ? (top ? ROUNDED_TOP : ROUNDED_BOTTOM)
                             : firstTab
                                 ? (top ? ROUNDED_TOPLEFT : ROUNDED_BOTTOMLEFT)
