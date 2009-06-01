@@ -757,7 +757,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
                                          QTC_TO_FACTOR(opts.lighterPopupMenuBgnd));
 
-    if ((SHADE_CUSTOM==opts.shadeMenubars || SHADE_BLEND_SELECTED==opts.shadeMenubars) &&
+    if ((SHADE_CUSTOM==opts.shadeMenubars || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars) &&
         "soffice.bin"==QString(qApp->argv()[0]) && TOO_DARK(SHADE_CUSTOM==opts.shadeMenubars
                                                        ? opts.customMenubarsColor
                                                        : itsHighlightCols[ORIGINAL_SHADE]))
@@ -1173,7 +1173,7 @@ void QtCurveStyle::polish(QWidget *widget)
         if(SHADE_NONE!=opts.shadeMenubars)
             widget->installEventFilter(this);
 
-        if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars ||
+        if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
            (SHADE_CUSTOM==opts.shadeMenubars &&TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
         {
             QPalette    pal(widget->palette());
@@ -1421,7 +1421,7 @@ void QtCurveStyle::unPolish(QWidget *widget)
         if(SHADE_NONE!=opts.shadeMenubars)
             widget->removeEventFilter(this);
 
-        if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars ||
+        if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
            (SHADE_CUSTOM==opts.shadeMenubars &&TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
             widget->setPalette(QApplication::palette());
     }
@@ -1672,7 +1672,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
 
     if(::qt_cast<QMenuBar *>(object))
     {
-        if( (opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars ||
+        if( (opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
              SHADE_CUSTOM==opts.shadeMenubars) && QEvent::Paint==event->type())
         {
             const QColor &col(((QWidget *)object)->palette().active().color(QColorGroup::Foreground));
@@ -1680,7 +1680,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
             // If we're relouring the menubar text, check to see if menubar palette has changed, if so set back to
             // our values. This fixes opera - which seems to change the widgets palette after it is polished.
             if((opts.customMenuTextColor && col!=opts.customMenuNormTextColor) ||
-                    ( (SHADE_BLEND_SELECTED==opts.shadeMenubars ||
+                    ( (SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
                         (SHADE_CUSTOM==opts.shadeMenubars && TOO_DARK(itsMenubarCols[ORIGINAL_SHADE]))) &&
                         col!=QApplication::palette().active().highlightedText()))
             {
@@ -6256,7 +6256,7 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QC
     else if(mbi || opts.borderMenuitems)
     {
         int  flags(Style_Raised);
-        bool stdColor(!mbi || SHADE_BLEND_SELECTED!=opts.shadeMenubars);
+        bool stdColor(!mbi || (SHADE_BLEND_SELECTED!=opts.shadeMenubars && SHADE_SELECTED!=opts.shadeMenubars));
 
         flags|=Style_Horizontal;
 
@@ -6980,7 +6980,10 @@ void QtCurveStyle::setMenuColors(const QColorGroup &cg)
         case SHADE_NONE:
             memcpy(itsMenubarCols, itsBackgroundCols, sizeof(QColor)*(TOTAL_SHADES+1));
             break;
-        case SHADE_BLEND_SELECTED: // For menubars we dont actually blend...
+        case SHADE_BLEND_SELECTED:
+            shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE], itsBackgroundCols[ORIGINAL_SHADE]), itsMenubarCols);
+            break;
+        case SHADE_SELECTED:
             shadeColors(IS_GLASS(opts.appearance)
                             ? shade(itsHighlightCols[ORIGINAL_SHADE], MENUBAR_GLASS_SELECTED_DARK_FACTOR)
                             : itsHighlightCols[ORIGINAL_SHADE],
@@ -7438,9 +7441,25 @@ const QColor & QtCurveStyle::getTabFill(bool current, bool highlight, const QCol
 
 const QColor & QtCurveStyle::menuStripeCol() const
 {
-    return opts.lighterPopupMenuBgnd<0
+    switch(opts.menuStripe)
+    {
+        default:
+        case SHADE_NONE:
+            return itsBackgroundCols[ORIGINAL_SHADE];
+        case SHADE_CUSTOM:
+            return opts.customMenuStripeColor;
+        case SHADE_BLEND_SELECTED:
+            return midColor(itsHighlightCols[ORIGINAL_SHADE],
+                            opts.lighterPopupMenuBgnd<0
+                                ? itsLighterPopupMenuBgndCol
+                                : itsBackgroundCols[ORIGINAL_SHADE]);
+        case SHADE_SELECTED:
+            return itsHighlightCols[QTC_MENU_STRIPE_SHADE];
+        case SHADE_DARKEN:
+            return opts.lighterPopupMenuBgnd<0
                 ? itsLighterPopupMenuBgndCol
                 : itsBackgroundCols[QTC_MENU_STRIPE_SHADE];
+    }
 }
 
 const QColor & QtCurveStyle::checkRadioCol(SFlags flags, const QColorGroup &cg) const

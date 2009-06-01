@@ -338,25 +338,39 @@ static int toInt(const QString &str)
     return str.length()>1 ? str[0].unicode() : 0;
 }
 
-static void insertShadeEntries(QComboBox *combo, bool withDarken, bool checkRadio=false)
+enum ShadeWidget
 {
-    combo->insertItem(checkRadio ? i18n("Text")
-                                 : withDarken ? i18n("Background")
-                                              : i18n("Button"));
-    combo->insertItem(i18n("Custom:"));
+    SW_MENUBAR,
+    SW_SLIDER,
+    SW_CHECK_RADIO,
+    SW_MENU_STRIPE
+};
 
-    if(checkRadio) // For check/radio, we dont blend, and dont allow darken
-        combo->insertItem(i18n("Selected background"));
-    else if(withDarken)
+static void insertShadeEntries(QComboBox *combo, ShadeWidget sw)
+{
+    switch(sw)
     {
-         // For menubars we dont actually blend...
-        combo->insertItem(i18n("Selected background"));
-        combo->insertItem(i18n("Darken"));
+        case SW_MENUBAR:
+            combo->insertItem(i18n("Background"));
+            break;
+        case SW_SLIDER:
+            combo->insertItem(i18n("Button"));
+            break;
+        case SW_CHECK_RADIO:
+            combo->insertItem(i18n("Text"));
+            break;
+        case SW_MENU_STRIPE:
+            combo->insertItem(i18n("None"));
+            break;
     }
-    else
+
+    combo->insertItem(i18n("Custom:"));
+    combo->insertItem(i18n("Selected background"));
+    if(SW_CHECK_RADIO!=sw) // For check/radio, we dont blend, and dont allow darken
     {
         combo->insertItem(i18n("Blended selected background"));
-        combo->insertItem(i18n("Selected background"));
+        if(SW_MENU_STRIPE==sw || SW_MENUBAR==sw)
+            combo->insertItem(i18n("Darken"));
     }
 }
 
@@ -517,9 +531,10 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
                lastCategory(NULL)
 {
     titleLabel->setText("QtCurve " VERSION " - (C) Craig Drummond, 2003-2009");
-    insertShadeEntries(shadeSliders, false);
-    insertShadeEntries(shadeMenubars, true);
-    insertShadeEntries(shadeCheckRadio, false, true);
+    insertShadeEntries(shadeSliders, SW_SLIDER);
+    insertShadeEntries(shadeMenubars, SW_MENUBAR);
+    insertShadeEntries(shadeCheckRadio, SW_CHECK_RADIO);
+    insertShadeEntries(menuStripe, SW_MENU_STRIPE);
     insertAppearanceEntries(appearance);
     insertAppearanceEntries(menubarAppearance);
     insertAppearanceEntries(toolbarAppearance);
@@ -566,7 +581,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     lighterPopupMenuBgnd->setValue(DEF_POPUPMENU_LIGHT_FACTOR);
 
     connect(lighterPopupMenuBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
-    connect(menuStripe, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(menuStripe, SIGNAL(activated(int)), SLOT(menuStripeChanged()));
     connect(menuStripeAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(round, SIGNAL(activated(int)), SLOT(roundChanged()));
     connect(toolbarBorders, SIGNAL(activated(int)), SLOT(updateChanged()));
@@ -798,6 +813,13 @@ void QtCurveConfig::customMenuTextColorChanged()
 {
     customMenuNormTextColor->setEnabled(customMenuTextColor->isChecked());
     customMenuSelTextColor->setEnabled(customMenuTextColor->isChecked());
+    updateChanged();
+}
+
+void QtCurveConfig::menuStripeChanged()
+{
+    customMenuStripeColor->setEnabled(SHADE_CUSTOM==menuStripe->currentItem());
+    menuStripeAppearance->setEnabled(SHADE_NONE!=menuStripe->currentItem());
     updateChanged();
 }
 
@@ -1271,7 +1293,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.animatedProgress=animatedProgress->isChecked();
     opts.stripedProgress=(EStripe)stripedProgress->currentItem();
     opts.lighterPopupMenuBgnd=lighterPopupMenuBgnd->value();
-    opts.menuStripe=menuStripe->isChecked();
+    opts.menuStripe=(EShade)menuStripe->currentItem();
     opts.menuStripeAppearance=(EAppearance)menuStripeAppearance->currentItem();
     opts.embolden=embolden->isChecked();
     opts.scrollbarType=(EScrollbar)scrollbarType->currentItem();
@@ -1360,7 +1382,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     round->setCurrentItem(opts.round);
     scrollbarType->setCurrentItem(opts.scrollbarType);
     lighterPopupMenuBgnd->setValue(opts.lighterPopupMenuBgnd);
-    menuStripe->setChecked(opts.menuStripe);
+    menuStripe->setCurrentItem(opts.menuStripe);
     menuStripeAppearance->setCurrentItem(opts.menuStripeAppearance);
     toolbarBorders->setCurrentItem(opts.toolbarBorders);
     sliderThumbs->setCurrentItem(opts.sliderThumbs);
@@ -1480,7 +1502,7 @@ bool QtCurveConfig::settingsChanged()
          animatedProgress->isChecked()!=currentStyle.animatedProgress ||
          stripedProgress->currentItem()!=currentStyle.stripedProgress ||
          lighterPopupMenuBgnd->value()!=currentStyle.lighterPopupMenuBgnd ||
-         menuStripe->isChecked()!=currentStyle.menuStripe ||
+         menuStripe->currentItem()!=currentStyle.menuStripe ||
          menuStripeAppearance->currentItem()!=currentStyle.menuStripeAppearance ||
          embolden->isChecked()!=currentStyle.embolden ||
          fillSlider->isChecked()!=currentStyle.fillSlider ||
@@ -1561,6 +1583,8 @@ bool QtCurveConfig::settingsChanged()
                customMenuNormTextColor->color()!=currentStyle.customMenuNormTextColor) ||
          (customMenuTextColor->isChecked() &&
                customMenuSelTextColor->color()!=currentStyle.customMenuSelTextColor) ||
+         (SHADE_CUSTOM==currentStyle.menuStripe &&
+               customMenuStripeColor->color()!=currentStyle.customMenuStripeColor) ||
 
          customGradient!=currentStyle.customGradient;
 
