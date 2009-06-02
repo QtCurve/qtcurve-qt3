@@ -35,6 +35,7 @@
     are shaded, and flat scrollbar buttons.
 25. Fix faded menuitems when not rounding.
 26. Make popup menu titles more KDE4-like.
+27. Fix use of base colour in disabled listviews. (Fixes bug introduced in 0.62.0)
 
 0.62.7
 ------
