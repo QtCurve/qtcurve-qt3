@@ -25,6 +25,7 @@
 #define QTC_CONFIG_DIALOG
 
 #include <qtcurveconfigbase.h>
+#include <qcombobox.h>
 #include <qmap.h>
 #include "common.h"
 
@@ -33,6 +34,7 @@ class QListViewItem;
 class KDoubleNumInput;
 class CExportThemeDialog;
 class CStackItem;
+class QtCurveConfig;
 
 class CGradientPreview : public QWidget
 {
@@ -40,7 +42,7 @@ class CGradientPreview : public QWidget
 
     public:
 
-    CGradientPreview(QWidget *p);
+    CGradientPreview(QtCurveConfig *c, QWidget *p);
 
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
@@ -53,6 +55,7 @@ class CGradientPreview : public QWidget
 
     private:
 
+    QtCurveConfig    *cfg;
     QColor           color;
     GradientStopCont stops;
 };
@@ -65,6 +68,8 @@ class QtCurveConfig : public QtCurveConfigBase
 
     QtCurveConfig(QWidget *parent);
     virtual ~QtCurveConfig();
+
+    EShading currentShading() const { return (EShading)shading->currentItem(); }
 
     signals:
 
@@ -96,8 +101,11 @@ class QtCurveConfig : public QtCurveConfigBase
     void shadeMenubarsChanged();
     void shadeCheckRadioChanged();
     void customMenuTextColorChanged();
+    void menuStripeChanged();
     void stripedProgressChanged();
     void activeTabAppearanceChanged();
+    void tabMoChanged();
+    void shadingChanged();
     void passwordCharClicked();
 
     void changeStack();

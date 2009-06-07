@@ -1,3 +1,42 @@
+0.63.0
+------
+ 1. Add '3dfull' to gradient border options. This forces the
+    dark, as well as the light, portion to be drawn.
+ 2. Use a lighter shade for the dark portion of gradient border.
+ 3. Flat dot for radio buttons.
+ 4. Option to use button colour for listview headers.
+ 5. Use KDE4 colors for focus and mouse-over.
+ 6. Removal of background focus option.
+ 7. Softer colouration of selected tab.
+ 8. Tab mouse over options; top (as before), below, or glow.
+ 9. Modified defaults:
+     Tab mouse-over highlight drawn at the bottom
+     Plain slider style
+     Align titlebars text in center
+10. Add appearance setting for background of flat scrollbar buttons.
+11. Add HCY colour space.
+12. Use tint and mix color routines from KDE4's KColorUtils.
+13. Remove QtCurve's 'inactiveHighlight' option, and use KDE4s setting
+    instead.
+14. Add option to specify appearance setting of filler part of sliders.
+15. Increase number of custom gradients - now matches number of gradient
+    config items.
+16. When using glow style mouse over, use mouse over colour for arrows.
+17. Option to use a thinner groove for scrollbars (only when using flat, or no, buttons).
+18. Option to only color sliders on mouse over.
+19. Option to round all tabs.
+20. Add option to specify menu stripe color.
+21. Update gradient preview when change colour space.
+22. Remove 'Custom sunken gradient' setting, as this was not
+    actually used.
+23. Better handling of 'full centered' titlebar texts when
+    window size is small.
+24. Fix scrolbar sliders appearing rounded when round=none, sliders
+    are shaded, and flat scrollbar buttons.
+25. Fix faded menuitems when not rounding.
+26. Make popup menu titles more KDE4-like.
+27. Fix use of base colour in disabled listviews. (Fixes bug introduced in 0.62.0)
+
 0.62.7
 ------
 1. Show 'extra' as the default round setting in the config UI, as this is
