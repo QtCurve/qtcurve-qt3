@@ -6099,6 +6099,8 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
 {
     switch(stylehint)
     {
+        case SH_PopupMenu_SubMenuPopupDelay:
+            return opts.menuDelay;
         case SH_ScrollView_FrameOnlyAroundContents:
             return opts.gtkScrollViews;
         case SH_EtchDisabledText:

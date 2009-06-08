@@ -2,7 +2,8 @@
 ------
 1. Add option to not draw border around popupmenus.
 2. Add option to unify spinbuttons.
-3. Fix mispainted spin widget entry field.
+3. Add option to set sub-menu delay (default 100ms)
+4. Fix mispainted spin widget entry field.
 
 0.63.0
 ------

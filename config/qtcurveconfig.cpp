@@ -581,7 +581,12 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     lighterPopupMenuBgnd->setMaxValue(MAX_LIGHTER_POPUP_MENU);
     lighterPopupMenuBgnd->setValue(DEF_POPUPMENU_LIGHT_FACTOR);
 
+    menuDelay->setMinValue(MIN_MENU_DELAY);
+    menuDelay->setMaxValue(MAX_MENU_DELAY);
+    menuDelay->setValue(DEFAULT_MENU_DELAY);
+    
     connect(lighterPopupMenuBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
+    connect(menuDelay, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(menuStripe, SIGNAL(activated(int)), SLOT(menuStripeChanged()));
     connect(menuStripeAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(round, SIGNAL(activated(int)), SLOT(roundChanged()));
@@ -1296,6 +1301,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.animatedProgress=animatedProgress->isChecked();
     opts.stripedProgress=(EStripe)stripedProgress->currentItem();
     opts.lighterPopupMenuBgnd=lighterPopupMenuBgnd->value();
+    opts.menuDelay=menuDelay->value();
     opts.menuStripe=(EShade)menuStripe->currentItem();
     opts.menuStripeAppearance=(EAppearance)menuStripeAppearance->currentItem();
     opts.embolden=embolden->isChecked();
@@ -1387,6 +1393,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     round->setCurrentItem(opts.round);
     scrollbarType->setCurrentItem(opts.scrollbarType);
     lighterPopupMenuBgnd->setValue(opts.lighterPopupMenuBgnd);
+    menuDelay->setValue(opts.menuDelay);
     menuStripe->setCurrentItem(opts.menuStripe);
     menuStripeAppearance->setCurrentItem(opts.menuStripeAppearance);
     toolbarBorders->setCurrentItem(opts.toolbarBorders);
@@ -1509,6 +1516,7 @@ bool QtCurveConfig::settingsChanged()
          animatedProgress->isChecked()!=currentStyle.animatedProgress ||
          stripedProgress->currentItem()!=currentStyle.stripedProgress ||
          lighterPopupMenuBgnd->value()!=currentStyle.lighterPopupMenuBgnd ||
+         menuDelay->value()!=currentStyle.menuDelay ||
          menuStripe->currentItem()!=currentStyle.menuStripe ||
          menuStripeAppearance->currentItem()!=currentStyle.menuStripeAppearance ||
          embolden->isChecked()!=currentStyle.embolden ||
