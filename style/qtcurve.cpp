@@ -2475,20 +2475,18 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
     if(doEtch)
         r.addCoords(1, 1, -1, -1);
 
+    if(!itsFormMode)
+        p->fillRect(rx, cg.background());
+//     if(flags&Style_Enabled)
+//         p->fillRect(QRect(rx.x()+2, rx.y()+2, rx.width()-3, rx.height()-3), cg.background());
+
     if(isSpin)
     {
         if(reverse)
             r.addCoords(-1, 0, 0, 0);
 
-        p->setPen(cg.base());
-        p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-2, r.y()+r.height()-1);
-        p->drawLine(r.x()+r.width()-3, r.y(), r.x()+r.width()-3, r.y()+r.height()-1);
+        p->fillRect(r, flags&Style_Enabled ? cg.base() : cg.background());
     }
-
-    if(!itsFormMode)
-        p->fillRect(rx, cg.background());
-//     if(flags&Style_Enabled)
-//         p->fillRect(QRect(rx.x()+2, rx.y()+2, rx.width()-3, rx.height()-3), cg.background());
 
     if(highlight && isSpin)
         if(reverse)
@@ -2496,7 +2494,8 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
         else
             r.addCoords(0, 0, -1, 0);
 
-    drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal), round, use, WIDGET_SCROLLVIEW==w ? w : WIDGET_ENTRY, true, BORDER_SUNKEN);
+    drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal), round, use,
+               WIDGET_SCROLLVIEW==w ? w : WIDGET_ENTRY, true, isSpin && !(flags&Style_Enabled) ? BORDER_FLAT : BORDER_SUNKEN);
 
     if(doEtch)
     {
