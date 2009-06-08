@@ -1097,6 +1097,11 @@ void QtCurveStyle::polish(QWidget *widget)
             widget->parentWidget()->inherits("KateView"))) &&
         ((QFrame *)widget)->lineWidth()>1)
         ((QFrame *)widget)->setLineWidth(opts.gtkScrollViews ? 1 : 2);
+    else if(!opts.popupBorder && widget &&
+            (::qt_cast<const QPopupMenu *>(widget) ||
+             (widget->parentWidget() && ::qt_cast<const QListBox *>(widget) &&
+              ::qt_cast<const QComboBox *>(widget->parentWidget()))))
+        ((QFrame *)widget)->setLineWidth(0);
     else if (USE_LIGHTER_POPUP_MENU && !opts.borderMenuitems &&
         widget && ::qt_cast<const QPopupMenu *>(widget))
         ((QFrame *)widget)->setLineWidth(1);

@@ -619,6 +619,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(tabMouseOver, SIGNAL(activated(int)), SLOT(tabMoChanged()));
     connect(stdSidebarButtons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(borderMenuitems, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(popupBorder, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(progressAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(progressGrooveAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(grooveAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
@@ -1333,6 +1334,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.tabMouseOver=(ETabMo)tabMouseOver->currentItem();
     opts.stdSidebarButtons=stdSidebarButtons->isChecked();
     opts.borderMenuitems=borderMenuitems->isChecked();
+    opts.popupBorder=popupBorder->isChecked();
     opts.progressAppearance=(EAppearance)progressAppearance->currentItem();
     opts.progressGrooveAppearance=(EAppearance)progressGrooveAppearance->currentItem();
     opts.grooveAppearance=(EAppearance)grooveAppearance->currentItem();
@@ -1444,6 +1446,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     tabMouseOver->setCurrentItem(opts.tabMouseOver);
     stdSidebarButtons->setChecked(opts.stdSidebarButtons);
     borderMenuitems->setChecked(opts.borderMenuitems);
+    popupBorder->setChecked(opts.popupBorder);
     progressAppearance->setCurrentItem(opts.progressAppearance);
     progressGrooveAppearance->setCurrentItem(opts.progressGrooveAppearance);
     grooveAppearance->setCurrentItem(opts.grooveAppearance);
@@ -1521,6 +1524,7 @@ bool QtCurveConfig::settingsChanged()
          tabMouseOver->currentItem()!=currentStyle.tabMouseOver ||
          stdSidebarButtons->isChecked()!=currentStyle.stdSidebarButtons ||
          borderMenuitems->isChecked()!=currentStyle.borderMenuitems ||
+         popupBorder->isChecked()!=currentStyle.popupBorder ||
          defBtnIndicator->currentItem()!=(int)currentStyle.defBtnIndicator ||
          sliderThumbs->currentItem()!=(int)currentStyle.sliderThumbs ||
          handles->currentItem()!=(int)currentStyle.handles ||
