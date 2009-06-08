@@ -127,23 +127,6 @@
                             </size>
                         </property>
                     </spacer>
-                    <spacer row="12" column="1">
-                        <property name="name">
-                            <cstring>spacer9</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>130</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <widget class="QLabel" row="4" column="0">
                         <property name="name">
                             <cstring>textLabel1_6</cstring>
@@ -187,17 +170,6 @@
                     <widget class="QComboBox" row="3" column="1">
                         <property name="name">
                             <cstring>buttonEffect</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="11" column="0">
-                        <property name="name">
-                            <cstring>fadeLines</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Draw fading lines (KDE4 &amp;&amp; Gtk2)</string>
-                        </property>
-                        <property name="accel">
-                            <string></string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="2" column="0">
@@ -300,6 +272,42 @@
                         </property>
                         <property name="text">
                             <string>Sunken appearance:</string>
+                        </property>
+                    </widget>
+                    <spacer row="13" column="1">
+                        <property name="name">
+                            <cstring>spacer9</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>147</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="12" column="0">
+                        <property name="name">
+                            <cstring>fadeLines</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw fading lines (KDE4 &amp;&amp; Gtk2)</string>
+                        </property>
+                        <property name="accel">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="11" column="0">
+                        <property name="name">
+                            <cstring>unifySpinBtns</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Unify spin widget buttons</string>
                         </property>
                     </widget>
                 </grid>
@@ -2250,8 +2258,9 @@ None - no buttons, only the slider</string>
     <tabstop>vArrows</tabstop>
     <tabstop>stdSidebarButtons</tabstop>
     <tabstop>darkerBorders</tabstop>
-    <tabstop>fadeLines</tabstop>
     <tabstop>comboSplitter</tabstop>
+    <tabstop>unifySpinBtns</tabstop>
+    <tabstop>fadeLines</tabstop>
     <tabstop>splitters</tabstop>
     <tabstop>sliderAppearance</tabstop>
     <tabstop>shadeSliders</tabstop>

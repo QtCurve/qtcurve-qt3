@@ -1890,6 +1890,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                  draw3d(draw3dfull || (!lightBorder && QTC_DRAW_3D_BORDER(sunken, app))),
                  doColouredMouseOver(!sunken && doBorder &&
                                     opts.coloredMouseOver && flags&Style_MouseOver &&
+                                     (WIDGET_SPIN!=w || !opts.unifySpinBtns) &&
                                     !(flags&QTC_DW_CLOSE_BUTTON) &&
 #ifdef QTC_DONT_COLOUR_MOUSEOVER_TBAR_BUTTONS
                                     !(flags&QTC_STD_TOOLBUTTON) &&
@@ -3496,14 +3497,15 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             const QColor *use(buttonColors(cg));
             bool         reverse(QApplication::reverseLayout());
 
-            drawLightBevel(p, sr, cg, flags|Style_Horizontal, PE_SpinWidgetDown==pe || PE_SpinWidgetMinus==pe
-                                                                ? reverse
-                                                                    ? ROUNDED_BOTTOMLEFT
-                                                                    : ROUNDED_BOTTOMRIGHT
-                                                                : reverse
-                                                                    ? ROUNDED_TOPLEFT
-                                                                    : ROUNDED_TOPRIGHT,
-                           getFill(flags, use), use, true, true, WIDGET_SPIN);
+            if(!opts.unifySpinBtns || flags&Style_Sunken)
+                drawLightBevel(p, sr, cg, flags|Style_Horizontal, PE_SpinWidgetDown==pe || PE_SpinWidgetMinus==pe
+                                                                    ? reverse
+                                                                        ? ROUNDED_BOTTOMLEFT
+                                                                        : ROUNDED_BOTTOMRIGHT
+                                                                    : reverse
+                                                                        ? ROUNDED_TOPLEFT
+                                                                        : ROUNDED_TOPRIGHT,
+                               getFill(flags, use), use, true, true, WIDGET_SPIN);
 
             if(PE_SpinWidgetUp==pe || PE_SpinWidgetDown==pe)
             {
@@ -5024,6 +5026,30 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                ROUNDED_LEFT, WIDGET_SPIN);
             }
 
+            if(opts.unifySpinBtns)
+            {
+                QRect        btns=up.unite(down);
+                const QColor *use(buttonColors(cg));
+                int          btnFlags=flags;
+
+                btnFlags&=~(Style_Sunken|Style_MouseOver);
+                btnFlags|=Style_Horizontal;
+
+                drawLightBevel(p, btns, cg, btnFlags, reverse ?  ROUNDED_LEFT : ROUNDED_RIGHT, getFill(btnFlags, use),
+                              use, true, true, WIDGET_SPIN);
+                if(hw && (HOVER_SW_DOWN==itsHover || HOVER_SW_UP==itsHover) && flags&Style_Enabled && !(flags&Style_Sunken))
+                {
+                    btnFlags|=Style_MouseOver;
+                    p->save();
+                    p->setClipRect(HOVER_SW_UP==itsHover ? up : down);
+                    drawLightBevel(p, btns, cg, btnFlags, reverse ?  ROUNDED_LEFT : ROUNDED_RIGHT, getFill(btnFlags, use),
+                                   use, true, true, WIDGET_SPIN);
+                    p->restore();
+                }
+                p->setPen(use[QT_BORDER(style&Style_Enabled)]);
+                p->drawLine(down.x()+2, down.y(), down.x()+down.width()-3, down.y());
+            }
+                
             if((controls&SC_SpinWidgetUp) && up.isValid())
             {
                 PrimitiveElement pe(PE_SpinWidgetUp);
