@@ -4222,7 +4222,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
             if(mi->isSeparator())
             {
-                y=r.y()+((r.height()/2)-1);
+                y=r.y()+(r.height()>>1);
                 p->setPen(itsBackgroundCols[QTC_MENU_SEP_SHADE]);
                 p->drawLine(r.x()+3+(!reverse && opts.menuStripe ? maxpmw : 0), y,
                             r.x()+r.width()-4-(reverse && opts.menuStripe ? maxpmw : 0), y);
@@ -6045,7 +6045,7 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
             else if (mi->isSeparator())
             {
                 w = 10;
-                h = opts.thinnerMenuItems ? 6 : 8;
+                h = 7;
             }
             else
             {
