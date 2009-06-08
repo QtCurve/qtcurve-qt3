@@ -379,10 +379,13 @@ static bool readKdeGlobals()
     if(abs(now-lastCheck)<3)
         return false;
 
+  
     QFile  f(kdeHome(true)+"/share/config/kdeglobals");
     QColor highlight(QApplication::palette().active().highlight());
     bool   inactiveEnabled(false),
            changeSelectionColor(false);
+
+    lastCheck=now;
 
     kdeSettings.hover=kdeSettings.focus=highlight;
     if(f.open(IO_ReadOnly))
@@ -396,7 +399,6 @@ static bool readKdeGlobals()
         while (!in.atEnd() && (!donePal || !doneInactive))
         {
             QString line(in.readLine());
-
             if(inPal)
             {
                 if(0==line.find("DecorationFocus=", false))
@@ -404,21 +406,28 @@ static bool readKdeGlobals()
                 else if(0==line.find("DecorationHover=", false))
                     setRgb(&kdeSettings.hover, QStringList::split(",", line.mid(16)));
                 else if (-1!=line.find('['))
+                {
                     donePal=true;
+                    inPal=false;
+                }
             }
-            if(inInactive)
+            else if(inInactive)
             {
                 if(0==line.find("ChangeSelectionColor=", false))
                     changeSelectionColor=line.find("=true");
                 else if(0==line.find("Enable=", false))
                     inactiveEnabled=line.find("=true");
                 else if (-1!=line.find('['))
+                {
                     doneInactive=true;
+                    inInactive=false;
+                }
             }
-            else if(0==line.find("[Colors:Button]", false))
-                inPal=true;
-            else if(0==line.find("[ColorEffects:Inactive]", false))
-                inInactive=true;
+            if(!inPal && !inInactive)
+                if(0==line.find("[Colors:Button]", false))
+                    inPal=true;
+                else if(0==line.find("[ColorEffects:Inactive]", false))
+                    inInactive=true;
         }
         f.close();
     }

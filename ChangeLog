@@ -5,6 +5,7 @@
 3. Add option to set sub-menu delay (default 100ms)
 4. Use equal top/bottom padding on popupmenu separators.
 5. Fix mispainted spin widget entry field.
+6. Fix reading of KDE4 palette.
 
 0.63.0
 ------
