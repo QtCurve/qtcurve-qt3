@@ -99,7 +99,7 @@
                             <cstring>appearance</cstring>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>The setting here affects the general appearance - and will be applied to buttons, scrollbars, sliders, combo boxes, and spin buttons.</string>
+                            <string>The setting here affects the general appearance - and will be applied to buttons, combo boxes, and spin buttons.</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="0" column="0">
@@ -186,17 +186,6 @@
                         </property>
                         <property name="text">
                             <string>'V' style arrows</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="10" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>comboSplitter</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Combo splitter</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>This option controls whether a line is drawn near non-editable combo box arrows.</string>
                         </property>
                     </widget>
                     <widget class="QComboBox" row="4" column="1">
@@ -323,6 +312,85 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
+                    <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="4">
+                        <property name="name">
+                            <cstring>comboSplitter</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw splitter</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This option controls whether a line is drawn near non-editable combo box arrows.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_17</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Button shade:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="1" column="1">
+                        <property name="name">
+                            <cstring>comboBtn</cstring>
+                        </property>
+                    </widget>
+                    <widget class="KColorButton" row="1" column="2">
+                        <property name="name">
+                            <cstring>customComboBtnColor</cstring>
+                        </property>
+                        <property name="text">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <spacer row="1" column="3">
+                        <property name="name">
+                            <cstring>spacer26_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>31</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="2" column="2">
+                        <property name="name">
+                            <cstring>spacer27_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>21</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>WStackPage</cstring>
+                </property>
+                <attribute name="id">
+                    <number>2</number>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
                     <widget class="QComboBox" row="0" column="1">
                         <property name="name">
                             <cstring>splitters</cstring>
@@ -377,7 +445,7 @@
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>2</number>
+                    <number>3</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -613,7 +681,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>3</number>
+                    <number>4</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -706,7 +774,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>4</number>
+                    <number>5</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -782,7 +850,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>5</number>
+                    <number>6</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -861,7 +929,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>6</number>
+                    <number>7</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -941,7 +1009,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>7</number>
+                    <number>8</number>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -1003,7 +1071,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>8</number>
+                    <number>9</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1107,7 +1175,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>9</number>
+                    <number>10</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1207,7 +1275,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>10</number>
+                    <number>11</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1322,7 +1390,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>11</number>
+                    <number>12</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1691,7 +1759,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>12</number>
+                    <number>13</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1787,7 +1855,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>13</number>
+                    <number>14</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -2053,7 +2121,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>14</number>
+                    <number>15</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -2269,7 +2337,6 @@ None - no buttons, only the slider</string>
     <tabstop>vArrows</tabstop>
     <tabstop>stdSidebarButtons</tabstop>
     <tabstop>darkerBorders</tabstop>
-    <tabstop>comboSplitter</tabstop>
     <tabstop>unifySpinBtns</tabstop>
     <tabstop>fadeLines</tabstop>
     <tabstop>splitters</tabstop>
@@ -2371,6 +2438,7 @@ None - no buttons, only the slider</string>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kpushbutton.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
