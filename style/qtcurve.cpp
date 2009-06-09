@@ -6852,23 +6852,26 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
         int          pos((int)(((double)(horiz ? groove.width() : groove.height()) /
                                      (sliderWidget->maxValue()-sliderWidget->minValue()))  *
                                      (sliderWidget->value() - sliderWidget->minValue())));
-        const QColor *usedCols=itsSliderCols ? itsSliderCols : itsHighlightCols;
+        if(pos>0)
+        {
+            const QColor *usedCols=itsSliderCols ? itsSliderCols : itsHighlightCols;
 
-        if(horiz)
-        {
-            pos+=(groove.width()>10 && pos<(groove.width()/2)) ? 3 : 0;
-            if(reverse)
-                used.addCoords(groove.width()-pos, 0, 0, 0);
+            if(horiz)
+            {
+                pos+=(groove.width()>10 && pos<(groove.width()/2)) ? 3 : 0;
+                if(reverse)
+                    used.addCoords(groove.width()-pos, 0, 0, 0);
+                else
+                    used.addCoords(0, 0, -(groove.width()-pos), 0);
+            }
             else
-                used.addCoords(0, 0, -(groove.width()-pos), 0);
+            {
+                pos+=(groove.height()>10 && pos<(groove.height()/2)) ? 3 : 0;
+                used.addCoords(0, pos, 0, 0);
+            }
+            if(used.height()>0 && used.width()>0)
+                drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_FILLED_SLIDER_TROUGH);
         }
-        else
-        {
-            pos+=(groove.height()>10 && pos<(groove.height()/2)) ? 3 : 0;
-            used.addCoords(0, pos, 0, 0);
-        }
-        if(used.height()>0 && used.width()>0)
-            drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_FILLED_SLIDER_TROUGH);
     }
 }
 
