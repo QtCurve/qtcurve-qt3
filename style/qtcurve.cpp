@@ -123,6 +123,14 @@ dimension, so as to draw the scrollbar at the correct size.
 
 static const int constMenuPixmapWidth=22;
 
+static bool useQt4Settings()
+{
+    static const char *vers = getenv("KDE_SESSION_VERSION");
+    static bool       use   = vers && atoi(vers)>=4;
+
+    return use;
+}
+
 static QRect adjusted(const QRect r, int xp1, int yp1, int xp2, int yp2)
 {
     int x1, y1, x2, y2;
@@ -387,7 +395,14 @@ static bool readKdeGlobals()
 
     lastCheck=now;
 
-    kdeSettings.hover=kdeSettings.focus=highlight;
+    if(useQt4Settings())
+    {
+        kdeSettings.hover=QColor(119, 183, 255);
+        kdeSettings.focus=QColor( 43, 116, 199);
+    }
+    else
+        kdeSettings.hover=kdeSettings.focus=highlight;
+
     if(f.open(IO_ReadOnly))
     {
         QTextStream in(&f);
@@ -603,14 +618,6 @@ static void parseWindowLine(const QString &line, QValueList<int> &data)
         }
 }
 #endif
-
-static bool useQt4Settings()
-{
-    static const char *vers = getenv("KDE_SESSION_VERSION");
-    static bool       use   = vers && atoi(vers)>=4;
-
-    return use;
-}
 
 static bool isCheckBoxOfGroupBox(const QObject *w)
 {

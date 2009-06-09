@@ -12,6 +12,8 @@
     setting.
 10. Fix kaffeine's slider benig completely filled at start of song.
 11. Fix LineEdit in qtconfig.
+12. Under KDE4 (KDE_SESSION_VERSION>=4), default hover/focus colours to the
+    KDE4 defaults.
 
 0.63.0
 ------
