@@ -231,6 +231,7 @@ class QtCurveStyle : public KStyle
                                *itsSliderCols,
                                *itsDefBtnCols,
                                *itsMouseOverCols,
+                               *itsComboBtnCols,
                                itsButtonCols[TOTAL_SHADES+1],
                                itsLighterPopupMenuBgndCol,
                                itsCheckRadioCol;

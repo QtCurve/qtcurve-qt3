@@ -381,7 +381,7 @@ static bool readKdeGlobals()
 {
     static int lastCheck=0;
 
-    int now=time(NULL);
+    int now=time(0L);
 
     // Dont keep on reading kdeglobals file - only read if its been at least 2 seconds since the last time...
     if(abs(now-lastCheck)<3)
@@ -683,6 +683,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
               itsSliderCols(0L),
               itsDefBtnCols(0L),
               itsMouseOverCols(0L),
+              itsComboBtnCols(0L),
               itsSidebarButtonsCols(0L),
               itsActiveMdiColors(0L),
               itsMdiColors(0L),
@@ -735,16 +736,24 @@ QtCurveStyle::QtCurveStyle(const QString &name)
 
     setDecorationColors();
 
-    if(SHADE_SELECTED==opts.shadeSliders)
-        itsSliderCols=itsHighlightCols;
-    else if(SHADE_NONE!=opts.shadeSliders)
+    switch(opts.shadeSliders)
     {
-        itsSliderCols=new QColor [TOTAL_SHADES+1];
-        shadeColors(SHADE_BLEND_SELECTED==opts.shadeSliders
-                        ? midColor(itsHighlightCols[ORIGINAL_SHADE],
-                                   itsButtonCols[ORIGINAL_SHADE])
-                        : opts.customSlidersColor,
-                    itsSliderCols);
+        default:
+        case SHADE_DARKEN:
+        case SHADE_NONE:
+            break;
+        case SHADE_SELECTED:
+            itsSliderCols=itsHighlightCols;
+            break;
+        case SHADE_BLEND_SELECTED:
+        case SHADE_CUSTOM:
+            if(!itsSliderCols)
+                itsSliderCols=new QColor [TOTAL_SHADES+1];
+            shadeColors(SHADE_BLEND_SELECTED==opts.shadeSliders
+                            ? midColor(itsHighlightCols[ORIGINAL_SHADE],
+                                       itsButtonCols[ORIGINAL_SHADE])
+                            : opts.customSlidersColor,
+                        itsSliderCols);
     }
 
     if(IND_GLOW==opts.defBtnIndicator)
@@ -765,6 +774,36 @@ QtCurveStyle::QtCurveStyle(const QString &name)
             shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
                                  itsButtonCols[ORIGINAL_SHADE]), itsDefBtnCols);
         }
+    }
+
+    switch(opts.comboBtn)
+    {
+        default:
+        case SHADE_DARKEN:
+        case SHADE_NONE:
+            break;
+        case SHADE_SELECTED:
+            itsComboBtnCols=itsHighlightCols;
+            break;
+        case SHADE_BLEND_SELECTED:
+            if(opts.shadeSliders==SHADE_BLEND_SELECTED)
+            {
+                itsComboBtnCols=itsSliderCols;
+                break;
+            }
+        case SHADE_CUSTOM:
+            if(opts.shadeSliders==SHADE_CUSTOM && opts.customSlidersColor==opts.customComboBtnColor)
+            {
+                itsComboBtnCols=itsSliderCols;
+                break;
+            }
+            if(!itsComboBtnCols)
+                itsComboBtnCols=new QColor [TOTAL_SHADES+1];
+            shadeColors(SHADE_BLEND_SELECTED==opts.comboBtn
+                            ? midColor(itsHighlightCols[ORIGINAL_SHADE],
+                                       itsButtonCols[ORIGINAL_SHADE])
+                            : opts.customComboBtnColor,
+                        itsComboBtnCols);
     }
 
     setMenuColors(QApplication::palette().active());
@@ -817,6 +856,8 @@ QtCurveStyle::~QtCurveStyle()
         delete [] itsDefBtnCols;
     if(itsSliderCols && itsSliderCols!=itsHighlightCols)
         delete [] itsSliderCols;
+    if(itsComboBtnCols && itsComboBtnCols!=itsHighlightCols && itsComboBtnCols!=itsSliderCols)
+        delete [] itsComboBtnCols;
     delete itsMactorPal;
 }
 
@@ -974,7 +1015,10 @@ void QtCurveStyle::polish(QPalette &pal)
          newDefBtn(itsDefBtnCols && /*( (IND_COLORED==opts.defBtnIndicator &&*/
                                        SHADE_BLEND_SELECTED!=opts.shadeSliders/*) ||*/
                                       /*(IND_TINT==opts.defBtnIndicator) )*/ &&
-                   (newContrast || newButton || newMenu));
+                   (newContrast || newButton || newMenu)),
+         newComboBtn(itsComboBtnCols && itsHighlightCols!=itsComboBtnCols && itsSliderCols!=itsComboBtnCols &&
+                     SHADE_BLEND_SELECTED==opts.comboBtn &&
+                     (newContrast || newButton || newMenu));
 
     if(newGray)
         shadeColors(QApplication::palette().active().background(), itsBackgroundCols);
@@ -992,6 +1036,10 @@ void QtCurveStyle::polish(QPalette &pal)
     if(newSlider)
         shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
                     itsButtonCols[ORIGINAL_SHADE]), itsSliderCols);
+
+    if(newComboBtn)
+        shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
+                    itsButtonCols[ORIGINAL_SHADE]), itsComboBtnCols);
 
     if(newDefBtn)
         if(IND_TINT==opts.defBtnIndicator)
@@ -1936,12 +1984,15 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     {
         // Adjust paint rect, so that gradient is drawn from the same coords as KDE4 and Gtk2
         if(WIDGET_PROGRESSBAR==w && opts.stripedProgress)
+        {
+            p->save();
             p->setClipRegion(p->clipRegion().eor(QRegion(br)));
+        }
         br.addCoords(1, 1,-1,-1);
         drawBevelGradient(fill, p, br, horiz, sunken, app, w);
         br.addCoords(-1, -1, 1, 1);
         if(WIDGET_PROGRESSBAR==w && opts.stripedProgress)
-            p->setClipping(false);
+            p->restore();
     }
 
     if(!colouredMouseOver && lightBorder)
@@ -2070,6 +2121,13 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
         }
 
     if(doBorder)
+    {
+        const QColor *borderCols=WIDGET_COMBO==w && cols==itsComboBtnCols
+                        ? flags&Style_MouseOver && MO_GLOW==opts.coloredMouseOver && !sunken
+                            ? itsMouseOverCols
+                            : itsButtonCols
+                        : cols;
+                            
         if(!sunken && flags&Style_Enabled &&
             ((((doEtch && WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w) || WIDGET_COMBO==w || WIDGET_SB_SLIDER==w) &&
              MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
@@ -2079,7 +2137,8 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                         (!(flags&Style_MouseOver) || !itsMouseOverCols)
                             ? itsDefBtnCols : itsMouseOverCols, w, doCorners);
         else
-            drawBorder(bgnd, p, r, cg, flags, round, cols, w, doCorners);
+            drawBorder(bgnd, p, r, cg, flags, round, borderCols, w, doCorners);
+    }
 
     if(doEtch)
         if( !sunken &&
@@ -3874,7 +3933,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                 ? (top ? ROUNDED_TOPLEFT : ROUNDED_BOTTOMLEFT)
                                 : lastTab
                                     ? (top ? ROUNDED_TOPRIGHT : ROUNDED_BOTTOMRIGHT)
-                                    : ROUNDED_NONE, glowMo ? itsMouseOverCols : NULL, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT, true,
+                                    : ROUNDED_NONE, glowMo ? itsMouseOverCols : 0L, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT, true,
                        active && !opts.colorSelTab ? BORDER_RAISED : BORDER_FLAT, false);
             if(glowMo)
             {
@@ -4898,6 +4957,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(controls&SC_ComboBoxFrame && frame.isValid())
             {
+                const QColor *cols=itsComboBtnCols && editable ? itsComboBtnCols : use;
+
                 if(editable && HOVER_CB_ARROW!=itsHover)
                     fillFlags&=~Style_MouseOver;
 
@@ -4907,11 +4968,25 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 drawLightBevel(p, frame, cg, fillFlags|Style_Raised|Style_Horizontal,
                                controls&SC_ComboBoxEditField && field.isValid() && editable
                                    ? (reverse ? ROUNDED_LEFT : ROUNDED_RIGHT) : ROUNDED_ALL,
-                               getFill(fillFlags, use), use, true, true, editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
+                               getFill(fillFlags, cols), cols, true, true, editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
             }
 
             if(controls&SC_ComboBoxArrow && arrow.isValid())
             {
+                if(!editable && itsComboBtnCols)
+                {
+                    SFlags btnFlags(flags);
+                    QRect  btn(arrow.x(), frame.y(), arrow.width()+1, frame.height());
+                    if(!sunken)
+                        btnFlags|=Style_Raised;
+                    p->save();
+                    p->setClipRect(btn);
+                    btn.addCoords(reverse ? 0 : -2, 0, reverse ? 2 : 0, 0);
+                    drawLightBevel(p, btn, cg, btnFlags|Style_Horizontal, reverse ? ROUNDED_LEFT : ROUNDED_RIGHT,
+                                    getFill(btnFlags, itsComboBtnCols), itsComboBtnCols, true, true, WIDGET_COMBO);
+                    p->restore();
+                }
+                    
                 SFlags arrowFlags(flags);
                 if(sunken)
                     arrow.addCoords(1, 1, 1, 1);
