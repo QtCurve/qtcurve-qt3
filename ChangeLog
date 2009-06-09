@@ -11,6 +11,7 @@
  9. In config dialog, place '%'symbol on the right for the "popup menu background"
     setting.
 10. Fix kaffeine's slider benig completely filled at start of song.
+11. Fix LineEdit in qtconfig.
 
 0.63.0
 ------
