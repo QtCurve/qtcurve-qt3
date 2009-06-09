@@ -8,6 +8,8 @@
 6. Fix reading of KDE4 palette.
 7. Fix setting of check/radio shade.
 8. Fix storing of custom menu stripe colour.
+9. In config dialog, place '%'symbol on the right for the "popup menu background"
+   setting.
 
 0.63.0
 ------
