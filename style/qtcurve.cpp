@@ -3601,47 +3601,23 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             break;
         case PE_SizeGrip:
         {
-            p->save();
-
-            int x, y, w, h;
-            r.rect(&x, &y, &w, &h);
-
-            int sw(QMIN(h,w));
-
-            if (h > w)
-                p->translate(0, h - w);
-            else
-                p->translate(w - h, 0);
-
-            int sx(x),
-                sy(y),
-                s(sw / 4),
-                dark(4); // QT_BORDER(flags&Style_Enabled));
+            QPointArray a;
 
             if (QApplication::reverseLayout())
             {
-                sx = x + sw;
-                for (int i = 0; i < 4; ++i)
-                {
-//                     p->setPen(QPen(itsBackgroundCols[0], 1));
-//                     p->drawLine(x, sy - 1 , sx + 1,  sw);
-                    p->setPen(QPen(itsBackgroundCols[dark], 1));
-                    p->drawLine(x, sy, sx,  sw);
-                    sx -= s;
-                    sy += s;
-                }
+                a.setPoints(3,  0,0, SIZE_GRIP_SIZE,SIZE_GRIP_SIZE, 0,SIZE_GRIP_SIZE);
+                a.translate(r.x(), r.y()+(r.height()-SIZE_GRIP_SIZE));
             }
             else
-                for (int i = 0; i < 4; ++i)
-                {
-//                     p->setPen(QPen(itsBackgroundCols[0], 1));
-//                     p->drawLine(sx-1, sw, sw,  sy-1);
-                    p->setPen(QPen(itsBackgroundCols[dark], 1));
-                    p->drawLine(sx, sw, sw,  sy);
-                    sx += s;
-                    sy += s;
-                }
+            {
+                a.setPoints(3,  SIZE_GRIP_SIZE,0, SIZE_GRIP_SIZE,SIZE_GRIP_SIZE, 0,SIZE_GRIP_SIZE);
+                a.translate(r.x()+(r.width()-SIZE_GRIP_SIZE), r.y()+(r.height()-SIZE_GRIP_SIZE));
+            }
 
+            p->save();
+            p->setBrush(itsBackgroundCols[2]);
+            p->setPen(itsBackgroundCols[2]);
+            p->drawPolygon(a);
             p->restore();
             break;
         }

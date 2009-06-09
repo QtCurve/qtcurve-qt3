@@ -4,15 +4,16 @@
  2. Add option to unify spinbuttons.
  3. Add option to set sub-menu delay (default 100ms)
  4. Use equal top/bottom padding on popupmenu separators.
- 5. Fix mispainted spin widget entry field.
- 6. Fix reading of KDE4 palette.
- 7. Fix setting of check/radio shade.
- 8. Fix storing of custom menu stripe colour.
- 9. In config dialog, place '%'symbol on the right for the "popup menu background"
+ 5. Draw resize grip as a darkend triangle.
+ 6. Fix mispainted spin widget entry field.
+ 7. Fix reading of KDE4 palette.
+ 8. Fix setting of check/radio shade.
+ 9. Fix storing of custom menu stripe colour.
+10. In config dialog, place '%'symbol on the right for the "popup menu background"
     setting.
-10. Fix kaffeine's slider benig completely filled at start of song.
-11. Fix LineEdit in qtconfig.
-12. Under KDE4 (KDE_SESSION_VERSION>=4), default hover/focus colours to the
+11. Fix kaffeine's slider benig completely filled at start of song.
+12. Fix LineEdit in qtconfig.
+13. Under KDE4 (KDE_SESSION_VERSION>=4), default hover/focus colours to the
     KDE4 defaults.
 
 0.63.0
