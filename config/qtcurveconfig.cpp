@@ -588,6 +588,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(lighterPopupMenuBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(menuDelay, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(menuStripe, SIGNAL(activated(int)), SLOT(menuStripeChanged()));
+    connect(customMenuStripeColor, SIGNAL(changed(const QColor &)), SLOT(menuStripeChanged()));
     connect(menuStripeAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(round, SIGNAL(activated(int)), SLOT(roundChanged()));
     connect(toolbarBorders, SIGNAL(activated(int)), SLOT(updateChanged()));
@@ -1303,6 +1304,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.lighterPopupMenuBgnd=lighterPopupMenuBgnd->value();
     opts.menuDelay=menuDelay->value();
     opts.menuStripe=(EShade)menuStripe->currentItem();
+    opts.customMenuStripeColor=customMenuStripeColor->color();
     opts.menuStripeAppearance=(EAppearance)menuStripeAppearance->currentItem();
     opts.embolden=embolden->isChecked();
     opts.scrollbarType=(EScrollbar)scrollbarType->currentItem();
@@ -1395,6 +1397,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     lighterPopupMenuBgnd->setValue(opts.lighterPopupMenuBgnd);
     menuDelay->setValue(opts.menuDelay);
     menuStripe->setCurrentItem(opts.menuStripe);
+    customMenuStripeColor->setColor(opts.customMenuStripeColor);
     menuStripeAppearance->setCurrentItem(opts.menuStripeAppearance);
     toolbarBorders->setCurrentItem(opts.toolbarBorders);
     sliderThumbs->setCurrentItem(opts.sliderThumbs);
@@ -1437,6 +1440,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     customMenuNormTextColor->setEnabled(customMenuTextColor->isChecked());
     customMenuSelTextColor->setEnabled(customMenuTextColor->isChecked());
     customCheckRadioColor->setEnabled(SHADE_CUSTOM==opts.shadeCheckRadio);
+    customMenuStripeColor->setEnabled(SHADE_CUSTOM==opts.menuStripe);
 
     animatedProgress->setEnabled(STRIPE_NONE!=stripedProgress->currentItem());
 
