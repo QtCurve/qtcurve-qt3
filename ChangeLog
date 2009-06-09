@@ -6,6 +6,7 @@
 4. Use equal top/bottom padding on popupmenu separators.
 5. Fix mispainted spin widget entry field.
 6. Fix reading of KDE4 palette.
+7. Fix setting of check/radio shade.
 
 0.63.0
 ------
