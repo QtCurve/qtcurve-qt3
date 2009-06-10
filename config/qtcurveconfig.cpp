@@ -620,7 +620,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(fillProgress, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(darkerBorders, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(comboSplitter, SIGNAL(toggled(bool)), SLOT(updateChanged()));
-    connect(comboBtn, SIGNAL(currentIndexChanged(int)), SLOT(comboBtnChanged()));
+    connect(comboBtn, SIGNAL(activated(int)), SLOT(comboBtnChanged()));
     connect(customComboBtnColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
     connect(unifySpinBtns, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(vArrows, SIGNAL(toggled(bool)), SLOT(updateChanged()));
