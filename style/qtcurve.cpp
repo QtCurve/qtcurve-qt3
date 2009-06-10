@@ -4971,22 +4971,25 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 drawLightBevel(p, frame, cg, fillFlags|Style_Raised|Style_Horizontal,
                                controls&SC_ComboBoxEditField && field.isValid() && editable
                                    ? (reverse ? ROUNDED_LEFT : ROUNDED_RIGHT) : ROUNDED_ALL,
-                               getFill(fillFlags, cols), cols, true, true, editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
+                               getFill(fillFlags, cols, false, SHADE_DARKEN==opts.comboBtn && editable)), cols, true, true,
+                               editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
             }
 
             if(controls&SC_ComboBoxArrow && arrow.isValid())
             {
-                if(!editable && itsComboBtnCols)
+                if(!editable && (SHADE_DARKEN==opts.comboBtn || itsComboBtnCols))
                 {
-                    SFlags btnFlags(flags);
-                    QRect  btn(arrow.x(), frame.y(), arrow.width()+1, frame.height());
+                    SFlags       btnFlags(flags);
+                    QRect        btn(arrow.x(), frame.y(), arrow.width()+1, frame.height());
+                    const QColor *cols=SHADE_DARKEN==opts.comboBtn ? use : itsComboBtnCols;
                     if(!sunken)
                         btnFlags|=Style_Raised;
                     p->save();
                     p->setClipRect(btn);
                     btn.addCoords(reverse ? 0 : -2, 0, reverse ? 2 : 0, 0);
                     drawLightBevel(p, btn, cg, btnFlags|Style_Horizontal, reverse ? ROUNDED_LEFT : ROUNDED_RIGHT,
-                                    getFill(btnFlags, itsComboBtnCols), itsComboBtnCols, true, true, WIDGET_COMBO);
+                                   getFill(btnFlags, cols, false, SHADE_DARKEN==opts.comboBtn), cols, true, true,
+                                   WIDGET_COMBO);
                     p->restore();
                 }
                     
@@ -6668,7 +6671,7 @@ void QtCurveStyle::drawSbSliderHandle(QPainter *p, const QRect &orig, const QCol
                         || SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons
 #endif
                         ? ROUNDED_ALL : ROUNDED_NONE,
-                   getFill(flags, use), use, true, false, WIDGET_SB_SLIDER);
+                   getFill(flags, use, false, SHADE_DARKEN==opts.shadeSliders), use, true, false, WIDGET_SB_SLIDER);
 
     const QColor *markers(/*opts.coloredMouseOver && flags&Style_MouseOver
                               ? itsMouseOverCols
@@ -6704,7 +6707,7 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
                          *border(flags&Style_MouseOver && (MO_GLOW==opts.coloredMouseOver ||
                                                            MO_COLORED==opts.coloredMouseOver)
                                     ? itsMouseOverCols : use);
-        const QColor     &fill(getFill(flags, use));
+        const QColor     &fill(getFill(flags, use, false, SHADE_DARKEN==opts.shadeSliders));
         int              x(r.x()),
                          y(r.y()),
                          xo(horiz ? 8 : 0),
@@ -7038,7 +7041,7 @@ const QColor * QtCurveStyle::buttonColors(const QColorGroup &cg) const
 const QColor * QtCurveStyle::sliderColors(/*const QColorGroup &cg, */ SFlags flags) const
 {
     return (flags&Style_Enabled)
-                ? SHADE_NONE!=opts.shadeSliders && (!opts.colorSliderMouseOver || flags&Style_MouseOver)
+                ? SHADE_NONE!=opts.shadeSliders &&itsSliderCols && (!opts.colorSliderMouseOver || flags&Style_MouseOver)
                         ? itsSliderCols
                         : itsButtonCols // buttonColors(cg)
                 : itsBackgroundCols;
@@ -7522,19 +7525,19 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
     return false;
 }
 
-const QColor & QtCurveStyle::getFill(SFlags flags, const QColor *use, bool cr) const
+const QColor & QtCurveStyle::getFill(SFlags flags, const QColor *use, bool cr, bool darker) const
 {
     return !(flags&Style_Enabled)
-               ? use[ORIGINAL_SHADE]
+               ? use[darker ? 2 : ORIGINAL_SHADE]
                : flags&Style_Down
-                   ? use[4]
+                   ? use[darker ? 5 : 4]
                    : flags&Style_MouseOver
                          ? !cr && (flags&(Style_On | Style_Sunken))
-                               ? use[SHADE_4_HIGHLIGHT]
-                               : use[SHADE_ORIG_HIGHLIGHT]
+                               ? use[darker ? 3 : SHADE_4_HIGHLIGHT]
+                               : use[darker ? SHADE_2_HIGHLIGHT : SHADE_ORIG_HIGHLIGHT]
                          : !cr && (flags&(Style_On | Style_Sunken))
-                               ? use[4]
-                               : use[ORIGINAL_SHADE];
+                               ? use[darker ? 5 : 4]
+                               : use[darker ? 2 : ORIGINAL_SHADE];
 }
 
 const QColor & QtCurveStyle::getTabFill(bool current, bool highlight, const QColor *use) const

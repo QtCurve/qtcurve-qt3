@@ -7,15 +7,16 @@
  5. Add option to colour arrow part of combobox.
  6. Draw resize grip as a darkend triangle.
  7. Add a 'thick colored border' mouse over type.
- 8. Fix mispainted spin widget entry field.
- 9. Fix reading of KDE4 palette.
-10. Fix setting of check/radio shade.
-11. Fix storing of custom menu stripe colour.
-12. In config dialog, place '%'symbol on the right for the "popup menu background"
+ 8. Allow to darken sliders.
+ 9. Fix mispainted spin widget entry field.
+10. Fix reading of KDE4 palette.
+11. Fix setting of check/radio shade.
+12. Fix storing of custom menu stripe colour.
+13. In config dialog, place '%'symbol on the right for the "popup menu background"
     setting.
-13. Fix kaffeine's slider benig completely filled at start of song.
-14. Fix LineEdit in qtconfig.
-15. Under KDE4 (KDE_SESSION_VERSION>=4), default hover/focus colours to the
+14. Fix kaffeine's slider benig completely filled at start of song.
+15. Fix LineEdit in qtconfig.
+16. Under KDE4 (KDE_SESSION_VERSION>=4), default hover/focus colours to the
     KDE4 defaults.
 
 0.63.0
