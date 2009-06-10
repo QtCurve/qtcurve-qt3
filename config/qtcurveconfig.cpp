@@ -443,6 +443,7 @@ static void insertMouseOverEntries(QComboBox *combo)
 {
     combo->insertItem(i18n("No coloration"));
     combo->insertItem(i18n("Color border"));
+    combo->insertItem(i18n("Thick color border"));
     combo->insertItem(i18n("Plastik style"));
     combo->insertItem(i18n("Glow"));
 }

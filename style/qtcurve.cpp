@@ -1964,7 +1964,8 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                                     (flags&QTC_CHECK_BUTTON || flags&QTC_TOGGLE_BUTTON || !sunken)),
                  plastikMouseOver(doColouredMouseOver && MO_PLASTIK==opts.coloredMouseOver),
                  colouredMouseOver(doColouredMouseOver &&
-                                       (MO_COLORED==opts.coloredMouseOver || (MO_GLOW==opts.coloredMouseOver && itsFormMode))),
+                                       (MO_COLORED==opts.coloredMouseOver || MO_COLORED_THICK==opts.coloredMouseOver ||
+                                        (MO_GLOW==opts.coloredMouseOver && itsFormMode))),
                  doEtch(!itsFormMode && doBorder && ETCH_WIDGET(w) && !(flags&QTC_CHECK_BUTTON) &&
                         QTC_DO_EFFECT),
                  horiz(flags&Style_Horizontal);
@@ -2137,7 +2138,9 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                         (!(flags&Style_MouseOver) || !itsMouseOverCols)
                             ? itsDefBtnCols : itsMouseOverCols, w, doCorners);
         else
-            drawBorder(bgnd, p, r, cg, flags, round, borderCols, w, doCorners);
+            drawBorder(bgnd, p, r, cg, flags, round,
+                       colouredMouseOver && MO_COLORED_THICK==opts.coloredMouseOver ? itsMouseOverCols : borderCols,
+                       w, doCorners);
     }
 
     if(doEtch)
