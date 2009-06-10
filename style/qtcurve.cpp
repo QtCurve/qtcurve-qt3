@@ -4965,7 +4965,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(controls&SC_ComboBoxFrame && frame.isValid())
             {
-                const QColor *cols=itsComboBtnCols && editable ? itsComboBtnCols : use;
+                const QColor *cols=itsComboBtnCols && editable  && flags&Style_Enabled ? itsComboBtnCols : use;
 
                 if(editable && HOVER_CB_ARROW!=itsHover)
                     fillFlags&=~Style_MouseOver;
@@ -4976,8 +4976,10 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 drawLightBevel(p, frame, cg, fillFlags|Style_Raised|Style_Horizontal,
                                controls&SC_ComboBoxEditField && field.isValid() && editable
                                    ? (reverse ? ROUNDED_LEFT : ROUNDED_RIGHT) : ROUNDED_ALL,
-                               getFill(fillFlags, cols, false, SHADE_DARKEN==opts.comboBtn && editable)), cols, true, true,
-                               editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
+                               getFill(fillFlags, cols, false, (SHADE_DARKEN==opts.comboBtn ||
+                                                                  (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))) &&
+                                                                editable),
+                               cols, true, true, editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
             }
 
             if(controls&SC_ComboBoxArrow && arrow.isValid())
@@ -4986,15 +4988,16 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 {
                     SFlags       btnFlags(flags);
                     QRect        btn(arrow.x(), frame.y(), arrow.width()+1, frame.height());
-                    const QColor *cols=SHADE_DARKEN==opts.comboBtn ? use : itsComboBtnCols;
+                    const QColor *cols=SHADE_DARKEN==opts.comboBtn || !(flags&Style_Enabled) ? use : itsComboBtnCols;
                     if(!sunken)
                         btnFlags|=Style_Raised;
                     p->save();
                     p->setClipRect(btn);
                     btn.addCoords(reverse ? 0 : -2, 0, reverse ? 2 : 0, 0);
                     drawLightBevel(p, btn, cg, btnFlags|Style_Horizontal, reverse ? ROUNDED_LEFT : ROUNDED_RIGHT,
-                                   getFill(btnFlags, cols, false, SHADE_DARKEN==opts.comboBtn), cols, true, true,
-                                   WIDGET_COMBO);
+                                   getFill(btnFlags, cols, false, SHADE_DARKEN==opts.comboBtn ||
+                                                                  (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled)))),
+                                   cols, true, true, WIDGET_COMBO);
                     p->restore();
                 }
                     
