@@ -194,13 +194,13 @@ class QtCurveStyle : public KStyle
     const QColor * borderColors(SFlags flags, const QColor *use) const;
     const QColor * getSidebarButtons() const;
     void           setMenuColors(const QColorGroup &cg);
-    void           setDecorationColors();
+    void           setDecorationColors(bool init=false);
     const QColor * getMdiColors(const QColorGroup &cg, bool active) const;
 #ifdef SET_MDI_WINDOW_BUTTON_POSITIONS
     void           readMdiPositions() const;
 #endif
     bool           redrawHoverWidget(const QPoint &pos);
-    const QColor & getFill(SFlags flags, const QColor *use, bool cr=false) const;
+    const QColor & getFill(SFlags flags, const QColor *use, bool cr=false, bool darker=false) const;
     const QColor & getListViewFill(SFlags flags, const QColor *use) const;
     const QColor & getTabFill(bool current,  bool highlight, const QColor *use) const;
     const QColor & menuStripeCol() const;
@@ -223,7 +223,7 @@ class QtCurveStyle : public KStyle
 
     private:
 
-    Options                    opts;
+    mutable Options            opts;
     QColor                     itsHighlightCols[TOTAL_SHADES+1],
                                itsBackgroundCols[TOTAL_SHADES+1],
                                itsMenubarCols[TOTAL_SHADES+1],
@@ -231,6 +231,7 @@ class QtCurveStyle : public KStyle
                                *itsSliderCols,
                                *itsDefBtnCols,
                                *itsMouseOverCols,
+                               *itsComboBtnCols,
                                itsButtonCols[TOTAL_SHADES+1],
                                itsLighterPopupMenuBgndCol,
                                itsCheckRadioCol;

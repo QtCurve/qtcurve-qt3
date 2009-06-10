@@ -1,3 +1,25 @@
+0.64.0
+------
+ 1. Add option to not draw border around popupmenus.
+ 2. Add option to unify spinbuttons.
+ 3. Add option to set sub-menu delay (default 100ms)
+ 4. Use equal top/bottom padding on popupmenu separators.
+ 5. Add option to colour arrow part of combobox.
+ 6. Draw resize grip as a darkend triangle.
+ 7. Add a 'thick colored border' mouse over type.
+ 8. Allow to darken sliders.
+ 9. Add new default button indicator - darken.
+10. Fix mispainted spin widget entry field.
+11. Fix reading of KDE4 palette.
+12. Fix setting of check/radio shade.
+13. Fix storing of custom menu stripe colour.
+14. In config dialog, place '%'symbol on the right for the "popup menu background"
+    setting.
+15. Fix kaffeine's slider benig completely filled at start of song.
+16. Fix LineEdit in qtconfig.
+17. Under KDE4 (KDE_SESSION_VERSION>=4), default hover/focus colours to the
+    KDE4 defaults.
+
 0.63.0
 ------
  1. Add '3dfull' to gradient border options. This forces the

@@ -123,6 +123,14 @@ dimension, so as to draw the scrollbar at the correct size.
 
 static const int constMenuPixmapWidth=22;
 
+static bool useQt4Settings()
+{
+    static const char *vers = getenv("KDE_SESSION_VERSION");
+    static bool       use   = vers && atoi(vers)>=4;
+
+    return use;
+}
+
 static QRect adjusted(const QRect r, int xp1, int yp1, int xp2, int yp2)
 {
     int x1, y1, x2, y2;
@@ -373,30 +381,40 @@ static bool readKdeGlobals()
 {
     static int lastCheck=0;
 
-    int now=time(NULL);
+    int now=time(0L);
 
     // Dont keep on reading kdeglobals file - only read if its been at least 2 seconds since the last time...
     if(abs(now-lastCheck)<3)
         return false;
 
+  
     QFile  f(kdeHome(true)+"/share/config/kdeglobals");
     QColor highlight(QApplication::palette().active().highlight());
     bool   inactiveEnabled(false),
-           changeSelectionColor(false);
+           changeSelectionColor(false),
+           useQt4(useQt4Settings());
 
-    kdeSettings.hover=kdeSettings.focus=highlight;
+    lastCheck=now;
+
+    if(useQt4)
+    {
+        kdeSettings.hover=QColor(119, 183, 255);
+        kdeSettings.focus=QColor( 43, 116, 199);
+    }
+    else
+        kdeSettings.hover=kdeSettings.focus=highlight;
+
     if(f.open(IO_ReadOnly))
     {
         QTextStream in(&f);
         bool        inPal(false),
                     inInactive(false),
-                    donePal(false),
+                    donePal(!useQt4),
                     doneInactive(false);
 
         while (!in.atEnd() && (!donePal || !doneInactive))
         {
             QString line(in.readLine());
-
             if(inPal)
             {
                 if(0==line.find("DecorationFocus=", false))
@@ -404,21 +422,28 @@ static bool readKdeGlobals()
                 else if(0==line.find("DecorationHover=", false))
                     setRgb(&kdeSettings.hover, QStringList::split(",", line.mid(16)));
                 else if (-1!=line.find('['))
+                {
                     donePal=true;
+                    inPal=false;
+                }
             }
-            if(inInactive)
+            else if(inInactive)
             {
                 if(0==line.find("ChangeSelectionColor=", false))
                     changeSelectionColor=line.find("=true");
                 else if(0==line.find("Enable=", false))
                     inactiveEnabled=line.find("=true");
                 else if (-1!=line.find('['))
+                {
                     doneInactive=true;
+                    inInactive=false;
+                }
             }
-            else if(0==line.find("[Colors:Button]", false))
-                inPal=true;
-            else if(0==line.find("[ColorEffects:Inactive]", false))
-                inInactive=true;
+            if(!inPal && !inInactive)
+                if(useQt4 && 0==line.find("[Colors:Button]", false))
+                    inPal=true;
+                else if(0==line.find("[ColorEffects:Inactive]", false))
+                    inInactive=true;
         }
         f.close();
     }
@@ -595,14 +620,6 @@ static void parseWindowLine(const QString &line, QValueList<int> &data)
 }
 #endif
 
-static bool useQt4Settings()
-{
-    static const char *vers = getenv("KDE_SESSION_VERSION");
-    static bool       use   = vers && atoi(vers)>=4;
-
-    return use;
-}
-
 static bool isCheckBoxOfGroupBox(const QObject *w)
 {
     return w && w->parent() &&
@@ -667,6 +684,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
               itsSliderCols(0L),
               itsDefBtnCols(0L),
               itsMouseOverCols(0L),
+              itsComboBtnCols(0L),
               itsSidebarButtonsCols(0L),
               itsActiveMdiColors(0L),
               itsMdiColors(0L),
@@ -717,38 +735,79 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     shadeColors(QApplication::palette().active().background(), itsBackgroundCols);
     shadeColors(QApplication::palette().active().button(), itsButtonCols);
 
-    setDecorationColors();
+    setDecorationColors(true);
 
-    if(SHADE_SELECTED==opts.shadeSliders)
-        itsSliderCols=itsHighlightCols;
-    else if(SHADE_NONE!=opts.shadeSliders)
+    switch(opts.shadeSliders)
     {
-        itsSliderCols=new QColor [TOTAL_SHADES+1];
-        shadeColors(SHADE_BLEND_SELECTED==opts.shadeSliders
-                        ? midColor(itsHighlightCols[ORIGINAL_SHADE],
-                                   itsButtonCols[ORIGINAL_SHADE])
-                        : opts.customSlidersColor,
-                    itsSliderCols);
+        default:
+        case SHADE_DARKEN:
+        case SHADE_NONE:
+            break;
+        case SHADE_SELECTED:
+            itsSliderCols=itsHighlightCols;
+            break;
+        case SHADE_BLEND_SELECTED:
+        case SHADE_CUSTOM:
+            if(!itsSliderCols)
+                itsSliderCols=new QColor [TOTAL_SHADES+1];
+            shadeColors(SHADE_BLEND_SELECTED==opts.shadeSliders
+                            ? midColor(itsHighlightCols[ORIGINAL_SHADE],
+                                       itsButtonCols[ORIGINAL_SHADE])
+                            : opts.customSlidersColor,
+                        itsSliderCols);
     }
 
-    if(IND_GLOW==opts.defBtnIndicator)
-        itsDefBtnCols=itsFocusCols;
-    else if(IND_TINT==opts.defBtnIndicator)
+    switch(opts.defBtnIndicator)
     {
-        itsDefBtnCols=new QColor [TOTAL_SHADES+1];
-        shadeColors(tint(itsButtonCols[ORIGINAL_SHADE],
-                         itsHighlightCols[ORIGINAL_SHADE], QTC_DEF_BNT_TINT), itsDefBtnCols);
-    }
-    else
-    {
-        if(SHADE_BLEND_SELECTED==opts.shadeSliders)
-            itsDefBtnCols=itsSliderCols;
-        else
-        {
+        case IND_GLOW:
+            itsDefBtnCols=itsFocusCols;
+            break;
+        case IND_TINT:
             itsDefBtnCols=new QColor [TOTAL_SHADES+1];
-            shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
-                                 itsButtonCols[ORIGINAL_SHADE]), itsDefBtnCols);
-        }
+            shadeColors(tint(itsButtonCols[ORIGINAL_SHADE],
+                            itsHighlightCols[ORIGINAL_SHADE], QTC_DEF_BNT_TINT), itsDefBtnCols);
+            break;
+        default:
+            break;
+        case IND_COLORED:
+            if(SHADE_BLEND_SELECTED==opts.shadeSliders)
+                itsDefBtnCols=itsSliderCols;
+            else
+            {
+                itsDefBtnCols=new QColor [TOTAL_SHADES+1];
+                shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
+                                    itsButtonCols[ORIGINAL_SHADE]), itsDefBtnCols);
+            }
+    }
+
+    switch(opts.comboBtn)
+    {
+        default:
+        case SHADE_DARKEN:
+        case SHADE_NONE:
+            break;
+        case SHADE_SELECTED:
+            itsComboBtnCols=itsHighlightCols;
+            break;
+        case SHADE_BLEND_SELECTED:
+            if(opts.shadeSliders==SHADE_BLEND_SELECTED)
+            {
+                itsComboBtnCols=itsSliderCols;
+                break;
+            }
+        case SHADE_CUSTOM:
+            if(opts.shadeSliders==SHADE_CUSTOM && opts.customSlidersColor==opts.customComboBtnColor)
+            {
+                itsComboBtnCols=itsSliderCols;
+                break;
+            }
+            if(!itsComboBtnCols)
+                itsComboBtnCols=new QColor [TOTAL_SHADES+1];
+            shadeColors(SHADE_BLEND_SELECTED==opts.comboBtn
+                            ? midColor(itsHighlightCols[ORIGINAL_SHADE],
+                                       itsButtonCols[ORIGINAL_SHADE])
+                            : opts.customComboBtnColor,
+                        itsComboBtnCols);
     }
 
     setMenuColors(QApplication::palette().active());
@@ -801,6 +860,8 @@ QtCurveStyle::~QtCurveStyle()
         delete [] itsDefBtnCols;
     if(itsSliderCols && itsSliderCols!=itsHighlightCols)
         delete [] itsSliderCols;
+    if(itsComboBtnCols && itsComboBtnCols!=itsHighlightCols && itsComboBtnCols!=itsSliderCols)
+        delete [] itsComboBtnCols;
     delete itsMactorPal;
 }
 
@@ -958,7 +1019,10 @@ void QtCurveStyle::polish(QPalette &pal)
          newDefBtn(itsDefBtnCols && /*( (IND_COLORED==opts.defBtnIndicator &&*/
                                        SHADE_BLEND_SELECTED!=opts.shadeSliders/*) ||*/
                                       /*(IND_TINT==opts.defBtnIndicator) )*/ &&
-                   (newContrast || newButton || newMenu));
+                   (newContrast || newButton || newMenu)),
+         newComboBtn(itsComboBtnCols && itsHighlightCols!=itsComboBtnCols && itsSliderCols!=itsComboBtnCols &&
+                     SHADE_BLEND_SELECTED==opts.comboBtn &&
+                     (newContrast || newButton || newMenu));
 
     if(newGray)
         shadeColors(QApplication::palette().active().background(), itsBackgroundCols);
@@ -976,6 +1040,10 @@ void QtCurveStyle::polish(QPalette &pal)
     if(newSlider)
         shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
                     itsButtonCols[ORIGINAL_SHADE]), itsSliderCols);
+
+    if(newComboBtn)
+        shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
+                    itsButtonCols[ORIGINAL_SHADE]), itsComboBtnCols);
 
     if(newDefBtn)
         if(IND_TINT==opts.defBtnIndicator)
@@ -1013,6 +1081,8 @@ void QtCurveStyle::polish(QPalette &pal)
 
     if(itsMactorPal)
         *itsMactorPal=pal;
+    // Force this to be re-generated!
+    opts.customMenuStripeColor=Qt::black;
 }
 
 QColorGroup QtCurveStyle::setColorGroup(const QColorGroup &old)
@@ -1097,6 +1167,11 @@ void QtCurveStyle::polish(QWidget *widget)
             widget->parentWidget()->inherits("KateView"))) &&
         ((QFrame *)widget)->lineWidth()>1)
         ((QFrame *)widget)->setLineWidth(opts.gtkScrollViews ? 1 : 2);
+    else if(!opts.popupBorder && widget &&
+            (::qt_cast<const QPopupMenu *>(widget) ||
+             (widget->parentWidget() && ::qt_cast<const QListBox *>(widget) &&
+              ::qt_cast<const QComboBox *>(widget->parentWidget()))))
+        ((QFrame *)widget)->setLineWidth(0);
     else if (USE_LIGHTER_POPUP_MENU && !opts.borderMenuitems &&
         widget && ::qt_cast<const QPopupMenu *>(widget))
         ((QFrame *)widget)->setLineWidth(1);
@@ -1885,6 +1960,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                  draw3d(draw3dfull || (!lightBorder && QTC_DRAW_3D_BORDER(sunken, app))),
                  doColouredMouseOver(!sunken && doBorder &&
                                     opts.coloredMouseOver && flags&Style_MouseOver &&
+                                     (WIDGET_SPIN!=w || !opts.unifySpinBtns) &&
                                     !(flags&QTC_DW_CLOSE_BUTTON) &&
 #ifdef QTC_DONT_COLOUR_MOUSEOVER_TBAR_BUTTONS
                                     !(flags&QTC_STD_TOOLBUTTON) &&
@@ -1892,7 +1968,8 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                                     (flags&QTC_CHECK_BUTTON || flags&QTC_TOGGLE_BUTTON || !sunken)),
                  plastikMouseOver(doColouredMouseOver && MO_PLASTIK==opts.coloredMouseOver),
                  colouredMouseOver(doColouredMouseOver &&
-                                       (MO_COLORED==opts.coloredMouseOver || (MO_GLOW==opts.coloredMouseOver && itsFormMode))),
+                                       (MO_COLORED==opts.coloredMouseOver || MO_COLORED_THICK==opts.coloredMouseOver ||
+                                        (MO_GLOW==opts.coloredMouseOver && itsFormMode))),
                  doEtch(!itsFormMode && doBorder && ETCH_WIDGET(w) && !(flags&QTC_CHECK_BUTTON) &&
                         QTC_DO_EFFECT),
                  horiz(flags&Style_Horizontal);
@@ -1912,12 +1989,15 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     {
         // Adjust paint rect, so that gradient is drawn from the same coords as KDE4 and Gtk2
         if(WIDGET_PROGRESSBAR==w && opts.stripedProgress)
+        {
+            p->save();
             p->setClipRegion(p->clipRegion().eor(QRegion(br)));
+        }
         br.addCoords(1, 1,-1,-1);
         drawBevelGradient(fill, p, br, horiz, sunken, app, w);
         br.addCoords(-1, -1, 1, 1);
         if(WIDGET_PROGRESSBAR==w && opts.stripedProgress)
-            p->setClipping(false);
+            p->restore();
     }
 
     if(!colouredMouseOver && lightBorder)
@@ -2046,6 +2126,13 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
         }
 
     if(doBorder)
+    {
+        const QColor *borderCols=WIDGET_COMBO==w && cols==itsComboBtnCols
+                        ? flags&Style_MouseOver && MO_GLOW==opts.coloredMouseOver && !sunken
+                            ? itsMouseOverCols
+                            : itsButtonCols
+                        : cols;
+                            
         if(!sunken && flags&Style_Enabled &&
             ((((doEtch && WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w) || WIDGET_COMBO==w || WIDGET_SB_SLIDER==w) &&
              MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
@@ -2055,7 +2142,10 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                         (!(flags&Style_MouseOver) || !itsMouseOverCols)
                             ? itsDefBtnCols : itsMouseOverCols, w, doCorners);
         else
-            drawBorder(bgnd, p, r, cg, flags, round, cols, w, doCorners);
+            drawBorder(bgnd, p, r, cg, flags, round,
+                       colouredMouseOver && MO_COLORED_THICK==opts.coloredMouseOver ? itsMouseOverCols : borderCols,
+                       w, doCorners);
+    }
 
     if(doEtch)
         if( !sunken &&
@@ -2469,20 +2559,18 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
     if(doEtch)
         r.addCoords(1, 1, -1, -1);
 
+    if(!itsFormMode)
+        p->fillRect(rx, cg.background());
+    if(WIDGET_ENTRY==w && flags&Style_Enabled)
+        p->fillRect(QRect(rx.x()+2, rx.y()+2, rx.width()-3, rx.height()-3), cg.base());
+
     if(isSpin)
     {
         if(reverse)
             r.addCoords(-1, 0, 0, 0);
 
-        p->setPen(cg.base());
-        p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-2, r.y()+r.height()-1);
-        p->drawLine(r.x()+r.width()-3, r.y(), r.x()+r.width()-3, r.y()+r.height()-1);
+        p->fillRect(r, flags&Style_Enabled ? cg.base() : cg.background());
     }
-
-    if(!itsFormMode)
-        p->fillRect(rx, cg.background());
-//     if(flags&Style_Enabled)
-//         p->fillRect(QRect(rx.x()+2, rx.y()+2, rx.width()-3, rx.height()-3), cg.background());
 
     if(highlight && isSpin)
         if(reverse)
@@ -2490,7 +2578,8 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
         else
             r.addCoords(0, 0, -1, 0);
 
-    drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal), round, use, WIDGET_SCROLLVIEW==w ? w : WIDGET_ENTRY, true, BORDER_SUNKEN);
+    drawBorder(cg.background(), p, r, cg, (SFlags)(flags|Style_Horizontal), round, use,
+               WIDGET_SCROLLVIEW==w ? w : WIDGET_ENTRY, true, isSpin && !(flags&Style_Enabled) ? BORDER_FLAT : BORDER_SUNKEN);
 
     if(doEtch)
     {
@@ -2696,7 +2785,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                            operaMdi || mdi
                             ? ROUNDED_NONE
                             : ROUNDED_ALL,
-                           getFill(flags, use), use, true, true,
+                           getFill(flags, use, false,
+                                   flags&Style_ButtonDefault && flags&Style_Enabled && IND_DARKEN==opts.defBtnIndicator),
+                           use, true, true,
                            flags&QTC_NO_ETCH_BUTTON
                                 ? WIDGET_NO_ETCH_BTN
                                 : flags&Style_ButtonDefault && flags&Style_Enabled && IND_COLORED!=opts.defBtnIndicator
@@ -3491,14 +3582,15 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             const QColor *use(buttonColors(cg));
             bool         reverse(QApplication::reverseLayout());
 
-            drawLightBevel(p, sr, cg, flags|Style_Horizontal, PE_SpinWidgetDown==pe || PE_SpinWidgetMinus==pe
-                                                                ? reverse
-                                                                    ? ROUNDED_BOTTOMLEFT
-                                                                    : ROUNDED_BOTTOMRIGHT
-                                                                : reverse
-                                                                    ? ROUNDED_TOPLEFT
-                                                                    : ROUNDED_TOPRIGHT,
-                           getFill(flags, use), use, true, true, WIDGET_SPIN);
+            if(!opts.unifySpinBtns || flags&Style_Sunken)
+                drawLightBevel(p, sr, cg, flags|Style_Horizontal, PE_SpinWidgetDown==pe || PE_SpinWidgetMinus==pe
+                                                                    ? reverse
+                                                                        ? ROUNDED_BOTTOMLEFT
+                                                                        : ROUNDED_BOTTOMRIGHT
+                                                                    : reverse
+                                                                        ? ROUNDED_TOPLEFT
+                                                                        : ROUNDED_TOPRIGHT,
+                               getFill(flags, use), use, true, true, WIDGET_SPIN);
 
             if(PE_SpinWidgetUp==pe || PE_SpinWidgetDown==pe)
             {
@@ -3579,47 +3671,23 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             break;
         case PE_SizeGrip:
         {
-            p->save();
-
-            int x, y, w, h;
-            r.rect(&x, &y, &w, &h);
-
-            int sw(QMIN(h,w));
-
-            if (h > w)
-                p->translate(0, h - w);
-            else
-                p->translate(w - h, 0);
-
-            int sx(x),
-                sy(y),
-                s(sw / 4),
-                dark(4); // QT_BORDER(flags&Style_Enabled));
+            QPointArray a;
 
             if (QApplication::reverseLayout())
             {
-                sx = x + sw;
-                for (int i = 0; i < 4; ++i)
-                {
-//                     p->setPen(QPen(itsBackgroundCols[0], 1));
-//                     p->drawLine(x, sy - 1 , sx + 1,  sw);
-                    p->setPen(QPen(itsBackgroundCols[dark], 1));
-                    p->drawLine(x, sy, sx,  sw);
-                    sx -= s;
-                    sy += s;
-                }
+                a.setPoints(3,  0,0, SIZE_GRIP_SIZE,SIZE_GRIP_SIZE, 0,SIZE_GRIP_SIZE);
+                a.translate(r.x(), r.y()+(r.height()-SIZE_GRIP_SIZE));
             }
             else
-                for (int i = 0; i < 4; ++i)
-                {
-//                     p->setPen(QPen(itsBackgroundCols[0], 1));
-//                     p->drawLine(sx-1, sw, sw,  sy-1);
-                    p->setPen(QPen(itsBackgroundCols[dark], 1));
-                    p->drawLine(sx, sw, sw,  sy);
-                    sx += s;
-                    sy += s;
-                }
+            {
+                a.setPoints(3,  SIZE_GRIP_SIZE,0, SIZE_GRIP_SIZE,SIZE_GRIP_SIZE, 0,SIZE_GRIP_SIZE);
+                a.translate(r.x()+(r.width()-SIZE_GRIP_SIZE), r.y()+(r.height()-SIZE_GRIP_SIZE));
+            }
 
+            p->save();
+            p->setBrush(itsBackgroundCols[2]);
+            p->setPen(itsBackgroundCols[2]);
+            p->drawPolygon(a);
             p->restore();
             break;
         }
@@ -3874,7 +3942,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                 ? (top ? ROUNDED_TOPLEFT : ROUNDED_BOTTOMLEFT)
                                 : lastTab
                                     ? (top ? ROUNDED_TOPRIGHT : ROUNDED_BOTTOMRIGHT)
-                                    : ROUNDED_NONE, glowMo ? itsMouseOverCols : NULL, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT, true,
+                                    : ROUNDED_NONE, glowMo ? itsMouseOverCols : 0L, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT, true,
                        active && !opts.colorSelTab ? BORDER_RAISED : BORDER_FLAT, false);
             if(glowMo)
             {
@@ -4216,7 +4284,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
             if(mi->isSeparator())
             {
-                y=r.y()+((r.height()/2)-1);
+                y=r.y()+(r.height()>>1);
                 p->setPen(itsBackgroundCols[QTC_MENU_SEP_SHADE]);
                 p->drawLine(r.x()+3+(!reverse && opts.menuStripe ? maxpmw : 0), y,
                             r.x()+r.width()-4-(reverse && opts.menuStripe ? maxpmw : 0), y);
@@ -4898,6 +4966,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(controls&SC_ComboBoxFrame && frame.isValid())
             {
+                const QColor *cols=itsComboBtnCols && editable  && flags&Style_Enabled ? itsComboBtnCols : use;
+
                 if(editable && HOVER_CB_ARROW!=itsHover)
                     fillFlags&=~Style_MouseOver;
 
@@ -4907,11 +4977,31 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 drawLightBevel(p, frame, cg, fillFlags|Style_Raised|Style_Horizontal,
                                controls&SC_ComboBoxEditField && field.isValid() && editable
                                    ? (reverse ? ROUNDED_LEFT : ROUNDED_RIGHT) : ROUNDED_ALL,
-                               getFill(fillFlags, use), use, true, true, editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
+                               getFill(fillFlags, cols, false, (SHADE_DARKEN==opts.comboBtn ||
+                                                                  (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))) &&
+                                                                editable),
+                               cols, true, true, editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
             }
 
             if(controls&SC_ComboBoxArrow && arrow.isValid())
             {
+                if(!editable && (SHADE_DARKEN==opts.comboBtn || itsComboBtnCols))
+                {
+                    SFlags       btnFlags(flags);
+                    QRect        btn(arrow.x(), frame.y(), arrow.width()+1, frame.height());
+                    const QColor *cols=SHADE_DARKEN==opts.comboBtn || !(flags&Style_Enabled) ? use : itsComboBtnCols;
+                    if(!sunken)
+                        btnFlags|=Style_Raised;
+                    p->save();
+                    p->setClipRect(btn);
+                    btn.addCoords(reverse ? 0 : -2, 0, reverse ? 2 : 0, 0);
+                    drawLightBevel(p, btn, cg, btnFlags|Style_Horizontal, reverse ? ROUNDED_LEFT : ROUNDED_RIGHT,
+                                   getFill(btnFlags, cols, false, SHADE_DARKEN==opts.comboBtn ||
+                                                                  (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))),
+                                   cols, true, true, WIDGET_COMBO);
+                    p->restore();
+                }
+                    
                 SFlags arrowFlags(flags);
                 if(sunken)
                     arrow.addCoords(1, 1, 1, 1);
@@ -5019,6 +5109,30 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                ROUNDED_LEFT, WIDGET_SPIN);
             }
 
+            if(opts.unifySpinBtns)
+            {
+                QRect        btns=up.unite(down);
+                const QColor *use(buttonColors(cg));
+                int          btnFlags=flags;
+
+                btnFlags&=~(Style_Sunken|Style_MouseOver);
+                btnFlags|=Style_Horizontal;
+
+                drawLightBevel(p, btns, cg, btnFlags, reverse ?  ROUNDED_LEFT : ROUNDED_RIGHT, getFill(btnFlags, use),
+                              use, true, true, WIDGET_SPIN);
+                if(hw && (HOVER_SW_DOWN==itsHover || HOVER_SW_UP==itsHover) && flags&Style_Enabled && !(flags&Style_Sunken))
+                {
+                    btnFlags|=Style_MouseOver;
+                    p->save();
+                    p->setClipRect(HOVER_SW_UP==itsHover ? up : down);
+                    drawLightBevel(p, btns, cg, btnFlags, reverse ?  ROUNDED_LEFT : ROUNDED_RIGHT, getFill(btnFlags, use),
+                                   use, true, true, WIDGET_SPIN);
+                    p->restore();
+                }
+                p->setPen(use[QT_BORDER(style&Style_Enabled)]);
+                p->drawLine(down.x()+2, down.y(), down.x()+down.width()-3, down.y());
+            }
+                
             if((controls&SC_SpinWidgetUp) && up.isValid())
             {
                 PrimitiveElement pe(PE_SpinWidgetUp);
@@ -6015,7 +6129,7 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
             else if (mi->isSeparator())
             {
                 w = 10;
-                h = opts.thinnerMenuItems ? 6 : 8;
+                h = 7;
             }
             else
             {
@@ -6069,6 +6183,8 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
 {
     switch(stylehint)
     {
+        case SH_PopupMenu_SubMenuPopupDelay:
+            return opts.menuDelay;
         case SH_ScrollView_FrameOnlyAroundContents:
             return opts.gtkScrollViews;
         case SH_EtchDisabledText:
@@ -6564,7 +6680,7 @@ void QtCurveStyle::drawSbSliderHandle(QPainter *p, const QRect &orig, const QCol
                         || SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons
 #endif
                         ? ROUNDED_ALL : ROUNDED_NONE,
-                   getFill(flags, use), use, true, false, WIDGET_SB_SLIDER);
+                   getFill(flags, use, false, SHADE_DARKEN==opts.shadeSliders), use, true, false, WIDGET_SB_SLIDER);
 
     const QColor *markers(/*opts.coloredMouseOver && flags&Style_MouseOver
                               ? itsMouseOverCols
@@ -6600,7 +6716,7 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
                          *border(flags&Style_MouseOver && (MO_GLOW==opts.coloredMouseOver ||
                                                            MO_COLORED==opts.coloredMouseOver)
                                     ? itsMouseOverCols : use);
-        const QColor     &fill(getFill(flags, use));
+        const QColor     &fill(getFill(flags, use, false, SHADE_DARKEN==opts.shadeSliders));
         int              x(r.x()),
                          y(r.y()),
                          xo(horiz ? 8 : 0),
@@ -6811,23 +6927,26 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
         int          pos((int)(((double)(horiz ? groove.width() : groove.height()) /
                                      (sliderWidget->maxValue()-sliderWidget->minValue()))  *
                                      (sliderWidget->value() - sliderWidget->minValue())));
-        const QColor *usedCols=itsSliderCols ? itsSliderCols : itsHighlightCols;
+        if(pos>0)
+        {
+            const QColor *usedCols=itsSliderCols ? itsSliderCols : itsHighlightCols;
 
-        if(horiz)
-        {
-            pos+=(groove.width()>10 && pos<(groove.width()/2)) ? 3 : 0;
-            if(reverse)
-                used.addCoords(groove.width()-pos, 0, 0, 0);
+            if(horiz)
+            {
+                pos+=(groove.width()>10 && pos<(groove.width()/2)) ? 3 : 0;
+                if(reverse)
+                    used.addCoords(groove.width()-pos, 0, 0, 0);
+                else
+                    used.addCoords(0, 0, -(groove.width()-pos), 0);
+            }
             else
-                used.addCoords(0, 0, -(groove.width()-pos), 0);
+            {
+                pos+=(groove.height()>10 && pos<(groove.height()/2)) ? 3 : 0;
+                used.addCoords(0, pos, 0, 0);
+            }
+            if(used.height()>0 && used.width()>0)
+                drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_FILLED_SLIDER_TROUGH);
         }
-        else
-        {
-            pos+=(groove.height()>10 && pos<(groove.height()/2)) ? 3 : 0;
-            used.addCoords(0, pos, 0, 0);
-        }
-        if(used.height()>0 && used.width()>0)
-            drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_FILLED_SLIDER_TROUGH);
     }
 }
 
@@ -6931,7 +7050,7 @@ const QColor * QtCurveStyle::buttonColors(const QColorGroup &cg) const
 const QColor * QtCurveStyle::sliderColors(/*const QColorGroup &cg, */ SFlags flags) const
 {
     return (flags&Style_Enabled)
-                ? SHADE_NONE!=opts.shadeSliders && (!opts.colorSliderMouseOver || flags&Style_MouseOver)
+                ? SHADE_NONE!=opts.shadeSliders &&itsSliderCols && (!opts.colorSliderMouseOver || flags&Style_MouseOver)
                         ? itsSliderCols
                         : itsButtonCols // buttonColors(cg)
                 : itsBackgroundCols;
@@ -6997,9 +7116,9 @@ void QtCurveStyle::setMenuColors(const QColorGroup &cg)
     }
 }
 
-void QtCurveStyle::setDecorationColors()
+void QtCurveStyle::setDecorationColors(bool init)
 {
-    if(!readKdeGlobals())
+    if(!readKdeGlobals() && !init)
         return;
 
     if(opts.coloredMouseOver)
@@ -7415,19 +7534,19 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
     return false;
 }
 
-const QColor & QtCurveStyle::getFill(SFlags flags, const QColor *use, bool cr) const
+const QColor & QtCurveStyle::getFill(SFlags flags, const QColor *use, bool cr, bool darker) const
 {
     return !(flags&Style_Enabled)
-               ? use[ORIGINAL_SHADE]
+               ? use[darker ? 2 : ORIGINAL_SHADE]
                : flags&Style_Down
-                   ? use[4]
+                   ? use[darker ? 5 : 4]
                    : flags&Style_MouseOver
                          ? !cr && (flags&(Style_On | Style_Sunken))
-                               ? use[SHADE_4_HIGHLIGHT]
-                               : use[SHADE_ORIG_HIGHLIGHT]
+                               ? use[darker ? 3 : SHADE_4_HIGHLIGHT]
+                               : use[darker ? SHADE_2_HIGHLIGHT : SHADE_ORIG_HIGHLIGHT]
                          : !cr && (flags&(Style_On | Style_Sunken))
-                               ? use[4]
-                               : use[ORIGINAL_SHADE];
+                               ? use[darker ? 5 : 4]
+                               : use[darker ? 2 : ORIGINAL_SHADE];
 }
 
 const QColor & QtCurveStyle::getTabFill(bool current, bool highlight, const QColor *use) const
@@ -7449,10 +7568,13 @@ const QColor & QtCurveStyle::menuStripeCol() const
         case SHADE_CUSTOM:
             return opts.customMenuStripeColor;
         case SHADE_BLEND_SELECTED:
-            return midColor(itsHighlightCols[ORIGINAL_SHADE],
-                            opts.lighterPopupMenuBgnd<0
-                                ? itsLighterPopupMenuBgndCol
-                                : itsBackgroundCols[ORIGINAL_SHADE]);
+            // Hack! Use opts.customMenuStripeColor to store this setting!
+            if(QTC_IS_BLACK(opts.customMenuStripeColor))
+                opts.customMenuStripeColor=midColor(itsHighlightCols[ORIGINAL_SHADE],
+                                opts.lighterPopupMenuBgnd<0
+                                    ? itsLighterPopupMenuBgndCol
+                                    : itsBackgroundCols[ORIGINAL_SHADE]);
+            return opts.customMenuStripeColor;
         case SHADE_SELECTED:
             return itsHighlightCols[QTC_MENU_STRIPE_SHADE];
         case SHADE_DARKEN:
