@@ -756,24 +756,27 @@ QtCurveStyle::QtCurveStyle(const QString &name)
                         itsSliderCols);
     }
 
-    if(IND_GLOW==opts.defBtnIndicator)
-        itsDefBtnCols=itsFocusCols;
-    else if(IND_TINT==opts.defBtnIndicator)
+    switch(opts.defBtnIndicator)
     {
-        itsDefBtnCols=new QColor [TOTAL_SHADES+1];
-        shadeColors(tint(itsButtonCols[ORIGINAL_SHADE],
-                         itsHighlightCols[ORIGINAL_SHADE], QTC_DEF_BNT_TINT), itsDefBtnCols);
-    }
-    else
-    {
-        if(SHADE_BLEND_SELECTED==opts.shadeSliders)
-            itsDefBtnCols=itsSliderCols;
-        else
-        {
+        case IND_GLOW:
+            itsDefBtnCols=itsFocusCols;
+            break;
+        case IND_TINT:
             itsDefBtnCols=new QColor [TOTAL_SHADES+1];
-            shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
-                                 itsButtonCols[ORIGINAL_SHADE]), itsDefBtnCols);
-        }
+            shadeColors(tint(itsButtonCols[ORIGINAL_SHADE],
+                            itsHighlightCols[ORIGINAL_SHADE], QTC_DEF_BNT_TINT), itsDefBtnCols);
+            break;
+        default:
+            break;
+        case IND_COLORED:
+            if(SHADE_BLEND_SELECTED==opts.shadeSliders)
+                itsDefBtnCols=itsSliderCols;
+            else
+            {
+                itsDefBtnCols=new QColor [TOTAL_SHADES+1];
+                shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
+                                    itsButtonCols[ORIGINAL_SHADE]), itsDefBtnCols);
+            }
     }
 
     switch(opts.comboBtn)
@@ -2781,7 +2784,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                            operaMdi || mdi
                             ? ROUNDED_NONE
                             : ROUNDED_ALL,
-                           getFill(flags, use), use, true, true,
+                           getFill(flags, use, false,
+                                   flags&Style_ButtonDefault && flags&Style_Enabled && IND_DARKEN==opts.defBtnIndicator),
+                           use, true, true,
                            flags&QTC_NO_ETCH_BUTTON
                                 ? WIDGET_NO_ETCH_BTN
                                 : flags&Style_ButtonDefault && flags&Style_Enabled && IND_COLORED!=opts.defBtnIndicator

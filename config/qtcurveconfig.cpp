@@ -417,6 +417,7 @@ static void insertDefBtnEntries(QComboBox *combo)
     combo->insertItem(i18n("Selected background thick border"));
     combo->insertItem(i18n("Selected background tinting"));
     combo->insertItem(i18n("A slight glow"));
+    combo->insertItem(i18n("Darken"));
     combo->insertItem(i18n("No indicator"));
 }
 
