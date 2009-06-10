@@ -391,11 +391,12 @@ static bool readKdeGlobals()
     QFile  f(kdeHome(true)+"/share/config/kdeglobals");
     QColor highlight(QApplication::palette().active().highlight());
     bool   inactiveEnabled(false),
-           changeSelectionColor(false);
+           changeSelectionColor(false),
+           useQt4(useQt4Settings());
 
     lastCheck=now;
 
-    if(useQt4Settings())
+    if(useQt4)
     {
         kdeSettings.hover=QColor(119, 183, 255);
         kdeSettings.focus=QColor( 43, 116, 199);
@@ -408,7 +409,7 @@ static bool readKdeGlobals()
         QTextStream in(&f);
         bool        inPal(false),
                     inInactive(false),
-                    donePal(false),
+                    donePal(!useQt4),
                     doneInactive(false);
 
         while (!in.atEnd() && (!donePal || !doneInactive))
@@ -439,7 +440,7 @@ static bool readKdeGlobals()
                 }
             }
             if(!inPal && !inInactive)
-                if(0==line.find("[Colors:Button]", false))
+                if(useQt4 && 0==line.find("[Colors:Button]", false))
                     inPal=true;
                 else if(0==line.find("[ColorEffects:Inactive]", false))
                     inInactive=true;
