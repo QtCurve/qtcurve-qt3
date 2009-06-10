@@ -734,7 +734,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     shadeColors(QApplication::palette().active().background(), itsBackgroundCols);
     shadeColors(QApplication::palette().active().button(), itsButtonCols);
 
-    setDecorationColors();
+    setDecorationColors(true);
 
     switch(opts.shadeSliders)
     {
@@ -7115,9 +7115,9 @@ void QtCurveStyle::setMenuColors(const QColorGroup &cg)
     }
 }
 
-void QtCurveStyle::setDecorationColors()
+void QtCurveStyle::setDecorationColors(bool init)
 {
-    if(!readKdeGlobals())
+    if(!readKdeGlobals() && !init)
         return;
 
     if(opts.coloredMouseOver)

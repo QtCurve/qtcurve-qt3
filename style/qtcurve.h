@@ -194,7 +194,7 @@ class QtCurveStyle : public KStyle
     const QColor * borderColors(SFlags flags, const QColor *use) const;
     const QColor * getSidebarButtons() const;
     void           setMenuColors(const QColorGroup &cg);
-    void           setDecorationColors();
+    void           setDecorationColors(bool init=false);
     const QColor * getMdiColors(const QColorGroup &cg, bool active) const;
 #ifdef SET_MDI_WINDOW_BUTTON_POSITIONS
     void           readMdiPositions() const;
