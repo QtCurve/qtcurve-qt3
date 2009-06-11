@@ -2560,11 +2560,12 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
         r.addCoords(1, 1, -1, -1);
 
     if(!itsFormMode)
-        p->fillRect(rx, cg.background());
-    if(WIDGET_ENTRY==w && flags&Style_Enabled)
-        p->fillRect(QRect(rx.x()+2, rx.y()+2, rx.width()-3, rx.height()-3), cg.base());
+    {
+        p->setPen(cg.background());
+        p->drawRect(rx);
+    }
 
-    if(isSpin)
+    if(isSpin || WIDGET_ENTRY==w)
     {
         if(reverse)
             r.addCoords(-1, 0, 0, 0);
@@ -4994,7 +4995,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                         btnFlags|=Style_Raised;
                     p->save();
                     p->setClipRect(btn);
-                    btn.addCoords(reverse ? 0 : -2, 0, reverse ? 2 : 0, 0);
+                    if(!opts.comboSplitter)
+                        btn.addCoords(reverse ? 0 : -2, 0, reverse ? 2 : 0, 0);
                     drawLightBevel(p, btn, cg, btnFlags|Style_Horizontal, reverse ? ROUNDED_LEFT : ROUNDED_RIGHT,
                                    getFill(btnFlags, cols, false, SHADE_DARKEN==opts.comboBtn ||
                                                                   (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))),
@@ -5022,7 +5024,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                    (flags&Style_HasFocus), reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
                                    WIDGET_COMBO);
                 }
-                else if(opts.comboSplitter)
+                else if(opts.comboSplitter && !(SHADE_DARKEN==opts.comboBtn || itsComboBtnCols))
                 {
                     field.addCoords(1, sunken ? 2 : 1, sunken ? 2 : 1, -1);
                     p->setPen(use[QT_BORDER(flags&Style_Enabled)]);
