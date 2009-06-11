@@ -1,6 +1,8 @@
 0.64.1
 ------
-1. Fix background of some QTextEdits.
+1. When using shaded combo buttons, use the combo splitter setting to
+   determine if there should be a border between the shaded and unshaded parts.
+2. Fix background of some QTextEdits.
 
 0.64.0
 ------
