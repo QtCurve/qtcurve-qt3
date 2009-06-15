@@ -1,3 +1,7 @@
+0.64.3
+------
+1. Fix some re-draw errors with thin scrollbar grooves.
+
 0.64.2
 ------
 1. When using shaded combo buttons, use button colours for border.
