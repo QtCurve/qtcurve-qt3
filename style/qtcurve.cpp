@@ -123,12 +123,28 @@ dimension, so as to draw the scrollbar at the correct size.
 
 static const int constMenuPixmapWidth=22;
 
-static bool useQt4Settings()
+static bool useQt3Settings()
 {
-    static const char *vers = getenv("KDE_SESSION_VERSION");
-    static bool       use   = vers && atoi(vers)>=4;
+    static int ver=0;
 
-    return use;
+    if(0==ver)
+    {
+        const char *sessionVersion=getenv("KDE_SESSION_VERSION");
+
+        ver=sessionVersion
+                ? atoi(sessionVersion)<4
+                    ? 3
+                    : 4
+#ifdef QTC_DEFAULT_TO_KDE3
+                : 3;
+#else
+                : getenv("KDE_FULL_SESSION")
+                    ? 3
+                    : 4;
+#endif
+    }
+
+    return 3==ver;
 }
 
 static QRect adjusted(const QRect r, int xp1, int yp1, int xp2, int yp2)
@@ -178,13 +194,18 @@ static QString readEnvPath(const char *env)
 }
 
 // TODO: Call kde-config as per Gtk2!
-static QString kdeHome(bool kde4=false)
+static QString kdeHome(bool kde3=false)
 {
-    QString env(readEnvPath(getuid() ? "KDEHOME" : "KDEROOTHOME"));
-
-    return env.isEmpty()
-                ? QDir::homeDirPath()+"/.kde"
-                : env;
+    QString kdeHomePath(readEnvPath(getuid() ? "KDEHOME" : "KDEROOTHOME"));
+    if (kdeHomePath.isEmpty())
+    {
+        QDir    homeDir(QDir::homeDirPath());
+        QString kdeConfDir("/.kde");
+        if (!useQt3Settings() && homeDir.exists(".kde4"))
+            kdeConfDir = QString("/.kde4");
+        kdeHomePath = QDir::homeDirPath() + kdeConfDir;
+    }
+    return kdeHomePath;
 }
 
 static void getStyles(const QString &dir, const char *sub, QStringList &styles)
@@ -242,8 +263,8 @@ class QtCurveStylePlugin : public QStylePlugin
         QStringList list;
         list << "QtCurve";
 
-        getStyles(kdeHome(), list);
-        getStyles(kdeHome(true), list);
+        getStyles(kdeHome(useQt3Settings()), list);
+        getStyles(kdeHome(!useQt3Settings()), list);
         getStyles(KDE_PREFIX(3), list);
         getStyles(KDE_PREFIX(4), list);
 
@@ -388,28 +409,28 @@ static bool readKdeGlobals()
         return false;
 
   
-    QFile  f(kdeHome(true)+"/share/config/kdeglobals");
     QColor highlight(QApplication::palette().active().highlight());
     bool   inactiveEnabled(false),
            changeSelectionColor(false),
-           useQt4(useQt4Settings());
+           useQt3(useQt3Settings());
+    QFile  f(kdeHome(useQt3)+"/share/config/kdeglobals");
 
     lastCheck=now;
 
-    if(useQt4)
+    if(useQt3)
+        kdeSettings.hover=kdeSettings.focus=highlight;
+    else
     {
         kdeSettings.hover=QColor(119, 183, 255);
         kdeSettings.focus=QColor( 43, 116, 199);
     }
-    else
-        kdeSettings.hover=kdeSettings.focus=highlight;
 
     if(f.open(IO_ReadOnly))
     {
         QTextStream in(&f);
         bool        inPal(false),
                     inInactive(false),
-                    donePal(!useQt4),
+                    donePal(useQt3),
                     doneInactive(false);
 
         while (!in.atEnd() && (!donePal || !doneInactive))
@@ -440,9 +461,9 @@ static bool readKdeGlobals()
                 }
             }
             if(!inPal && !inInactive)
-                if(useQt4 && 0==line.find("[Colors:Button]", false))
+                if(!useQt3 && 0==line.find("[Colors:Button]", false))
                     inPal=true;
-                else if(0==line.find("[ColorEffects:Inactive]", false))
+                else if(!useQt3 && 0==line.find("[ColorEffects:Inactive]", false))
                     inInactive=true;
         }
         f.close();
@@ -714,9 +735,9 @@ QtCurveStyle::QtCurveStyle(const QString &name)
             rcFile=themeFile(kdeHome(true), name);
             if(rcFile.isEmpty())
             {
-                rcFile=themeFile(KDE_PREFIX(useQt4Settings() ? 4 : 3), name);
+                rcFile=themeFile(KDE_PREFIX(useQt3Settings() ? 3 : 4), name);
                 if(rcFile.isEmpty())
-                    rcFile=themeFile(KDE_PREFIX(useQt4Settings() ? 3 : 4), name);
+                    rcFile=themeFile(KDE_PREFIX(useQt3Settings() ? 4 : 3), name);
             }
         }
     }
@@ -7134,7 +7155,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
         itsMdiTextColor=cg.text();
 
         // Try to read kwin's settings...
-        if(!useQt4Settings())
+        if(useQt3Settings())
         {
             QFile f(QDir::homeDirPath()+"/.qt/qtrc");
 
@@ -7262,7 +7283,7 @@ void QtCurveStyle::readMdiPositions() const
         itsMdiButtons[1].append(SC_TitleBarCloseButton);
 
         // Read in KWin settings...
-        QFile f(kdeHome(useQt4Settings())+"/share/config/kwinrc");
+        QFile f(kdeHome(useQt3Settings())+"/share/config/kwinrc");
 
         if(f.open(IO_ReadOnly))
         {

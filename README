@@ -8,6 +8,11 @@ To build and install:
 4. make
 5. make install
 
+The following options may be supplied to cmake:
+
+    -DQTC_DEFAULT_TO_KDE3=true
+       If the KDE_SESSION_VERSION is not set, then assume we are running
+       under KDE3. If this cmake option is not set, then KDE4 is assumed.
 
 Themes
 ------

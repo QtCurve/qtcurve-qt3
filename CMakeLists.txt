@@ -51,6 +51,19 @@ add_definitions(${QT_DEFINITIONS} ${KDE3_DEFINITIONS})
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE3_INCLUDES})
 
 set(DATA_INSTALL_DIR ${KDE3PREFIX}/share/apps)
+
+if(QTC_DEFAULT_TO_KDE3)
+    message("\n**************************************************************\n"
+            "Information: Defaulting to reading KDE3 settings if \n"
+            "             KDE_SESSION_VERSION is not set\n"
+            "**************************************************************\n")
+else(QTC_DEFAULT_TO_KDE3)
+    message("\n**************************************************************\n"
+            "Information: Defaulting to reading KDE4 settings if \n"
+            "             KDE_SESSION_VERSION is not set\n"
+            "**************************************************************\n")
+endif(QTC_DEFAULT_TO_KDE3)
+
 add_subdirectory(style)
 add_subdirectory(config)
 add_subdirectory(themes)
