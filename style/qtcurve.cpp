@@ -5299,7 +5299,10 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             }
 #endif
 
-//             p->setClipRegion(QRegion(s2)+QRegion(addpage));
+            if(slider.isValid())
+                p->fillRect(slider, cg.background());
+            p->save();
+            p->setClipRegion(QRegion(s2)+QRegion(addpage));
             if(opts.flatSbarButtons && SCROLLBAR_NONE!=opts.scrollbarType && QTC_ROUNDED)
                 drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, sbRect, flags&Style_Horizontal, false,
                                   opts.sbarBgndAppearance, WIDGET_SB_BGND);
@@ -5322,9 +5325,9 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                            trough[2], trough, true, true,
                            opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons)
                             ? WIDGET_SLIDER_TROUGH : WIDGET_TROUGH);
-//             p->setClipping(false);
+            p->restore();
 
-            if(/*(controls&SC_ScrollBarSubLine) && */subline.isValid())
+            if((controls&SC_ScrollBarSubLine) && subline.isValid())
             {
                 bool enable=(!maxed && sb->value()!=sb->minValue());
 
@@ -5343,7 +5346,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                  (enable && (!hw || HOVER_SB_SUB2==itsHover || HOVER_NONE==itsHover)
                                    && SC_ScrollBarSubLine==active ? Style_Down : Style_Default));
             }
-            if(/*(controls&SC_ScrollBarAddLine) && */addline.isValid())
+            if((controls&SC_ScrollBarAddLine) && addline.isValid())
             {
                 bool enable=(!maxed && sb->value()!=sb->maxValue());
 
@@ -5362,25 +5365,25 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                      ? Style_Down : Style_Default));
             }
 
-            if(/*(controls&SC_ScrollBarFirst) && */first.isValid())
+            if((controls&SC_ScrollBarFirst) && first.isValid())
                 drawPrimitive(PE_ScrollBarFirst, p, first, cg, sflags |
                                  //(maxed ? Style_Default : Style_Enabled) |
                                  (!maxed && SC_ScrollBarFirst==active ? Style_Down : Style_Default));
 
-            if(/*(controls&SC_ScrollBarLast) && */last.isValid())
+            if((controls&SC_ScrollBarLast) && last.isValid())
                 drawPrimitive(PE_ScrollBarLast, p, last, cg, sflags |
                                  //(maxed ? Style_Default : Style_Enabled) |
                                  (!maxed && SC_ScrollBarLast==active ? Style_Down : Style_Default));
 
-            if(/*((controls&SC_ScrollBarSlider) || noButtons) && */slider.isValid())
+            if(((controls&SC_ScrollBarSlider) || noButtons) && slider.isValid())
             {
                 // If "SC_ScrollBarSlider" wasn't pecified, then we only want to draw the portion
                 // of the slider that overlaps with the tough. So, once again set the clipping
                 // region...
-//                 if(!(controls&SC_ScrollBarSlider))
-//                     p->setClipRegion(QRegion(s2)+QRegion(addpage));
+                if(!(controls&SC_ScrollBarSlider))
+                    p->setClipRegion(QRegion(s2)+QRegion(addpage));
 #ifdef QTC_INCREASE_SB_SLIDER
-                /*else */if(!opts.flatSbarButtons)
+                else if(!opts.flatSbarButtons)
                 {
                     if(atMax)
                         switch(opts.scrollbarType)
