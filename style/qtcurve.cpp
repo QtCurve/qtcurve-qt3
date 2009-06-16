@@ -2276,7 +2276,8 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
                                         : itsMouseOverCols==cols && IS_SLIDER(w)
                                             ? QT_SLIDER_MO_BORDER
                                             : borderVal]);
-    bool        hasFocus(cols==itsFocusCols /* CPD USED TO INDICATE FOCUS! */);
+    bool        hasFocus(cols==itsFocusCols /* CPD USED TO INDICATE FOCUS! */),
+                hasMouseOver(cols==itsMouseOverCols);
 
     switch(borderProfile)
     {
@@ -2284,25 +2285,29 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
             break;
         case BORDER_RAISED:
         case BORDER_SUNKEN:
-            p->setPen(flags&Style_Enabled && (BORDER_RAISED==borderProfile || APPEARANCE_FLAT!=app)
-                         ? blendBorderColors
-                               ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
+            if(flags&Style_Enabled && (hasMouseOver || hasFocus) && (WIDGET_ENTRY==w || WIDGET_SCROLLVIEW==w || WIDGET_COMBO==w || WIDGET_SPIN==w))
+                p->setPen(midColorF(cg.background(), cols[BORDER_RAISED==borderProfile ? 0 : QT_FRAME_DARK_SHADOW], 1.5-QTC_ENTRY_INNER_ALPHA));
+            else
+                p->setPen(flags&Style_Enabled && (BORDER_RAISED==borderProfile || APPEARANCE_FLAT!=app)
+                            ? blendBorderColors
+                                ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
                                                                    ? 0 : QT_FRAME_DARK_SHADOW]) // Was base???
-                               : cols[BORDER_RAISED==borderProfile ? 0 : QT_FRAME_DARK_SHADOW]
-                         : cg.background());
+                                : cols[BORDER_RAISED==borderProfile ? 0 : QT_FRAME_DARK_SHADOW]
+                            : cg.background());
             p->drawLine(r.x()+1, r.y()+1, r.x()+1, r.y()+r.height()-2);
             p->drawLine(r.x()+1, r.y()+1, r.x()+r.width()-2, r.y()+1);
-            p->setPen(WIDGET_SCROLLVIEW==w && !hasFocus
-                        ? cg.background()
-                        : WIDGET_ENTRY==w && !hasFocus
-                            ? cg.base()
-                            : flags&Style_Enabled && (BORDER_SUNKEN==borderProfile || APPEARANCE_FLAT!=app ||
-                                                      WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w)
-                                ? blendBorderColors
-                                    ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
-                                                                        ? QT_FRAME_DARK_SHADOW : 0]) // Was base???
-                                    : cols[BORDER_RAISED==borderProfile ? QT_FRAME_DARK_SHADOW : 0]
-                                : cg.background());
+            if(!hasFocus && !hasMouseOver)
+                p->setPen(WIDGET_SCROLLVIEW==w
+                            ? cg.background()
+                            : WIDGET_ENTRY==w
+                                ? cg.base()
+                                : flags&Style_Enabled && (BORDER_SUNKEN==borderProfile || APPEARANCE_FLAT!=app ||
+                                                        WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w)
+                                    ? blendBorderColors
+                                        ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
+                                                                            ? QT_FRAME_DARK_SHADOW : 0]) // Was base???
+                                        : cols[BORDER_RAISED==borderProfile ? QT_FRAME_DARK_SHADOW : 0]
+                                    : cg.background());
             p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-2, r.y()+r.height()-2);
             p->drawLine(r.x()+1, r.y()+r.height()-2, r.x()+r.width()-2, r.y()+r.height()-2);
     }
