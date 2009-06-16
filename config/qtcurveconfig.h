@@ -108,6 +108,8 @@ class QtCurveConfig : public QtCurveConfigBase
     void tabMoChanged();
     void shadingChanged();
     void passwordCharClicked();
+    void unifySpinBtnsToggled();
+    void unifySpinToggled();
 
     void changeStack();
     void gradChanged(int i);

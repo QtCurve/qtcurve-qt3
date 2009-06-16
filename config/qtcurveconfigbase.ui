@@ -291,14 +291,6 @@
                             <string></string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="11" column="0">
-                        <property name="name">
-                            <cstring>unifySpinBtns</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Unify spin widget buttons</string>
-                        </property>
-                    </widget>
                 </grid>
             </widget>
             <widget class="QWidget">
@@ -323,20 +315,24 @@
                             <string>This option controls whether a line is drawn near non-editable combo box arrows.</string>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="1" column="0">
+                    <spacer row="3" column="2">
                         <property name="name">
-                            <cstring>textLabel1_17</cstring>
+                            <cstring>spacer27_2</cstring>
                         </property>
-                        <property name="text">
-                            <string>Button shade:</string>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
                         </property>
-                    </widget>
-                    <widget class="QComboBox" row="1" column="1">
-                        <property name="name">
-                            <cstring>comboBtn</cstring>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
                         </property>
-                    </widget>
-                    <widget class="KColorButton" row="1" column="2">
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>430</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="KColorButton" row="2" column="2">
                         <property name="name">
                             <cstring>customComboBtnColor</cstring>
                         </property>
@@ -344,7 +340,20 @@
                             <string></string>
                         </property>
                     </widget>
-                    <spacer row="1" column="3">
+                    <widget class="QComboBox" row="2" column="1">
+                        <property name="name">
+                            <cstring>comboBtn</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_17</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Button shade:</string>
+                        </property>
+                    </widget>
+                    <spacer row="2" column="3">
                         <property name="name">
                             <cstring>spacer26_2</cstring>
                         </property>
@@ -361,9 +370,46 @@
                             </size>
                         </property>
                     </spacer>
-                    <spacer row="2" column="2">
+                    <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
                         <property name="name">
-                            <cstring>spacer27_2</cstring>
+                            <cstring>unifyCombo</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw arrow of editable combos within edit field</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>WStackPage</cstring>
+                </property>
+                <attribute name="id">
+                    <number>2</number>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>unifySpinBtns</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Combine both buttons</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>unifySpin</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw arrows within edit field</string>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer28_3</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -374,18 +420,18 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>21</height>
+                                <height>31</height>
                             </size>
                         </property>
                     </spacer>
-                </grid>
+                </vbox>
             </widget>
             <widget class="QWidget">
                 <property name="name">
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>2</number>
+                    <number>3</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -445,7 +491,7 @@
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>3</number>
+                    <number>4</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -681,7 +727,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>4</number>
+                    <number>5</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -774,7 +820,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>5</number>
+                    <number>6</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -850,7 +896,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>6</number>
+                    <number>7</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -929,7 +975,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>7</number>
+                    <number>8</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1009,7 +1055,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>8</number>
+                    <number>9</number>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -1071,7 +1117,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>9</number>
+                    <number>10</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1175,7 +1221,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>10</number>
+                    <number>11</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1275,7 +1321,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>11</number>
+                    <number>12</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1390,7 +1436,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>12</number>
+                    <number>13</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1759,7 +1805,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>13</number>
+                    <number>14</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1855,7 +1901,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>14</number>
+                    <number>15</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -2121,7 +2167,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>15</number>
+                    <number>16</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -2337,8 +2383,13 @@ None - no buttons, only the slider</string>
     <tabstop>vArrows</tabstop>
     <tabstop>stdSidebarButtons</tabstop>
     <tabstop>darkerBorders</tabstop>
-    <tabstop>unifySpinBtns</tabstop>
     <tabstop>fadeLines</tabstop>
+    <tabstop>comboSplitter</tabstop>
+    <tabstop>unifyCombo</tabstop>
+    <tabstop>comboBtn</tabstop>
+    <tabstop>customComboBtnColor</tabstop>
+    <tabstop>unifySpinBtns</tabstop>
+    <tabstop>unifySpin</tabstop>
     <tabstop>splitters</tabstop>
     <tabstop>sliderAppearance</tabstop>
     <tabstop>shadeSliders</tabstop>
