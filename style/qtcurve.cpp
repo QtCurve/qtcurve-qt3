@@ -193,19 +193,42 @@ static QString readEnvPath(const char *env)
    return path.isEmpty() ? QString::null : QFile::decodeName(path);
 }
 
-// TODO: Call kde-config as per Gtk2!
 static QString kdeHome(bool kde3=false)
 {
-    QString kdeHomePath(readEnvPath(getuid() ? "KDEHOME" : "KDEROOTHOME"));
-    if (kdeHomePath.isEmpty())
+    static QString kdeHome[2];
+
+    // Execute kde-config to ascertain users KDEHOME
+    if(kdeHome[kde3 ? 0 : 1].isEmpty())
     {
-        QDir    homeDir(QDir::homeDirPath());
-        QString kdeConfDir("/.kde");
-        if (!useQt3Settings() && homeDir.exists(".kde4"))
-            kdeConfDir = QString("/.kde4");
-        kdeHomePath = QDir::homeDirPath() + kdeConfDir;
+        FILE *fpipe;
+
+        if (fpipe = (FILE*)popen(kde3 ? "kde-config --localprefix" : "kde4-config --localprefix", "r"))
+        {
+            char line[1024];
+
+            while(fgets(line, sizeof line, fpipe))
+            {
+                kdeHome[kde3 ? 0 : 1]=QFile::decodeName(line).replace("\n", "");
+                break;
+            }
+            pclose(fpipe);
+        }
     }
-    return kdeHomePath;
+
+    // Try env vars...
+    if(kdeHome[kde3 ? 0 : 1].isEmpty())
+    {
+        kdeHome[kde3 ? 0 : 1]=readEnvPath(getuid() ? "KDEHOME" : "KDEROOTHOME");
+        if (kdeHome[kde3 ? 0 : 1].isEmpty())
+        {
+            QDir    homeDir(QDir::homeDirPath());
+            QString kdeConfDir("/.kde");
+            if (!useQt3Settings() && homeDir.exists(".kde4"))
+                kdeConfDir = QString("/.kde4");
+            kdeHome[kde3 ? 0 : 1] = QDir::homeDirPath() + kdeConfDir;
+        }
+    }
+    return kdeHome[kde3 ? 0 : 1];
 }
 
 static void getStyles(const QString &dir, const char *sub, QStringList &styles)
