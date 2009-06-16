@@ -5342,9 +5342,6 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 s2.addCoords(-2, -2, 2, 2);
             }
 #endif
-
-            if(slider.isValid())
-                p->fillRect(slider, cg.background());
             p->save();
             p->setClipRegion(QRegion(s2)+QRegion(addpage));
             if(opts.flatSbarButtons && SCROLLBAR_NONE!=opts.scrollbarType && QTC_ROUNDED)
@@ -5457,6 +5454,14 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                         }
                 }
 #endif
+
+                if(opts.thinSbarGroove)
+                    if(opts.flatSbarButtons && SCROLLBAR_NONE!=opts.scrollbarType && QTC_ROUNDED)
+                        drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, slider, flags&Style_Horizontal, false,
+                                          opts.sbarBgndAppearance, WIDGET_SB_BGND);
+                    else if(opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons) &&
+                            IS_FLAT(opts.sbarBgndAppearance))
+                        p->fillRect(slider, cg.background());
 
                 drawPrimitive(PE_ScrollBarSlider, p, slider, cg, sflags |
                                  //(maxed ? Style_Default : Style_Enabled) |
