@@ -2595,7 +2595,7 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
 {
     const QColor *use(highlight ? itsFocusCols : backgroundColors(cg));
     bool         isSpin(WIDGET_SPIN==w),
-                 doEtch(!itsFormMode && !isSpin && WIDGET_COMBO!=w && QTC_DO_EFFECT),
+                 doEtch(!itsFormMode && (!isSpin || opts.unifySpin) && WIDGET_COMBO!=w && QTC_DO_EFFECT),
                  reverse(QApplication::reverseLayout());
 
     QRect r(rx);
@@ -3627,7 +3627,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             const QColor *use(buttonColors(cg));
             bool         reverse(QApplication::reverseLayout());
 
-            if(!opts.unifySpinBtns || flags&Style_Sunken)
+            if((!opts.unifySpinBtns || flags&Style_Sunken)  && !opts.unifySpin)
                 drawLightBevel(p, sr, cg, flags|Style_Horizontal, PE_SpinWidgetDown==pe || PE_SpinWidgetMinus==pe
                                                                     ? reverse
                                                                         ? ROUNDED_BOTTOMLEFT
@@ -3641,10 +3641,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             {
                 sr.setY(sr.y()+(PE_SpinWidgetDown==pe ? -2 : 1));
 
-                if(flags&Style_Sunken)
+                if(opts.unifySpin)
+                    sr.addCoords(reverse ? 1 : -1, 0, reverse ? 1 : -1, 0);
+                else if(flags&Style_Sunken)
                     sr.addCoords(1, 1, 1, 1);
 
-                ::drawArrow(p, sr, QTC_MO_ARROW(cg.buttonText()), PE_SpinWidgetUp==pe ? PE_ArrowUp : PE_ArrowDown, opts, true);
+                ::drawArrow(p, sr, QTC_MO_ARROW(cg.buttonText()), PE_SpinWidgetUp==pe ? PE_ArrowUp : PE_ArrowDown, opts, !opts.unifySpin);
             }
             else
             {
@@ -3655,7 +3657,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(l%2 != 0)
                     --l;
 
-                if(flags&Style_Sunken)
+                if(flags&Style_Sunken && !opts.unifySpin)
                     c+=QPoint(1, 1);
 
                     p->setPen(cg.buttonText());
@@ -5011,61 +5013,53 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             if(controls&SC_ComboBoxFrame && frame.isValid())
             {
-                const QColor *cols=itsComboBtnCols && editable  && flags&Style_Enabled ? itsComboBtnCols : use;
-
-                if(editable && HOVER_CB_ARROW!=itsHover)
-                    fillFlags&=~Style_MouseOver;
-
-//                 if(opts.coloredMouseOver && fillFlags&Style_MouseOver && editable && !sunken)
-//                     frame.addCoords(reverse ? 0 : 1, 0, reverse ? 1 : 0, 0);
-
-                drawLightBevel(p, frame, cg, fillFlags|Style_Raised|Style_Horizontal,
-                               controls&SC_ComboBoxEditField && field.isValid() && editable
-                                   ? (reverse ? ROUNDED_LEFT : ROUNDED_RIGHT) : ROUNDED_ALL,
-                               getFill(fillFlags, cols, false, (SHADE_DARKEN==opts.comboBtn ||
-                                                                  (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))) &&
-                                                                editable),
-                               cols, true, true, editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
-            }
-
-            if(controls&SC_ComboBoxArrow && arrow.isValid())
-            {
-                if(!editable && (SHADE_DARKEN==opts.comboBtn || itsComboBtnCols))
+                if(editable && opts.unifyCombo)
                 {
-                    SFlags       btnFlags(flags);
-                    QRect        btn(arrow.x(), frame.y(), arrow.width()+1, frame.height());
-                    const QColor *cols=SHADE_DARKEN==opts.comboBtn || !(flags&Style_Enabled) ? use : itsComboBtnCols;
-                    if(!sunken)
-                        btnFlags|=Style_Raised;
-                    p->save();
-                    p->setClipRect(btn);
-                    if(!opts.comboSplitter)
-                        btn.addCoords(reverse ? 0 : -2, 0, reverse ? 2 : 0, 0);
-                    drawLightBevel(p, btn, cg, btnFlags|Style_Horizontal, reverse ? ROUNDED_LEFT : ROUNDED_RIGHT,
-                                   getFill(btnFlags, cols, false, SHADE_DARKEN==opts.comboBtn ||
-                                                                  (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))),
-                                   cols, true, true, WIDGET_COMBO);
-                    p->restore();
+                    if(reverse)
+                        frame.addCoords(0, 1, 2, -1);
+                    else
+                        frame.addCoords(-1, 1, -1, -1);
+                    p->fillRect(frame, flags&Style_Enabled ? cg.base() : cg.background());
                 }
-                    
-                SFlags arrowFlags(flags);
-                if(sunken)
-                    arrow.addCoords(1, 1, 1, 1);
-                if(editable && HOVER_CB_ARROW!=itsHover)
-                    arrowFlags&=~Style_MouseOver;
-                ::drawArrow(p, arrow, QTC_MO_ARROW_X(arrowFlags, cg.buttonText()), PE_ArrowDown, opts);
+                else
+                {
+                    const QColor *cols=itsComboBtnCols && editable  && flags&Style_Enabled ? itsComboBtnCols : use;
+
+                    if(editable && HOVER_CB_ARROW!=itsHover)
+                        fillFlags&=~Style_MouseOver;
+
+    //                 if(opts.coloredMouseOver && fillFlags&Style_MouseOver && editable && !sunken)
+    //                     frame.addCoords(reverse ? 0 : 1, 0, reverse ? 1 : 0, 0);
+
+                    drawLightBevel(p, frame, cg, fillFlags|Style_Raised|Style_Horizontal,
+                                controls&SC_ComboBoxEditField && field.isValid() && editable
+                                    ? (reverse ? ROUNDED_LEFT : ROUNDED_RIGHT) : ROUNDED_ALL,
+                                getFill(fillFlags, cols, false, (SHADE_DARKEN==opts.comboBtn ||
+                                                                    (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))) &&
+                                                                    editable),
+                                cols, true, true, editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
+                }
             }
 
             if(controls&SC_ComboBoxEditField && field.isValid())
             {
                 if(editable)
                 {
-                    field.addCoords(-1,-1, 0, 1);
+                    if(opts.unifyCombo)
+                    {
+                        field=r;
+                        if(QTC_DO_EFFECT)
+                            field.addCoords(1, 1, -1, -1);
+                    }
+                    else
+                        field.addCoords(-1,-1, 0, 1);
                     p->setPen(flags&Style_Enabled ? cg.base() : cg.background());
                     p->drawRect(field);
-                    field.addCoords(-2,-2, 2, 2);
+                    if(!opts.unifyCombo)
+                        field.addCoords(-2,-2, 2, 2);
                     drawEntryField(p, field, cg, fillFlags, flags&Style_Enabled &&
-                                   (flags&Style_HasFocus), reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
+                                   (flags&Style_HasFocus), opts.unifyCombo ? ROUNDED_ALL
+                                                                           : reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
                                    WIDGET_COMBO);
                 }
                 else if(opts.comboSplitter && !(SHADE_DARKEN==opts.comboBtn || itsComboBtnCols))
@@ -5109,6 +5103,34 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 }
             }
 
+            if(controls&SC_ComboBoxArrow && arrow.isValid())
+            {
+                if(!editable && (SHADE_DARKEN==opts.comboBtn || itsComboBtnCols))
+                {
+                    SFlags       btnFlags(flags);
+                    QRect        btn(arrow.x(), frame.y(), arrow.width()+1, frame.height());
+                    const QColor *cols=SHADE_DARKEN==opts.comboBtn || !(flags&Style_Enabled) ? use : itsComboBtnCols;
+                    if(!sunken)
+                        btnFlags|=Style_Raised;
+                    p->save();
+                    p->setClipRect(btn);
+                    if(!opts.comboSplitter)
+                        btn.addCoords(reverse ? 0 : -2, 0, reverse ? 2 : 0, 0);
+                    drawLightBevel(p, btn, cg, btnFlags|Style_Horizontal, reverse ? ROUNDED_LEFT : ROUNDED_RIGHT,
+                                   getFill(btnFlags, cols, false, SHADE_DARKEN==opts.comboBtn ||
+                                                                  (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))),
+                                   cols, true, true, WIDGET_COMBO);
+                    p->restore();
+                }
+
+                SFlags arrowFlags(flags);
+                if(sunken && !opts.unifyCombo)
+                    arrow.addCoords(1, 1, 1, 1);
+                if(editable && HOVER_CB_ARROW!=itsHover)
+                    arrowFlags&=~Style_MouseOver;
+                ::drawArrow(p, arrow, QTC_MO_ARROW_X(arrowFlags, cg.buttonText()), PE_ArrowDown, opts);
+            }
+
             if(doEtch)
                 if(!sunken && !editable &&
                     ((MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver)/* ||
@@ -5130,7 +5152,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             QRect             frame(querySubControlMetrics(CC_SpinWidget, widget, SC_SpinWidgetFrame,
                                     data)),
                               up(spinwidget->upRect()),
-                              down(spinwidget->downRect());
+                              down(spinwidget->downRect()),
+                              all(frame.unite(up).unite(down));
             bool              hw(itsHoverWidget && itsHoverWidget==spinwidget),
                               reverse(QApplication::reverseLayout()),
                               doFrame((controls&SC_SpinWidgetFrame) && frame.isValid()),
@@ -5146,39 +5169,45 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             if(flags&Style_MouseOver)
                 flags-=Style_MouseOver;
 
-            if(!reverse && doFrame)
+            if(opts.unifySpin)
+                drawEntryField(p, all, cg, flags,  spinwidget ? spinwidget->hasFocus() && (flags&Style_Enabled) : false,
+                               ROUNDED_ALL, WIDGET_SPIN);
+            else
             {
-                frame.setWidth(frame.width()+1);
-
-                drawEntryField(p, frame, cg, flags,
-                               spinwidget ? spinwidget->hasFocus() && (flags&Style_Enabled) : false,
-                               ROUNDED_LEFT, WIDGET_SPIN);
-            }
-
-            if(opts.unifySpinBtns)
-            {
-                QRect        btns=up.unite(down);
-                const QColor *use(buttonColors(cg));
-                int          btnFlags=flags;
-
-                btnFlags&=~(Style_Sunken|Style_MouseOver);
-                btnFlags|=Style_Horizontal;
-
-                drawLightBevel(p, btns, cg, btnFlags, reverse ?  ROUNDED_LEFT : ROUNDED_RIGHT, getFill(btnFlags, use),
-                              use, true, true, WIDGET_SPIN);
-                if(hw && (HOVER_SW_DOWN==itsHover || HOVER_SW_UP==itsHover) && flags&Style_Enabled && !(flags&Style_Sunken))
+                if(!reverse && doFrame)
                 {
-                    btnFlags|=Style_MouseOver;
-                    p->save();
-                    p->setClipRect(HOVER_SW_UP==itsHover ? up : down);
+                    frame.setWidth(frame.width()+1);
+
+                    drawEntryField(p, frame, cg, flags,
+                                   spinwidget ? spinwidget->hasFocus() && (flags&Style_Enabled) : false,
+                                   ROUNDED_LEFT, WIDGET_SPIN);
+                }
+
+                if(opts.unifySpinBtns)
+                {
+                    QRect        btns=up.unite(down);
+                    const QColor *use(buttonColors(cg));
+                    int          btnFlags=flags;
+
+                    btnFlags&=~(Style_Sunken|Style_MouseOver);
+                    btnFlags|=Style_Horizontal;
+
                     drawLightBevel(p, btns, cg, btnFlags, reverse ?  ROUNDED_LEFT : ROUNDED_RIGHT, getFill(btnFlags, use),
                                    use, true, true, WIDGET_SPIN);
-                    p->restore();
+                    if(hw && (HOVER_SW_DOWN==itsHover || HOVER_SW_UP==itsHover) && flags&Style_Enabled && !(flags&Style_Sunken))
+                    {
+                        btnFlags|=Style_MouseOver;
+                        p->save();
+                        p->setClipRect(HOVER_SW_UP==itsHover ? up : down);
+                        drawLightBevel(p, btns, cg, btnFlags, reverse ?  ROUNDED_LEFT : ROUNDED_RIGHT, getFill(btnFlags, use),
+                                       use, true, true, WIDGET_SPIN);
+                        p->restore();
+                    }
+                    p->setPen(use[QT_BORDER(style&Style_Enabled)]);
+                    p->drawLine(down.x()+2, down.y(), down.x()+down.width()-3, down.y());
                 }
-                p->setPen(use[QT_BORDER(style&Style_Enabled)]);
-                p->drawLine(down.x()+2, down.y(), down.x()+down.width()-3, down.y());
             }
-                
+
             if((controls&SC_SpinWidgetUp) && up.isValid())
             {
                 PrimitiveElement pe(PE_SpinWidgetUp);
@@ -5212,17 +5241,19 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                   ? Style_On | Style_Sunken : Style_Raised));
             }
 
-            if(reverse && doFrame)
+            if(!opts.unifySpin)
             {
-                frame.setWidth(frame.width()+1);
-                drawEntryField(p, frame, cg, flags,
-                               spinwidget ? spinwidget->hasFocus() && (flags&Style_Enabled) : false,
-                               ROUNDED_RIGHT, WIDGET_SPIN);
+                if(reverse && doFrame)
+                {
+                    frame.setWidth(frame.width()+1);
+                    drawEntryField(p, frame, cg, flags,
+                                   spinwidget ? spinwidget->hasFocus() && (flags&Style_Enabled) : false,
+                                   ROUNDED_RIGHT, WIDGET_SPIN);
+                }
+
+                if(doEtch)
+                    drawEtch(p, spinwidget ? spinwidget->rect() : r, cg);
             }
-
-            if(doEtch)
-                drawEtch(p, spinwidget ? spinwidget->rect() : r, cg);
-
             itsFormMode=false;
             break;
         }
