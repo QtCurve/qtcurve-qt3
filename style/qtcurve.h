@@ -103,9 +103,18 @@ class QtCurveStyle : public KStyle
         HOVER_KICKER,
         HOVER_SW_UP,
         HOVER_SW_DOWN,
-        HOVER_CB_ARROW
+        HOVER_SW_ENTRY,
+        HOVER_CB_ARROW,
+        HOVER_CB_ENTRY
     };
 
+    enum EntryColor
+    {
+        ENTRY_FOCUS,
+        ENTRY_MOUSE_OVER,
+        ENTRY_NONE
+    };
+    
     QtCurveStyle(const QString &name=QString());
     virtual ~QtCurveStyle();
 
@@ -130,7 +139,7 @@ class QtCurveStyle : public KStyle
                      SubControl button) const;
     void drawWindowIcon(QPainter *painter, const QColor &color, const QRect &r, bool sunken, int margin, SubControl button) const;
     void drawEntryField(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
-                        bool highlight, int round, EWidget=WIDGET_ENTRY) const;
+                        EntryColor coloration, int round, EWidget=WIDGET_ENTRY) const;
     void drawArrow(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
                    QStyle::PrimitiveElement pe,  bool small=false, bool checkActive=false) const;
     void drawPrimitive(PrimitiveElement, QPainter *, const QRect &, const QColorGroup &,

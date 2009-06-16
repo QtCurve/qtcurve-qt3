@@ -2,10 +2,11 @@
 ------
 1. Add options to draw editable combos, and spin widgets, as edit fields with
    embedded arrows - oxygen style.
-2. Fix some re-draw errors with thin scrollbar grooves.
-3. Default to reading KDE4 settings if KDE_SESSION_VERSION is not set.
+2. Enable mouse-over for entry fields.
+3. Fix some re-draw errors with thin scrollbar grooves.
+4. Default to reading KDE4 settings if KDE_SESSION_VERSION is not set.
    Pass -DQTC_DEFAULT_TO_KDE3=true to cmake to force this to default to KDE3.
-4. Call kde-config / kde4-config to ascertain users KDEHOME.
+5. Call kde-config / kde4-config to ascertain users KDEHOME.
 
 0.64.2
 ------

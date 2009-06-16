@@ -1774,7 +1774,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
     // focus highlight
     if (::qt_cast<QLineEdit*>(object) || ::qt_cast<QTextEdit*>(object)/* || ::qt_cast<QDateTimeEditBase*>(object)*/)
     {
-        if((QEvent::FocusIn==event->type() || QEvent::FocusOut==event->type()))
+        if(QEvent::FocusIn==event->type() || QEvent::FocusOut==event->type() || QEvent::Enter==event->type() || QEvent::Leave==event->type())
         {
             QWidget *widget(static_cast<QWidget*>(object));
 
@@ -2591,9 +2591,13 @@ void QtCurveStyle::drawWindowIcon(QPainter *painter, const QColor &color, const 
 }
 
 void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGroup &cg,
-                                  SFlags flags, bool highlight, int round, EWidget w) const
+                                  SFlags flags, EntryColor coloration, int round, EWidget w) const
 {
-    const QColor *use(highlight ? itsFocusCols : backgroundColors(cg));
+    const QColor *use(ENTRY_MOUSE_OVER==coloration && itsMouseOverCols
+                        ? itsMouseOverCols
+                        : ENTRY_FOCUS==coloration && itsFocusCols
+                            ? itsFocusCols
+                            : backgroundColors(cg));
     bool         isSpin(WIDGET_SPIN==w),
                  doEtch(!itsFormMode && (!isSpin || opts.unifySpin) && WIDGET_COMBO!=w && QTC_DO_EFFECT),
                  reverse(QApplication::reverseLayout());
@@ -2617,7 +2621,7 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
         p->fillRect(r, flags&Style_Enabled ? cg.base() : cg.background());
     }
 
-    if(highlight && isSpin)
+    if(ENTRY_NONE!=coloration && isSpin)
         if(reverse)
             r.addCoords(1, 0, 0, 0);
         else
@@ -3341,7 +3345,13 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                         flags&=~Style_HasFocus;
                     if(sv && opts.sunkenScrollViews && ((QFrame *)widget)->lineWidth()>2)
                     {
-                        drawEntryField(p, r, cg, flags, (flags&Style_Enabled) && (flags&Style_HasFocus), ROUNDED_ALL, WIDGET_SCROLLVIEW);
+                        drawEntryField(p, r, cg, flags, flags&Style_Enabled
+                                                            ? flags&Style_MouseOver
+                                                                ? ENTRY_MOUSE_OVER
+                                                                : flags&Style_HasFocus
+                                                                    ? ENTRY_FOCUS
+                                                                    : ENTRY_NONE
+                                                            : ENTRY_NONE, ROUNDED_ALL, WIDGET_SCROLLVIEW);
                     }
                     else
                         drawBorder(cg.background(), p, r, cg,
@@ -3707,7 +3717,13 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             if(scrollView && !opts.highlightScrollViews)
                 flags&=~Style_HasFocus;
 
-            drawEntryField(p, r, cg, flags, !isReadOnly && isEnabled && (flags&Style_HasFocus),
+            drawEntryField(p, r, cg, flags, !isReadOnly && isEnabled
+                                                ? flags&Style_MouseOver
+                                                    ? ENTRY_MOUSE_OVER
+                                                    : flags&Style_HasFocus
+                                                        ? ENTRY_FOCUS
+                                                        : ENTRY_NONE
+                                                : ENTRY_NONE,
                            ROUNDED_ALL, scrollView ? WIDGET_SCROLLVIEW : WIDGET_ENTRY);
             itsFormMode=false;
             break;
@@ -5057,9 +5073,14 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     p->drawRect(field);
                     if(!opts.unifyCombo)
                         field.addCoords(-2,-2, 2, 2);
-                    drawEntryField(p, field, cg, fillFlags, flags&Style_Enabled &&
-                                   (flags&Style_HasFocus), opts.unifyCombo ? ROUNDED_ALL
-                                                                           : reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
+                    drawEntryField(p, field, cg, fillFlags, flags&Style_Enabled
+                                                            ? flags&Style_MouseOver
+                                                                ? ENTRY_MOUSE_OVER
+                                                                : flags&Style_HasFocus
+                                                                    ? ENTRY_FOCUS
+                                                                    : ENTRY_NONE
+                                                            : ENTRY_NONE, 
+                                   opts.unifyCombo ? ROUNDED_ALL : reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
                                    WIDGET_COMBO);
                 }
                 else if(opts.comboSplitter && !(SHADE_DARKEN==opts.comboBtn || itsComboBtnCols))
@@ -5170,7 +5191,13 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 flags-=Style_MouseOver;
 
             if(opts.unifySpin)
-                drawEntryField(p, all, cg, flags,  spinwidget ? spinwidget->hasFocus() && (flags&Style_Enabled) : false,
+                drawEntryField(p, all, cg, flags, spinwidget && flags&Style_Enabled
+                                                            ? flags&Style_MouseOver || hw 
+                                                                ? ENTRY_MOUSE_OVER
+                                                                : flags&Style_HasFocus || spinwidget->hasFocus()
+                                                                    ? ENTRY_FOCUS
+                                                                    : ENTRY_NONE
+                                                            : ENTRY_NONE,
                                ROUNDED_ALL, WIDGET_SPIN);
             else
             {
@@ -5179,7 +5206,13 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     frame.setWidth(frame.width()+1);
 
                     drawEntryField(p, frame, cg, flags,
-                                   spinwidget ? spinwidget->hasFocus() && (flags&Style_Enabled) : false,
+                                   spinwidget && flags&Style_Enabled
+                                                            ? flags&Style_MouseOver || hw
+                                                                ? ENTRY_MOUSE_OVER
+                                                                : flags&Style_HasFocus || spinwidget->hasFocus()
+                                                                    ? ENTRY_FOCUS
+                                                                    : ENTRY_NONE
+                                                            : ENTRY_NONE,
                                    ROUNDED_LEFT, WIDGET_SPIN);
                 }
 
@@ -5247,7 +5280,13 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 {
                     frame.setWidth(frame.width()+1);
                     drawEntryField(p, frame, cg, flags,
-                                   spinwidget ? spinwidget->hasFocus() && (flags&Style_Enabled) : false,
+                                   spinwidget && flags&Style_Enabled
+                                                            ? flags&Style_MouseOver || hw 
+                                                                ? ENTRY_MOUSE_OVER
+                                                                : flags&Style_HasFocus || spinwidget->hasFocus()
+                                                                    ? ENTRY_FOCUS
+                                                                    : ENTRY_NONE
+                                                            : ENTRY_NONE,
                                    ROUNDED_RIGHT, WIDGET_SPIN);
                 }
 
@@ -7543,12 +7582,13 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
                             else if(down.contains(pos))
                                 itsHover=HOVER_SW_DOWN;
                             else
-                                itsHover=HOVER_NONE;
+                                itsHover=HOVER_SW_ENTRY;
 
                             return (HOVER_SW_UP==itsHover && !up.contains(itsOldPos)) ||
                                    (HOVER_SW_UP!=itsHover && up.contains(itsOldPos)) ||
                                    (HOVER_SW_DOWN==itsHover && !down.contains(itsOldPos)) ||
-                                   (HOVER_SW_DOWN!=itsHover && down.contains(itsOldPos));
+                                   (HOVER_SW_DOWN!=itsHover && down.contains(itsOldPos)) ||
+                                   (HOVER_SW_ENTRY==itsHover);
                         }
                         else
                         {
@@ -7584,11 +7624,12 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
                                         if(arrow.contains(pos))
                                             itsHover=HOVER_CB_ARROW;
                                         else
-                                            itsHover=HOVER_NONE;
+                                            itsHover=HOVER_CB_ENTRY;
                                     }
 
                                    return (HOVER_CB_ARROW==itsHover && !arrow.contains(itsOldPos)) ||
-                                          (HOVER_CB_ARROW!=itsHover && arrow.contains(itsOldPos));
+                                          (HOVER_CB_ARROW!=itsHover && arrow.contains(itsOldPos)) ||
+                                          (HOVER_CB_ENTRY==itsHover);
                                 }
                                 else
                                     return itsOldPos==QPoint(-1, -1);
