@@ -6149,18 +6149,19 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
         case PM_SplitterWidth:
             return widget && widget->inherits("QDockWindowResizeHandle") ? 9 : 6;
         case PM_ScrollBarSliderMin:
-            return 16;
+            return opts.sliderWidth+1;
         case PM_SliderThickness:
-            return SLIDER_TRIANGULAR==opts.sliderStyle ? 22 : (QTC_ROTATED_SLIDER ? 23 : 18);
+            return SLIDER_TRIANGULAR==opts.sliderStyle ? 22 : (QTC_SLIDER_SIZE+(QTC_ROTATED_SLIDER ? 8 : 3));
         case PM_SliderControlThickness:
-            return SLIDER_TRIANGULAR==opts.sliderStyle ? 19 : (QTC_ROTATED_SLIDER ? 23 : 15); // This equates to 13, as we draw the handle 2 pix smaller for focus rect...
+            return SLIDER_TRIANGULAR==opts.sliderStyle ? 19 : (QTC_SLIDER_SIZE+(QTC_ROTATED_SLIDER ? 8 : 0)); // This equates to 13, as we draw the handle 2 pix smaller for focus rect...
         case PM_SliderLength:
-            return SLIDER_TRIANGULAR==opts.sliderStyle ? 11 : (QTC_ROTATED_SLIDER ? 13 : 21);
+            return SLIDER_TRIANGULAR==opts.sliderStyle ? 11 : (QTC_SLIDER_SIZE+(QTC_ROTATED_SLIDER ? -2 : 6));
         case PM_ScrollBarExtent:
             // See KHTML note at top of file
-            return APP_KPRESENTER==itsThemedApp ||
+            return opts.sliderWidth+
+                   (APP_KPRESENTER==itsThemedApp ||
                    ((APP_KONQUEROR==itsThemedApp || APP_KONTACT==itsThemedApp) && (!widget || isFormWidget(widget)))
-                        ? 16 : 15;
+                        ? 1 : 0);
         case PM_MaximumDragDistance:
             return -1;
         case PM_TabBarTabVSpace:

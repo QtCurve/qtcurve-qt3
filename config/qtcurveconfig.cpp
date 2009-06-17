@@ -577,26 +577,28 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAlignEntries(titlebarAlignment);
     insertTabMoEntriess(tabMouseOver);
 
-    highlightFactor->setMinValue(MIN_HIGHLIGHT_FACTOR);
-    highlightFactor->setMaxValue(MAX_HIGHLIGHT_FACTOR);
+    highlightFactor->setRange(MIN_HIGHLIGHT_FACTOR, MAX_HIGHLIGHT_FACTOR);
     highlightFactor->setValue(DEFAULT_HIGHLIGHT_FACTOR);
 
-    lighterPopupMenuBgnd->setMinValue(MIN_LIGHTER_POPUP_MENU);
-    lighterPopupMenuBgnd->setMaxValue(MAX_LIGHTER_POPUP_MENU);
+    lighterPopupMenuBgnd->setRange(MIN_LIGHTER_POPUP_MENU, MAX_LIGHTER_POPUP_MENU);
     lighterPopupMenuBgnd->setValue(DEF_POPUPMENU_LIGHT_FACTOR);
 
-    menuDelay->setMinValue(MIN_MENU_DELAY);
-    menuDelay->setMaxValue(MAX_MENU_DELAY);
+    menuDelay->setRange(MIN_MENU_DELAY, MAX_MENU_DELAY);
     menuDelay->setValue(DEFAULT_MENU_DELAY);
     
+    sliderWidth->setRange(MIN_SLIDER_WIDTH, MAX_SLIDER_WIDTH, 2);
+    sliderWidth->setValue(DEFAULT_SLIDER_WIDTH);
+    sliderWidth->setSuffix(i18n(" pixels"));
+
     connect(lighterPopupMenuBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(menuDelay, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
+    connect(sliderWidth, SIGNAL(valueChanged(int)), SLOT(sliderWidthChanged()));
     connect(menuStripe, SIGNAL(activated(int)), SLOT(menuStripeChanged()));
     connect(customMenuStripeColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
     connect(menuStripeAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(round, SIGNAL(activated(int)), SLOT(roundChanged()));
     connect(toolbarBorders, SIGNAL(activated(int)), SLOT(updateChanged()));
-    connect(sliderThumbs, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(sliderThumbs, SIGNAL(activated(int)), SLOT(sliderThumbChanged()));
     connect(handles, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(appearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(customMenuTextColor, SIGNAL(toggled(bool)), SLOT(customMenuTextColorChanged()));
@@ -905,6 +907,21 @@ void QtCurveConfig::unifySpinToggled()
     if(unifySpin->isChecked())
         unifySpinBtns->setChecked(false);
     unifySpinBtns->setDisabled(unifySpin->isChecked());
+}
+
+void QtCurveConfig::sliderThumbChanged()
+{
+    if(LINE_NONE!=sliderThumbs->currentItem() && sliderWidth->value()<DEFAULT_SLIDER_WIDTH)
+        sliderWidth->setValue(DEFAULT_SLIDER_WIDTH);
+}
+
+void QtCurveConfig::sliderWidthChanged()
+{
+    if(0==sliderWidth->value()%2)
+        sliderWidth->setValue(sliderWidth->value()+1);
+
+    if(LINE_NONE!=sliderThumbs->currentItem() && sliderWidth->value()<DEFAULT_SLIDER_WIDTH)
+        sliderThumbs->setCurrentItem(LINE_NONE);
 }
 
 void QtCurveConfig::setupStack()
@@ -1334,6 +1351,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.stripedProgress=(EStripe)stripedProgress->currentItem();
     opts.lighterPopupMenuBgnd=lighterPopupMenuBgnd->value();
     opts.menuDelay=menuDelay->value();
+    opts.sliderWidth=sliderWidth->value();
     opts.menuStripe=(EShade)menuStripe->currentItem();
     opts.customMenuStripeColor=customMenuStripeColor->color();
     opts.menuStripeAppearance=(EAppearance)menuStripeAppearance->currentItem();
@@ -1432,6 +1450,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     scrollbarType->setCurrentItem(opts.scrollbarType);
     lighterPopupMenuBgnd->setValue(opts.lighterPopupMenuBgnd);
     menuDelay->setValue(opts.menuDelay);
+    sliderWidth->setValue(opts.sliderWidth);
     menuStripe->setCurrentItem(opts.menuStripe);
     customMenuStripeColor->setColor(opts.customMenuStripeColor);
     menuStripeAppearance->setCurrentItem(opts.menuStripeAppearance);
@@ -1563,6 +1582,7 @@ bool QtCurveConfig::settingsChanged()
          stripedProgress->currentItem()!=currentStyle.stripedProgress ||
          lighterPopupMenuBgnd->value()!=currentStyle.lighterPopupMenuBgnd ||
          menuDelay->value()!=currentStyle.menuDelay ||
+         sliderWidth->value()!=currentStyle.sliderWidth ||
          menuStripe->currentItem()!=currentStyle.menuStripe ||
          menuStripeAppearance->currentItem()!=currentStyle.menuStripeAppearance ||
          embolden->isChecked()!=currentStyle.embolden ||

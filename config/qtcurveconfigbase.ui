@@ -562,7 +562,7 @@
                             <string>This appearance setting affects both scrollbar sliders, and other sliders.</string>
                         </property>
                     </widget>
-                    <spacer row="9" column="1">
+                    <spacer row="10" column="1">
                         <property name="name">
                             <cstring>spacer13</cstring>
                         </property>
@@ -597,6 +597,11 @@
                             </sizepolicy>
                         </property>
                     </widget>
+                    <widget class="KIntNumInput" row="9" column="1">
+                        <property name="name">
+                            <cstring>sliderWidth</cstring>
+                        </property>
+                    </widget>
                     <widget class="QLabel" row="3" column="0">
                         <property name="name">
                             <cstring>textLabel7</cstring>
@@ -610,7 +615,15 @@
                             <cstring>textLabel8_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Scrollbar thumbs:</string>
+                            <string>Mark thumbs with:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="9" column="0">
+                        <property name="name">
+                            <cstring>textLabel8_2x</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Thumb size:</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="4" column="0">

@@ -110,7 +110,8 @@ class QtCurveConfig : public QtCurveConfigBase
     void passwordCharClicked();
     void unifySpinBtnsToggled();
     void unifySpinToggled();
-
+    void sliderThumbChanged();
+    void sliderWidthChanged();
     void changeStack();
     void gradChanged(int i);
     void itemChanged(QListViewItem *i, int col);
