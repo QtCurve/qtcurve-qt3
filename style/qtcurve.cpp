@@ -4307,7 +4307,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                          button->pixmap(), button->text(), -1, &textCol);
 
             // Draw a focus rect if the button has focus
-            if (flags & Style_HasFocus)
+            if (flags&Style_HasFocus &&
+                !(flags&Style_MouseOver && FOCUS_FULL==opts.focus && MO_NONE!=opts.coloredMouseOver))
                drawPrimitive(PE_FocusRect, p, visualRect(subRect(SR_PushButtonFocusRect,
                              widget), widget), cg, flags);
             break;
@@ -5124,8 +5125,9 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                         fr.addCoords(3, 3, -3, -3);
                     }
 
-                    drawPrimitive(PE_FocusRect, p, fr, cg, flags | Style_FocusAtBorder,
-                                  QStyleOption(cg.highlight()));
+                    if(!(flags&Style_MouseOver && FOCUS_FULL==opts.focus && MO_NONE!=opts.coloredMouseOver))
+                        drawPrimitive(PE_FocusRect, p, fr, cg, flags | Style_FocusAtBorder,
+                                      QStyleOption(cg.highlight()));
                 }
             }
 
