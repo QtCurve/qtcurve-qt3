@@ -6,16 +6,19 @@
     (Enabled by default)
  3. Added ability to specify scrollbar width (11 -> 31, default 15)
  4. Base slider dimensions off of scrollbar width, unless using triangular slider.
- 5. Enable mouse-over for entry fields.
- 6. For mouse-over and focus, use same colour for top and bottom inner parts
+ 5. Add option to have thinner buttons. (Enabled by default)
+ 6. Enable mouse-over for entry fields.
+ 7. For mouse-over and focus, use same colour for top and bottom inner parts
     of entry fields.
- 7. When using full focus with colored mouse over, then mouse over takes
+ 8. When using full focus with colored mouse over, then mouse over takes
     precedence.
- 8. Alter default settings; Use soft gradient for active tab.
- 9. Fix some re-draw errors with thin scrollbar grooves.
-10. Default to reading KDE4 settings if KDE_SESSION_VERSION is not set.
+ 9. Alter default settings; Use soft gradient for active tab.
+10. Modified how button, and combo, heights are calculated - no longer set a
+    minimum height.
+11. Fix some re-draw errors with thin scrollbar grooves.
+12. Default to reading KDE4 settings if KDE_SESSION_VERSION is not set.
     Pass -DQTC_DEFAULT_TO_KDE3=true to cmake to force this to default to KDE3.
-11. Call kde-config / kde4-config to ascertain users KDEHOME.
+13. Call kde-config / kde4-config to ascertain users KDEHOME.
 
 0.64.2
 ------

@@ -263,7 +263,7 @@
                             <string>Sunken appearance:</string>
                         </property>
                     </widget>
-                    <spacer row="13" column="1">
+                    <spacer row="14" column="1">
                         <property name="name">
                             <cstring>spacer9</cstring>
                         </property>
@@ -286,6 +286,17 @@
                         </property>
                         <property name="text">
                             <string>Draw fading lines (KDE4 &amp;&amp; Gtk2)</string>
+                        </property>
+                        <property name="accel">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="13" column="0">
+                        <property name="name">
+                            <cstring>thinnerBtns</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Thinner buttons when etched/shadowed</string>
                         </property>
                         <property name="accel">
                             <string></string>
@@ -2407,6 +2418,7 @@ None - no buttons, only the slider</string>
     <tabstop>stdSidebarButtons</tabstop>
     <tabstop>darkerBorders</tabstop>
     <tabstop>fadeLines</tabstop>
+    <tabstop>thinnerBtns</tabstop>
     <tabstop>comboSplitter</tabstop>
     <tabstop>unifyCombo</tabstop>
     <tabstop>comboBtn</tabstop>

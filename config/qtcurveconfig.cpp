@@ -660,6 +660,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(menubarMouseOver, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(shadeMenubarOnlyWhenActive, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(thinnerMenuItems, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(thinnerBtns, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(customSlidersColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
     connect(customMenubarsColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
     connect(customMenuSelTextColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
@@ -1346,6 +1347,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.menubarMouseOver=menubarMouseOver->isChecked();
     opts.shadeMenubarOnlyWhenActive=shadeMenubarOnlyWhenActive->isChecked();
     opts.thinnerMenuItems=thinnerMenuItems->isChecked();
+    opts.thinnerBtns=thinnerBtns->isChecked();
     opts.fixParentlessDialogs=fixParentlessDialogs->isChecked();
     opts.animatedProgress=animatedProgress->isChecked();
     opts.stripedProgress=(EStripe)stripedProgress->currentItem();
@@ -1467,6 +1469,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     menubarMouseOver->setChecked(opts.menubarMouseOver);
     shadeMenubarOnlyWhenActive->setChecked(opts.shadeMenubarOnlyWhenActive);
     thinnerMenuItems->setChecked(opts.thinnerMenuItems);
+    thinnerBtns->setChecked(opts.thinnerBtns);
     fixParentlessDialogs->setChecked(opts.fixParentlessDialogs);
     animatedProgress->setChecked(opts.animatedProgress);
     stripedProgress->setCurrentItem(opts.stripedProgress);
@@ -1577,6 +1580,7 @@ bool QtCurveConfig::settingsChanged()
          menubarMouseOver->isChecked()!=currentStyle.menubarMouseOver ||
          shadeMenubarOnlyWhenActive->isChecked()!=currentStyle.shadeMenubarOnlyWhenActive ||
          thinnerMenuItems->isChecked()!=currentStyle.thinnerMenuItems ||
+         thinnerBtns->isChecked()!=currentStyle.thinnerBtns ||
          fixParentlessDialogs->isChecked()!=currentStyle.fixParentlessDialogs ||
          animatedProgress->isChecked()!=currentStyle.animatedProgress ||
          stripedProgress->currentItem()!=currentStyle.stripedProgress ||

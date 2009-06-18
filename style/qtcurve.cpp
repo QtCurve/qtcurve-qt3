@@ -6194,14 +6194,9 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
 
             if (button && !button->text().isEmpty())
             {
-                bool allowEtch(QTC_DO_EFFECT && !isFormWidget(widget));
-
-                const int constMinH(allowEtch ? 29 : 27);
-
                 int margin(2*pixelMetric(PM_ButtonMargin, widget)),
                     mbi(button->isMenuButton() ? pixelMetric(PM_MenuButtonIndicator, widget) : 0),
-                    w(contentsSize.width() + margin + mbi + 16),
-                    h(contentsSize.height() + margin);
+                    w(contentsSize.width() + margin + mbi + 16);
 
 //                 if(button->text()=="...")
 //                     w+=24;
@@ -6216,26 +6211,15 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
                         w=constMinW;
                 }
 
-                if(allowEtch)
-                    h+=2;
-
-                return QSize(w, h < constMinH ? constMinH : h);
+                return QSize(w, contentsSize.height() + margin+(QTC_DO_EFFECT && !isFormWidget(widget) && !opts.thinnerBtns
+                                                                    ? 6 : 4));
             }
             break;
         }
         case CT_ComboBox:
         {
-            bool allowEtch(QTC_DO_EFFECT && !isFormWidget(widget));
-
-            const int constMinH(allowEtch ? 26 : 24);
-
             QSize sz(KStyle::sizeFromContents(contents, widget, contentsSize, data));
-            int   h(sz.height());
-
-            if(allowEtch)
-                h+=2;
-
-            return QSize(sz.width(), h<constMinH ? constMinH : h);
+            return QSize(sz.width(), sz.height()+(QTC_DO_EFFECT && !isFormWidget(widget) && !opts.thinnerBtns ? 4 : 2));
         }
         case CT_PopupMenuItem:
         {
