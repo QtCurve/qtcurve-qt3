@@ -2622,10 +2622,11 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
 
     if(isSpin || WIDGET_ENTRY==w)
     {
-        if(reverse)
+        if(reverse && isSpin)
             r.addCoords(-1, 0, 0, 0);
 
-        p->fillRect(r, flags&Style_Enabled ? cg.base() : cg.background());
+        if(isSpin)
+            p->fillRect(r, flags&Style_Enabled ? cg.base() : cg.background());
     }
 
     if(ENTRY_NONE!=coloration && isSpin)
