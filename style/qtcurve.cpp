@@ -4039,7 +4039,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->setPen(itsBackgroundCols[0]);
                     p->drawLine(r.x()+1, r.y()+r.height()-3, r.x()+1, r.y()+r.height()-1);
                     //p->drawPoint(r.x()+r.width()-2, r.y()+r.height()-1);
-                    p->setPen(itsBackgroundCols[BORDER_LIGHT==opts.borderTab ? 0 : QT_FRAME_DARK_SHADOW]);
+                    p->setPen(itsBackgroundCols[opts.borderTab ? 0 : QT_FRAME_DARK_SHADOW]);
                     p->drawPoint(r.x()+r.width()-2, r.y()+r.height()-2);
                 }
                 else
@@ -4061,12 +4061,12 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     int x(reverse ? r.x()+r.width()-1 : r.x()),
                         x2(reverse ? x-1 : x+1);
 
-                    p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+                    p->setPen(itsBackgroundCols[!active && TAB_MO_GLOW==opts.tabMouseOver ? ORIGINAL_SHADE : QT_STD_BORDER]);
                     p->drawLine(x, r.y()+r.height()-1, x, r.height()-2);
                     if(active)
                     {
                         p->setPen(itsBackgroundCols[reverse ? dark : 0]);
-                        p->drawLine(x2, r.y()+r.height()-1, x2, r.height()-2);
+                        p->drawLine(x2, r.y()+r.height()-1, x2, r.y()+r.height()-2);
                     }
                 }
 
@@ -4089,7 +4089,9 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 {
                     p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                     p->drawPoint(r.x()+1, r.y()+r.height()-1);
-                    p->setPen(midColor(itsBackgroundCols[QT_STD_BORDER], cg.background()));
+                    p->setPen(TAB_MO_GLOW==opts.tabMouseOver
+                                ? itsBackgroundCols[QT_STD_BORDER]
+                                : midColor(itsBackgroundCols[QT_STD_BORDER], cg.background()));
                     p->drawPoint(r.x()+1, r.y()+r.height()-2);
                 }
             }
@@ -4102,13 +4104,13 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->drawPoint(r.x()+r.width()-1, r.y()+1);
                     p->setPen(itsBackgroundCols[0]);
                     p->drawLine(r.x()+1, r.y()+2, r.x()+1, r.y());
-                    p->setPen(itsBackgroundCols[BORDER_LIGHT==opts.borderTab ? 0 : QT_FRAME_DARK_SHADOW]);
+                    p->setPen(itsBackgroundCols[opts.borderTab ? 0 : QT_FRAME_DARK_SHADOW]);
                     p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-2, r.y());
                     p->drawPoint(r.x()+r.width()-1, r.y());
                 }
                 else
                 {
-                    p->setPen(itsBackgroundCols[dark]);
+                    p->setPen(itsBackgroundCols[opts.borderTab ? 0 : dark]);
                     p->drawLine(r.x(), r.y(), r.x()+r.width()-1, r.y());
                     p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                     p->drawLine(r.x(), r.y()+1, r.x()+r.width()-1, r.y()+1);
