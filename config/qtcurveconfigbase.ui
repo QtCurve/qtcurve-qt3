@@ -626,7 +626,7 @@
                             <cstring>textLabel8_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Mark thumbs with:</string>
+                            <string>Slider thumbs:</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="9" column="0">
@@ -634,7 +634,7 @@
                             <cstring>textLabel8_2x</cstring>
                         </property>
                         <property name="text">
-                            <string>Thumb size:</string>
+                            <string>Slider width:</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="4" column="0">
