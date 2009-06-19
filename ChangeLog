@@ -24,6 +24,7 @@
     Pass -DQTC_DEFAULT_TO_KDE3=true to cmake to force this to default to KDE3.
 13. Call kde-config / kde4-config to ascertain users KDEHOME.
 14. Fix slight redraw error with glow style mouse over tabs.
+15. Remove box from listview arrows when configured to drawn listview lines.
 
 0.64.2
 ------
