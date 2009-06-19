@@ -3354,9 +3354,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     if(sv && opts.sunkenScrollViews && ((QFrame *)widget)->lineWidth()>2)
                     {
                         drawEntryField(p, r, cg, flags, flags&Style_Enabled
-                                                            ? flags&Style_MouseOver
+                                                            ? /*flags&Style_MouseOver
                                                                 ? ENTRY_MOUSE_OVER
-                                                                : flags&Style_HasFocus
+                                                                :*/ flags&Style_HasFocus
                                                                     ? ENTRY_FOCUS
                                                                     : ENTRY_NONE
                                                             : ENTRY_NONE, ROUNDED_ALL, WIDGET_SCROLLVIEW);
@@ -3729,7 +3729,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             r2.addCoords(1, 1, -1, -1);
             p->fillRect(r2, flags&Style_Enabled ? cg.base() : cg.background());
             drawEntryField(p, r, cg, flags, !isReadOnly && isEnabled
-                                                ? flags&Style_MouseOver
+                                                ? flags&Style_MouseOver && !scrollView
                                                     ? ENTRY_MOUSE_OVER
                                                     : flags&Style_HasFocus
                                                         ? ENTRY_FOCUS
