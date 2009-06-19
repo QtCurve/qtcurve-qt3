@@ -3725,6 +3725,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             if(scrollView && !opts.highlightScrollViews)
                 flags&=~Style_HasFocus;
 
+            QRect r2(r);
+            r2.addCoords(1, 1, -1, -1);
+            p->fillRect(r2, flags&Style_Enabled ? cg.base() : cg.background());
             drawEntryField(p, r, cg, flags, !isReadOnly && isEnabled
                                                 ? flags&Style_MouseOver
                                                     ? ENTRY_MOUSE_OVER
