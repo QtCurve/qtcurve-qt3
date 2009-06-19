@@ -3664,7 +3664,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 else if(flags&Style_Sunken)
                     sr.addCoords(1, 1, 1, 1);
 
-                ::drawArrow(p, sr, QTC_MO_ARROW(cg.buttonText()), PE_SpinWidgetUp==pe ? PE_ArrowUp : PE_ArrowDown, opts, !opts.unifySpin);
+                ::drawArrow(p, sr, flags&Style_Enabled ? QTC_MO_ARROW(cg.buttonText()) : cg.text(), PE_SpinWidgetUp==pe ? PE_ArrowUp : PE_ArrowDown, opts, !opts.unifySpin);
             }
             else
             {
@@ -3678,7 +3678,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(flags&Style_Sunken && !opts.unifySpin)
                     c+=QPoint(1, 1);
 
-                    p->setPen(cg.buttonText());
+                p->setPen(flags&Style_Enabled ? cg.buttonText() : cg.text());
                 p->drawLine(c.x()-l, c.y(), c.x()+l, c.y());
                 if(PE_SpinWidgetPlus==pe)
                     p->drawLine(c.x(), c.y()-l, c.x(), c.y()+l);
@@ -5274,7 +5274,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 if(spinwidget->buttonSymbols()==QSpinWidget::PlusMinus)
                     pe=PE_SpinWidgetPlus;
                 if(!spinwidget->isUpEnabled())
-                    upflags^=Style_Enabled;
+                    upflags&=~Style_Enabled;
                 drawPrimitive(pe, p, up, cg,
                              upflags |((active==SC_SpinWidgetUp)
                                  ? Style_On | Style_Sunken : Style_Raised));
@@ -5290,7 +5290,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 if(spinwidget->buttonSymbols()==QSpinWidget::PlusMinus)
                     pe=PE_SpinWidgetMinus;
                 if(!spinwidget->isDownEnabled())
-                    downflags^=Style_Enabled;
+                    downflags&=~Style_Enabled;
                 drawPrimitive(pe, p, down, cg,
                               downflags |((active==SC_SpinWidgetDown)
                                   ? Style_On | Style_Sunken : Style_Raised));
