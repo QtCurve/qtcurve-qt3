@@ -2629,7 +2629,7 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
             p->fillRect(r, flags&Style_Enabled ? cg.base() : cg.background());
     }
 
-    if(ENTRY_NONE!=coloration && isSpin)
+    if(ENTRY_NONE!=coloration && isSpin && !opts.unifySpin)
         if(reverse)
             r.addCoords(1, 0, 0, 0);
         else
