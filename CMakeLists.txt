@@ -7,8 +7,8 @@ set(DEBIAN_PACKAGE_DESCRIPTION "QtCurve for Qt3/KDE3")
 set(DEBIAN_PACKAGE_SECTION "kde")
 set(CPACK_SOURCE_GENERATOR "TBZ2")
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
-set(CPACK_PACKAGE_VERSION_MINOR "64")
-set(CPACK_PACKAGE_VERSION_PATCH "2")
+set(CPACK_PACKAGE_VERSION_MINOR "65")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
 set(CPACK_PACKAGE_CONTACT "Craig Drummond <craig_p_drummond@yahoo.co.uk>")
 set(QTCURVE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
 set(QTCURVE_VERSION_FULL "${QTCURVE_VERSION}.${CPACK_PACKAGE_VERSION_PATCH}")
@@ -51,6 +51,19 @@ add_definitions(${QT_DEFINITIONS} ${KDE3_DEFINITIONS})
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE3_INCLUDES})
 
 set(DATA_INSTALL_DIR ${KDE3PREFIX}/share/apps)
+
+if(QTC_DEFAULT_TO_KDE3)
+    message("\n**************************************************************\n"
+            "Information: Defaulting to reading KDE3 settings if \n"
+            "             KDE_SESSION_VERSION is not set\n"
+            "**************************************************************\n")
+else(QTC_DEFAULT_TO_KDE3)
+    message("\n**************************************************************\n"
+            "Information: Defaulting to reading KDE4 settings if \n"
+            "             KDE_SESSION_VERSION is not set\n"
+            "**************************************************************\n")
+endif(QTC_DEFAULT_TO_KDE3)
+
 add_subdirectory(style)
 add_subdirectory(config)
 add_subdirectory(themes)

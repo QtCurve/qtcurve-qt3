@@ -103,9 +103,18 @@ class QtCurveStyle : public KStyle
         HOVER_KICKER,
         HOVER_SW_UP,
         HOVER_SW_DOWN,
-        HOVER_CB_ARROW
+        HOVER_SW_ENTRY,
+        HOVER_CB_ARROW,
+        HOVER_CB_ENTRY
     };
 
+    enum EntryColor
+    {
+        ENTRY_FOCUS,
+        ENTRY_MOUSE_OVER,
+        ENTRY_NONE
+    };
+    
     QtCurveStyle(const QString &name=QString());
     virtual ~QtCurveStyle();
 
@@ -130,7 +139,7 @@ class QtCurveStyle : public KStyle
                      SubControl button) const;
     void drawWindowIcon(QPainter *painter, const QColor &color, const QRect &r, bool sunken, int margin, SubControl button) const;
     void drawEntryField(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
-                        bool highlight, int round, EWidget=WIDGET_ENTRY) const;
+                        EntryColor coloration, int round, EWidget=WIDGET_ENTRY) const;
     void drawArrow(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
                    QStyle::PrimitiveElement pe,  bool small=false, bool checkActive=false) const;
     void drawPrimitive(PrimitiveElement, QPainter *, const QRect &, const QColorGroup &,
@@ -168,6 +177,8 @@ class QtCurveStyle : public KStyle
                       const QWidget *widget) const;
     void drawBevelGradient(const QColor &base, QPainter *p, QRect const &r,
                            bool horiz, bool sel, EAppearance bevApp, EWidget w=WIDGET_OTHER) const;
+    void drawBevelGradientReal(const QColor &base, QPainter *p, QRect const &r,
+                               bool horiz, bool sel, EAppearance bevApp, EWidget w=WIDGET_OTHER) const;
     void drawGradient(const QColor &top, const QColor &bot, QPainter *p, const QRect &r, bool horiz=true) const;
     void drawSbSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, bool slider=false) const;
     void drawSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, QSlider *slider, bool tb=false) const;

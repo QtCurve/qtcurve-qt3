@@ -1,3 +1,32 @@
+0.65.0
+------
+ 1. Add options to draw editable combos, and spin widgets, as edit fields with
+    embedded arrows - oxygen style.
+ 2. Add option to draw a light border around tab widgets, as opposed to 3d look.
+ 3. Added ability to specify scrollbar width (11 -> 31, default 15)
+ 4. Base slider dimensions off of scrollbar width, unless using triangular slider.
+ 5. Add option to have thinner buttons.
+ 6. Add option to specify gradient for background of popupmenus.
+ 7. Enable mouse-over for entry fields.
+ 8. For mouse-over and focus, use same colour for top and bottom inner parts
+    of entry fields.
+ 9. When using full focus with colored mouse over, then mouse over takes
+    precedence.
+10. Alter default settings:
+        Place arrows of spin buttons, and editable combos, in the edit field.
+        Draw a light border around tab widget.
+        Thinner buttons.
+        Use soft gradient for active tab.
+        Use glow style highlight for tab mouse-over (this introduces gaps between tabs).
+11. Modified how button, and combo, heights are calculated - no longer set a
+    minimum height.
+12. Fix some re-draw errors with thin scrollbar grooves.
+13. Default to reading KDE4 settings if KDE_SESSION_VERSION is not set.
+    Pass -DQTC_DEFAULT_TO_KDE3=true to cmake to force this to default to KDE3.
+14. Call kde-config / kde4-config to ascertain users KDEHOME.
+15. Fix slight redraw error with glow style mouse over tabs.
+16. Remove box from listview arrows when configured to drawn listview lines.
+
 0.64.2
 ------
 1. When using shaded combo buttons, use button colours for border.
