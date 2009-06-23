@@ -527,6 +527,12 @@ static void insertTabMoEntriess(QComboBox *combo)
     combo->insertItem(i18n("Add a slight glow"));
 }
 
+static void insertGradTypeEntries(QComboBox *combo)
+{
+    combo->insertItem(i18n("Horizontal"));
+    combo->insertItem(i18n("Vertical"));
+}
+
 QtCurveConfig::QtCurveConfig(QWidget *parent)
              : QtCurveConfigBase(parent),
                exportDialog(NULL),
@@ -558,6 +564,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(menuStripeAppearance, true, false);
     insertAppearanceEntries(sbarBgndAppearance);
     insertAppearanceEntries(sliderFill);
+    insertAppearanceEntries(menuBgndAppearance);
     insertLineEntries(handles, true);
     insertLineEntries(sliderThumbs, false);
     insertLineEntries(toolbarSeparators, false);
@@ -576,17 +583,18 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertGradBorderEntries(gradBorder);
     insertAlignEntries(titlebarAlignment);
     insertTabMoEntriess(tabMouseOver);
+    insertGradTypeEntries(menuBgndGrad);
 
     highlightFactor->setRange(MIN_HIGHLIGHT_FACTOR, MAX_HIGHLIGHT_FACTOR);
     highlightFactor->setValue(DEFAULT_HIGHLIGHT_FACTOR);
 
-    lighterPopupMenuBgnd->setRange(MIN_LIGHTER_POPUP_MENU, MAX_LIGHTER_POPUP_MENU);
+    lighterPopupMenuBgnd->setRange(MIN_LIGHTER_POPUP_MENU, MAX_LIGHTER_POPUP_MENU, 1, false);
     lighterPopupMenuBgnd->setValue(DEF_POPUPMENU_LIGHT_FACTOR);
 
-    menuDelay->setRange(MIN_MENU_DELAY, MAX_MENU_DELAY);
+    menuDelay->setRange(MIN_MENU_DELAY, MAX_MENU_DELAY, 1, false);
     menuDelay->setValue(DEFAULT_MENU_DELAY);
     
-    sliderWidth->setRange(MIN_SLIDER_WIDTH, MAX_SLIDER_WIDTH, 2);
+    sliderWidth->setRange(MIN_SLIDER_WIDTH, MAX_SLIDER_WIDTH, 2, false);
     sliderWidth->setValue(DEFAULT_SLIDER_WIDTH);
     sliderWidth->setSuffix(i18n(" pixels"));
 
@@ -596,6 +604,8 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(menuStripe, SIGNAL(activated(int)), SLOT(menuStripeChanged()));
     connect(customMenuStripeColor, SIGNAL(changed(const QColor &)), SLOT(updateChanged()));
     connect(menuStripeAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(menuBgndAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(menuBgndGrad, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(round, SIGNAL(activated(int)), SLOT(roundChanged()));
     connect(toolbarBorders, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(sliderThumbs, SIGNAL(activated(int)), SLOT(sliderThumbChanged()));
@@ -713,6 +723,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     loadStyles(subMenu);
     setupGradientsTab();
     setupStack();
+    resize(600, 400);
 }
 
 QtCurveConfig::~QtCurveConfig()
@@ -1357,6 +1368,8 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.menuStripe=(EShade)menuStripe->currentItem();
     opts.customMenuStripeColor=customMenuStripeColor->color();
     opts.menuStripeAppearance=(EAppearance)menuStripeAppearance->currentItem();
+    opts.menuBgndAppearance=(EAppearance)menuBgndAppearance->currentItem();
+    opts.menuBgndGrad=(EGradType)menuBgndGrad->currentItem();
     opts.embolden=embolden->isChecked();
     opts.scrollbarType=(EScrollbar)scrollbarType->currentItem();
     opts.defBtnIndicator=(EDefBtnIndicator)defBtnIndicator->currentItem();
@@ -1456,6 +1469,8 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     menuStripe->setCurrentItem(opts.menuStripe);
     customMenuStripeColor->setColor(opts.customMenuStripeColor);
     menuStripeAppearance->setCurrentItem(opts.menuStripeAppearance);
+    menuBgndAppearance->setCurrentItem(opts.menuBgndAppearance);
+    menuBgndGrad->setCurrentItem(opts.menuBgndGrad);
     toolbarBorders->setCurrentItem(opts.toolbarBorders);
     sliderThumbs->setCurrentItem(opts.sliderThumbs);
     handles->setCurrentItem(opts.handles);
@@ -1589,6 +1604,8 @@ bool QtCurveConfig::settingsChanged()
          sliderWidth->value()!=currentStyle.sliderWidth ||
          menuStripe->currentItem()!=currentStyle.menuStripe ||
          menuStripeAppearance->currentItem()!=currentStyle.menuStripeAppearance ||
+         menuBgndAppearance->currentItem()!=currentStyle.menuBgndAppearance ||
+         menuBgndGrad->currentItem()!=currentStyle.menuBgndGrad ||
          embolden->isChecked()!=currentStyle.embolden ||
          fillSlider->isChecked()!=currentStyle.fillSlider ||
          sliderStyle->currentItem()!=currentStyle.sliderStyle ||

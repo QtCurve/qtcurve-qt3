@@ -177,6 +177,8 @@ class QtCurveStyle : public KStyle
                       const QWidget *widget) const;
     void drawBevelGradient(const QColor &base, QPainter *p, QRect const &r,
                            bool horiz, bool sel, EAppearance bevApp, EWidget w=WIDGET_OTHER) const;
+    void drawBevelGradientReal(const QColor &base, QPainter *p, QRect const &r,
+                               bool horiz, bool sel, EAppearance bevApp, EWidget w=WIDGET_OTHER) const;
     void drawGradient(const QColor &top, const QColor &bot, QPainter *p, const QRect &r, bool horiz=true) const;
     void drawSbSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, bool slider=false) const;
     void drawSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, QSlider *slider, bool tb=false) const;
