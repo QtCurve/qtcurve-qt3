@@ -1219,7 +1219,7 @@ void QtCurveStyle::polish(QWidget *widget)
              (widget->parentWidget() && ::qt_cast<const QListBox *>(widget) &&
               ::qt_cast<const QComboBox *>(widget->parentWidget()))))
         ((QFrame *)widget)->setLineWidth(0);
-    else if (USE_LIGHTER_POPUP_MENU && !opts.borderMenuitems &&
+    else if ((USE_LIGHTER_POPUP_MENU || !IS_FLAT(opts.menuBgndAppearance)) && !opts.borderMenuitems &&
         widget && ::qt_cast<const QPopupMenu *>(widget))
         ((QFrame *)widget)->setLineWidth(1);
 
@@ -1704,7 +1704,8 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
             QWidget *widget=(QWidget*)object;
             QPainter painter(widget);
 
-            drawBevelGradientReal(itsLighterPopupMenuBgndCol, &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
+            drawBevelGradientReal(USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : widget->palette().active().background(),
+                                  &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
                                   opts.menuBgndAppearance, WIDGET_OTHER);
         }
         else if (object->inherits("KToolBarSeparator"))
