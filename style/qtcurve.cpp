@@ -331,7 +331,7 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 
 static bool kickerIsTrans()
 {
-    QString cfgFileName(kdeHome()+"/share/config/kickerrc");
+    QString cfgFileName(kdeHome(true)+"/share/config/kickerrc");
     bool    trans(false);
     QFile   cfgFile(cfgFileName);
 
@@ -7310,7 +7310,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
         }
         else // KDE4
         {
-            QFile f(kdeHome(true)+"/share/config/kdeglobals");
+            QFile f(kdeHome(false)+"/share/config/kdeglobals");
 
             if(f.open(IO_ReadOnly))
             {
