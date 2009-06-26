@@ -2635,12 +2635,12 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
         p->drawRect(rx);
     }
 
-    if(isSpin || WIDGET_ENTRY==w)
+    if(isSpin || WIDGET_ENTRY==w || WIDGET_COMBO==w)
     {
         if(reverse && isSpin)
             r.addCoords(-1, 0, 0, 0);
 
-        if(isSpin)
+        if(isSpin || WIDGET_COMBO==w)
             p->fillRect(r, flags&Style_Enabled ? cg.base() : cg.background());
     }
 
