@@ -6,6 +6,7 @@
 2. Fix gradient menus when not using lighter popup menu backgrounds.
 3. Dont fill background of PE_PanelLineEdit
 4. When readining kicker's settings, and window colours, use the correct KDE home.
+5. Fix blank menus in Amarok when using gradient menu background.
 
 0.65.0
 ------

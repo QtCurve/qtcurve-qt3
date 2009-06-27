@@ -1707,6 +1707,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
             drawBevelGradientReal(USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : widget->palette().active().background(),
                                   &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
                                   opts.menuBgndAppearance, WIDGET_OTHER);
+            return false;
         }
         else if (object->inherits("KToolBarSeparator"))
         {
