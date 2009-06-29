@@ -331,7 +331,7 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 
 static bool kickerIsTrans()
 {
-    QString cfgFileName(kdeHome()+"/share/config/kickerrc");
+    QString cfgFileName(kdeHome(true)+"/share/config/kickerrc");
     bool    trans(false);
     QFile   cfgFile(cfgFileName);
 
@@ -1219,7 +1219,7 @@ void QtCurveStyle::polish(QWidget *widget)
              (widget->parentWidget() && ::qt_cast<const QListBox *>(widget) &&
               ::qt_cast<const QComboBox *>(widget->parentWidget()))))
         ((QFrame *)widget)->setLineWidth(0);
-    else if (USE_LIGHTER_POPUP_MENU && !opts.borderMenuitems &&
+    else if ((USE_LIGHTER_POPUP_MENU || !IS_FLAT(opts.menuBgndAppearance)) && !opts.borderMenuitems &&
         widget && ::qt_cast<const QPopupMenu *>(widget))
         ((QFrame *)widget)->setLineWidth(1);
 
@@ -1704,8 +1704,10 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
             QWidget *widget=(QWidget*)object;
             QPainter painter(widget);
 
-            drawBevelGradientReal(itsLighterPopupMenuBgndCol, &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
+            drawBevelGradientReal(USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : widget->palette().active().background(),
+                                  &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
                                   opts.menuBgndAppearance, WIDGET_OTHER);
+            return false;
         }
         else if (object->inherits("KToolBarSeparator"))
         {
@@ -2634,12 +2636,12 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
         p->drawRect(rx);
     }
 
-    if(isSpin || WIDGET_ENTRY==w)
+    if(isSpin || WIDGET_ENTRY==w || WIDGET_COMBO==w)
     {
         if(reverse && isSpin)
             r.addCoords(-1, 0, 0, 0);
 
-        if(isSpin)
+        if(isSpin || WIDGET_COMBO==w)
             p->fillRect(r, flags&Style_Enabled ? cg.base() : cg.background());
     }
 
@@ -3743,7 +3745,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
             QRect r2(r);
             r2.addCoords(1, 1, -1, -1);
-            p->fillRect(r2, flags&Style_Enabled ? cg.base() : cg.background());
+//             p->fillRect(r2, flags&Style_Enabled ? cg.base() : cg.background());
             drawEntryField(p, r, cg, flags, !isReadOnly && isEnabled
                                                 ? flags&Style_MouseOver && !scrollView
                                                     ? ENTRY_MOUSE_OVER
@@ -7309,7 +7311,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
         }
         else // KDE4
         {
-            QFile f(kdeHome(true)+"/share/config/kdeglobals");
+            QFile f(kdeHome(false)+"/share/config/kdeglobals");
 
             if(f.open(IO_ReadOnly))
             {
@@ -7698,7 +7700,7 @@ const QColor & QtCurveStyle::menuStripeCol() const
         case SHADE_SELECTED:
             return itsHighlightCols[QTC_MENU_STRIPE_SHADE];
         case SHADE_DARKEN:
-            return opts.lighterPopupMenuBgnd<0
+            return USE_LIGHTER_POPUP_MENU
                 ? itsLighterPopupMenuBgndCol
                 : itsBackgroundCols[QTC_MENU_STRIPE_SHADE];
     }
