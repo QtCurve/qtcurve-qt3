@@ -3899,6 +3899,33 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             QRect ar(r.x()+((r.width()-(QTC_LV_SIZE+4))>>1), r.y()+((r.height()-(QTC_LV_SIZE+4))>>1), QTC_LV_SIZE+4,
                      QTC_LV_SIZE+4);
 
+            if(LV_OLD==opts.lvLines)
+            {
+                int lo(QTC_ROUNDED ? 2 : 0);
+
+                p->setPen(cg.mid());
+                p->drawLine(ar.x()+lo, ar.y(), (ar.x()+ar.width()-1)-lo, ar.y());
+                p->drawLine(ar.x()+lo, ar.y()+ar.height()-1, (ar.x()+ar.width()-1)-lo,
+                            ar.y()+ar.height()-1);
+                p->drawLine(ar.x(), ar.y()+lo, ar.x(), (ar.y()+ar.height()-1)-lo);
+                p->drawLine(ar.x()+ar.width()-1, ar.y()+lo, ar.x()+ar.width()-1,
+                            (ar.y()+ar.height()-1)-lo);
+
+                if(QTC_ROUNDED)
+                {
+                    p->drawPoint(ar.x()+1, ar.y()+1);
+                    p->drawPoint(ar.x()+1, ar.y()+ar.height()-2);
+                    p->drawPoint(ar.x()+ar.width()-2, ar.y()+1);
+                    p->drawPoint(ar.x()+ar.width()-2, ar.y()+ar.height()-2);
+                    p->setPen(midColor(cg.mid(), cg.background()));
+                    p->drawLine(ar.x(), ar.y()+1, ar.x()+1, ar.y());
+                    p->drawLine(ar.x()+ar.width()-2, ar.y(), ar.x()+ar.width()-1, ar.y()+1);
+                    p->drawLine(ar.x(), ar.y()+ar.height()-2, ar.x()+1, ar.y()+ar.height()-1);
+                    p->drawLine(ar.x()+ar.width()-2, ar.y()+ar.height()-1, ar.x()+ar.width()-1,
+                                ar.y()+ar.height()-2);
+                }
+            }
+
             ::drawArrow(p, ar, flags&Style_Enabled ? cg.mid() : cg.text(), flags&Style_On // Collapsed = On
                                             ?  QApplication::reverseLayout()
                                                  ? PE_ArrowLeft

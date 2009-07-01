@@ -1031,31 +1031,6 @@ None - no buttons, only the slider</string>
                             <cstring>lvAppearance</cstring>
                         </property>
                     </widget>
-                    <spacer row="3" column="1">
-                        <property name="name">
-                            <cstring>spacer22</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>16</width>
-                                <height>241</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>lvLines</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Join items with lines (KDE)</string>
-                        </property>
-                    </widget>
                     <widget class="QCheckBox" row="0" column="2">
                         <property name="name">
                             <cstring>lvButton</cstring>
@@ -1070,6 +1045,36 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="text">
                             <string>Button color</string>
+                        </property>
+                    </widget>
+                    <spacer row="3" column="1">
+                        <property name="name">
+                            <cstring>spacer22</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>16</width>
+                                <height>445</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_18</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Lines between items:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="2" column="1">
+                        <property name="name">
+                            <cstring>lvLines</cstring>
                         </property>
                     </widget>
                 </grid>
@@ -2442,8 +2447,8 @@ None - no buttons, only the slider</string>
     <tabstop>highlightFactor</tabstop>
     <tabstop>lvAppearance</tabstop>
     <tabstop>lvButton</tabstop>
-    <tabstop>selectionAppearance</tabstop>
     <tabstop>lvLines</tabstop>
+    <tabstop>selectionAppearance</tabstop>
     <tabstop>gtkScrollViews</tabstop>
     <tabstop>highlightScrollViews</tabstop>
     <tabstop>squareScrollViews</tabstop>
