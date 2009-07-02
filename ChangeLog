@@ -8,6 +8,7 @@
 4. Fix custom menu stripe color.
 5. In config dialog - for gradient directions, use "Top to bottom" instead of
    "Horizontal" and "Left to right" instead of "Vertical"
+6. Add support for translations of config dialogs.
 
 0.65.2
 ------

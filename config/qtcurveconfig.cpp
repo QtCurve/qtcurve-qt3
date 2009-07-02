@@ -60,7 +60,7 @@ extern "C"
 {
     QWidget * allocate_kstyle_config(QWidget *parent)
     {
-        KGlobal::locale()->insertCatalogue("kstyle_qtcurve_config");
+        KGlobal::locale()->insertCatalogue("qtcurve");
         return new QtCurveConfig(parent);
     }
 }
