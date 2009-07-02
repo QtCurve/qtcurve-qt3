@@ -4086,7 +4086,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     int x(reverse ? r.x()+r.width()-1 : r.x()),
                         x2(reverse ? x-1 : x+1);
 
-                    p->setPen(itsBackgroundCols[!active && TAB_MO_GLOW==opts.tabMouseOver ? ORIGINAL_SHADE : QT_STD_BORDER]);
+                    p->setPen(itsBackgroundCols[!active && TAB_MO_GLOW==opts.tabMouseOver && opts.round>ROUND_SLIGHT
+                                                    ? ORIGINAL_SHADE : QT_STD_BORDER]);
                     p->drawLine(x, r.y()+r.height()-1, x, r.height()-2);
                     if(active)
                     {
@@ -4139,7 +4140,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->drawLine(r.x(), r.y(), r.x()+r.width()-1, r.y());
                     p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                     p->drawLine(r.x(), r.y()+1, r.x()+r.width()-1, r.y()+1);
-
+                    
                     if(opts.coloredMouseOver && itsHover && TAB_MO_GLOW!=opts.tabMouseOver)
                         drawHighlight(p, QRect(tr.x()+(firstTab ? moOffset : 1),
                                                tr.y()+(TAB_MO_TOP==opts.tabMouseOver ? tr.height()-2 : 1),
@@ -4147,6 +4148,12 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                       cg, true, TAB_MO_TOP==opts.tabMouseOver);
                 }
 
+                if(TAB_MO_GLOW==opts.tabMouseOver && opts.round<=ROUND_SLIGHT && !reverse && firstTab && !cornerWidget)
+                {
+                    p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+                    p->drawPoint(r.x(), r.y());
+                }
+                    
                 if(active && opts.highlightTab)
                 {
                     p->setPen(itsHighlightCols[0]);
