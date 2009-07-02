@@ -1298,7 +1298,7 @@ void QtCurveStyle::polish(QWidget *widget)
             widget->installEventFilter(this);
 
         if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
-           (SHADE_CUSTOM==opts.shadeMenubars &&TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
+           (SHADE_CUSTOM==opts.shadeMenubars && TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
         {
             QPalette    pal(widget->palette());
             QColorGroup act(pal.active());
@@ -4523,11 +4523,13 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                      mi->pixmap(), QString::null);
             else
             {
-                const QColor *col=((opts.colorMenubarMouseOver && active) || (!opts.colorMenubarMouseOver && down)) && opts.useHighlightForMenu
-                                ? opts.customMenuTextColor
-                                    ? &opts.customMenuSelTextColor
-                                    : &cg.highlightedText()
-                                : &cg.foreground();
+                const QColor *col=((opts.colorMenubarMouseOver && active) || (!opts.colorMenubarMouseOver && down))
+                                    ? opts.customMenuTextColor
+                                        ? &opts.customMenuSelTextColor
+                                        : opts.useHighlightForMenu
+                                            ? &cg.highlightedText()
+                                            : &cg.foreground()
+                                    : &cg.foreground();
 
                 p->setPen(*col);
                 p->drawText(r, AlignCenter|ShowPrefix|DontClip|SingleLine, mi->text());
