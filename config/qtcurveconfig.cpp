@@ -529,8 +529,8 @@ static void insertTabMoEntriess(QComboBox *combo)
 
 static void insertGradTypeEntries(QComboBox *combo)
 {
-    combo->insertItem(i18n("Horizontal"));
-    combo->insertItem(i18n("Vertical"));
+    combo->insertItem(i18n("Top to bottom"));
+    combo->insertItem(i18n("Left to right"));
 }
 
 static void insertLvLinesEntries(QComboBox *combo)
