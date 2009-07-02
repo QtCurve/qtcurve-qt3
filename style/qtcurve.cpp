@@ -1128,7 +1128,8 @@ void QtCurveStyle::polish(QPalette &pal)
     if(itsMactorPal)
         *itsMactorPal=pal;
     // Force this to be re-generated!
-    opts.customMenuStripeColor=Qt::black;
+    if(SHADE_BLEND_SELECTED==opts.menuStripe)
+        opts.customMenuStripeColor=Qt::black;
 }
 
 QColorGroup QtCurveStyle::setColorGroup(const QColorGroup &old)
