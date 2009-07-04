@@ -869,7 +869,8 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     switch(opts.shadeCheckRadio)
     {
         default:
-            itsCheckRadioCol=QApplication::palette().active().buttonText();
+            itsCheckRadioCol=opts.crButton ? QApplication::palette().active().buttonText()
+                                           : QApplication::palette().active().text();
             break;
         case SHADE_BLEND_SELECTED:
         case SHADE_SELECTED:
@@ -1113,7 +1114,8 @@ void QtCurveStyle::polish(QPalette &pal)
     switch(opts.shadeCheckRadio)
     {
         default:
-            itsCheckRadioCol=QApplication::palette().active().buttonText();
+            itsCheckRadioCol=opts.crButton ? QApplication::palette().active().buttonText()
+                                           : QApplication::palette().active().text();
             break;
         case SHADE_SELECTED:
         case SHADE_BLEND_SELECTED:
@@ -1126,7 +1128,8 @@ void QtCurveStyle::polish(QPalette &pal)
     if(itsMactorPal)
         *itsMactorPal=pal;
     // Force this to be re-generated!
-    opts.customMenuStripeColor=Qt::black;
+    if(SHADE_BLEND_SELECTED==opts.menuStripe)
+        opts.customMenuStripeColor=Qt::black;
 }
 
 QColorGroup QtCurveStyle::setColorGroup(const QColorGroup &old)
@@ -1296,7 +1299,7 @@ void QtCurveStyle::polish(QWidget *widget)
             widget->installEventFilter(this);
 
         if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
-           (SHADE_CUSTOM==opts.shadeMenubars &&TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
+           (SHADE_CUSTOM==opts.shadeMenubars && TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
         {
             QPalette    pal(widget->palette());
             QColorGroup act(pal.active());
@@ -4083,7 +4086,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     int x(reverse ? r.x()+r.width()-1 : r.x()),
                         x2(reverse ? x-1 : x+1);
 
-                    p->setPen(itsBackgroundCols[!active && TAB_MO_GLOW==opts.tabMouseOver ? ORIGINAL_SHADE : QT_STD_BORDER]);
+                    p->setPen(itsBackgroundCols[!active && TAB_MO_GLOW==opts.tabMouseOver && opts.round>ROUND_SLIGHT
+                                                    ? ORIGINAL_SHADE : QT_STD_BORDER]);
                     p->drawLine(x, r.y()+r.height()-1, x, r.height()-2);
                     if(active)
                     {
@@ -4136,7 +4140,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->drawLine(r.x(), r.y(), r.x()+r.width()-1, r.y());
                     p->setPen(itsBackgroundCols[QT_STD_BORDER]);
                     p->drawLine(r.x(), r.y()+1, r.x()+r.width()-1, r.y()+1);
-
+                    
                     if(opts.coloredMouseOver && itsHover && TAB_MO_GLOW!=opts.tabMouseOver)
                         drawHighlight(p, QRect(tr.x()+(firstTab ? moOffset : 1),
                                                tr.y()+(TAB_MO_TOP==opts.tabMouseOver ? tr.height()-2 : 1),
@@ -4144,6 +4148,12 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                       cg, true, TAB_MO_TOP==opts.tabMouseOver);
                 }
 
+                if(TAB_MO_GLOW==opts.tabMouseOver && opts.round<=ROUND_SLIGHT && !reverse && firstTab && !cornerWidget)
+                {
+                    p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+                    p->drawPoint(r.x(), r.y());
+                }
+                    
                 if(active && opts.highlightTab)
                 {
                     p->setPen(itsHighlightCols[0]);
@@ -4521,11 +4531,13 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                      mi->pixmap(), QString::null);
             else
             {
-                const QColor *col=((opts.colorMenubarMouseOver && active) || (!opts.colorMenubarMouseOver && down)) && opts.useHighlightForMenu
-                                ? opts.customMenuTextColor
-                                    ? &opts.customMenuSelTextColor
-                                    : &cg.highlightedText()
-                                : &cg.foreground();
+                const QColor *col=((opts.colorMenubarMouseOver && active) || (!opts.colorMenubarMouseOver && down))
+                                    ? opts.customMenuTextColor
+                                        ? &opts.customMenuSelTextColor
+                                        : opts.useHighlightForMenu
+                                            ? &cg.highlightedText()
+                                            : &cg.foreground()
+                                    : &cg.foreground();
 
                 p->setPen(*col);
                 p->drawText(r, AlignCenter|ShowPrefix|DontClip|SingleLine, mi->text());
@@ -7742,7 +7754,9 @@ const QColor & QtCurveStyle::checkRadioCol(SFlags flags, const QColorGroup &cg) 
 
     return flags&Style_Enabled
                 ? itsCheckRadioCol
-                : cg.buttonText();
+                : opts.crButton
+                    ? cg.buttonText()
+                    : cg.text();
 }
 
 QColor QtCurveStyle::shade(const QColor &a, float k) const

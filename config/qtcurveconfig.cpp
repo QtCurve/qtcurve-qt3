@@ -60,7 +60,7 @@ extern "C"
 {
     QWidget * allocate_kstyle_config(QWidget *parent)
     {
-        KGlobal::locale()->insertCatalogue("kstyle_qtcurve_config");
+        KGlobal::locale()->insertCatalogue("qtcurve");
         return new QtCurveConfig(parent);
     }
 }
@@ -529,8 +529,8 @@ static void insertTabMoEntriess(QComboBox *combo)
 
 static void insertGradTypeEntries(QComboBox *combo)
 {
-    combo->insertItem(i18n("Horizontal"));
-    combo->insertItem(i18n("Vertical"));
+    combo->insertItem(i18n("Top to bottom"));
+    combo->insertItem(i18n("Left to right"));
 }
 
 static void insertLvLinesEntries(QComboBox *combo)
