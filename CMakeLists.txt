@@ -8,7 +8,7 @@ set(DEBIAN_PACKAGE_SECTION "kde")
 set(CPACK_SOURCE_GENERATOR "TBZ2")
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
 set(CPACK_PACKAGE_VERSION_MINOR "65")
-set(CPACK_PACKAGE_VERSION_PATCH "3")
+set(CPACK_PACKAGE_VERSION_PATCH "4")
 set(CPACK_PACKAGE_CONTACT "Craig Drummond <craig_p_drummond@yahoo.co.uk>")
 set(QTCURVE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
 set(QTCURVE_VERSION_FULL "${QTCURVE_VERSION}.${CPACK_PACKAGE_VERSION_PATCH}")
@@ -22,8 +22,12 @@ find_package(KDE3 REQUIRED)
 include(KDE3Macros)
 
 exec_program(kde-config
-             ARGS --prefix
+             ARGS --prefix --expandvars
              OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX)
+
+exec_program(kde-config
+             ARGS --install locale --expandvars
+             OUTPUT_VARIABLE KDE3_LOCALE_PREFIX)
 
 file(TO_CMAKE_PATH "$ENV{KDEDIRS}" _KDEDIRS)
 
