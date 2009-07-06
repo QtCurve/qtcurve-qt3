@@ -1,6 +1,8 @@
 0.65.4
 ------
-1. Fix installation location of translation files.
+1. Use 'MS Windows' and not 'Windows' for scrollbar type - to aid
+   translations.
+2. Fix installation location of translation files.
 
 0.65.3
 ------
