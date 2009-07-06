@@ -18,7 +18,7 @@ else(NOT GETTEXT_MSGFMT_EXECUTABLE)
             add_custom_command(TARGET translations
                     COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} --check -o ${_gmoFile} ${_poFile}
                     DEPENDS ${_poFile})
-            install(FILES ${_gmoFile} DESTINATION ${LOCALE_INSTALL_DIR}/${_langCode}/LC_MESSAGES/ RENAME ${catalogname}.mo)
+            install(FILES ${_gmoFile} DESTINATION  ${KDE3_LOCALE_PREFIX}/${_langCode}/LC_MESSAGES/ RENAME ${catalogname}.mo)
         endif( _langCode )
     endforeach(_poFile ${PO_FILES})
 endif(NOT GETTEXT_MSGFMT_EXECUTABLE)
