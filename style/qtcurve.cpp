@@ -4454,9 +4454,11 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 drawPrimitive(PE_CheckMark, p, cr, cg,
                               (flags &(Style_Enabled|(opts.useHighlightForMenu ? Style_Active : 0)))| Style_On|QTC_MENU_ITEM);
 
-            QColor textCol(flags&Style_Enabled && flags&Style_Active && opts.useHighlightForMenu
-                                ? cg.highlightedText()
-                                : cg.foreground());
+            QColor textCol(flags&Style_Enabled
+                                ? flags&Style_Active && opts.useHighlightForMenu
+                                    ? cg.highlightedText()
+                                    : cg.foreground()
+                                : cg.mid());
 
             p->setPen(textCol);
 

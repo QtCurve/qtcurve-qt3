@@ -1,3 +1,7 @@
+0.65.5
+------
+1. Fix colour of disabled menuitems (use 'mid' colour).
+
 0.65.4
 ------
 1. Use 'MS Windows' and not 'Windows' for scrollbar type - to aid
