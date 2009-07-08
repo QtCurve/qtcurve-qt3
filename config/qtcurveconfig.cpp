@@ -388,6 +388,7 @@ static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=
     combo->insertItem(i18n("Standard gradient"));
     combo->insertItem(i18n("Harsh gradient"));
     combo->insertItem(i18n("Inverted gradient"));
+    combo->insertItem(i18n("Dark inverted gradient"));
     if(split)
     {
         combo->insertItem(i18n("Split gradient"));
