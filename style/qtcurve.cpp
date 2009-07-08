@@ -1489,6 +1489,17 @@ void QtCurveStyle::polish(QWidget *widget)
             ((QScrollView *)(widget->parentWidget()->parentWidget()))->setLineWidth(0);
     }
 
+    if(opts.tabBgnd && widget && widget->parentWidget() && ::qt_cast<QWidgetStack *>(widget) &&
+       ::qt_cast<QTabWidget *>(widget->parentWidget()) &&
+        0==qstrcmp(widget->name(), "tab pages"))
+    {
+        QPalette pal(widget->palette());
+
+        pal.setColor(QColorGroup::Background, shade(pal.active().background(), QTC_TO_FACTOR(opts.tabBgnd)));
+        widget->setBackgroundMode(PaletteBackground);
+        widget->setPalette(pal);
+    }
+
     KStyle::polish(widget);
 }
 
@@ -4015,6 +4026,17 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             QRect tr(r);
             bool  top(QTabBar::TriangularAbove==tb->shape() || QTabBar::RoundedAbove==tb->shape());
 
+            if(active && opts.tabBgnd)
+            {
+                QRect rx(tr);
+
+                if(top)
+                    rx.addCoords(1, 6, -1, 0);
+                else
+                    rx.addCoords(1, 0, -1, -6);
+                p->fillRect(rx, shade(cg.background(), QTC_TO_FACTOR(opts.tabBgnd)));
+            }
+            
             if(!active)
                 if(top)
                     tr.addCoords(0, 2, 0, 0);
@@ -4032,10 +4054,17 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             p->setClipRect(QRect(tr.x(), top ? tr.y()-sizeAdjust : tr.y()+2, tr.width(), top ? tr.height()-2+(2*sizeAdjust) : tr.height()),
                            QPainter::CoordPainter);
 
-            if(APPEARANCE_INVERTED==opts.appearance && active)
-                p->fillRect(glowTr, cg.background());
+
+            bool   invertedSel=APPEARANCE_INVERTED==opts.appearance && active;
+            QColor col(invertedSel ? cg.background() : fill);
+
+            if(opts.tabBgnd)
+                col=shade(col, QTC_TO_FACTOR(opts.tabBgnd));
+        
+            if(invertedSel)
+                p->fillRect(glowTr, col);
             else
-                drawBevelGradient(fill, p, glowTr, true,
+                drawBevelGradient(col, p, glowTr, true,
                                   active, active ? QTC_SEL_TAB_APP : QTC_NORM_TAB_APP, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT);
 
             drawBorder(cg.background(), p, glowTr, cg, flags|Style_Horizontal|Style_Enabled,

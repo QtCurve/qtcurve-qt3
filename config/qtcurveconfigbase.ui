@@ -1226,7 +1226,15 @@ None - no buttons, only the slider</string>
                             <string>Round all tabs</string>
                         </property>
                     </widget>
-                    <spacer row="5" column="1">
+                    <widget class="QCheckBox" row="4" column="0">
+                        <property name="name">
+                            <cstring>borderTab</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw a light border around tab widget</string>
+                        </property>
+                    </widget>
+                    <spacer row="6" column="1">
                         <property name="name">
                             <cstring>spacer23</cstring>
                         </property>
@@ -1239,16 +1247,24 @@ None - no buttons, only the slider</string>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>418</height>
+                                <height>369</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="4" column="0">
+                    <widget class="QLabel" row="5" column="0">
                         <property name="name">
-                            <cstring>borderTab</cstring>
+                            <cstring>textLabel1_19</cstring>
                         </property>
                         <property name="text">
-                            <string>Draw a light border around tab widget</string>
+                            <string>Alter background by:</string>
+                        </property>
+                    </widget>
+                    <widget class="KIntNumInput" row="5" column="1">
+                        <property name="name">
+                            <cstring>tabBgnd</cstring>
+                        </property>
+                        <property name="prefix">
+                            <string>%</string>
                         </property>
                     </widget>
                 </grid>
@@ -2374,6 +2390,8 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>framelessGroupBoxes</sender>
@@ -2460,6 +2478,7 @@ None - no buttons, only the slider</string>
     <tabstop>tabMouseOver</tabstop>
     <tabstop>roundAllTabs</tabstop>
     <tabstop>borderTab</tabstop>
+    <tabstop>tabBgnd</tabstop>
     <tabstop>shadeCheckRadio</tabstop>
     <tabstop>customCheckRadioColor</tabstop>
     <tabstop>xCheck</tabstop>
@@ -2522,11 +2541,8 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>
@@ -2534,13 +2550,6 @@ None - no buttons, only the slider</string>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
