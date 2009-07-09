@@ -1107,9 +1107,9 @@ void QtCurveStyle::polish(QPalette &pal)
         itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
                                          QTC_TO_FACTOR(opts.lighterPopupMenuBgnd));
 
-    pal.setActive(setColorGroup(pal.active()));
-    pal.setInactive(setColorGroup(pal.inactive()));
-    pal.setDisabled(setColorGroup(pal.disabled()));
+    pal.setActive(setColorGroup(pal.active(), pal.active()));
+    pal.setInactive(setColorGroup(pal.inactive(), pal.active()));
+    pal.setDisabled(setColorGroup(pal.disabled(), pal.active(), true));
 
     switch(opts.shadeCheckRadio)
     {
@@ -1132,11 +1132,24 @@ void QtCurveStyle::polish(QPalette &pal)
         opts.customMenuStripeColor=Qt::black;
 }
 
-QColorGroup QtCurveStyle::setColorGroup(const QColorGroup &old)
+static QColor disable(const QColor &col, const QColor &bgnd)
 {
+    QColor c = col;
+    c = ColorUtils_darken(&c, 0.1, 1.0);
+    c = ColorUtils_mix(&c, &bgnd, 0.65);
+    return c;
+}
+
+QColorGroup QtCurveStyle::setColorGroup(const QColorGroup &old, const QColorGroup &act, bool dis)
+{
+    QColor mid(old.mid());
+
+    if(dis)
+        mid=disable(act.foreground(), old.background());
+    
     const QColor           *use(backgroundColors(old));
     QColorGroup            newGrp(old.foreground(), old.button(), use[0], use[QT_STD_BORDER],
-                                  old.mid(), old.text(), old.brightText(),
+                                  mid, old.text(), old.brightText(),
                                   old.base(), old.background());
     QColorGroup::ColorRole roles[]={QColorGroup::Midlight, QColorGroup::ButtonText,
                                     QColorGroup::Shadow, QColorGroup::Highlight,
@@ -1146,6 +1159,13 @@ QColorGroup QtCurveStyle::setColorGroup(const QColorGroup &old)
 
     for(r=0; roles[r]!=QColorGroup::NColorRoles; ++r)
         newGrp.setColor(roles[r], old.color(roles[r]));
+
+    if(dis)
+    {
+        newGrp.setColor(QColorGroup::ButtonText, disable(act.buttonText(), old.button()));
+        newGrp.setColor(QColorGroup::Text, disable(act.text(), old.background()));
+    }
+    
     return newGrp;
 }
 

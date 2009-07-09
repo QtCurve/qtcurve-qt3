@@ -120,7 +120,7 @@ class QtCurveStyle : public KStyle
 
     void polish(QApplication *app);
     void polish(QPalette &pal);
-    QColorGroup setColorGroup(const QColorGroup &old);
+    QColorGroup setColorGroup(const QColorGroup &old, const QColorGroup &act, bool dis=false);
     void polish(QWidget *widget);
     void unPolish(QWidget *widget);
     void drawLightBevel(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
