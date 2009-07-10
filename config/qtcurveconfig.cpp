@@ -384,6 +384,7 @@ static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=
     combo->insertItem(i18n("Raised"));
     combo->insertItem(i18n("Dull glass"));
     combo->insertItem(i18n("Shiny glass"));
+    combo->insertItem(i18n("Agua"));
     combo->insertItem(i18n("Soft gradient"));
     combo->insertItem(i18n("Standard gradient"));
     combo->insertItem(i18n("Harsh gradient"));
