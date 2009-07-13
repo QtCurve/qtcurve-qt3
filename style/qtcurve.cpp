@@ -266,7 +266,7 @@ static QString themeFile(const QString &dir, const QString &n, const char *sub)
     return QFile(name).exists() ? name : QString();
 }
 
-static QString themeFile(const QString &dir, const QString &n, bool kde3)
+static QString themeFile(const QString &dir, const QString &n, bool kde3=true)
 {
     QString name(themeFile(dir, n, kde3 ? QTC_THEME_DIR : QTC_THEME_DIR4));
 
@@ -7857,6 +7857,14 @@ static QImage rotateImage(const QImage &img, double angle=90.0)
                               matrix.dx() - newRect.left(), matrix.dy() - newRect.top()));
 }
 
+static void recolour(QImage &img, const QColor &col, double shade)
+{
+    if (img.depth()<32)
+        img=img.convertDepth(32);
+
+    adjustPix(img.bits(), 4, img.width(), img.height(), img.bytesPerLine(), col.red(), col.green(), col.blue(), shade);
+}
+ 
 QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) const
 {
     QRgb    rgb(col.rgb());
@@ -7900,13 +7908,14 @@ QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) con
                 img.loadFromData(qembed_findData("slider_light.png"));
                 img=rotateImage(img).mirror(true, false);
                 break;
+            default:
+                break;
         }
 
         if (img.depth()<32)
             img=img.convertDepth(32);
 
-        adjustPix(img.bits(), 4, img.width(), img.height(), img.bytesPerLine(), col.red(),
-                  col.green(), col.blue(), shade);
+        adjustPix(img.bits(), 4, img.width(), img.height(), img.bytesPerLine(), col.red(), col.green(), col.blue(), shade);
         pix->convertFromImage(img);
         itsPixmapCache.insert(key, pix, pix->depth()/8);
     }
