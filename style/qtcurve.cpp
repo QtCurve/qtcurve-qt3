@@ -223,7 +223,7 @@ static QString kdeHome(bool kde3=false)
         {
             QDir    homeDir(QDir::homeDirPath());
             QString kdeConfDir("/.kde");
-            if (!useQt3Settings() && homeDir.exists(".kde4"))
+            if (!kde3 && homeDir.exists(".kde4"))
                 kdeConfDir = QString("/.kde4");
             kdeHome[kde3 ? 0 : 1] = QDir::homeDirPath() + kdeConfDir;
         }
