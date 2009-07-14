@@ -202,7 +202,7 @@ static QString kdeHome(bool kde3=false)
     {
         FILE *fpipe;
 
-        if (fpipe = (FILE*)popen(kde3 ? "kde-config --localprefix" : "kde4-config --localprefix", "r"))
+        if (fpipe = (FILE*)popen(kde3 ? "kde-config --localprefix 2> /dev/null" : "kde4-config --localprefix 2> /dev/null", "r"))
         {
             char line[1024];
 

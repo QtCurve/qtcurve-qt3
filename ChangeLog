@@ -10,6 +10,7 @@
 6. Update Klearlooks to be more consistent with Clearlooks (lighten tab background,
    use highlight strip on active tab, dont colour active tab)
 7. Use default KDE4 settings to determine colour of text for disabled items.
+8. When calling kde-config/kde4-config pipe stderr to /dev/null
 
 0.65.4
 ------
