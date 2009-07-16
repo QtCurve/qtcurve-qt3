@@ -2656,7 +2656,7 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
                             ? itsFocusCols
                             : backgroundColors(cg));
     bool         isSpin(WIDGET_SPIN==w),
-                 doEtch(!itsFormMode && (!isSpin || opts.unifySpin) && WIDGET_COMBO!=w && QTC_DO_EFFECT),
+                 doEtch(!itsFormMode && opts.etchEntry && (!isSpin || opts.unifySpin) && WIDGET_COMBO!=w && QTC_DO_EFFECT),
                  reverse(QApplication::reverseLayout());
 
     QRect r(rx);
@@ -3401,7 +3401,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     itsFormMode=itsIsTransKicker;
                     if(sv && !opts.highlightScrollViews)
                         flags&=~Style_HasFocus;
-                    if(sv && opts.sunkenScrollViews && ((QFrame *)widget)->lineWidth()>2)
+                    if(sv && opts.sunkenScrollViews && opts.etchEntry && ((QFrame *)widget)->lineWidth()>2)
                     {
                         drawEntryField(p, r, cg, flags, flags&Style_Enabled
                                                             ? /*flags&Style_MouseOver
@@ -5110,7 +5110,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                             sunken(combobox->listBox() ? combobox->listBox()->isShown() : false),
                             reverse(QApplication::reverseLayout());
             SFlags          fillFlags(flags),
-                            doEtch(!itsFormMode && QTC_DO_EFFECT);
+                            doEtch(!itsFormMode && QTC_DO_EFFECT && (!editable || opts.etchEntry));
 
             if(doEtch)
             {
@@ -5283,7 +5283,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             bool              hw(itsHoverWidget && itsHoverWidget==spinwidget),
                               reverse(QApplication::reverseLayout()),
                               doFrame((controls&SC_SpinWidgetFrame) && frame.isValid()),
-                              doEtch(!itsFormMode && QTC_DO_EFFECT);
+                              doEtch(!itsFormMode && QTC_DO_EFFECT && opts.etchEntry);
 
             if(doEtch)
             {
@@ -6212,7 +6212,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
             if (opts.squareScrollViews && widget && ::qt_cast<const QScrollView *>(widget))
                 return opts.gtkScrollViews ? 1 : 2;
 
-            if(QTC_DO_EFFECT && widget && !isFormWidget(widget) &&
+            if(QTC_DO_EFFECT && opts.etchEntry && widget && !isFormWidget(widget) &&
                (::qt_cast<const QLineEdit *>(widget) || ::qt_cast<const QDateTimeEditBase*>(widget) ||
                 ::qt_cast<const QTextEdit*>(widget)) ||
                 (opts.sunkenScrollViews && ::qt_cast<const QScrollView*>(widget)))
