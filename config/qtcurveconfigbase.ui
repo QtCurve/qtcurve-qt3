@@ -263,7 +263,29 @@
                             <string>Sunken appearance:</string>
                         </property>
                     </widget>
-                    <spacer row="14" column="1">
+                    <widget class="QCheckBox" row="10" column="0">
+                        <property name="name">
+                            <cstring>fadeLines</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw fading lines (KDE4 &amp;&amp; Gtk2)</string>
+                        </property>
+                        <property name="accel">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="11" column="0">
+                        <property name="name">
+                            <cstring>thinnerBtns</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Thinner buttons when etched/shadowed</string>
+                        </property>
+                        <property name="accel">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <spacer row="13" column="1">
                         <property name="name">
                             <cstring>spacer9</cstring>
                         </property>
@@ -276,30 +298,16 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>147</height>
+                                <height>162</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="12" column="0">
+                    <widget class="QCheckBox" row="12" column="0" rowspan="1" colspan="3">
                         <property name="name">
-                            <cstring>fadeLines</cstring>
+                            <cstring>etchEntry</cstring>
                         </property>
                         <property name="text">
-                            <string>Draw fading lines (KDE4 &amp;&amp; Gtk2)</string>
-                        </property>
-                        <property name="accel">
-                            <string></string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="13" column="0">
-                        <property name="name">
-                            <cstring>thinnerBtns</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Thinner buttons when etched/shadowed</string>
-                        </property>
-                        <property name="accel">
-                            <string></string>
+                            <string>Etch entries and scrollviews when button effect set to etched/shadowed.</string>
                         </property>
                     </widget>
                 </grid>
@@ -1112,14 +1120,6 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="text">
                             <string>Always draw with a square frame - regardless of the general round setting.</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>sunkenScrollViews</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Draw etched when button effect set to etched/shadow.</string>
                         </property>
                     </widget>
                     <spacer>
@@ -2433,6 +2433,7 @@ None - no buttons, only the slider</string>
     <tabstop>darkerBorders</tabstop>
     <tabstop>fadeLines</tabstop>
     <tabstop>thinnerBtns</tabstop>
+    <tabstop>etchEntry</tabstop>
     <tabstop>comboSplitter</tabstop>
     <tabstop>unifyCombo</tabstop>
     <tabstop>comboBtn</tabstop>
@@ -2470,7 +2471,6 @@ None - no buttons, only the slider</string>
     <tabstop>gtkScrollViews</tabstop>
     <tabstop>highlightScrollViews</tabstop>
     <tabstop>squareScrollViews</tabstop>
-    <tabstop>sunkenScrollViews</tabstop>
     <tabstop>activeTabAppearance</tabstop>
     <tabstop>highlightTab</tabstop>
     <tabstop>colorSelTab</tabstop>
@@ -2543,6 +2543,7 @@ None - no buttons, only the slider</string>
 <includehints>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>

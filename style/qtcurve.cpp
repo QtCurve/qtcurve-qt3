@@ -3401,7 +3401,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     itsFormMode=itsIsTransKicker;
                     if(sv && !opts.highlightScrollViews)
                         flags&=~Style_HasFocus;
-                    if(sv && opts.sunkenScrollViews && opts.etchEntry && ((QFrame *)widget)->lineWidth()>2)
+                    if(sv && opts.etchEntry && ((QFrame *)widget)->lineWidth()>2)
                     {
                         drawEntryField(p, r, cg, flags, flags&Style_Enabled
                                                             ? /*flags&Style_MouseOver
@@ -6214,8 +6214,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
 
             if(QTC_DO_EFFECT && opts.etchEntry && widget && !isFormWidget(widget) &&
                (::qt_cast<const QLineEdit *>(widget) || ::qt_cast<const QDateTimeEditBase*>(widget) ||
-                ::qt_cast<const QTextEdit*>(widget)) ||
-                (opts.sunkenScrollViews && ::qt_cast<const QScrollView*>(widget)))
+                ::qt_cast<const QTextEdit*>(widget)) || ::qt_cast<const QScrollView*>(widget))
                 return 3;
             else
                 return 2;
