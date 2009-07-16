@@ -1,18 +1,21 @@
 0.66.0
 ------
-1. Add a new 'Dark Inverted Gradient' and use this as the default gradient
-   for menu stripes.
-2. New 'Agua' style gradient - looks better under KDE4 and Gtk2.
-3. Add option to lighten/darken the background of tabs.
-4. Make inactive tabs more consistent with active tabs.
-5. Remove sunken scroll views config item, and replace with option to control
-   if entries and scroll views should be etched (sunken).
-6. Use KDE_SESSION_VERSION to determine which KDE prefix (KDE3, or KDE4) to
-   seach first for qtc_xxx.themerc files.
-7. Update Klearlooks to be more consistent with Clearlooks (lighten tab background,
-   use highlight strip on active tab, dont colour active tab)
-8. Use default KDE4 settings to determine colour of text for disabled items.
-9. When calling kde-config/kde4-config pipe stderr to /dev/null
+ 1. Add a new 'Dark Inverted Gradient' and use this as the default gradient
+    for menu stripes.
+ 2. New 'Agua' style gradient - looks better under KDE4 and Gtk2.
+ 3. Add option to lighten/darken the background of tabs.
+ 4. Make inactive tabs more consistent with active tabs.
+ 5. Remove sunken scroll views config item, and replace with option to control
+    if entries and scroll views should be etched (sunken).
+ 6. Modify defaults:
+        Scrollbars outside of scrollview (Gtk/oxygen style)
+        Thin scrollbar groove.
+ 7. Use KDE_SESSION_VERSION to determine which KDE prefix (KDE3, or KDE4) to
+    seach first for qtc_xxx.themerc files.
+ 8. Update Klearlooks to be more consistent with Clearlooks (lighten tab background,
+    use highlight strip on active tab, dont colour active tab)
+ 9. Use default KDE4 settings to determine colour of text for disabled items.
+10. When calling kde-config/kde4-config pipe stderr to /dev/null
 
 0.65.4
 ------
