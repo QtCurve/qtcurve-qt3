@@ -402,6 +402,18 @@ static bool isKhtmlFormWidget(const QWidget *widget)
     return true;
 }
 
+static bool inStackWidget(const QWidget *w)
+{
+    while(w)
+    {
+        if(::qt_cast<const QTabWidget *>(w))
+            return true;
+        w=w->parentWidget();
+    }
+    
+    return false;
+}
+
 static void setRgb(QColor *col, const QStringList &rgb)
 {
     if(3==rgb.size())
@@ -3329,9 +3341,14 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             const QColor *use(buttonColors(cg));
             const QColor *border(borderColors(flags, use));
 
-            p->fillRect(r, QColor(flags&Style_MouseOver
-                                      ? shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor))
-                                      : cg.background()));
+            QColor color(cg.background());
+
+            if(0!=opts.tabBgnd && p->device() && inStackWidget(dynamic_cast<const QWidget *>(p->device())))
+                color=shade(color, QTC_TO_FACTOR(opts.tabBgnd));
+                
+            p->fillRect(r, flags&Style_MouseOver
+                            ? shade(color, QTC_TO_FACTOR(opts.highlightFactor))
+                            : color);
 
             switch(opts.splitters)
             {
@@ -3596,15 +3613,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     }
                     break;
             }
-            if(opts.flatSbarButtons)
-            {
-                if(!IS_FLAT(opts.sbarBgndAppearance) && SCROLLBAR_NONE!=opts.scrollbarType)
-                    drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, r, flags&Style_Horizontal, false,
-                                      opts.sbarBgndAppearance, WIDGET_SB_BGND);
-                else
-                    p->fillRect(br, itsBackgroundCols[ORIGINAL_SHADE]);
-            }
-            else
+            if(!opts.flatSbarButtons)
+// No need to draw background here - drawn in CC_ScrollBar
+//             {
+//                 if(!IS_FLAT(opts.sbarBgndAppearance) && SCROLLBAR_NONE!=opts.scrollbarType)
+//                     drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, r, flags&Style_Horizontal, false,
+//                                       opts.sbarBgndAppearance, WIDGET_SB_BGND);
+//                 else
+//                     p->fillRect(br, itsBackgroundCols[ORIGINAL_SHADE]);
+//             }
+//             else
                 drawLightBevel(p, br, cg, flags|Style_Raised,
                                round, getFill(flags, use), use, true, true, WIDGET_SB_BUTTON);
 
@@ -5519,14 +5537,21 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 #endif
             p->save();
             p->setClipRegion(QRegion(s2)+QRegion(addpage));
-            if(opts.flatSbarButtons && SCROLLBAR_NONE!=opts.scrollbarType && QTC_ROUNDED)
+
+            if(opts.flatSbarButtons && SCROLLBAR_NONE!=opts.scrollbarType && QTC_ROUNDED && !IS_FLAT(opts.sbarBgndAppearance))
                 drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, sbRect, flags&Style_Horizontal, false,
                                   opts.sbarBgndAppearance, WIDGET_SB_BGND);
             else if(opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons) && IS_FLAT(opts.sbarBgndAppearance))
+            {
+                QColor color(cg.background());
+
+                if(0!=opts.tabBgnd && inStackWidget(widget))
+                    color=shade(color, QTC_TO_FACTOR(opts.tabBgnd));
                 p->fillRect(sbRect, cg.background());
+            }
                 
             sflags&=~(Style_Down|Style_On|Style_Sunken);
-
+           
             if(opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons))
                 if(horiz)
                     sbRect.addCoords(0, QTC_THIN_SBAR_MOD, 0, -QTC_THIN_SBAR_MOD);
