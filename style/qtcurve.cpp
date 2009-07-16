@@ -6214,7 +6214,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
 
             if(QTC_DO_EFFECT && opts.etchEntry && widget && !isFormWidget(widget) &&
                (::qt_cast<const QLineEdit *>(widget) || ::qt_cast<const QDateTimeEditBase*>(widget) ||
-                ::qt_cast<const QTextEdit*>(widget)) || ::qt_cast<const QScrollView*>(widget))
+                ::qt_cast<const QTextEdit*>(widget) || ::qt_cast<const QScrollView*>(widget)))
                 return 3;
             else
                 return 2;
