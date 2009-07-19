@@ -384,10 +384,12 @@ static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=
     combo->insertItem(i18n("Raised"));
     combo->insertItem(i18n("Dull glass"));
     combo->insertItem(i18n("Shiny glass"));
+    combo->insertItem(i18n("Agua"));
     combo->insertItem(i18n("Soft gradient"));
     combo->insertItem(i18n("Standard gradient"));
     combo->insertItem(i18n("Harsh gradient"));
     combo->insertItem(i18n("Inverted gradient"));
+    combo->insertItem(i18n("Dark inverted gradient"));
     if(split)
     {
         combo->insertItem(i18n("Split gradient"));
@@ -606,7 +608,11 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     sliderWidth->setValue(DEFAULT_SLIDER_WIDTH);
     sliderWidth->setSuffix(i18n(" pixels"));
 
+    tabBgnd->setRange(MIN_TAB_BGND, MAX_TAB_BGND, 1, false);
+    tabBgnd->setValue(DEF_TAB_BGND);
+
     connect(lighterPopupMenuBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
+    connect(tabBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(menuDelay, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(sliderWidth, SIGNAL(valueChanged(int)), SLOT(sliderWidthChanged()));
     connect(menuStripe, SIGNAL(activated(int)), SLOT(menuStripeChanged()));
@@ -691,7 +697,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(gtkScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(squareScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(highlightScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
-    connect(sunkenScrollViews, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(etchEntry, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(flatSbarButtons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(thinSbarGroove, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(colorSliderMouseOver, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -1371,6 +1377,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.animatedProgress=animatedProgress->isChecked();
     opts.stripedProgress=(EStripe)stripedProgress->currentItem();
     opts.lighterPopupMenuBgnd=lighterPopupMenuBgnd->value();
+    opts.tabBgnd=tabBgnd->value();
     opts.menuDelay=menuDelay->value();
     opts.sliderWidth=sliderWidth->value();
     opts.menuStripe=(EShade)menuStripe->currentItem();
@@ -1439,7 +1446,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.gtkScrollViews=gtkScrollViews->isChecked();
     opts.highlightScrollViews=highlightScrollViews->isChecked();
     opts.squareScrollViews=squareScrollViews->isChecked();
-    opts.sunkenScrollViews=sunkenScrollViews->isChecked();
+    opts.etchEntry=etchEntry->isChecked();
     opts.flatSbarButtons=flatSbarButtons->isChecked();
     opts.thinSbarGroove=thinSbarGroove->isChecked();
     opts.colorSliderMouseOver=colorSliderMouseOver->isChecked();
@@ -1472,6 +1479,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     round->setCurrentItem(opts.round);
     scrollbarType->setCurrentItem(opts.scrollbarType);
     lighterPopupMenuBgnd->setValue(opts.lighterPopupMenuBgnd);
+    tabBgnd->setValue(opts.tabBgnd);
     menuDelay->setValue(opts.menuDelay);
     sliderWidth->setValue(opts.sliderWidth);
     menuStripe->setCurrentItem(opts.menuStripe);
@@ -1571,7 +1579,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     gtkScrollViews->setChecked(opts.gtkScrollViews);
     highlightScrollViews->setChecked(opts.highlightScrollViews);
     squareScrollViews->setChecked(opts.squareScrollViews);
-    sunkenScrollViews->setChecked(opts.sunkenScrollViews);
+    etchEntry->setChecked(opts.etchEntry);
     flatSbarButtons->setChecked(opts.flatSbarButtons);
     thinSbarGroove->setChecked(opts.thinSbarGroove);
     colorSliderMouseOver->setChecked(opts.colorSliderMouseOver);
@@ -1608,6 +1616,7 @@ bool QtCurveConfig::settingsChanged()
          animatedProgress->isChecked()!=currentStyle.animatedProgress ||
          stripedProgress->currentItem()!=currentStyle.stripedProgress ||
          lighterPopupMenuBgnd->value()!=currentStyle.lighterPopupMenuBgnd ||
+         tabBgnd->value()!=currentStyle.tabBgnd ||
          menuDelay->value()!=currentStyle.menuDelay ||
          sliderWidth->value()!=currentStyle.sliderWidth ||
          menuStripe->currentItem()!=currentStyle.menuStripe ||
@@ -1673,7 +1682,7 @@ bool QtCurveConfig::settingsChanged()
          gtkScrollViews->isChecked()!=currentStyle.gtkScrollViews ||
          highlightScrollViews->isChecked()!=currentStyle.highlightScrollViews ||
          squareScrollViews->isChecked()!=currentStyle.squareScrollViews ||
-         sunkenScrollViews->isChecked()!=currentStyle.sunkenScrollViews ||
+         etchEntry->isChecked()!=currentStyle.etchEntry ||
          flatSbarButtons->isChecked()!=currentStyle.flatSbarButtons ||
          thinSbarGroove->isChecked()!=currentStyle.thinSbarGroove ||
          colorSliderMouseOver->isChecked()!=currentStyle.colorSliderMouseOver ||

@@ -263,7 +263,29 @@
                             <string>Sunken appearance:</string>
                         </property>
                     </widget>
-                    <spacer row="14" column="1">
+                    <widget class="QCheckBox" row="10" column="0">
+                        <property name="name">
+                            <cstring>fadeLines</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw fading lines (KDE4 &amp;&amp; Gtk2)</string>
+                        </property>
+                        <property name="accel">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="11" column="0">
+                        <property name="name">
+                            <cstring>thinnerBtns</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Thinner buttons when etched/shadowed</string>
+                        </property>
+                        <property name="accel">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <spacer row="13" column="1">
                         <property name="name">
                             <cstring>spacer9</cstring>
                         </property>
@@ -276,30 +298,16 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>147</height>
+                                <height>162</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="12" column="0">
+                    <widget class="QCheckBox" row="12" column="0" rowspan="1" colspan="3">
                         <property name="name">
-                            <cstring>fadeLines</cstring>
+                            <cstring>etchEntry</cstring>
                         </property>
                         <property name="text">
-                            <string>Draw fading lines (KDE4 &amp;&amp; Gtk2)</string>
-                        </property>
-                        <property name="accel">
-                            <string></string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="13" column="0">
-                        <property name="name">
-                            <cstring>thinnerBtns</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Thinner buttons when etched/shadowed</string>
-                        </property>
-                        <property name="accel">
-                            <string></string>
+                            <string>Etch entries and scrollviews when button effect set to etched/shadowed.</string>
                         </property>
                     </widget>
                 </grid>
@@ -1114,14 +1122,6 @@ None - no buttons, only the slider</string>
                             <string>Always draw with a square frame - regardless of the general round setting.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>sunkenScrollViews</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Draw etched when button effect set to etched/shadow.</string>
-                        </property>
-                    </widget>
                     <spacer>
                         <property name="name">
                             <cstring>spacer28_2</cstring>
@@ -1226,7 +1226,15 @@ None - no buttons, only the slider</string>
                             <string>Round all tabs</string>
                         </property>
                     </widget>
-                    <spacer row="5" column="1">
+                    <widget class="QCheckBox" row="4" column="0">
+                        <property name="name">
+                            <cstring>borderTab</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw a light border around tab widget</string>
+                        </property>
+                    </widget>
+                    <spacer row="6" column="1">
                         <property name="name">
                             <cstring>spacer23</cstring>
                         </property>
@@ -1239,16 +1247,24 @@ None - no buttons, only the slider</string>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>418</height>
+                                <height>369</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="4" column="0">
+                    <widget class="QLabel" row="5" column="0">
                         <property name="name">
-                            <cstring>borderTab</cstring>
+                            <cstring>textLabel1_19</cstring>
                         </property>
                         <property name="text">
-                            <string>Draw a light border around tab widget</string>
+                            <string>Alter background by:</string>
+                        </property>
+                    </widget>
+                    <widget class="KIntNumInput" row="5" column="1">
+                        <property name="name">
+                            <cstring>tabBgnd</cstring>
+                        </property>
+                        <property name="prefix">
+                            <string>%</string>
                         </property>
                     </widget>
                 </grid>
@@ -2374,6 +2390,8 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>framelessGroupBoxes</sender>
@@ -2415,6 +2433,7 @@ None - no buttons, only the slider</string>
     <tabstop>darkerBorders</tabstop>
     <tabstop>fadeLines</tabstop>
     <tabstop>thinnerBtns</tabstop>
+    <tabstop>etchEntry</tabstop>
     <tabstop>comboSplitter</tabstop>
     <tabstop>unifyCombo</tabstop>
     <tabstop>comboBtn</tabstop>
@@ -2452,7 +2471,6 @@ None - no buttons, only the slider</string>
     <tabstop>gtkScrollViews</tabstop>
     <tabstop>highlightScrollViews</tabstop>
     <tabstop>squareScrollViews</tabstop>
-    <tabstop>sunkenScrollViews</tabstop>
     <tabstop>activeTabAppearance</tabstop>
     <tabstop>highlightTab</tabstop>
     <tabstop>colorSelTab</tabstop>
@@ -2460,6 +2478,7 @@ None - no buttons, only the slider</string>
     <tabstop>tabMouseOver</tabstop>
     <tabstop>roundAllTabs</tabstop>
     <tabstop>borderTab</tabstop>
+    <tabstop>tabBgnd</tabstop>
     <tabstop>shadeCheckRadio</tabstop>
     <tabstop>customCheckRadioColor</tabstop>
     <tabstop>xCheck</tabstop>
@@ -2522,10 +2541,8 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
@@ -2534,13 +2551,6 @@ None - no buttons, only the slider</string>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
