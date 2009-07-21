@@ -5568,11 +5568,12 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                             ? WIDGET_SLIDER_TROUGH : WIDGET_TROUGH);
             p->restore();
 
-            if((controls&SC_ScrollBarSubLine) && subline.isValid())
+            if(/*(controls&SC_ScrollBarSubLine) && */subline.isValid())
             {
-                bool enable=(!maxed && sb->value()!=sb->minValue());
+                bool enable=!atMin;
 
-                drawPrimitive(PE_ScrollBarSubLine, p, subline, cg, sflags |
+                drawPrimitive(PE_ScrollBarSubLine, p, subline, !enable && sb ? sb->palette().disabled() : cg,
+                                 sflags |
                                  //(enable ? Style_Enabled : Style_Default) |
                                  (enable && hw && HOVER_SB_SUB==itsHover
                                        ? Style_MouseOver : Style_Default) |
@@ -5580,16 +5581,21 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                    && SC_ScrollBarSubLine==active ? Style_Down : Style_Default));
 
                 if (useThreeButtonScrollBar && subline2.isValid())
-                    drawPrimitive(PE_ScrollBarSubLine, p, subline2, cg, sflags |
+                {
+                    if(IS_FLAT(opts.sbarBgndAppearance))
+                        p->fillRect(subline2, cg.background());
+                    drawPrimitive(PE_ScrollBarSubLine, p, subline2, !enable && sb ? sb->palette().disabled() : cg,
+                                  sflags |
                                  //(enable ? Style_Enabled : Style_Default) |
                                  (enable && hw && HOVER_SB_SUB2==itsHover
                                      ? Style_MouseOver : Style_Default) |
                                  (enable && (!hw || HOVER_SB_SUB2==itsHover || HOVER_NONE==itsHover)
                                    && SC_ScrollBarSubLine==active ? Style_Down : Style_Default));
+                }
             }
-            if((controls&SC_ScrollBarAddLine) && addline.isValid())
+            if(/*(controls&SC_ScrollBarAddLine) && */addline.isValid())
             {
-                bool enable=(!maxed && sb->value()!=sb->maxValue());
+                bool enable=!atMax;
 
                 // See KHTML note at top of file
                 if(itsFormMode && SCROLLBAR_NEXT!=opts.scrollbarType)
@@ -5598,7 +5604,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     else
                         addline.addCoords(0, 0, 0, -1);
 
-                drawPrimitive(PE_ScrollBarAddLine, p, addline, cg, sflags |
+                drawPrimitive(PE_ScrollBarAddLine, p, addline, !enable && sb ? sb->palette().disabled() : cg,
+                              sflags |
                                  //(enable ? Style_Enabled : Style_Default) |
                                  (enable && hw && HOVER_SB_ADD==itsHover
                                      ? Style_MouseOver : Style_Default) |
