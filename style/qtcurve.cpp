@@ -3209,16 +3209,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 p->save();
 
+                p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
+                               ? shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)) : cg.background());
+
                 if(doEtch && !glow && opts.crButton && !drawSunken && EFFECT_SHADOW==opts.buttonEffect)
                 {
                     p->setBrush(Qt::NoBrush);
                     p->setPen(shade(cg.background(), QTC_ETCHED_DARK));
-                    p->drawArc(QRect(r.x()+1, r.y()+1, QTC_RADIO_SIZE, QTC_RADIO_SIZE), 0, 360*16);
+                    p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 225*16, 180*16);
                     doneShadow=true;
                 }
-
-                p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
-                               ? shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)) : cg.background());
 
                 p->setClipRegion(QRegion(clipRegion));
                 if(IS_FLAT(opts.appearance))
