@@ -1,9 +1,10 @@
 0.67.0
 ------
 1. Add option to draw insider border of inactive tabs.
-2. Disable spin button when at min/max - matches Gtk2.
-3. Disable scrollbar buttons when at min/max - to match spin buttons.
-4. Fix shadows on radio buttons.
+2. Add option to colour the sorted listview header.
+3. Disable spin button when at min/max - matches Gtk2.
+4. Disable scrollbar buttons when at min/max - to match spin buttons.
+5. Fix shadows on radio buttons.
 
 0.66.0
 ------

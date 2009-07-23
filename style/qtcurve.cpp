@@ -741,6 +741,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
               itsDefBtnCols(0L),
               itsMouseOverCols(0L),
               itsComboBtnCols(0L),
+              itsSortedLvColors(0L),
               itsSidebarButtonsCols(0L),
               itsActiveMdiColors(0L),
               itsMdiColors(0L),
@@ -866,6 +867,46 @@ QtCurveStyle::QtCurveStyle(const QString &name)
                         itsComboBtnCols);
     }
 
+    switch(opts.sortedLv)
+    {
+        default:
+        case SHADE_DARKEN:
+        case SHADE_NONE:
+            break;
+        case SHADE_SELECTED:
+            itsSortedLvColors=itsHighlightCols;
+            break;
+        case SHADE_BLEND_SELECTED:
+            if(opts.shadeSliders==SHADE_BLEND_SELECTED)
+            {
+                itsSortedLvColors=itsSliderCols;
+                break;
+            }
+            else if(SHADE_BLEND_SELECTED==opts.comboBtn)
+            {
+                itsSortedLvColors=itsComboBtnCols;
+                break;
+            }
+        case SHADE_CUSTOM:
+            if(opts.shadeSliders==SHADE_CUSTOM && opts.customSlidersColor==opts.customSortedLvColor)
+            {
+                itsSortedLvColors=itsSliderCols;
+                break;
+            }
+            if(opts.comboBtn==SHADE_CUSTOM && opts.customComboBtnColor==opts.customSortedLvColor)
+            {
+                itsSortedLvColors=itsComboBtnCols;
+                break;
+            }
+            if(!itsSortedLvColors)
+                itsSortedLvColors=new QColor [TOTAL_SHADES+1];
+            shadeColors(SHADE_BLEND_SELECTED==opts.comboBtn
+                            ? midColor(itsHighlightCols[ORIGINAL_SHADE],
+                                       (opts.lvButton ? itsButtonCols[ORIGINAL_SHADE] : itsBackgroundCols[ORIGINAL_SHADE]))
+                            : opts.customSortedLvColor,
+                        itsSortedLvColors);
+    }
+
     setMenuColors(QApplication::palette().active());
 
     if(USE_LIGHTER_POPUP_MENU)
@@ -919,6 +960,9 @@ QtCurveStyle::~QtCurveStyle()
         delete [] itsSliderCols;
     if(itsComboBtnCols && itsComboBtnCols!=itsHighlightCols && itsComboBtnCols!=itsSliderCols)
         delete [] itsComboBtnCols;
+    if(itsSortedLvColors && itsSortedLvColors!=itsHighlightCols && itsSortedLvColors!=itsSliderCols &&
+       itsSortedLvColors!=itsComboBtnCols)
+        delete [] itsSortedLvColors;
     delete itsMactorPal;
 }
 
@@ -1079,7 +1123,11 @@ void QtCurveStyle::polish(QPalette &pal)
                    (newContrast || newButton || newMenu)),
          newComboBtn(itsComboBtnCols && itsHighlightCols!=itsComboBtnCols && itsSliderCols!=itsComboBtnCols &&
                      SHADE_BLEND_SELECTED==opts.comboBtn &&
-                     (newContrast || newButton || newMenu));
+                     (newContrast || newButton || newMenu)),
+         newSortedLv(itsSortedLvColors && itsHighlightCols!=itsSortedLvColors && itsSliderCols!=itsSortedLvColors &&
+                     itsComboBtnCols!=itsSortedLvColors &&
+                     SHADE_BLEND_SELECTED==opts.sortedLv &&
+                     (newContrast || (opts.lvButton ? newButton : newGray) || newMenu));
 
     if(newGray)
         shadeColors(QApplication::palette().active().background(), itsBackgroundCols);
@@ -1101,6 +1149,10 @@ void QtCurveStyle::polish(QPalette &pal)
     if(newComboBtn)
         shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
                     itsButtonCols[ORIGINAL_SHADE]), itsComboBtnCols);
+
+    if(newSortedLv)
+        shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
+                    opts.lvButton ? itsButtonCols[ORIGINAL_SHADE] : itsBackgroundCols[ORIGINAL_SHADE]), itsSortedLvColors);
 
     if(newDefBtn)
         if(IND_TINT==opts.defBtnIndicator)
@@ -2761,9 +2813,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             }
             else
             {
-                bool    isFirst(false), isLast(false), isTable(false);
-                QHeader *header(p && p->device() ? dynamic_cast<QHeader*>(p->device())
-                                                 : 0L);
+                bool    isFirst(false), isLast(false), isTable(false), isSort(false);
+                QHeader *header(p && p->device() ? dynamic_cast<QHeader*>(p->device()) : 0L);
+
                 if (header)
                 {
                     if(header->parent() && ::qt_cast<const QTable *>(header->parent()))
@@ -2777,7 +2829,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                            isLast=tbl->rowAt(r.y()+header->offset())==(tbl->numRows()-1);
                     }
                     else
-                        isFirst = header->mapToIndex(header->sectionAt(r.x()+header->offset())) == 0;
+                    {
+                        int index=header->mapToIndex(header->sectionAt(r.x()+header->offset()));
+                        isFirst = index == 0;
+                        isSort = header->sortIndicatorSection() == index;
+                    }
                 }
                 else if(0==flags) // Header on popup menu?
                 {   QWidget      *widget(p && p->device() ? dynamic_cast<QWidget*>(p->device()) : 0L);
@@ -2791,7 +2847,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     break;
                 }
 
-                const QColor *use(opts.lvButton ? buttonColors(cg) : backgroundColors(cg));
+                const QColor *use(itsSortedLvColors && isSort
+                                    ? itsSortedLvColors
+                                    : opts.lvButton ? buttonColors(cg) : backgroundColors(cg));
                 
                 flags=((flags|Style_Sunken)^Style_Sunken)| Style_Raised;
 
