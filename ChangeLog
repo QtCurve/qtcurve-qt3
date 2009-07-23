@@ -1,3 +1,12 @@
+0.67.0
+------
+1. Add option to draw insider border of inactive tabs.
+2. Add option to colour the sorted listview header.
+3. Disable spin button when at min/max - matches Gtk2.
+4. Disable scrollbar buttons when at min/max - to match spin buttons.
+5. Place non-V arrows of unified spin widgets closer together.
+6. Fix shadows on radio buttons.
+
 0.66.0
 ------
  1. Add a new 'Dark Inverted Gradient' and use this as the default gradient

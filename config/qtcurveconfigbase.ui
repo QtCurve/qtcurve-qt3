@@ -334,7 +334,15 @@
                             <string>This option controls whether a line is drawn near non-editable combo box arrows.</string>
                         </property>
                     </widget>
-                    <spacer row="3" column="2">
+                    <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>unifyCombo</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw arrow of editable combos within edit field</string>
+                        </property>
+                    </widget>
+                    <spacer row="5" column="2">
                         <property name="name">
                             <cstring>spacer27_2</cstring>
                         </property>
@@ -347,32 +355,11 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>430</height>
+                                <height>429</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="KColorButton" row="2" column="2">
-                        <property name="name">
-                            <cstring>customComboBtnColor</cstring>
-                        </property>
-                        <property name="text">
-                            <string></string>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="2" column="1">
-                        <property name="name">
-                            <cstring>comboBtn</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="2" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_17</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Button shade:</string>
-                        </property>
-                    </widget>
-                    <spacer row="2" column="3">
+                    <spacer row="4" column="3">
                         <property name="name">
                             <cstring>spacer26_2</cstring>
                         </property>
@@ -389,12 +376,44 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                    <widget class="QLabel" row="4" column="0">
                         <property name="name">
-                            <cstring>unifyCombo</cstring>
+                            <cstring>textLabel1_17</cstring>
                         </property>
                         <property name="text">
-                            <string>Draw arrow of editable combos within edit field</string>
+                            <string>Button shade:</string>
+                        </property>
+                    </widget>
+                    <widget class="KColorButton" row="4" column="2">
+                        <property name="name">
+                            <cstring>customComboBtnColor</cstring>
+                        </property>
+                        <property name="text">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="4" column="1">
+                        <property name="name">
+                            <cstring>comboBtn</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="4">
+                        <property name="name">
+                            <cstring>gtkComboMenus</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Gtk style comboboxes (KDE4)</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>In Gtk, the list that is attached to a combo-box appears in the same style as a popup-menu. KDE4 has the ability to mimic this look.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="3" column="0">
+                        <property name="name">
+                            <cstring>doubleGtkComboArrow</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Double arrows for Gtk style comboboxes</string>
                         </property>
                     </widget>
                 </grid>
@@ -1013,32 +1032,6 @@ None - no buttons, only the slider</string>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QLabel" row="0" column="0">
-                        <property name="name">
-                            <cstring>textLabel12</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Header appearance:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_8_2_2_3_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Selection appearance (KDE4 &amp;&amp; Gtk2):</string>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="1" column="1">
-                        <property name="name">
-                            <cstring>selectionAppearance</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="0" column="1">
-                        <property name="name">
-                            <cstring>lvAppearance</cstring>
-                        </property>
-                    </widget>
                     <widget class="QCheckBox" row="0" column="2">
                         <property name="name">
                             <cstring>lvButton</cstring>
@@ -1055,7 +1048,7 @@ None - no buttons, only the slider</string>
                             <string>Button color</string>
                         </property>
                     </widget>
-                    <spacer row="3" column="1">
+                    <spacer row="4" column="1">
                         <property name="name">
                             <cstring>spacer22</cstring>
                         </property>
@@ -1068,11 +1061,11 @@ None - no buttons, only the slider</string>
                         <property name="sizeHint">
                             <size>
                                 <width>16</width>
-                                <height>445</height>
+                                <height>425</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QLabel" row="2" column="0">
+                    <widget class="QLabel" row="3" column="0">
                         <property name="name">
                             <cstring>textLabel1_18</cstring>
                         </property>
@@ -1080,9 +1073,59 @@ None - no buttons, only the slider</string>
                             <string>Lines between items:</string>
                         </property>
                     </widget>
-                    <widget class="QComboBox" row="2" column="1">
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_8_2_2_3_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Selection appearance (KDE4 &amp;&amp; Gtk2):</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="3" column="1">
                         <property name="name">
                             <cstring>lvLines</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="2" column="1">
+                        <property name="name">
+                            <cstring>selectionAppearance</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel12</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Header appearance:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="0" column="1">
+                        <property name="name">
+                            <cstring>lvAppearance</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel12_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Shade header of sorted column:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="1" column="1">
+                        <property name="name">
+                            <cstring>sortedLv</cstring>
+                        </property>
+                    </widget>
+                    <widget class="KColorButton" row="1" column="2">
+                        <property name="name">
+                            <cstring>customSortedLvColor</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string></string>
                         </property>
                     </widget>
                 </grid>
@@ -1226,15 +1269,7 @@ None - no buttons, only the slider</string>
                             <string>Round all tabs</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="4" column="0">
-                        <property name="name">
-                            <cstring>borderTab</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Draw a light border around tab widget</string>
-                        </property>
-                    </widget>
-                    <spacer row="6" column="1">
+                    <spacer row="7" column="1">
                         <property name="name">
                             <cstring>spacer23</cstring>
                         </property>
@@ -1247,11 +1282,27 @@ None - no buttons, only the slider</string>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>369</height>
+                                <height>354</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QLabel" row="5" column="0">
+                    <widget class="QCheckBox" row="4" column="0">
+                        <property name="name">
+                            <cstring>borderTab</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Draw a light border around tab widget</string>
+                        </property>
+                    </widget>
+                    <widget class="KIntNumInput" row="6" column="1">
+                        <property name="name">
+                            <cstring>tabBgnd</cstring>
+                        </property>
+                        <property name="prefix">
+                            <string>%</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="6" column="0">
                         <property name="name">
                             <cstring>textLabel1_19</cstring>
                         </property>
@@ -1259,12 +1310,12 @@ None - no buttons, only the slider</string>
                             <string>Alter background by:</string>
                         </property>
                     </widget>
-                    <widget class="KIntNumInput" row="5" column="1">
+                    <widget class="QCheckBox" row="5" column="0">
                         <property name="name">
-                            <cstring>tabBgnd</cstring>
+                            <cstring>borderInactiveTab</cstring>
                         </property>
-                        <property name="prefix">
-                            <string>%</string>
+                        <property name="text">
+                            <string>Draw inner border of inactive tabs</string>
                         </property>
                     </widget>
                 </grid>
@@ -1929,17 +1980,6 @@ None - no buttons, only the slider</string>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
-                        <property name="name">
-                            <cstring>gtkComboMenus</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Gtk style comboboxes (KDE4)</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>In Gtk, the list that is attached to a combo-box appears in the same style as a popup-menu. KDE4 has the ability to mimic this look.</string>
-                        </property>
-                    </widget>
                 </grid>
             </widget>
             <widget class="QWidget">
@@ -2390,8 +2430,6 @@ None - no buttons, only the slider</string>
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>framelessGroupBoxes</sender>
@@ -2436,6 +2474,8 @@ None - no buttons, only the slider</string>
     <tabstop>etchEntry</tabstop>
     <tabstop>comboSplitter</tabstop>
     <tabstop>unifyCombo</tabstop>
+    <tabstop>gtkComboMenus</tabstop>
+    <tabstop>doubleGtkComboArrow</tabstop>
     <tabstop>comboBtn</tabstop>
     <tabstop>customComboBtnColor</tabstop>
     <tabstop>unifySpinBtns</tabstop>
@@ -2466,8 +2506,10 @@ None - no buttons, only the slider</string>
     <tabstop>highlightFactor</tabstop>
     <tabstop>lvAppearance</tabstop>
     <tabstop>lvButton</tabstop>
-    <tabstop>lvLines</tabstop>
+    <tabstop>sortedLv</tabstop>
+    <tabstop>customSortedLvColor</tabstop>
     <tabstop>selectionAppearance</tabstop>
+    <tabstop>lvLines</tabstop>
     <tabstop>gtkScrollViews</tabstop>
     <tabstop>highlightScrollViews</tabstop>
     <tabstop>squareScrollViews</tabstop>
@@ -2478,6 +2520,7 @@ None - no buttons, only the slider</string>
     <tabstop>tabMouseOver</tabstop>
     <tabstop>roundAllTabs</tabstop>
     <tabstop>borderTab</tabstop>
+    <tabstop>borderInactiveTab</tabstop>
     <tabstop>tabBgnd</tabstop>
     <tabstop>shadeCheckRadio</tabstop>
     <tabstop>customCheckRadioColor</tabstop>
@@ -2516,7 +2559,6 @@ None - no buttons, only the slider</string>
     <tabstop>popupBorder</tabstop>
     <tabstop>toolbarAppearance</tabstop>
     <tabstop>toolbarSeparators</tabstop>
-    <tabstop>gtkComboMenus</tabstop>
     <tabstop>gtkButtonOrder</tabstop>
     <tabstop>mapKdeIcons</tabstop>
     <tabstop>fixParentlessDialogs</tabstop>
@@ -2541,16 +2583,28 @@ None - no buttons, only the slider</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>

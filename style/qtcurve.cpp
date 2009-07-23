@@ -741,6 +741,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
               itsDefBtnCols(0L),
               itsMouseOverCols(0L),
               itsComboBtnCols(0L),
+              itsSortedLvColors(0L),
               itsSidebarButtonsCols(0L),
               itsActiveMdiColors(0L),
               itsMdiColors(0L),
@@ -866,6 +867,50 @@ QtCurveStyle::QtCurveStyle(const QString &name)
                         itsComboBtnCols);
     }
 
+    switch(opts.sortedLv)
+    {
+        case SHADE_DARKEN:
+            if(!itsSortedLvColors)
+                itsSortedLvColors=new QColor [TOTAL_SHADES+1];
+            shadeColors(shade(opts.lvButton ? itsButtonCols[ORIGINAL_SHADE] : itsBackgroundCols[ORIGINAL_SHADE], LV_HEADER_DARK_FACTOR), itsSortedLvColors);
+            break;
+        default:
+        case SHADE_NONE:
+            break;
+        case SHADE_SELECTED:
+            itsSortedLvColors=itsHighlightCols;
+            break;
+        case SHADE_BLEND_SELECTED:
+            if(opts.shadeSliders==SHADE_BLEND_SELECTED)
+            {
+                itsSortedLvColors=itsSliderCols;
+                break;
+            }
+            else if(SHADE_BLEND_SELECTED==opts.comboBtn)
+            {
+                itsSortedLvColors=itsComboBtnCols;
+                break;
+            }
+        case SHADE_CUSTOM:
+            if(opts.shadeSliders==SHADE_CUSTOM && opts.customSlidersColor==opts.customSortedLvColor)
+            {
+                itsSortedLvColors=itsSliderCols;
+                break;
+            }
+            if(opts.comboBtn==SHADE_CUSTOM && opts.customComboBtnColor==opts.customSortedLvColor)
+            {
+                itsSortedLvColors=itsComboBtnCols;
+                break;
+            }
+            if(!itsSortedLvColors)
+                itsSortedLvColors=new QColor [TOTAL_SHADES+1];
+            shadeColors(SHADE_BLEND_SELECTED==opts.comboBtn
+                            ? midColor(itsHighlightCols[ORIGINAL_SHADE],
+                                       (opts.lvButton ? itsButtonCols[ORIGINAL_SHADE] : itsBackgroundCols[ORIGINAL_SHADE]))
+                            : opts.customSortedLvColor,
+                        itsSortedLvColors);
+    }
+
     setMenuColors(QApplication::palette().active());
 
     if(USE_LIGHTER_POPUP_MENU)
@@ -919,6 +964,9 @@ QtCurveStyle::~QtCurveStyle()
         delete [] itsSliderCols;
     if(itsComboBtnCols && itsComboBtnCols!=itsHighlightCols && itsComboBtnCols!=itsSliderCols)
         delete [] itsComboBtnCols;
+    if(itsSortedLvColors && itsSortedLvColors!=itsHighlightCols && itsSortedLvColors!=itsSliderCols &&
+       itsSortedLvColors!=itsComboBtnCols)
+        delete [] itsSortedLvColors;
     delete itsMactorPal;
 }
 
@@ -1079,7 +1127,11 @@ void QtCurveStyle::polish(QPalette &pal)
                    (newContrast || newButton || newMenu)),
          newComboBtn(itsComboBtnCols && itsHighlightCols!=itsComboBtnCols && itsSliderCols!=itsComboBtnCols &&
                      SHADE_BLEND_SELECTED==opts.comboBtn &&
-                     (newContrast || newButton || newMenu));
+                     (newContrast || newButton || newMenu)),
+         newSortedLv(itsSortedLvColors && ( (SHADE_BLEND_SELECTED==opts.sortedLv && itsHighlightCols!=itsSortedLvColors && itsSliderCols!=itsSortedLvColors &&
+                                             itsComboBtnCols!=itsSortedLvColors) || 
+                                             SHADE_DARKEN==opts.sortedLv) &&
+                     (newContrast || (opts.lvButton ? newButton : newGray)));
 
     if(newGray)
         shadeColors(QApplication::palette().active().background(), itsBackgroundCols);
@@ -1101,6 +1153,13 @@ void QtCurveStyle::polish(QPalette &pal)
     if(newComboBtn)
         shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
                     itsButtonCols[ORIGINAL_SHADE]), itsComboBtnCols);
+
+    if(newSortedLv)
+        if(SHADE_BLEND_SELECTED==opts.sortedLv)
+            shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
+                        opts.lvButton ? itsButtonCols[ORIGINAL_SHADE] : itsBackgroundCols[ORIGINAL_SHADE]), itsSortedLvColors);
+        else
+            shadeColors(shade(opts.lvButton ? itsButtonCols[ORIGINAL_SHADE] : itsBackgroundCols[ORIGINAL_SHADE], LV_HEADER_DARK_FACTOR), itsSortedLvColors);
 
     if(newDefBtn)
         if(IND_TINT==opts.defBtnIndicator)
@@ -2341,6 +2400,9 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
     bool        hasFocus(cols==itsFocusCols /* CPD USED TO INDICATE FOCUS! */),
                 hasMouseOver(cols==itsMouseOverCols);
 
+    if(WIDGET_TAB_BOT==w || WIDGET_TAB_TOP==w)
+        cols=itsBackgroundCols;
+
     switch(borderProfile)
     {
         case BORDER_FLAT:
@@ -2758,9 +2820,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             }
             else
             {
-                bool    isFirst(false), isLast(false), isTable(false);
-                QHeader *header(p && p->device() ? dynamic_cast<QHeader*>(p->device())
-                                                 : 0L);
+                bool    isFirst(false), isLast(false), isTable(false), isSort(false);
+                QHeader *header(p && p->device() ? dynamic_cast<QHeader*>(p->device()) : 0L);
+
                 if (header)
                 {
                     if(header->parent() && ::qt_cast<const QTable *>(header->parent()))
@@ -2774,7 +2836,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                            isLast=tbl->rowAt(r.y()+header->offset())==(tbl->numRows()-1);
                     }
                     else
-                        isFirst = header->mapToIndex(header->sectionAt(r.x()+header->offset())) == 0;
+                    {
+                        int index=header->mapToIndex(header->sectionAt(r.x()+header->offset()));
+                        isFirst = index == 0;
+                        isSort = header->sortIndicatorSection() == index;
+                    }
                 }
                 else if(0==flags) // Header on popup menu?
                 {   QWidget      *widget(p && p->device() ? dynamic_cast<QWidget*>(p->device()) : 0L);
@@ -2788,7 +2854,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     break;
                 }
 
-                const QColor *use(opts.lvButton ? buttonColors(cg) : backgroundColors(cg));
+                const QColor *use(flags&Style_Enabled && itsSortedLvColors && isSort
+                                    ? itsSortedLvColors
+                                    : opts.lvButton ? buttonColors(cg) : backgroundColors(cg));
                 
                 flags=((flags|Style_Sunken)^Style_Sunken)| Style_Raised;
 
@@ -3209,16 +3277,16 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 p->save();
 
+                p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
+                               ? shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)) : cg.background());
+
                 if(doEtch && !glow && opts.crButton && !drawSunken && EFFECT_SHADOW==opts.buttonEffect)
                 {
                     p->setBrush(Qt::NoBrush);
                     p->setPen(shade(cg.background(), QTC_ETCHED_DARK));
-                    p->drawArc(QRect(r.x()+1, r.y()+1, QTC_RADIO_SIZE, QTC_RADIO_SIZE), 0, 360*16);
+                    p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 225*16, 180*16);
                     doneShadow=true;
                 }
-
-                p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
-                               ? shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)) : cg.background());
 
                 p->setClipRegion(QRegion(clipRegion));
                 if(IS_FLAT(opts.appearance))
@@ -3730,11 +3798,15 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 sr.setY(sr.y()+(PE_SpinWidgetDown==pe ? -2 : 1));
 
                 if(opts.unifySpin)
+                {
                     sr.addCoords(reverse ? 1 : -1, 0, reverse ? 1 : -1, 0);
+                    if(!opts.vArrows)
+                        sr.setY(sr.y()+(PE_SpinWidgetDown==pe ? -2 : 2));
+                }
                 else if(flags&Style_Sunken)
                     sr.addCoords(1, 1, 1, 1);
 
-                ::drawArrow(p, sr, flags&Style_Enabled ? QTC_MO_ARROW(cg.buttonText()) : cg.text(), PE_SpinWidgetUp==pe ? PE_ArrowUp : PE_ArrowDown, opts, !opts.unifySpin);
+                ::drawArrow(p, sr, QTC_MO_ARROW(cg.buttonText()), PE_SpinWidgetUp==pe ? PE_ArrowUp : PE_ArrowDown, opts, !opts.unifySpin);
             }
             else
             {
@@ -3748,7 +3820,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(flags&Style_Sunken && !opts.unifySpin)
                     c+=QPoint(1, 1);
 
-                p->setPen(flags&Style_Enabled ? cg.buttonText() : cg.text());
+                p->setPen(QTC_MO_ARROW(cg.buttonText()));
                 p->drawLine(c.x()-l, c.y(), c.x()+l, c.y());
                 if(PE_SpinWidgetPlus==pe)
                     p->drawLine(c.x(), c.y()-l, c.x(), c.y()+l);
@@ -4034,10 +4106,10 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                           glowMo(!active && itsHover && opts.coloredMouseOver && TAB_MO_GLOW==opts.tabMouseOver);
             int           sizeAdjust(!active && TAB_MO_GLOW==opts.tabMouseOver ? 1 : 0);
             const QColor  &fill(getTabFill(flags&Style_Selected, itsHover, itsBackgroundCols));
-            EBorder       borderProfile(active
+            EBorder       borderProfile(active || opts.borderInactiveTab
                                         ? opts.borderTab
                                             ? BORDER_LIGHT
-                                            : opts.colorSelTab
+                                            : opts.colorSelTab && active
                                                 ? BORDER_FLAT
                                                 : BORDER_RAISED
                                         : BORDER_FLAT);
@@ -5376,7 +5448,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     pe=PE_SpinWidgetPlus;
                 if(!spinwidget->isUpEnabled())
                     upflags&=~Style_Enabled;
-                drawPrimitive(pe, p, up, cg,
+                drawPrimitive(pe, p, up, !(upflags&Style_Enabled) && spinwidget ? spinwidget->palette().disabled() : cg,
                              upflags |((active==SC_SpinWidgetUp)
                                  ? Style_On | Style_Sunken : Style_Raised));
             }
@@ -5392,7 +5464,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     pe=PE_SpinWidgetMinus;
                 if(!spinwidget->isDownEnabled())
                     downflags&=~Style_Enabled;
-                drawPrimitive(pe, p, down, cg,
+                drawPrimitive(pe, p, down, !(downflags&Style_Enabled) && spinwidget ? spinwidget->palette().disabled() : cg,
                               downflags |((active==SC_SpinWidgetDown)
                                   ? Style_On | Style_Sunken : Style_Raised));
             }
@@ -5568,11 +5640,12 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                             ? WIDGET_SLIDER_TROUGH : WIDGET_TROUGH);
             p->restore();
 
-            if((controls&SC_ScrollBarSubLine) && subline.isValid())
+            if(/*(controls&SC_ScrollBarSubLine) && */subline.isValid())
             {
-                bool enable=(!maxed && sb->value()!=sb->minValue());
+                bool enable=!atMin;
 
-                drawPrimitive(PE_ScrollBarSubLine, p, subline, cg, sflags |
+                drawPrimitive(PE_ScrollBarSubLine, p, subline, !enable && sb ? sb->palette().disabled() : cg,
+                                 sflags |
                                  //(enable ? Style_Enabled : Style_Default) |
                                  (enable && hw && HOVER_SB_SUB==itsHover
                                        ? Style_MouseOver : Style_Default) |
@@ -5580,16 +5653,21 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                    && SC_ScrollBarSubLine==active ? Style_Down : Style_Default));
 
                 if (useThreeButtonScrollBar && subline2.isValid())
-                    drawPrimitive(PE_ScrollBarSubLine, p, subline2, cg, sflags |
+                {
+                    if(IS_FLAT(opts.sbarBgndAppearance))
+                        p->fillRect(subline2, cg.background());
+                    drawPrimitive(PE_ScrollBarSubLine, p, subline2, !enable && sb ? sb->palette().disabled() : cg,
+                                  sflags |
                                  //(enable ? Style_Enabled : Style_Default) |
                                  (enable && hw && HOVER_SB_SUB2==itsHover
                                      ? Style_MouseOver : Style_Default) |
                                  (enable && (!hw || HOVER_SB_SUB2==itsHover || HOVER_NONE==itsHover)
                                    && SC_ScrollBarSubLine==active ? Style_Down : Style_Default));
+                }
             }
-            if((controls&SC_ScrollBarAddLine) && addline.isValid())
+            if(/*(controls&SC_ScrollBarAddLine) && */addline.isValid())
             {
-                bool enable=(!maxed && sb->value()!=sb->maxValue());
+                bool enable=!atMax;
 
                 // See KHTML note at top of file
                 if(itsFormMode && SCROLLBAR_NEXT!=opts.scrollbarType)
@@ -5598,7 +5676,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     else
                         addline.addCoords(0, 0, 0, -1);
 
-                drawPrimitive(PE_ScrollBarAddLine, p, addline, cg, sflags |
+                drawPrimitive(PE_ScrollBarAddLine, p, addline, !enable && sb ? sb->palette().disabled() : cg,
+                              sflags |
                                  //(enable ? Style_Enabled : Style_Default) |
                                  (enable && hw && HOVER_SB_ADD==itsHover
                                      ? Style_MouseOver : Style_Default) |

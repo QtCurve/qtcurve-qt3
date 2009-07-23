@@ -243,6 +243,7 @@ class QtCurveStyle : public KStyle
                                *itsDefBtnCols,
                                *itsMouseOverCols,
                                *itsComboBtnCols,
+                               *itsSortedLvColors,
                                itsButtonCols[TOTAL_SHADES+1],
                                itsLighterPopupMenuBgndCol,
                                itsCheckRadioCol;
