@@ -3798,7 +3798,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 sr.setY(sr.y()+(PE_SpinWidgetDown==pe ? -2 : 1));
 
                 if(opts.unifySpin)
+                {
                     sr.addCoords(reverse ? 1 : -1, 0, reverse ? 1 : -1, 0);
+                    if(!opts.vArrows)
+                        sr.setY(sr.y()+(PE_SpinWidgetDown==pe ? -2 : 2));
+                }
                 else if(flags&Style_Sunken)
                     sr.addCoords(1, 1, 1, 1);
 

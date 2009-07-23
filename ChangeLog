@@ -4,7 +4,8 @@
 2. Add option to colour the sorted listview header.
 3. Disable spin button when at min/max - matches Gtk2.
 4. Disable scrollbar buttons when at min/max - to match spin buttons.
-5. Fix shadows on radio buttons.
+5. Place non-V arrows of unified spin widgets closer together.
+6. Fix shadows on radio buttons.
 
 0.66.0
 ------
