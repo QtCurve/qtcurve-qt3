@@ -2341,6 +2341,9 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
     bool        hasFocus(cols==itsFocusCols /* CPD USED TO INDICATE FOCUS! */),
                 hasMouseOver(cols==itsMouseOverCols);
 
+    if(WIDGET_TAB_BOT==w || WIDGET_TAB_TOP==w)
+        cols=itsBackgroundCols;
+
     switch(borderProfile)
     {
         case BORDER_FLAT:
@@ -4034,10 +4037,10 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                           glowMo(!active && itsHover && opts.coloredMouseOver && TAB_MO_GLOW==opts.tabMouseOver);
             int           sizeAdjust(!active && TAB_MO_GLOW==opts.tabMouseOver ? 1 : 0);
             const QColor  &fill(getTabFill(flags&Style_Selected, itsHover, itsBackgroundCols));
-            EBorder       borderProfile(active
+            EBorder       borderProfile(active || opts.borderInactiveTab
                                         ? opts.borderTab
                                             ? BORDER_LIGHT
-                                            : opts.colorSelTab
+                                            : opts.colorSelTab && active
                                                 ? BORDER_FLAT
                                                 : BORDER_RAISED
                                         : BORDER_FLAT);
