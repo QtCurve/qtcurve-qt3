@@ -4564,7 +4564,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 ir=visualRect(ir, r);
             }
 
-            if(mi->iconSet())
+            if(mi->iconSet() && opts.menuIcons)
             {
                 // Select the correct icon from the iconset
                 QIconSet::Mode mode=flags & Style_Active
