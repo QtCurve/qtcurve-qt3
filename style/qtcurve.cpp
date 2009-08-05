@@ -5183,6 +5183,9 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
         }
         case CC_ComboBox:
         {
+            if(APP_OPENOFFICE==itsThemedApp)
+                flags&=~Style_MouseOver;
+
             itsFormMode = isFormWidget(widget);
 
             const QComboBox *combobox((const QComboBox *)widget);
