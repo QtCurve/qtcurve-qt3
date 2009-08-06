@@ -4564,7 +4564,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 ir=visualRect(ir, r);
             }
 
-            if(mi->iconSet())
+            if(mi->iconSet() && opts.menuIcons)
             {
                 // Select the correct icon from the iconset
                 QIconSet::Mode mode=flags & Style_Active
@@ -5183,6 +5183,9 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
         }
         case CC_ComboBox:
         {
+            if(APP_OPENOFFICE==itsThemedApp)
+                flags&=~Style_MouseOver;
+
             itsFormMode = isFormWidget(widget);
 
             const QComboBox *combobox((const QComboBox *)widget);
