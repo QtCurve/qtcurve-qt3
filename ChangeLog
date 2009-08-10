@@ -5,6 +5,7 @@
 3. If not etching/shadowing, when mosue over set to 'glow' use 'thick coloured'
 4. If not etching/shadowing, make descrease thinner scrollbar groove.
 5. Fix shaded button on combos when not etching/shadowing.
+6. Remove hard-coding of light border in progressbars - use gradient setting.
 
 0.67.1
 ------
