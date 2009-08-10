@@ -2,8 +2,8 @@
 ------
 1. When using coloured mouse over, use mouse over colour for arrows.
 2. Only do mouse over for entries if combos and spin widgets are unified.
-3. If not etching/shadowing, when mosue over set to 'glow' use 'thick coloured'
-4. If not etching/shadowing, make descrease thinner scrollbar groove.
+3. If not etching/shadowing, when mouse over set to 'glow' use 'thick coloured'
+4. If not etching/shadowing, decrease thinner scrollbar groove.
 5. Fix shaded button on combos when not etching/shadowing.
 6. Remove hard-coding of light border in progressbars - use gradient setting.
 
