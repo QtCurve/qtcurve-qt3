@@ -1,6 +1,7 @@
 0.67.2
 ------
 1. When using coloured mouse over, use mouse over colour for arrows.
+2. Only do mouse over for entries if combos and spin widgets are unified.
 
 0.67.1
 ------
