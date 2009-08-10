@@ -5338,6 +5338,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     p->setClipRect(btn);
                     if(!opts.comboSplitter)
                         btn.addCoords(reverse ? 0 : -2, 0, reverse ? 2 : 0, 0);
+                    if(!QTC_DO_EFFECT)
+                        btn.addCoords(0, 0, 1, 0);
                     drawLightBevel(p, btn, cg, btnFlags|Style_Horizontal, reverse ? ROUNDED_LEFT : ROUNDED_RIGHT,
                                    getFill(btnFlags, cols, false, SHADE_DARKEN==opts.comboBtn ||
                                                                   (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))),
