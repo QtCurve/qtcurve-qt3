@@ -1,3 +1,11 @@
+0.67.2
+------
+1. Only do mouse over for entries if combos and spin widgets are unified.
+2. If not etching/shadowing, when mouse over set to 'glow' use 'thick coloured'
+3. If not etching/shadowing, decrease thinner scrollbar groove.
+4. Fix shaded button on combos when not etching/shadowing.
+5. Remove hard-coding of light border in progressbars - use gradient setting.
+
 0.67.1
 ------
 1. Disable combobox mouse over for OpenOffice.

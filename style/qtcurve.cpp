@@ -118,7 +118,7 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <X11/Xatom.h>
 #include <fixx11h.h>
 
-#define QTC_MO_ARROW_X(FLAGS, COL) (MO_GLOW==opts.coloredMouseOver && FLAGS&Style_MouseOver && FLAGS&Style_Enabled ? itsMouseOverCols[QT_STD_BORDER] : COL)
+#define QTC_MO_ARROW_X(FLAGS, COL) (MO_NONE!=opts.coloredMouseOver && FLAGS&Style_MouseOver && FLAGS&Style_Enabled ? itsMouseOverCols[QT_STD_BORDER] : COL)
 #define QTC_MO_ARROW(COL)          QTC_MO_ARROW_X(flags, COL)
 
 static const int constMenuPixmapWidth=22;
@@ -2398,7 +2398,7 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
                                             ? QT_SLIDER_MO_BORDER
                                             : borderVal]);
     bool        hasFocus(cols==itsFocusCols /* CPD USED TO INDICATE FOCUS! */),
-                hasMouseOver(cols==itsMouseOverCols);
+                hasMouseOver(cols==itsMouseOverCols && QTC_ENTRY_MO);
 
     if(WIDGET_TAB_BOT==w || WIDGET_TAB_TOP==w)
         cols=itsBackgroundCols;
@@ -5270,10 +5270,13 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     p->drawRect(field);
                     if(!opts.unifyCombo)
                         field.addCoords(-2,-2, 2, 2);
-                    drawEntryField(p, field, cg, fillFlags, flags&Style_Enabled
-                                                            ? flags&Style_MouseOver
+                    SFlags fieldFlags(flags);
+                    if(!opts.unifyCombo && HOVER_CB_ENTRY!=itsHover)
+                        fieldFlags&=~Style_MouseOver;
+                    drawEntryField(p, field, cg, fillFlags, fieldFlags&Style_Enabled
+                                                            ? fieldFlags&Style_MouseOver
                                                                 ? ENTRY_MOUSE_OVER
-                                                                : flags&Style_HasFocus
+                                                                : fieldFlags&Style_HasFocus
                                                                     ? ENTRY_FOCUS
                                                                     : ENTRY_NONE
                                                             : ENTRY_NONE, 
@@ -5335,6 +5338,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     p->setClipRect(btn);
                     if(!opts.comboSplitter)
                         btn.addCoords(reverse ? 0 : -2, 0, reverse ? 2 : 0, 0);
+                    if(!QTC_DO_EFFECT)
+                        btn.addCoords(0, 0, 1, 0);
                     drawLightBevel(p, btn, cg, btnFlags|Style_Horizontal, reverse ? ROUNDED_LEFT : ROUNDED_RIGHT,
                                    getFill(btnFlags, cols, false, SHADE_DARKEN==opts.comboBtn ||
                                                                   (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))),
@@ -7825,7 +7830,19 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
                                         if(arrow.contains(pos))
                                             itsHover=HOVER_CB_ARROW;
                                         else
-                                            itsHover=HOVER_CB_ENTRY;
+                                        {
+                                            QRect r(cb->rect());
+                                            if(QApplication::reverseLayout())
+                                                r.addCoords(6, 0, 0, 0);
+                                            else
+                                                r.addCoords(0, 0, -6, 0);
+                                            if(QTC_DO_EFFECT && opts.etchEntry)
+                                                r.addCoords(1, 0, -1, 0);
+                                            if(r.contains(pos))
+                                                itsHover=HOVER_CB_ENTRY;
+                                            else
+                                                itsHover=HOVER_NONE;
+                                        }
                                     }
 
                                    return (HOVER_CB_ARROW==itsHover && !arrow.contains(itsOldPos)) ||
