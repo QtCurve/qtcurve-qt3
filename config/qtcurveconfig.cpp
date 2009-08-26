@@ -720,6 +720,10 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(useHighlightForMenu, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(groupBoxLine, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(fadeLines, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(menuIcons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(stdBtnSizes, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(forceAlternateLvCols, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(squareLvSelection, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(titlebarAlignment, SIGNAL(activated(int)), SLOT(updateChanged()));
 
     defaultSettings(&defaultStyle);
@@ -1480,6 +1484,10 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.useHighlightForMenu=useHighlightForMenu->isChecked();
     opts.groupBoxLine=groupBoxLine->isChecked();
     opts.fadeLines=fadeLines->isChecked();
+    opts.menuIcons=menuIcons->isChecked();
+    opts.stdBtnSizes=stdBtnSizes->isChecked();
+    opts.forceAlternateLvCols=forceAlternateLvCols->isChecked();
+    opts.squareLvSelection=squareLvSelection->isChecked();
     opts.titlebarAlignment=(EAlign)titlebarAlignment->currentItem();
 
     if(customShading->isChecked())
@@ -1594,6 +1602,10 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     useHighlightForMenu->setChecked(opts.useHighlightForMenu);
     groupBoxLine->setChecked(opts.groupBoxLine);
     fadeLines->setChecked(opts.fadeLines);
+    menuIcons->setChecked(opts.menuIcons);
+    stdBtnSizes->setChecked(opts.stdBtnSizes);
+    forceAlternateLvCols->setChecked(opts.forceAlternateLvCols);
+    squareLvSelection->setChecked(opts.squareLvSelection);
     titlebarAlignment->setCurrentItem(opts.titlebarAlignment);
 
     shading->setCurrentItem(opts.shading);
@@ -1700,6 +1712,10 @@ bool QtCurveConfig::settingsChanged()
          useHighlightForMenu->isChecked()!=currentStyle.useHighlightForMenu ||
          groupBoxLine->isChecked()!=currentStyle.groupBoxLine ||
          fadeLines->isChecked()!=currentStyle.fadeLines ||
+         menuIcons->isChecked()!=currentStyle.menuIcons ||
+         stdBtnSizes->isChecked()!=currentStyle.stdBtnSizes ||
+         forceAlternateLvCols->isChecked()!=currentStyle.forceAlternateLvCols ||
+         squareLvSelection->isChecked()!=currentStyle.squareLvSelection ||
          titlebarAlignment->currentItem()!=currentStyle.titlebarAlignment ||
 
          shading->currentItem()!=(int)currentStyle.shading ||
