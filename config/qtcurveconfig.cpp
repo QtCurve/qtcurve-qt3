@@ -430,7 +430,7 @@ static void insertScrollbarEntries(QComboBox *combo)
     combo->insertItem(i18n("KDE"));
     combo->insertItem(i18n("MS Windows"));
     combo->insertItem(i18n("Platinum"));
-    combo->insertItem(i18n("Next"));
+    combo->insertItem(i18n("NeXT"));
     combo->insertItem(i18n("No buttons"));
 }
 
