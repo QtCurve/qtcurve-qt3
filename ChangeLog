@@ -1,4 +1,4 @@
-0.67.2
+0.67.3
 ------
 1. Fix saving of menubar item 'colour on mouse over' setting.
 2. Offset sunken slider thumbs to improve appearance.
