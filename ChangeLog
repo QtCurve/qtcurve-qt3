@@ -1,3 +1,8 @@
+0.69.0
+------
+1. Add option to control whether bottom tabs should have their gradient
+   shades inverted.
+
 0.68.1
 ------
 1. Fix reading, and saving, of 'dark inverted gradient' setting.

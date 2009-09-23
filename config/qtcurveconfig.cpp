@@ -664,6 +664,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(roundAllTabs, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(borderTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(borderInactiveTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(invertBotTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(doubleGtkComboArrow, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(tabMouseOver, SIGNAL(activated(int)), SLOT(tabMoChanged()));
     connect(stdSidebarButtons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -1446,6 +1447,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.borderTab=borderTab->isChecked();
     opts.doubleGtkComboArrow=doubleGtkComboArrow->isChecked();
     opts.borderInactiveTab=borderInactiveTab->isChecked();
+    opts.invertBotTab=invertBotTab->isChecked();
     opts.tabMouseOver=(ETabMo)tabMouseOver->currentItem();
     opts.stdSidebarButtons=stdSidebarButtons->isChecked();
     opts.borderMenuitems=borderMenuitems->isChecked();
@@ -1581,6 +1583,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     borderTab->setChecked(opts.borderTab);
     doubleGtkComboArrow->setChecked(opts.doubleGtkComboArrow);
     borderInactiveTab->setChecked(opts.borderInactiveTab);
+    invertBotTab->setChecked(opts.invertBotTab);
     tabMouseOver->setCurrentItem(opts.tabMouseOver);
     stdSidebarButtons->setChecked(opts.stdSidebarButtons);
     borderMenuitems->setChecked(opts.borderMenuitems);
@@ -1677,6 +1680,7 @@ bool QtCurveConfig::settingsChanged()
          borderTab->isChecked()!=currentStyle.borderTab ||
          doubleGtkComboArrow->isChecked()!=currentStyle.doubleGtkComboArrow ||
          borderInactiveTab->isChecked()!=currentStyle.borderInactiveTab ||
+         invertBotTab->isChecked()!=currentStyle.invertBotTab ||
          tabMouseOver->currentItem()!=currentStyle.tabMouseOver ||
          stdSidebarButtons->isChecked()!=currentStyle.stdSidebarButtons ||
          borderMenuitems->isChecked()!=currentStyle.borderMenuitems ||
