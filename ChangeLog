@@ -4,6 +4,7 @@
    shades inverted.
 2. Config files now stored under $XDG_CONFIG_HOME/qtcurve (e.g. ~/.config/qtcurve)
 3. Fix usage of 'flat' appearance.
+4. Fix light tab border when appearance set to flat.
 
 0.68.1
 ------

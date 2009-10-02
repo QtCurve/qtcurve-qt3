@@ -2441,7 +2441,7 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
                 p->setPen(midColorF(cg.background(), cols[BORDER_RAISED==borderProfile || BORDER_LIGHT==borderProfile
                                                             ? 0 : QT_FRAME_DARK_SHADOW], 1.5-QTC_ENTRY_INNER_ALPHA));
             else
-                p->setPen(flags&Style_Enabled && (BORDER_RAISED==borderProfile || APPEARANCE_FLAT!=app)
+                p->setPen(flags&Style_Enabled && (BORDER_RAISED==borderProfile || BORDER_LIGHT==borderProfile || APPEARANCE_FLAT!=app)
                             ? blendBorderColors
                                 ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
                                                                    ? 0 : QT_FRAME_DARK_SHADOW]) // Was base???
