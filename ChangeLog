@@ -3,8 +3,7 @@
 1. Add option to control whether bottom tabs should have their gradient
    shades inverted.
 2. Config files now stored under $XDG_CONFIG_HOME/qtcurve (e.g. ~/.config/qtcurve)
-3. Fix usage of 'flat' appearance.
-4. Fix light tab border when appearance set to flat.
+3. Fix some issue with 'flat' appearance.
 
 0.68.1
 ------
