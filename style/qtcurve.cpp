@@ -882,7 +882,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
             itsSortedLvColors=itsHighlightCols;
             break;
         case SHADE_BLEND_SELECTED:
-            if(opts.shadeSliders==SHADE_BLEND_SELECTED)
+            if(SHADE_BLEND_SELECTED==opts.shadeSliders)
             {
                 itsSortedLvColors=itsSliderCols;
                 break;
@@ -905,7 +905,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
             }
             if(!itsSortedLvColors)
                 itsSortedLvColors=new QColor [TOTAL_SHADES+1];
-            shadeColors(SHADE_BLEND_SELECTED==opts.comboBtn
+            shadeColors(SHADE_BLEND_SELECTED==opts.sortedLv
                             ? midColor(itsHighlightCols[ORIGINAL_SHADE],
                                        (opts.lvButton ? itsButtonCols[ORIGINAL_SHADE] : itsBackgroundCols[ORIGINAL_SHADE]))
                             : opts.customSortedLvColor,
