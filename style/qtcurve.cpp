@@ -97,6 +97,7 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <qobjectlist.h>
 #include <qpixmapcache.h>
 #include <qbitmap.h>
+#include <qmainwindow.h>
 #include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -1302,6 +1303,11 @@ void QtCurveStyle::polish(QWidget *widget)
     if(!IS_FLAT(opts.menuBgndAppearance) && ::qt_cast<const QPopupMenu *>(widget))
         widget->installEventFilter(this);
 
+    #if 0
+    if(opts.menubarHiding && ::qt_cast<QMainWindow *>(widget) && static_cast<QMainWindow *>(widget)->menuBar())
+        widget->installEventFilter(this);
+    #endif
+
     if (opts.squareScrollViews && widget &&
         (::qt_cast<const QScrollView *>(widget) ||
         (widget->parentWidget() && ::qt_cast<const QFrame *>(widget) &&
@@ -1601,7 +1607,12 @@ void QtCurveStyle::unPolish(QWidget *widget)
 
     if(!IS_FLAT(opts.menuBgndAppearance) && ::qt_cast<const QPopupMenu *>(widget))
         widget->removeEventFilter(this);
-    
+
+    #if 0
+    if(opts.menubarHiding && ::qt_cast<QMainWindow *>(widget) && static_cast<QMainWindow *>(widget)->menuBar())
+        widget->removeEventFilter(this);
+    #endif
+
     if (::qt_cast<QRadioButton *>(widget) || ::qt_cast<QCheckBox *>(widget))
     {
 #if QT_VERSION >= 0x030200
@@ -1740,6 +1751,22 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
 {
     if(itsHoverWidget && object==itsHoverWidget && (QEvent::Destroy==event->type() || QEvent::Hide==event->type()))
         resetHover();
+
+    #if 0
+    // Works for qtconfig, but k3b hangs?
+    if(opts.menubarHiding && QEvent::KeyRelease==event->type() && ::qt_cast<QMainWindow *>(object))
+    {
+        QMainWindow *window=static_cast<QMainWindow *>(object);
+
+        if(window->isVisible() && window->menuBar())
+        {
+            QKeyEvent *k=static_cast<QKeyEvent *>(event);
+
+            if(k->state()&Qt::ControlButton && k->state()&Qt::AltButton && Qt::Key_M==k->key())
+                window->menuBar()->setHidden(window->menuBar()->isVisible());
+        }
+    }
+    #endif
 
     if(object->parent() && 0==qstrcmp(object->name(), kdeToolbarWidget))
     {
@@ -2414,7 +2441,7 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
                 p->setPen(midColorF(cg.background(), cols[BORDER_RAISED==borderProfile || BORDER_LIGHT==borderProfile
                                                             ? 0 : QT_FRAME_DARK_SHADOW], 1.5-QTC_ENTRY_INNER_ALPHA));
             else
-                p->setPen(flags&Style_Enabled && (BORDER_RAISED==borderProfile || APPEARANCE_FLAT!=app)
+                p->setPen(flags&Style_Enabled && (BORDER_RAISED==borderProfile || BORDER_LIGHT==borderProfile || APPEARANCE_FLAT!=app)
                             ? blendBorderColors
                                 ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
                                                                    ? 0 : QT_FRAME_DARK_SHADOW]) // Was base???
@@ -6883,11 +6910,7 @@ void QtCurveStyle::drawBevelGradientReal(const QColor &base, QPainter *p, const 
             if(sel && 0==i)
                 col=base;
             else
-            {
-                double val=INVERT_SHADE((*it).val);
-                
-                shade(base, &col, WIDGET_TAB_BOT==w ? QMAX(val, 0.9) : val);
-            }
+                shade(base, &col, opts.invertBotTab ? QMAX(INVERT_SHADE((*it).val), 0.9) : (*it).val);
 
             if(/*sel && */opts.colorSelTab && i>0)
                 col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*(0.2+QTC_COLOR_SEL_TAB_FACTOR));
