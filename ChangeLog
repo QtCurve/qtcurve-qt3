@@ -4,7 +4,7 @@
    shades inverted.
 2. Config files now stored under $XDG_CONFIG_HOME/qtcurve (e.g. ~/.config/qtcurve)
 3. Fix some issue with 'flat' appearance.
-4. Fix shaded lsitview header sometime being unintialised.
+4. Fix shaded listview headers sometime being uninitialised.
 
 0.68.1
 ------
