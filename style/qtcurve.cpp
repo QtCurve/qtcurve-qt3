@@ -3980,11 +3980,11 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
 
             r.rect(&x, &y, &w, &h);
             p->fillRect(r, cg.background()); // .dark(QTC_DW_BGND));
-            p->setPen(itsBackgroundCols[QT_STD_BORDER]);
-            if(horizontal)
-                p->drawLine(r.right(), r.top()-1, r.right(), r.bottom());
-            else
-                p->drawLine(r.left(), r.bottom(), r.right(), r.bottom());
+//             p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+//             if(horizontal)
+//                 p->drawLine(r.right(), r.top()-1, r.right(), r.bottom());
+//             else
+//                 p->drawLine(r.left(), r.bottom(), r.right(), r.bottom());
 
             if (w > 2 && h > 2)
             {
