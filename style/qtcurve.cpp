@@ -782,7 +782,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     readConfig(rcFile, &opts);
     opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
     if(opts.contrast<0 || opts.contrast>10)
-        opts.contrast=7;
+        opts.contrast=QTC_DEFAULT_CONTRAST;
 
     /* Doesn't seem to work well for KDE3 apps :-( */
     opts.groupBoxLine=false;
