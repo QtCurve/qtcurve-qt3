@@ -581,6 +581,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(sbarBgndAppearance);
     insertAppearanceEntries(sliderFill);
     insertAppearanceEntries(menuBgndAppearance);
+    insertAppearanceEntries(dwtAppearance);
     insertLineEntries(handles, true, true);
     insertLineEntries(sliderThumbs, true, false);
     insertLineEntries(toolbarSeparators, false, false);
@@ -716,6 +717,10 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(titlebarBorder, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(sbarBgndAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(sliderFill, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(dwtAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(crColor, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(smallRadio, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(splitterHighlight, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gtkComboMenus, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gtkButtonOrder, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(mapKdeIcons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -948,6 +953,7 @@ void QtCurveConfig::unifySpinBtnsToggled()
     if(unifySpinBtns->isChecked())
         unifySpin->setChecked(false);
     unifySpin->setDisabled(unifySpinBtns->isChecked());
+    updateChanged();
 }
 
 void QtCurveConfig::unifySpinToggled()
@@ -955,12 +961,14 @@ void QtCurveConfig::unifySpinToggled()
     if(unifySpin->isChecked())
         unifySpinBtns->setChecked(false);
     unifySpinBtns->setDisabled(unifySpin->isChecked());
+    updateChanged();
 }
 
 void QtCurveConfig::sliderThumbChanged()
 {
     if(LINE_NONE!=sliderThumbs->currentItem() && sliderWidth->value()<DEFAULT_SLIDER_WIDTH)
         sliderWidth->setValue(DEFAULT_SLIDER_WIDTH);
+    updateChanged();
 }
 
 void QtCurveConfig::sliderWidthChanged()
@@ -970,8 +978,9 @@ void QtCurveConfig::sliderWidthChanged()
 
     if(LINE_NONE!=sliderThumbs->currentItem() && sliderWidth->value()<DEFAULT_SLIDER_WIDTH)
         sliderThumbs->setCurrentItem(LINE_NONE);
+    updateChanged();
 }
-
+    
 void QtCurveConfig::setupStack()
 {
     int i=0;
@@ -989,6 +998,7 @@ void QtCurveConfig::setupStack()
     new CStackItem(stackList, i18n("Checks and Radios"), i++);
     new CStackItem(stackList, i18n("Windows"), i++);
     new CStackItem(stackList, i18n("Menus and Toolbars"), i++);
+    new CStackItem(stackList, i18n("Dock windows"), i++);
     new CStackItem(stackList, i18n("Advanced Settings"), i++);
     new CStackItem(stackList, i18n("Custom Gradients"), i++);
     new CStackItem(stackList, i18n("Custom Shades"), i++);
@@ -1480,6 +1490,10 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.titlebarBorder=titlebarBorder->isChecked();
     opts.sbarBgndAppearance=(EAppearance)sbarBgndAppearance->currentItem();
     opts.sliderFill=(EAppearance)sliderFill->currentItem();
+    opts.dwtAppearance=(EAppearance)dwtAppearance->currentItem();
+    opts.crColor=crColor->isChecked();
+    opts.smallRadio=smallRadio->isChecked();
+    opts.splitterHighlight=splitterHighlight->isChecked();
     opts.gtkComboMenus=gtkComboMenus->isChecked();
     opts.gtkButtonOrder=gtkButtonOrder->isChecked();
     opts.mapKdeIcons=mapKdeIcons->isChecked();
@@ -1626,6 +1640,10 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     titlebarBorder->setChecked(opts.titlebarBorder);
     sbarBgndAppearance->setCurrentItem(opts.sbarBgndAppearance);
     sliderFill->setCurrentItem(opts.sliderFill);
+    dwtAppearance->setCurrentItem(opts.dwtAppearance);
+    crColor->setChecked(opts.crColor);
+    smallRadio->setChecked(opts.smallRadio);
+    splitterHighlight->setChecked(opts.splitterHighlight);
     gtkComboMenus->setChecked(opts.gtkComboMenus);
     gtkButtonOrder->setChecked(opts.gtkButtonOrder);
     mapKdeIcons->setChecked(opts.mapKdeIcons);
@@ -1737,6 +1755,10 @@ bool QtCurveConfig::settingsChanged()
          titlebarBorder->isChecked()!=currentStyle.titlebarBorder ||
          sbarBgndAppearance->currentItem()!=currentStyle.sbarBgndAppearance ||
          sliderFill->currentItem()!=currentStyle.sliderFill ||
+         dwtAppearance->currentItem()!=currentStyle.dwtAppearance ||
+         crColor->isChecked()!=currentStyle.crColor ||
+         smallRadio->isChecked()!=currentStyle.smallRadio ||
+         splitterHighlight->isChecked()!=currentStyle.splitterHighlight ||
          gtkComboMenus->isChecked()!=currentStyle.gtkComboMenus ||
          gtkButtonOrder->isChecked()!=currentStyle.gtkButtonOrder ||
          mapKdeIcons->isChecked()!=currentStyle.mapKdeIcons ||
