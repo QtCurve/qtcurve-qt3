@@ -198,6 +198,7 @@ class QtCurveStyle : public KStyle
 
     void           shadeColors(const QColor &base, QColor *vals) const;
     const QColor * buttonColors(const QColorGroup &cg) const;
+    const QColor * checkRadioColors(const QColorGroup &cg, SFlags flags) const;
     const QColor * sliderColors(/*const QColorGroup &cg, */SFlags flags) const;
     const QColor * backgroundColors(const QColor &c) const;
     const QColor * backgroundColors(const QColorGroup &cg) const
@@ -243,6 +244,7 @@ class QtCurveStyle : public KStyle
                                *itsDefBtnCols,
                                *itsMouseOverCols,
                                *itsComboBtnCols,
+                               *itsCheckRadioSelCols,
                                *itsSortedLvColors,
                                itsButtonCols[TOTAL_SHADES+1],
                                itsLighterPopupMenuBgndCol,

@@ -1,6 +1,7 @@
 0.70.0
 ------
-1. Add option to specify appearance of dock-widget titlebars.
+1. Added option to colour selected check/radios.
+2. Add option to specify appearance of dock-widget titlebars.
 
 0.69.1
 ------
