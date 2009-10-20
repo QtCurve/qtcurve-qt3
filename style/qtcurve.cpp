@@ -3979,7 +3979,11 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             bool horizontal(flags & Style_Horizontal);
 
             r.rect(&x, &y, &w, &h);
-            p->fillRect(r, cg.background()); // .dark(QTC_DW_BGND));
+
+            if(!IS_FLAT(opts.dwtAppearance))
+                drawBevelGradient(cg.background(), p, r, horizontal, false, opts.dwtAppearance, WIDGET_DOCK_WIDGET_TITLE);
+            else
+                p->fillRect(r, cg.background()); // .dark(QTC_DW_BGND));
 //             p->setPen(itsBackgroundCols[QT_STD_BORDER]);
 //             if(horizontal)
 //                 p->drawLine(r.right(), r.top()-1, r.right(), r.bottom());
