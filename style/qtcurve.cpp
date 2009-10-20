@@ -781,7 +781,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     }
 
     readConfig(rcFile, &opts);
-    opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
+    opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", QTC_DEFAULT_CONTRAST);
     if(opts.contrast<0 || opts.contrast>10)
         opts.contrast=QTC_DEFAULT_CONTRAST;
 
@@ -1086,7 +1086,7 @@ void QtCurveStyle::polish(QPalette &pal)
         return;
 
     QSettings settings;
-    int       contrast(settings.readNumEntry("/Qt/KDE/contrast", 7));
+    int       contrast(settings.readNumEntry("/Qt/KDE/contrast", QTC_DEFAULT_CONTRAST));
     bool      newContrast(false);
 
     readKdeGlobals();
@@ -1117,7 +1117,7 @@ void QtCurveStyle::polish(QPalette &pal)
     }
 
     if(contrast<0 || contrast>10)
-        contrast=7;
+        contrast=QTC_DEFAULT_CONTRAST;
 
     if(contrast!=opts.contrast)
     {
