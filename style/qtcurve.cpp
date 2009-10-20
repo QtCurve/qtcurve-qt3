@@ -3446,6 +3446,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     }
                     break;
                 default:
+                case LINE_1DOT:
                 case LINE_DOTS:
                     drawDots(p, r, !(flags & Style_Horizontal), 1, 5, itsBackgroundCols, 0, 5);
             }
@@ -3479,6 +3480,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 case LINE_NONE:
                     break;
                 default:
+                case LINE_1DOT:
                 case LINE_DOTS:
                     drawDots(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 5);
                     break;
@@ -7082,6 +7084,7 @@ void QtCurveStyle::drawSbSliderHandle(QPainter *p, const QRect &orig, const QCol
             case LINE_SUNKEN:
                 drawLines(p, r, !horiz, 4, 3, markers, 0, 3, opts.sliderThumbs);
                 break;
+            case LINE_1DOT:
             case LINE_DOTS:
             default:
                 drawDots(p, r, !horiz, slider ? 3 : 5, slider ? 5 : 2, markers, 0, 5);
@@ -7359,6 +7362,7 @@ void QtCurveStyle::drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, 
     {
         case LINE_NONE:
             break;
+        case LINE_1DOT:
         case LINE_DOTS:
             drawDots(p, r, !(flags & Style_Horizontal), 2,
                      APP_KICKER==itsThemedApp ? 1 : tb ? 5 : 3, border,

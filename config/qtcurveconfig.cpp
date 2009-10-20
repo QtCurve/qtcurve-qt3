@@ -404,14 +404,18 @@ static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=
     }
 }
 
-static void insertLineEntries(QComboBox *combo, bool dashes)
+static void insertLineEntries(QComboBox *combo, bool singleDot, bool dashes)
 {
     combo->insertItem(i18n("None"));
     combo->insertItem(i18n("Sunken lines"));
     combo->insertItem(i18n("Flat lines"));
     combo->insertItem(i18n("Dots"));
-    if(dashes)
-        combo->insertItem(i18n("Dashes"));
+    if(singleDot)
+    {
+        combo->insertItem(i18n("Single dot (KDE4 & Gtk2 Only)"));
+        if(dashes)
+            combo->insertItem(i18n("Dashes"));
+    }
 }
 
 static void insertDefBtnEntries(QComboBox *combo)
@@ -577,10 +581,10 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(sbarBgndAppearance);
     insertAppearanceEntries(sliderFill);
     insertAppearanceEntries(menuBgndAppearance);
-    insertLineEntries(handles, true);
-    insertLineEntries(sliderThumbs, false);
-    insertLineEntries(toolbarSeparators, false);
-    insertLineEntries(splitters, true);
+    insertLineEntries(handles, true, true);
+    insertLineEntries(sliderThumbs, true, false);
+    insertLineEntries(toolbarSeparators, false, false);
+    insertLineEntries(splitters, true, true);
     insertDefBtnEntries(defBtnIndicator);
     insertScrollbarEntries(scrollbarType);
     insertRoundEntries(round);
