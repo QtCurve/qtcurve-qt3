@@ -8081,7 +8081,7 @@ QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) con
                 img.loadFromData(qembed_findData("radio_light.png"));
                 break;
             case PIX_RADIO_ON:
-                img.loadFromData(qembed_findData("radio_on.png"));
+                img.loadFromData(qembed_findData(opts.smallRadio ? "radio_on_small.png" : "radio_on.png"));
                 break;
             case PIX_CHECK:
                 img.loadFromData(qembed_findData(opts.xCheck ? "check_x_on.png" : "check_on.png"));
