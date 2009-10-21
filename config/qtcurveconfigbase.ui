@@ -1256,20 +1256,15 @@ None - no buttons, only the slider</string>
                             <string>This will cause a coloured stripe to be drawn over the current tab.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="0" column="3">
+                    <widget class="KIntNumInput" row="0" column="3">
                         <property name="name">
                             <cstring>colorSelTab</cstring>
                         </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
+                        <property name="prefix">
+                            <string>Tint by </string>
                         </property>
-                        <property name="text">
-                            <string>Color</string>
+                        <property name="suffix">
+                            <string>%</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="2" column="0">

@@ -8,7 +8,8 @@
    or scrollbar buttons.
 5. Don't do regular coloured mouse over of sliders when theese are seto to be
    coloured on mouse over.
-6. Add option to specify appearance of dock-widget titlebars.
+6. Allow to specify strength when colouring selected tab.
+7. Add option to specify appearance of dock-widget titlebars.
 
 0.69.1
 ------

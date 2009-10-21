@@ -619,6 +619,9 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     tabBgnd->setRange(MIN_TAB_BGND, MAX_TAB_BGND, 1, false);
     tabBgnd->setValue(DEF_TAB_BGND);
 
+    colorSelTab->setRange(MIN_COLOR_SEL_TAB_FACTOR, MAX_COLOR_SEL_TAB_FACTOR, 5, false);
+    colorSelTab->setValue(DEF_COLOR_SEL_TAB_FACTOR);
+
     connect(lighterPopupMenuBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(tabBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(menuDelay, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
@@ -665,7 +668,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(xCheck, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(crHighlight, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(crButton, SIGNAL(toggled(bool)), SLOT(updateChanged()));
-    connect(colorSelTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(colorSelTab, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(roundAllTabs, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(borderTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(borderInactiveTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -915,8 +918,8 @@ void QtCurveConfig::activeTabAppearanceChanged()
     int  current(activeTabAppearance->currentItem());
     bool disableCol(APPEARANCE_FLAT==current && APPEARANCE_RAISED==current);
 
-    if(colorSelTab->isChecked() && disableCol)
-        colorSelTab->setChecked(false);
+    if(colorSelTab->value() && disableCol)
+        colorSelTab->setValue(MIN_COLOR_SEL_TAB_FACTOR);
     colorSelTab->setEnabled(!disableCol);
     updateChanged();
 }
@@ -1456,7 +1459,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.xCheck=xCheck->isChecked();
     opts.crHighlight=crHighlight->isChecked();
     opts.crButton=crButton->isChecked();
-    opts.colorSelTab=colorSelTab->isChecked();
+    opts.colorSelTab=colorSelTab->value();
     opts.roundAllTabs=roundAllTabs->isChecked();
     opts.borderTab=borderTab->isChecked();
     opts.doubleGtkComboArrow=doubleGtkComboArrow->isChecked();
@@ -1596,7 +1599,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     xCheck->setChecked(opts.xCheck);
     crHighlight->setChecked(opts.crHighlight);
     crButton->setChecked(opts.crButton);
-    colorSelTab->setChecked(opts.colorSelTab);
+    colorSelTab->setValue(opts.colorSelTab);
     roundAllTabs->setChecked(opts.roundAllTabs);
     borderTab->setChecked(opts.borderTab);
     doubleGtkComboArrow->setChecked(opts.doubleGtkComboArrow);
@@ -1697,7 +1700,7 @@ bool QtCurveConfig::settingsChanged()
          xCheck->isChecked()!=currentStyle.xCheck ||
          crHighlight->isChecked()!=currentStyle.crHighlight ||
          crButton->isChecked()!=currentStyle.crButton ||
-         colorSelTab->isChecked()!=currentStyle.colorSelTab ||
+         colorSelTab->value()!=currentStyle.colorSelTab ||
          roundAllTabs->isChecked()!=currentStyle.roundAllTabs ||
          borderTab->isChecked()!=currentStyle.borderTab ||
          doubleGtkComboArrow->isChecked()!=currentStyle.doubleGtkComboArrow ||

@@ -6948,7 +6948,7 @@ void QtCurveStyle::drawBevelGradientReal(const QColor &base, QPainter *p, const 
                 shade(base, &col, opts.invertBotTab ? QMAX(INVERT_SHADE((*it).val), 0.9) : (*it).val);
 
             if(/*sel && */opts.colorSelTab && i>0)
-                col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*(0.2+QTC_COLOR_SEL_TAB_FACTOR));
+                col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*(0.2+QTC_TO_ALPHA(opts.colorSelTab)));
 
             if(i)
                 drawGradient(prev, col, p,
@@ -6976,7 +6976,7 @@ void QtCurveStyle::drawBevelGradientReal(const QColor &base, QPainter *p, const 
                 shade(base, &col, WIDGET_TAB_BOT==w ? QMAX((*it).val, 0.9) : (*it).val);
 
             if(sel && opts.colorSelTab && topTab && i<numStops-1)
-                col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*(0.2+QTC_COLOR_SEL_TAB_FACTOR));
+                col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*(0.2+QTC_TO_ALPHA(opts.colorSelTab)));
 
             if(i)
                 drawGradient(prev, col, p,
