@@ -219,6 +219,7 @@ class QtCurveStyle : public KStyle
     const QColor & checkRadioCol(SFlags flags, const QColorGroup &cg) const;
     QColor         shade(const QColor &a, float k) const;
     void           shade(const color &ca, color *cb, double k) const;
+    void           drawDot(QPainter *p, const QRect &r, const QColor *cols) const;
     QPixmap *      getPixelPixmap(const QColor col) const;
     QPixmap *      getPixmap(const QColor col, EPixmap pix, double shade=1.0) const;
     void           setSbType();

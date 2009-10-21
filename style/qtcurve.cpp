@@ -3445,8 +3445,10 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                         }
                     }
                     break;
-                default:
                 case LINE_1DOT:
+                    drawDot(p, r, itsBackgroundCols);
+                    break;
+                default:
                 case LINE_DOTS:
                     drawDots(p, r, !(flags & Style_Horizontal), 1, 5, itsBackgroundCols, 0, 5);
             }
@@ -3481,6 +3483,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     break;
                 default:
                 case LINE_1DOT:
+                    drawDot(p, r, border);
+                    break;
                 case LINE_DOTS:
                     drawDots(p, r, flags&Style_Horizontal, NUM_SPLITTER_DASHES, 1, border, 0, 5);
                     break;
@@ -6409,7 +6413,11 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
         case PM_DockWindowHandleExtent:
             return 10;
         case PM_SplitterWidth:
-            return widget && widget->inherits("QDockWindowResizeHandle") ? 9 : 6;
+            return widget && widget->inherits("QDockWindowResizeHandle")
+                    ? 9
+                    : LINE_1DOT==opts.splitters
+                        ? 7
+                        : 6;
         case PM_ScrollBarSliderMin:
             return opts.sliderWidth+1;
         case PM_SliderThickness:
@@ -7085,6 +7093,8 @@ void QtCurveStyle::drawSbSliderHandle(QPainter *p, const QRect &orig, const QCol
                 drawLines(p, r, !horiz, 4, 3, markers, 0, 3, opts.sliderThumbs);
                 break;
             case LINE_1DOT:
+                drawDot(p, r, markers);
+                break;
             case LINE_DOTS:
             default:
                 drawDots(p, r, !horiz, slider ? 3 : 5, slider ? 5 : 2, markers, 0, 5);
@@ -7363,6 +7373,8 @@ void QtCurveStyle::drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, 
         case LINE_NONE:
             break;
         case LINE_1DOT:
+            drawDot(p, r, border);
+            break;
         case LINE_DOTS:
             drawDots(p, r, !(flags & Style_Horizontal), 2,
                      APP_KICKER==itsThemedApp ? 1 : tb ? 5 : 3, border,
@@ -8061,7 +8073,13 @@ static void recolour(QImage &img, const QColor &col, double shade)
 
     adjustPix(img.bits(), 4, img.width(), img.height(), img.bytesPerLine(), col.red(), col.green(), col.blue(), shade);
 }
- 
+
+void QtCurveStyle::drawDot(QPainter *p, const QRect &r, const QColor *cols) const
+{
+    QPixmap *pix=getPixmap(cols[QT_STD_BORDER], PIX_DOT, 0.9);
+    p->drawPixmap(r.x()+((r.width()-pix->width())>>1), r.y()+((r.height()-pix->height())>>1), *pix);
+}
+
 QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) const
 {
     QRgb    rgb(col.rgb());
@@ -8104,6 +8122,9 @@ QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) con
             case PIX_SLIDER_LIGHT_V:
                 img.loadFromData(qembed_findData("slider_light.png"));
                 img=rotateImage(img).mirror(true, false);
+                break;
+            case PIX_DOT:
+                img.loadFromData(qembed_findData("dot.png"));
                 break;
             default:
                 break;
