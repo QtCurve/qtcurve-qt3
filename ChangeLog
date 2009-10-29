@@ -1,19 +1,20 @@
 0.70.0
 ------
-1. Added option to colour selected check/radios.
-2. Added option to use a smaller dot for radios.
-3. Added option to control whether the background of splitters should be
-   highlighted on mouse over.
-4. Added new splitter/handle/thumb style: single dot.
-5. Don't do coloured mouse over for buttons of editable combos, spin buttons,
-   or scrollbar buttons.
+ 1. Added option to colour selected check/radios.
+ 2. Added option to use a smaller dot for radios.
+ 3. Added option to control whether the background of splitters should be
+    highlighted on mouse over.
+ 4. Added new splitter/handle/thumb style: single dot.
+ 5. Don't do coloured mouse over for buttons of editable combos, spin buttons,
+    or scrollbar buttons.
  6. Don't do regular coloured mouse over of sliders when theese are set to be
-   coloured on mouse over.
-7. Allow to specify strength when colouring selected tab.
-8. Add option to specify appearance of dock-widget titlebars.
-9. When saving settings to $XDG_CONFIG_HOME/qtcurve/stylerc, remove the older
-   $XDG_CONFIG_HOME/qtcurvestylerc, and $XDG_CONFIG_HOME/qtcurve.gtk-icons if they
-   exist.
+    coloured on mouse over.
+ 7. Allow to specify strength when colouring selected tab.
+ 8. Add option to specify appearance of dock-widget titlebars.
+ 9. When saving settings to $XDG_CONFIG_HOME/qtcurve/stylerc, remove the older
+    $XDG_CONFIG_HOME/qtcurvestylerc, and $XDG_CONFIG_HOME/qtcurve.gtk-icons if they
+    exist.
+10. Use split gradient for dock-widget titlebars.
 
 0.69.1
 ------
