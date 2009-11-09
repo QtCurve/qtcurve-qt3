@@ -59,8 +59,11 @@ function will return 1 scrollbar with 1 greater than standard for form widgets, 
 In the CC_ScrollBar draw code, the rects used for each component are shrunk by 1, in the appropriate
 dimension, so as to draw the scrollbar at the correct size.
 */
+#include <qtable.h>
 
+#ifndef QTC_QT_ONLY
 #include <kdeversion.h>
+#endif
 #include <qsettings.h>
 #include <qmenubar.h>
 #include <qapplication.h>
@@ -117,7 +120,7 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <qmetaobject.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include <fixx11h.h>
+#include "qtc_fixx11h.h"
 
 #define QTC_MO_ARROW_X(FLAGS, COL) (MO_NONE!=opts.coloredMouseOver && FLAGS&Style_MouseOver && FLAGS&Style_Enabled ? itsMouseOverCols[QT_STD_BORDER] : COL)
 #define QTC_MO_ARROW(COL)          QTC_MO_ARROW_X(flags, COL)
@@ -176,7 +179,7 @@ inline bool isSpecialHover(QWidget *w)
                     ::qt_cast<QCheckBox *>(w) ||
 #endif
                     ::qt_cast<QScrollBar *>(w) ||
-#if KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
+#if defined KDE_VERSION && KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
                     ::qt_cast<QToolButton *>(w) ||
 
 #endif
@@ -309,7 +312,7 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 
 #define QTC_SKIP_TASKBAR (APP_SKIP_TASKBAR==itsThemedApp || APP_KPRINTER==itsThemedApp || APP_KDIALOG==itsThemedApp)
 
-#if KDE_VERSION >= 0x30200
+#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
 #include <qfile.h>
 #endif
 
@@ -327,7 +330,7 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 
 #define QTC_DW_BGND 105
 
-#if KDE_VERSION >= 0x30200
+#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
 // Try to read $KDEHOME/share/config/kickerrc to find out if kicker is transparent...
 
 static bool kickerIsTrans()
@@ -737,7 +740,7 @@ static void drawArrow(QPainter *p, const QRect &r, const QColor &col, QStyle::Pr
 }
 
 QtCurveStyle::QtCurveStyle(const QString &name)
-            : KStyle(AllowMenuTransparency, WindowsStyleScrollBar),
+            : QTC_BASE_STYLE(AllowMenuTransparency, WindowsStyleScrollBar),
               itsSliderCols(0L),
               itsDefBtnCols(0L),
               itsMouseOverCols(0L),
@@ -749,7 +752,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
               itsMdiColors(0L),
               itsThemedApp(APP_OTHER),
               itsPixmapCache(150000, 499),
-#if KDE_VERSION >= 0x30200
+#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
               itsIsTransKicker(false),
 #endif
               itsHover(HOVER_NONE),
@@ -1010,7 +1013,7 @@ void QtCurveStyle::polish(QApplication *app)
     if ("kicker"==appName || "appletproxy"==appName)
     {
         itsThemedApp=APP_KICKER;
-#if KDE_VERSION >= 0x30200
+#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
         itsIsTransKicker=kickerIsTrans();
 #endif
     }
@@ -1044,7 +1047,7 @@ void QtCurveStyle::polish(QApplication *app)
     else if ("korn"==appName)
     {
         itsThemedApp=APP_KORN;
-#if KDE_VERSION >= 0x30200
+#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
         itsIsTransKicker=kickerIsTrans();
 #endif
     }
@@ -1387,7 +1390,7 @@ void QtCurveStyle::polish(QWidget *widget)
         if(enableFilter)
         {
             widget->installEventFilter(this);
-#if KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
+#if defined KDE_VERSION && KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
             widget->setMouseTracking(true);
 #endif
         }
@@ -1625,7 +1628,7 @@ void QtCurveStyle::polish(QWidget *widget)
         widget->setPalette(pal);
     }
 
-    KStyle::polish(widget);
+    QTC_BASE_STYLE::polish(widget);
 }
 
 void QtCurveStyle::unPolish(QWidget *widget)
@@ -1665,7 +1668,7 @@ void QtCurveStyle::unPolish(QWidget *widget)
         if(NoBackground!=widget->backgroundMode()) //  && onToolBar(widget))
             widget->setBackgroundMode(PaletteButton);
         widget->removeEventFilter(this);
-#if KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
+#if defined KDE_VERSION && KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
         widget->setMouseTracking(false);
 #endif
     }
@@ -1737,7 +1740,7 @@ void QtCurveStyle::unPolish(QWidget *widget)
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
         widget->removeEventFilter(this);
 
-    KStyle::unPolish(widget);
+    QTC_BASE_STYLE::unPolish(widget);
 }
 
 static void sendXEvent(QDialog *dlg, const char *msg)
@@ -2162,7 +2165,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
             break;
     }
 
-    return KStyle::eventFilter(object, event);
+    return QTC_BASE_STYLE::eventFilter(object, event);
 }
 
 void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &rOrig,
@@ -2861,8 +2864,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(flags&Style_Down)
                     flags=((flags|Style_Down)^Style_Down)| Style_Sunken;
                 flags|=Style_Enabled;
-#if KDE_VERSION >= 0x30200
-#if KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
+#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined KDE_VERSION && KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
                 if(HOVER_KICKER==itsHover && itsHoverWidget) //  && itsHoverWidget==p->device())
                     flags|=Style_MouseOver;
 #endif
@@ -2870,7 +2873,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 #endif
                 drawLightBevel(p, r, cg, flags|Style_Horizontal, ROUNDED_ALL,
                                getFill(flags, use), use, true, false);
-#if KDE_VERSION >= 0x30200
+#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
                 itsFormMode=false;
 #endif
             }
@@ -3022,7 +3025,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                             ? cg.background().dark(QTC_DW_BGND)
                             : */cg.background(),
                            p, r, cg, glassMod ? flags : flags|Style_Horizontal,
-#if KDE_VERSION >= 0x30200
+#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
                            (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe) ||
 #endif
                            operaMdi || mdi
@@ -3054,7 +3057,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 drawLightBevel(p, r, cg, glassMod ? flags : flags|Style_Horizontal,
                                flags&QTC_CHECK_BUTTON
-#if KDE_VERSION >= 0x30200
+#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
                                  || (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe)
 #endif
                                     ? ROUNDED_NONE : ROUNDED_ALL,
@@ -3945,7 +3948,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         }
         case PE_StatusBarSection:
             if(opts.drawStatusBarFrames)
-                KStyle::drawPrimitive(pe, p, r, cg, flags, data);
+                QTC_BASE_STYLE::drawPrimitive(pe, p, r, cg, flags, data);
             break;
         case PE_SizeGrip:
         {
@@ -3970,7 +3973,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             break;
         }
         default:
-            KStyle::drawPrimitive(pe, p, r, cg, flags, data);
+            QTC_BASE_STYLE::drawPrimitive(pe, p, r, cg, flags, data);
     }
 }
 
@@ -4138,7 +4141,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             }
             break;
         default:
-            KStyle::drawKStylePrimitive(kpe, p, widget, r, cg, flags, opt);
+            QTC_BASE_STYLE::drawKStylePrimitive(kpe, p, widget, r, cg, flags, opt);
     }
 }
 
@@ -4763,7 +4766,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 drawMenuOrToolBarBackground(p, r, cg, false, Qt::Horizontal==wind->orientation());
             }
             else
-                KStyle::drawControl(control, p, widget, r, cg, flags, data);
+                QTC_BASE_STYLE::drawControl(control, p, widget, r, cg, flags, data);
             break;
         case CE_ProgressBarGroove:
         {
@@ -4958,7 +4961,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                   widget), cg, flags);
             }
             else
-                KStyle::drawControl(control, p, widget, r, cg, flags, data);
+                QTC_BASE_STYLE::drawControl(control, p, widget, r, cg, flags, data);
             break;
         case CE_RadioButton:
             itsFormMode=isFormWidget(widget);
@@ -5004,7 +5007,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             }
             // Fall through intentional!
         default:
-            KStyle::drawControl(control, p, widget, r, cg, flags, data);
+            QTC_BASE_STYLE::drawControl(control, p, widget, r, cg, flags, data);
     }
 }
 
@@ -5030,7 +5033,7 @@ void QtCurveStyle::drawControlMask(ControlElement control, QPainter *p, const QW
             break;
         }
         default:
-            KStyle::drawControlMask(control, p, widget, r, data);
+            QTC_BASE_STYLE::drawControlMask(control, p, widget, r, data);
     }
 }
 
@@ -5045,7 +5048,7 @@ void QtCurveStyle::drawComplexControlMask(ComplexControl control, QPainter *p, c
             drawControlMask(CE_PushButton, p, widget, r, data);
             break;
         default:
-            KStyle::drawComplexControlMask(control, p, widget, r, data);
+            QTC_BASE_STYLE::drawComplexControlMask(control, p, widget, r, data);
     }
 }
 
@@ -5091,7 +5094,7 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
         case SR_DockWindowHandleRect:
             return wrect;
         default:
-            return KStyle::subRect(subrect, widget);
+            return QTC_BASE_STYLE::subRect(subrect, widget);
     }
 
     return rect;
@@ -5169,7 +5172,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     bflags|=QTC_NO_ETCH_BUTTON;
 
                 // If we're pressed, on, or raised...
-#if KDE_VERSION >= 0x30200
+#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
                 if(bflags &(Style_Down | Style_On | Style_Raised) || onControlButtons)
 #else
                 if(bflags &(Style_Down | Style_On | Style_Raised | Style_MouseOver) ||
@@ -5932,7 +5935,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                         : widget->palette().inactive());
             const QColor    *cols(getMdiColors(cg, isActive));
             QColor          textCol(isActive ? itsActiveMdiTextColor : itsMdiTextColor),
-                            shadowCol(midColor(cols[ORIGINAL_SHADE], shadowColor(textCol)));
+                            shdCol(shadowColor(textCol)),
+                            shadowCol(midColor(cols[ORIGINAL_SHADE], shdCol));
 
             if (controls&SC_TitleBarLabel)
             {
@@ -6052,7 +6056,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             break;
         }
         default:
-            KStyle::drawComplexControl(control, p, widget, r, cg, flags, controls, active, data);
+            QTC_BASE_STYLE::drawComplexControl(control, p, widget, r, cg, flags, controls, active, data);
     }
 }
 
@@ -6103,7 +6107,7 @@ QRect QtCurveStyle::querySubControlMetrics(ComplexControl control, const QWidget
         }
         case CC_ComboBox:
         {
-            QRect r(KStyle::querySubControlMetrics(control, widget, sc, data));
+            QRect r(QTC_BASE_STYLE::querySubControlMetrics(control, widget, sc, data));
 
             if(SC_ComboBoxFrame==sc)
             {
@@ -6348,7 +6352,7 @@ QRect QtCurveStyle::querySubControlMetrics(ComplexControl control, const QWidget
             break; // Remove compiler warnings...
     }
 
-    return KStyle::querySubControlMetrics(control, widget, sc, data);
+    return QTC_BASE_STYLE::querySubControlMetrics(control, widget, sc, data);
 }
 
 int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
@@ -6370,7 +6374,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
                     ? QTabBar::RoundedAbove==tb->shape() || QTabBar::TriangularAbove==tb->shape()
                        ? 1
                        : -1
-                    : KStyle::pixelMetric(metric, widget);
+                    : QTC_BASE_STYLE::pixelMetric(metric, widget);
         }
         case PM_TabBarTabShiftHorizontal:
             return 0;
@@ -6437,7 +6441,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
         case PM_TabBarTabVSpace:
             return opts.highlightTab ? 11 : 9;
         default:
-            return KStyle::pixelMetric(metric, widget);
+            return QTC_BASE_STYLE::pixelMetric(metric, widget);
     }
 }
 
@@ -6448,7 +6452,7 @@ int QtCurveStyle::kPixelMetric(KStylePixelMetric kpm, const QWidget *widget) con
         case KPM_MenuItemSeparatorHeight:
             return 2;
         default:
-            return KStyle::kPixelMetric(kpm, widget);
+            return QTC_BASE_STYLE::kPixelMetric(kpm, widget);
     }
 }
 
@@ -6487,7 +6491,7 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
         }
         case CT_ComboBox:
         {
-            QSize sz(KStyle::sizeFromContents(contents, widget, contentsSize, data));
+            QSize sz(QTC_BASE_STYLE::sizeFromContents(contents, widget, contentsSize, data));
             return QSize(sz.width(), sz.height()+(QTC_DO_EFFECT && !isFormWidget(widget) && !opts.thinnerBtns ? 4 : 2));
         }
         case CT_PopupMenuItem:
@@ -6544,7 +6548,7 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
         }
         case CT_SpinBox:
         {
-            QSize size(KStyle::sizeFromContents(contents, widget, contentsSize, data));
+            QSize size(QTC_BASE_STYLE::sizeFromContents(contents, widget, contentsSize, data));
 
             if(!(size.height()%2))
                 size.setHeight(size.height()+1);
@@ -6561,7 +6565,7 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
             break;  // Remove compiler warnings...
     }
 
-    return KStyle::sizeFromContents(contents, widget, contentsSize, data);
+    return QTC_BASE_STYLE::sizeFromContents(contents, widget, contentsSize, data);
 }
 
 int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QStyleOption &option,
@@ -6607,7 +6611,7 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
         case SH_TabBar_Alignment:
             return AlignLeft;
         default:
-            return KStyle::styleHint(stylehint, widget, option, returnData);
+            return QTC_BASE_STYLE::styleHint(stylehint, widget, option, returnData);
     }
 }
 
@@ -7814,7 +7818,7 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
             }
             else
             {
-#if KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
+#if defined KDE_VERSION && KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
                 QToolButton *tb(::qt_cast<QToolButton *>(itsHoverWidget));
 
                 if(tb)
@@ -7940,7 +7944,7 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
 
                             }
                         }
-#if KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
+#if defined KDE_VERSION && KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
                     }
 #endif
 #if KDE_VERSION >= 0x30400
@@ -8146,17 +8150,17 @@ void QtCurveStyle::setSbType()
     switch(opts.scrollbarType)
     {
         case SCROLLBAR_KDE:
-            this->setScrollBarType(KStyle::ThreeButtonScrollBar);
+            this->setScrollBarType(QTC_BASE_STYLE::ThreeButtonScrollBar);
             break;
         default:
         case SCROLLBAR_WINDOWS:
-            this->setScrollBarType(KStyle::WindowsStyleScrollBar);
+            this->setScrollBarType(QTC_BASE_STYLE::WindowsStyleScrollBar);
             break;
         case SCROLLBAR_PLATINUM:
-            this->setScrollBarType(KStyle::PlatinumStyleScrollBar);
+            this->setScrollBarType(QTC_BASE_STYLE::PlatinumStyleScrollBar);
             break;
         case SCROLLBAR_NEXT:
-            this->setScrollBarType(KStyle::NextStyleScrollBar);
+            this->setScrollBarType(QTC_BASE_STYLE::NextStyleScrollBar);
             break;
     }
 }

@@ -16,14 +16,27 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${QTCURVE_VERSION_FULL
 set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${QTCURVE_VERSION_FULL}")
 include(CPack)
 
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
+if (NOT QTC_QT_ONLY)
+  find_package(KDE3 REQUIRED)
+  include(KDE3Macros)
+else (NOT QTC_QT_ONLY)
+    if(COMMAND cmake_policy)
+        cmake_policy(SET CMP0003 NEW)
+    endif(COMMAND cmake_policy)
+    set(QT_MT_REQUIRED TRUE)
+    find_package(Qt3 REQUIRED)
+    set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
+    include(QtCurveQt3)
+    if (QT_PLUGINS_DIR MATCHES NOTFOUND)
+        message(SEND_ERROR "ERROR: Failed to detemine Qt3 plugins folder. Please pass -DQT_PLUGINS_DIR=<folder> to cmake")
+    endif (QT_PLUGINS_DIR MATCHES NOTFOUND)
+endif (NOT QTC_QT_ONLY)
 
-find_package(KDE3 REQUIRED)
-include(KDE3Macros)
-
+if (NOT QTC_QT_ONLY)
 exec_program(kde-config
              ARGS --prefix --expandvars
              OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX)
+endif (NOT QTC_QT_ONLY)
 
 exec_program(kde-config
              ARGS --install locale --expandvars
@@ -51,25 +64,27 @@ if(NOT KDE4PREFIX)
 endif(NOT KDE4PREFIX)
 
 configure_file (config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
+if (NOT QTC_QT_ONLY)
 add_definitions(${QT_DEFINITIONS} ${KDE3_DEFINITIONS})
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE3_INCLUDES})
+else (NOT QTC_QT_ONLY)
+add_definitions(${QT_DEFINITIONS})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
+endif (NOT QTC_QT_ONLY)
 
 set(DATA_INSTALL_DIR ${KDE3PREFIX}/share/apps)
 
 if(QTC_DEFAULT_TO_KDE3)
-    message("\n**************************************************************\n"
-            "Information: Defaulting to reading KDE3 settings if \n"
-            "             KDE_SESSION_VERSION is not set\n"
-            "**************************************************************\n")
+    message("INFO: Defaulting to reading KDE3 settings if KDE_SESSION_VERSION is not set")
 else(QTC_DEFAULT_TO_KDE3)
-    message("\n**************************************************************\n"
-            "Information: Defaulting to reading KDE4 settings if \n"
-            "             KDE_SESSION_VERSION is not set\n"
-            "**************************************************************\n")
+    message("INFO: Defaulting to reading KDE4 settings if KDE_SESSION_VERSION is not set")
 endif(QTC_DEFAULT_TO_KDE3)
 
 add_subdirectory(style)
+if (NOT QTC_QT_ONLY)
 add_subdirectory(config)
 add_subdirectory(themes)
 add_subdirectory(colors)
 add_subdirectory(po)
+endif (NOT QTC_QT_ONLY)
+

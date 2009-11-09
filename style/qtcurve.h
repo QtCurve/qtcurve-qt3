@@ -51,8 +51,12 @@
 */
 
 #include "config.h"
+#ifdef QTC_QT_ONLY
+#include "qtc_kstyle.h"
+#else
 #include <kdeversion.h>
 #include <kstyle.h>
+#endif
 #include <qcolor.h>
 #include <qpoint.h>
 #include <qpalette.h>
@@ -64,7 +68,13 @@
 class QTimer;
 class QSlider;
 
-class QtCurveStyle : public KStyle
+#ifdef QTC_QT_ONLY
+#define QTC_BASE_STYLE QtCKStyle
+#else
+#define QTC_BASE_STYLE KStyle
+#endif
+
+class QtCurveStyle : public QTC_BASE_STYLE
 {
     Q_OBJECT
 
