@@ -7,10 +7,10 @@
  4. Added new splitter/handle/thumb style: single dot.
  5. Don't do coloured mouse over for buttons of editable combos, spin buttons,
     or scrollbar buttons.
- 6. Don't do regular coloured mouse over of sliders when theese are set to be
+ 6. Don't do regular coloured mouse over of sliders when these are set to be
     coloured on mouse over.
  7. Allow to specify strength when colouring selected tab.
- 8. Remove support for QtCurve styles (these appear as uniq KDE styles in the
+ 8. Remove support for QtCurve styles (these appear as unique KDE styles in the
     main KDE style selection dialog). Re-enable support by passing
     -DQTC_STYLE_SUPPORT=true to cmake.
  9. Add option to specify appearance of dock-widget titlebars.
@@ -18,7 +18,7 @@
     $XDG_CONFIG_HOME/qtcurvestylerc, and $XDG_CONFIG_HOME/qtcurve.gtk-icons if they
     exist.
 11. Use split gradient for dock-widget titlebars.
-12. Allow to compile style against jsut Qt3 - tarball includes a simplified copy
+12. Allow to compile style against just Qt3 - tarball includes a simplified copy
     of KStyle. Need to pass -DQTC_QT_ONLY to cmake. NOTE: May also need to set QTDIR
     *before* calling cmake.
     
