@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: kde3-qtcurve\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?"
 "group_id=50231&atid=459007\n"
-"POT-Creation-Date: 2009-11-04 21:13+0000\n"
+"POT-Creation-Date: 2009-11-12 20:42+0000\n"
 "PO-Revision-Date: 2009-07-04 01:44+0300\n"
 "Last-Translator: Necmettin Begiter <necmettin.begiter@gmail.com>\n"
 "Language-Team: Turkish <kde-i18n-doc@kde.org>\n"
@@ -53,487 +53,487 @@ msgstr ""
 msgid "Failed to create file: %1"
 msgstr "Dosya oluşturulamadı: %1"
 
-#: config/qtcurveconfig.cpp:144
+#: config/qtcurveconfig.cpp:146
 msgid "Select Password Character"
 msgstr "Parola Karakterini Seç"
 
 #. i18n: file: config/qtcurveconfigbase.ui:688
 #. i18n: ectx: property (text), widget (QLabel)
-#: config/qtcurveconfig.cpp:356 po/rc.cpp:124 rc.cpp:124
+#: config/qtcurveconfig.cpp:358 po/rc.cpp:124 rc.cpp:124
 msgid "Background"
 msgstr "Arkaplan"
 
-#: config/qtcurveconfig.cpp:360
+#: config/qtcurveconfig.cpp:362
 msgid "Button"
 msgstr "Düğme"
 
-#: config/qtcurveconfig.cpp:363
+#: config/qtcurveconfig.cpp:365
 msgid "Text"
 msgstr "Metin"
 
-#: config/qtcurveconfig.cpp:367 config/qtcurveconfig.cpp:409
-#: config/qtcurveconfig.cpp:461 config/qtcurveconfig.cpp:546
+#: config/qtcurveconfig.cpp:369 config/qtcurveconfig.cpp:411
+#: config/qtcurveconfig.cpp:463 config/qtcurveconfig.cpp:548
 msgid "None"
 msgstr "Yok"
 
-#: config/qtcurveconfig.cpp:371
+#: config/qtcurveconfig.cpp:373
 msgid "Custom:"
 msgstr "Özel:"
 
-#: config/qtcurveconfig.cpp:372
+#: config/qtcurveconfig.cpp:374
 msgid "Selected background"
 msgstr "Seçili arkaplan"
 
-#: config/qtcurveconfig.cpp:375
+#: config/qtcurveconfig.cpp:377
 msgid "Blended selected background"
 msgstr "Seçili arkaplanla harmanlanmış"
 
-#: config/qtcurveconfig.cpp:376
+#: config/qtcurveconfig.cpp:378
 msgid "Menu background"
 msgstr "Menü arkaplanı"
 
-#: config/qtcurveconfig.cpp:376 config/qtcurveconfig.cpp:428
+#: config/qtcurveconfig.cpp:378 config/qtcurveconfig.cpp:430
 msgid "Darken"
 msgstr "Karart"
 
-#: config/qtcurveconfig.cpp:383 config/qtcurveconfig.cpp:1218
+#: config/qtcurveconfig.cpp:385 config/qtcurveconfig.cpp:1224
 msgid "Custom gradient %1"
 msgstr "Özel eğimli %1"
 
 #. i18n: file: config/qtcurveconfigbase.ui:704
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: config/qtcurveconfig.cpp:385 po/rc.cpp:130 rc.cpp:130
+#: config/qtcurveconfig.cpp:387 po/rc.cpp:130 rc.cpp:130
 msgid "Flat"
 msgstr "Düz"
 
-#: config/qtcurveconfig.cpp:386
+#: config/qtcurveconfig.cpp:388
 msgid "Raised"
 msgstr "Yükseltilmiş"
 
-#: config/qtcurveconfig.cpp:387
+#: config/qtcurveconfig.cpp:389
 msgid "Dull glass"
 msgstr "Donuk cam"
 
-#: config/qtcurveconfig.cpp:388
+#: config/qtcurveconfig.cpp:390
 msgid "Shiny glass"
 msgstr "Parlak cam"
 
-#: config/qtcurveconfig.cpp:389
+#: config/qtcurveconfig.cpp:391
 msgid "Agua"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:390
+#: config/qtcurveconfig.cpp:392
 msgid "Soft gradient"
 msgstr "Yumuşak eğimli"
 
-#: config/qtcurveconfig.cpp:391
+#: config/qtcurveconfig.cpp:393
 msgid "Standard gradient"
 msgstr "Standart eğimli"
 
-#: config/qtcurveconfig.cpp:392
+#: config/qtcurveconfig.cpp:394
 msgid "Harsh gradient"
 msgstr "Sert eğimli"
 
-#: config/qtcurveconfig.cpp:393
+#: config/qtcurveconfig.cpp:395
 msgid "Inverted gradient"
 msgstr "Ters eğimli"
 
-#: config/qtcurveconfig.cpp:394
+#: config/qtcurveconfig.cpp:396
 #, fuzzy
 msgid "Dark inverted gradient"
 msgstr "Ters eğimli"
 
-#: config/qtcurveconfig.cpp:397
+#: config/qtcurveconfig.cpp:399
 msgid "Split gradient"
 msgstr "Ayrık eğimli"
 
-#: config/qtcurveconfig.cpp:400
+#: config/qtcurveconfig.cpp:402
 msgid "Bevelled"
 msgstr "Eğik"
 
-#: config/qtcurveconfig.cpp:402
+#: config/qtcurveconfig.cpp:404
 msgid "Fade out (popup menuitems)"
 msgstr "Sön (açılır menü öğeleri)"
 
-#: config/qtcurveconfig.cpp:410
+#: config/qtcurveconfig.cpp:412
 msgid "Sunken lines"
 msgstr "Çökmüş çizgiler"
 
-#: config/qtcurveconfig.cpp:411
+#: config/qtcurveconfig.cpp:413
 msgid "Flat lines"
 msgstr "Düz çizgiler"
 
-#: config/qtcurveconfig.cpp:412
+#: config/qtcurveconfig.cpp:414
 msgid "Dots"
 msgstr "Noktalar"
 
-#: config/qtcurveconfig.cpp:415
+#: config/qtcurveconfig.cpp:417
 #, fuzzy
 msgid "Single dot (KDE4 & Gtk2 Only)"
 msgstr "En fazla yuvarlatılmış (KDE4 ve Gtk2)"
 
-#: config/qtcurveconfig.cpp:417
+#: config/qtcurveconfig.cpp:419
 msgid "Dashes"
 msgstr "Kesik çizgiler"
 
-#: config/qtcurveconfig.cpp:423
+#: config/qtcurveconfig.cpp:425
 msgid "Corner indicator"
 msgstr "Köşe belirteci"
 
-#: config/qtcurveconfig.cpp:424
+#: config/qtcurveconfig.cpp:426
 msgid "Font color thin border"
 msgstr "Font rengi, ince kenar"
 
-#: config/qtcurveconfig.cpp:425
+#: config/qtcurveconfig.cpp:427
 msgid "Selected background thick border"
 msgstr "Seçili arkaplan, kalın kenar"
 
-#: config/qtcurveconfig.cpp:426
+#: config/qtcurveconfig.cpp:428
 msgid "Selected background tinting"
 msgstr "Seçili arkaplan tonlama"
 
-#: config/qtcurveconfig.cpp:427
+#: config/qtcurveconfig.cpp:429
 msgid "A slight glow"
 msgstr "Hafif bir parlama"
 
-#: config/qtcurveconfig.cpp:429
+#: config/qtcurveconfig.cpp:431
 msgid "No indicator"
 msgstr "Belirteç yok"
 
-#: config/qtcurveconfig.cpp:434
+#: config/qtcurveconfig.cpp:436
 msgid "KDE"
 msgstr "KDE"
 
-#: config/qtcurveconfig.cpp:435
+#: config/qtcurveconfig.cpp:437
 msgid "MS Windows"
 msgstr "MS Windows"
 
-#: config/qtcurveconfig.cpp:436
+#: config/qtcurveconfig.cpp:438
 msgid "Platinum"
 msgstr "Platin"
 
-#: config/qtcurveconfig.cpp:437
+#: config/qtcurveconfig.cpp:439
 msgid "NeXT"
 msgstr "NeXT"
 
-#: config/qtcurveconfig.cpp:438
+#: config/qtcurveconfig.cpp:440
 msgid "No buttons"
 msgstr "Düğme yok"
 
-#: config/qtcurveconfig.cpp:443
+#: config/qtcurveconfig.cpp:445
 msgid "Square"
 msgstr "Köşeli"
 
-#: config/qtcurveconfig.cpp:444
+#: config/qtcurveconfig.cpp:446
 msgid "Slightly rounded"
 msgstr "Hafif yuvarlatılmış"
 
-#: config/qtcurveconfig.cpp:445
+#: config/qtcurveconfig.cpp:447
 msgid "Fully rounded"
 msgstr "Tam yuvarlatılmış"
 
-#: config/qtcurveconfig.cpp:446
+#: config/qtcurveconfig.cpp:448
 msgid "Extra rounded (KDE4 & Gtk2)"
 msgstr "Fazladan yuvarlatılmış (KDE4 ve Gtk2)"
 
-#: config/qtcurveconfig.cpp:447
+#: config/qtcurveconfig.cpp:449
 msgid "Max rounded (KDE4 & Gtk2)"
 msgstr "En fazla yuvarlatılmış (KDE4 ve Gtk2)"
 
-#: config/qtcurveconfig.cpp:452
+#: config/qtcurveconfig.cpp:454
 msgid "No coloration"
 msgstr "Renklendirme yok"
 
-#: config/qtcurveconfig.cpp:453
+#: config/qtcurveconfig.cpp:455
 msgid "Color border"
 msgstr "Kenarlar renklendirilmiş"
 
-#: config/qtcurveconfig.cpp:454
+#: config/qtcurveconfig.cpp:456
 msgid "Thick color border"
 msgstr "Kenarlar kalın renklendirilmiş"
 
-#: config/qtcurveconfig.cpp:455
+#: config/qtcurveconfig.cpp:457
 msgid "Plastik style"
 msgstr "Plastik biçemi"
 
-#: config/qtcurveconfig.cpp:456
+#: config/qtcurveconfig.cpp:458
 msgid "Glow"
 msgstr "Parlama"
 
-#: config/qtcurveconfig.cpp:462
+#: config/qtcurveconfig.cpp:464
 msgid "Light"
 msgstr "Açık renk"
 
-#: config/qtcurveconfig.cpp:463
+#: config/qtcurveconfig.cpp:465
 msgid "Dark"
 msgstr "Koyu renk"
 
-#: config/qtcurveconfig.cpp:464
+#: config/qtcurveconfig.cpp:466
 msgid "Light (all sides)"
 msgstr "Açık renk (tüm kenarlar)"
 
-#: config/qtcurveconfig.cpp:465
+#: config/qtcurveconfig.cpp:467
 msgid "Dark (all sides)"
 msgstr "Koyu renk (tüm kenarlar)"
 
-#: config/qtcurveconfig.cpp:470 config/qtcurveconfig.cpp:485
-#: config/qtcurveconfig.cpp:492
+#: config/qtcurveconfig.cpp:472 config/qtcurveconfig.cpp:487
+#: config/qtcurveconfig.cpp:494
 msgid "Plain"
 msgstr "Düz"
 
-#: config/qtcurveconfig.cpp:471
+#: config/qtcurveconfig.cpp:473
 msgid "Etched"
 msgstr "Damgalı"
 
-#: config/qtcurveconfig.cpp:472
+#: config/qtcurveconfig.cpp:474
 msgid "Shadowed"
 msgstr "Gölgeli"
 
-#: config/qtcurveconfig.cpp:477
+#: config/qtcurveconfig.cpp:479
 msgid "Simple"
 msgstr "Basit"
 
-#: config/qtcurveconfig.cpp:478
+#: config/qtcurveconfig.cpp:480
 msgid "Use HSL color space"
 msgstr "HSL renk uzayı kullan"
 
-#: config/qtcurveconfig.cpp:479
+#: config/qtcurveconfig.cpp:481
 msgid "Use HSV color space"
 msgstr "HSV renk uzayı kullan"
 
-#: config/qtcurveconfig.cpp:480
+#: config/qtcurveconfig.cpp:482
 msgid "Use HCY color space"
 msgstr "HCY renk uzayı kullan"
 
-#: config/qtcurveconfig.cpp:486
+#: config/qtcurveconfig.cpp:488
 msgid "Striped"
 msgstr "Çizgili"
 
-#: config/qtcurveconfig.cpp:487
+#: config/qtcurveconfig.cpp:489
 msgid "Diagonal stripes"
 msgstr "Köşegen çizgili"
 
-#: config/qtcurveconfig.cpp:493
+#: config/qtcurveconfig.cpp:495
 msgid "Round"
 msgstr "Yuvarlak"
 
-#: config/qtcurveconfig.cpp:494
+#: config/qtcurveconfig.cpp:496
 msgid "Plain - rotated"
 msgstr "Düz - çevrilmiş"
 
-#: config/qtcurveconfig.cpp:495
+#: config/qtcurveconfig.cpp:497
 msgid "Round - rotated"
 msgstr "Yuvarlak - çevrilmiş"
 
-#: config/qtcurveconfig.cpp:496
+#: config/qtcurveconfig.cpp:498
 msgid "Triangular"
 msgstr "Üç köşeli"
 
-#: config/qtcurveconfig.cpp:501
+#: config/qtcurveconfig.cpp:503
 msgid "Base color"
 msgstr "Taban renk"
 
-#: config/qtcurveconfig.cpp:502
+#: config/qtcurveconfig.cpp:504
 msgid "Background color"
 msgstr "Arkaplan rengi"
 
-#: config/qtcurveconfig.cpp:503
+#: config/qtcurveconfig.cpp:505
 msgid "Darkened background color"
 msgstr "Karartılmış arkaplan rengi"
 
-#: config/qtcurveconfig.cpp:508
+#: config/qtcurveconfig.cpp:510
 msgid "Standard (dotted)"
 msgstr "Standart (noktalı)"
 
-#: config/qtcurveconfig.cpp:509
+#: config/qtcurveconfig.cpp:511
 msgid "Highlight color"
 msgstr "Vurgu rengi"
 
-#: config/qtcurveconfig.cpp:510
+#: config/qtcurveconfig.cpp:512
 msgid "Highlight color (full size)"
 msgstr "Vurgu rengi (tam boyut)"
 
-#: config/qtcurveconfig.cpp:511
+#: config/qtcurveconfig.cpp:513
 msgid "Highlight color, full, and fill (Gtk2 & KDE4 only)"
 msgstr "Vurgu rengi, dolu, ve doldur (sadece Gtk2 ve KDE4)"
 
-#: config/qtcurveconfig.cpp:512
+#: config/qtcurveconfig.cpp:514
 msgid "Line drawn with highlight color"
 msgstr "Vurgu rengiyle çizilmiş çizgi"
 
 #. i18n: file: config/qtcurveconfigbase.ui:869
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: config/qtcurveconfig.cpp:517 po/rc.cpp:166 rc.cpp:166
+#: config/qtcurveconfig.cpp:519 po/rc.cpp:166 rc.cpp:166
 msgid "No border"
 msgstr "Kenarlık yok"
 
-#: config/qtcurveconfig.cpp:518
+#: config/qtcurveconfig.cpp:520
 msgid "Light border"
 msgstr "Açık renk kenarlık"
 
-#: config/qtcurveconfig.cpp:519
+#: config/qtcurveconfig.cpp:521
 msgid "3D border (light only)"
 msgstr "3B kenarlık (sadece açık renk)"
 
-#: config/qtcurveconfig.cpp:520
+#: config/qtcurveconfig.cpp:522
 msgid "3D border (dark and light)"
 msgstr "3B kenarlık (açık ve koyu renk)"
 
-#: config/qtcurveconfig.cpp:525
+#: config/qtcurveconfig.cpp:527
 msgid "Left"
 msgstr "Sol"
 
-#: config/qtcurveconfig.cpp:526
+#: config/qtcurveconfig.cpp:528
 msgid "Center (between controls)"
 msgstr "Merkez (kontroller arası)"
 
-#: config/qtcurveconfig.cpp:527
+#: config/qtcurveconfig.cpp:529
 msgid "Center (full width)"
 msgstr "Merkez (tam genişlik)"
 
-#: config/qtcurveconfig.cpp:528
+#: config/qtcurveconfig.cpp:530
 msgid "Right"
 msgstr "Sağ"
 
-#: config/qtcurveconfig.cpp:533
+#: config/qtcurveconfig.cpp:535
 msgid "Highlight on top"
 msgstr "Vurgu yukarıda"
 
-#: config/qtcurveconfig.cpp:534
+#: config/qtcurveconfig.cpp:536
 msgid "Highlight on bottom"
 msgstr "Vurgu aşağıda"
 
-#: config/qtcurveconfig.cpp:535
+#: config/qtcurveconfig.cpp:537
 msgid "Add a slight glow"
 msgstr "Hafif bir parlama ekle"
 
-#: config/qtcurveconfig.cpp:540
+#: config/qtcurveconfig.cpp:542
 msgid "Top to bottom"
 msgstr "Yukarıdan aşağıya"
 
-#: config/qtcurveconfig.cpp:541
+#: config/qtcurveconfig.cpp:543
 msgid "Left to right"
 msgstr "Soldan sağa"
 
-#: config/qtcurveconfig.cpp:547
+#: config/qtcurveconfig.cpp:549
 msgid "New style (KDE and Gtk2 similar)"
 msgstr "Yeni biçem (KDE ve Gtk2 benzer)"
 
-#: config/qtcurveconfig.cpp:548
+#: config/qtcurveconfig.cpp:550
 msgid "Old style (KDE and Gtk2 different)"
 msgstr "Eski biçem (KDE ve Gtk2 farklı)"
 
-#: config/qtcurveconfig.cpp:617
+#: config/qtcurveconfig.cpp:621
 msgid " pixels"
 msgstr " piksel"
 
-#: config/qtcurveconfig.cpp:754
+#: config/qtcurveconfig.cpp:758
 msgid "Predefined Style"
 msgstr "Hazır Biçem"
 
-#: config/qtcurveconfig.cpp:756
+#: config/qtcurveconfig.cpp:760
 msgid "Import..."
 msgstr "İçeri Aktar..."
 
-#: config/qtcurveconfig.cpp:757
+#: config/qtcurveconfig.cpp:761
 msgid "Export..."
 msgstr "Dışarı Aktar..."
 
-#: config/qtcurveconfig.cpp:759
+#: config/qtcurveconfig.cpp:764
 msgid "Export Theme..."
 msgstr "Temayı Dışarı Aktar..."
 
-#: config/qtcurveconfig.cpp:990
+#: config/qtcurveconfig.cpp:996
 msgid "General"
 msgstr "Genel"
 
-#: config/qtcurveconfig.cpp:991
+#: config/qtcurveconfig.cpp:997
 msgid "Combos"
 msgstr "Birleşik Kutular"
 
-#: config/qtcurveconfig.cpp:992
+#: config/qtcurveconfig.cpp:998
 msgid "Spin Buttons"
 msgstr "Çevirme Düğmeleri"
 
-#: config/qtcurveconfig.cpp:993
+#: config/qtcurveconfig.cpp:999
 msgid "Splitters"
 msgstr "Ayraçlar"
 
-#: config/qtcurveconfig.cpp:994
+#: config/qtcurveconfig.cpp:1000
 msgid "Sliders and Scrollbars"
 msgstr "Sürgüler ve Kaydırma Çubukları"
 
-#: config/qtcurveconfig.cpp:995
+#: config/qtcurveconfig.cpp:1001
 msgid "Progressbars"
 msgstr "İlerleme Çubukları"
 
-#: config/qtcurveconfig.cpp:996
+#: config/qtcurveconfig.cpp:1002
 msgid "Default Button"
 msgstr "Varsayılan Düğme"
 
-#: config/qtcurveconfig.cpp:997
+#: config/qtcurveconfig.cpp:1003
 msgid "Mouse-over"
 msgstr "Fare Altında"
 
-#: config/qtcurveconfig.cpp:998
+#: config/qtcurveconfig.cpp:1004
 msgid "Listviews"
 msgstr "Listeler"
 
-#: config/qtcurveconfig.cpp:999
+#: config/qtcurveconfig.cpp:1005
 msgid "Scrollviews"
 msgstr "Kaydırma Kutuları"
 
-#: config/qtcurveconfig.cpp:1000
+#: config/qtcurveconfig.cpp:1006
 msgid "Tabs"
 msgstr "Sekmeler"
 
-#: config/qtcurveconfig.cpp:1001
+#: config/qtcurveconfig.cpp:1007
 msgid "Checks and Radios"
 msgstr "İşaretleme ve Seçme Kutuları"
 
-#: config/qtcurveconfig.cpp:1002
+#: config/qtcurveconfig.cpp:1008
 #, fuzzy
 msgid "Windows"
 msgstr "MS Windows"
 
-#: config/qtcurveconfig.cpp:1003
+#: config/qtcurveconfig.cpp:1009
 msgid "Menus and Toolbars"
 msgstr "Menüler ve Araç Çubukları"
 
-#: config/qtcurveconfig.cpp:1004
+#: config/qtcurveconfig.cpp:1010
 #, fuzzy
 msgid "Dock windows"
 msgstr "MS Windows"
 
-#: config/qtcurveconfig.cpp:1005
+#: config/qtcurveconfig.cpp:1011
 msgid "Advanced Settings"
 msgstr "Gelişmiş Seçenekler"
 
-#: config/qtcurveconfig.cpp:1006
+#: config/qtcurveconfig.cpp:1012
 msgid "Custom Gradients"
 msgstr "Özel Eğimler"
 
-#: config/qtcurveconfig.cpp:1007
+#: config/qtcurveconfig.cpp:1013
 msgid "Custom Shades"
 msgstr "Özel Gölgeler"
 
-#: config/qtcurveconfig.cpp:1231
+#: config/qtcurveconfig.cpp:1237
 msgid "Add"
 msgstr "Ekle"
 
-#: config/qtcurveconfig.cpp:1232
+#: config/qtcurveconfig.cpp:1238
 msgid "Remove"
 msgstr "Kaldır"
 
-#: config/qtcurveconfig.cpp:1233
+#: config/qtcurveconfig.cpp:1239
 msgid "Update"
 msgstr "Güncelle"
 
-#: config/qtcurveconfig.cpp:1343 config/qtcurveconfig.cpp:1353
+#: config/qtcurveconfig.cpp:1349 config/qtcurveconfig.cpp:1359
 msgid "*"
 msgstr "*"
 
-#: config/qtcurveconfig.cpp:1369
+#: config/qtcurveconfig.cpp:1375
 msgid ""
 "Could not write to file:\n"
 "%1"
