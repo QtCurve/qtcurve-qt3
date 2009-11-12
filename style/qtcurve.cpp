@@ -235,6 +235,7 @@ static QString kdeHome(bool kde3=false)
     return kdeHome[kde3 ? 0 : 1];
 }
 
+#ifdef QTC_STYLE_SUPPORT
 static void getStyles(const QString &dir, const char *sub, QStringList &styles)
 {
     QDir d(dir+sub);
@@ -278,6 +279,7 @@ static QString themeFile(const QString &dir, const QString &n, bool kde3=true)
         name=themeFile(dir, n, kde3 ? QTC_THEME_DIR4 : QTC_THEME_DIR);
     return name;
 }
+#endif
 
 class QtCurveStylePlugin : public QStylePlugin
 {
@@ -290,10 +292,12 @@ class QtCurveStylePlugin : public QStylePlugin
         QStringList list;
         list << "QtCurve";
 
+#ifdef QTC_STYLE_SUPPORT
         getStyles(kdeHome(useQt3Settings()), list);
         getStyles(kdeHome(!useQt3Settings()), list);
         getStyles(KDE_PREFIX(useQt3Settings() ? 3 : 4), list);
         getStyles(KDE_PREFIX(useQt3Settings() ? 4 : 3), list);
+#endif
 
         return list;
     }
@@ -302,8 +306,10 @@ class QtCurveStylePlugin : public QStylePlugin
     {
         return "qtcurve"==s.lower()
                     ? new QtCurveStyle
+#ifdef QTC_STYLE_SUPPORT
                     : 0==s.find(QTC_THEME_PREFIX)
                         ? new QtCurveStyle(s)
+#endif
                         : 0;
     }
 };
@@ -739,7 +745,11 @@ static void drawArrow(QPainter *p, const QRect &r, const QColor &col, QStyle::Pr
     p->restore();
 }
 
+#ifdef QTC_STYLE_SUPPORT
 QtCurveStyle::QtCurveStyle(const QString &name)
+#else
+QtCurveStyle::QtCurveStyle()
+#endif
             : QTC_BASE_STYLE(AllowMenuTransparency, WindowsStyleScrollBar),
               itsSliderCols(0L),
               itsDefBtnCols(0L),
@@ -765,8 +775,8 @@ QtCurveStyle::QtCurveStyle(const QString &name)
               itsActive(true),
               itsIsSpecialHover(false)
 {
+#ifdef QTC_STYLE_SUPPORT
     QString rcFile;
-
     if(!name.isEmpty())
     {
         rcFile=themeFile(kdeHome(), name, useQt3Settings());
@@ -784,6 +794,10 @@ QtCurveStyle::QtCurveStyle(const QString &name)
     }
 
     readConfig(rcFile, &opts);
+#else
+    readConfig(QString(), &opts);
+#endif
+
     opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", QTC_DEFAULT_CONTRAST);
     if(opts.contrast<0 || opts.contrast>10)
         opts.contrast=QTC_DEFAULT_CONTRAST;

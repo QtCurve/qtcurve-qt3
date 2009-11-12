@@ -32,7 +32,9 @@
 class QPopupMenu;
 class QListViewItem;
 class KDoubleNumInput;
+#ifdef QTC_STYLE_SUPPORT
 class CExportThemeDialog;
+#endif
 class CStackItem;
 class QtCurveConfig;
 
@@ -140,7 +142,9 @@ class QtCurveConfig : public QtCurveConfigBase
     Options            currentStyle,
                        defaultStyle;
     QMap<int, QString> styles;
+#ifdef QTC_STYLE_SUPPORT
     CExportThemeDialog *exportDialog;
+#endif
     CGradientPreview   *gradPreview;
     GradientCont       customGradient;
     KDoubleNumInput    *shadeVals[NUM_STD_SHADES];

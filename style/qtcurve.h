@@ -124,8 +124,13 @@ class QtCurveStyle : public QTC_BASE_STYLE
         ENTRY_MOUSE_OVER,
         ENTRY_NONE
     };
-    
+
+#ifdef QTC_STYLE_SUPPORT
     QtCurveStyle(const QString &name=QString());
+#else
+    QtCurveStyle();
+#endif
+
     virtual ~QtCurveStyle();
 
     void polish(QApplication *app);

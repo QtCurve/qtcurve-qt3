@@ -19,7 +19,9 @@
 */
 
 #include "qtcurveconfig.h"
+#ifdef QTC_STYLE_SUPPORT
 #include "exportthemedialog.h"
+#endif
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
@@ -550,7 +552,9 @@ static void insertLvLinesEntries(QComboBox *combo)
 
 QtCurveConfig::QtCurveConfig(QWidget *parent)
              : QtCurveConfigBase(parent),
+#ifdef QTC_STYLE_SUPPORT
                exportDialog(NULL),
+#endif
                gradPreview(NULL),
                lastCategory(NULL)
 {
@@ -755,8 +759,10 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     menu->insertSeparator();
     menu->insertItem(i18n("Import..."), this, SLOT(importStyle()));
     menu->insertItem(i18n("Export..."), this, SLOT(exportStyle()));
+#ifdef QTC_STYLE_SUPPORT
     menu->insertSeparator();
     menu->insertItem(i18n("Export Theme..."), this, SLOT(exportTheme()));
+#endif
 
     loadStyles(subMenu);
     setupGradientsTab();
@@ -1372,6 +1378,7 @@ void QtCurveConfig::exportStyle()
 
 void QtCurveConfig::exportTheme()
 {
+#ifdef QTC_STYLE_SUPPORT
     if(!exportDialog)
         exportDialog=new CExportThemeDialog(this);
 
@@ -1379,6 +1386,7 @@ void QtCurveConfig::exportTheme()
 
     setOptions(opts);
     exportDialog->run(opts);
+#endif
 }
 
 void QtCurveConfig::loadStyle(const QString &file)

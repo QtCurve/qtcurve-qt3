@@ -10,12 +10,15 @@
  6. Don't do regular coloured mouse over of sliders when theese are set to be
     coloured on mouse over.
  7. Allow to specify strength when colouring selected tab.
- 8. Add option to specify appearance of dock-widget titlebars.
- 9. When saving settings to $XDG_CONFIG_HOME/qtcurve/stylerc, remove the older
+ 8. Remove support for QtCurve styles (these appear as uniq KDE styles in the
+    main KDE style selection dialog). Re-enable support by passing
+    -DQTC_STYLE_SUPPORT=true to cmake.
+ 9. Add option to specify appearance of dock-widget titlebars.
+10. When saving settings to $XDG_CONFIG_HOME/qtcurve/stylerc, remove the older
     $XDG_CONFIG_HOME/qtcurvestylerc, and $XDG_CONFIG_HOME/qtcurve.gtk-icons if they
     exist.
-10. Use split gradient for dock-widget titlebars.
-11. Allow to compile style against jsut Qt3 - tarball includes a simplified copy
+11. Use split gradient for dock-widget titlebars.
+12. Allow to compile style against jsut Qt3 - tarball includes a simplified copy
     of KStyle. Need to pass -DQTC_QT_ONLY to cmake. NOTE: May also need to set QTDIR
     *before* calling cmake.
     
