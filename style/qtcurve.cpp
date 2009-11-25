@@ -122,7 +122,7 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <X11/Xatom.h>
 #include "qtc_fixx11h.h"
 
-#define QTC_MO_ARROW_X(FLAGS, COL) (MO_NONE!=opts.coloredMouseOver && FLAGS&Style_MouseOver && FLAGS&Style_Enabled ? itsMouseOverCols[QT_STD_BORDER] : COL)
+#define QTC_MO_ARROW_X(FLAGS, COL) (MO_NONE!=opts.coloredMouseOver && FLAGS&Style_MouseOver && FLAGS&Style_Enabled ? itsMouseOverCols[QT_ARROW_MO] : COL)
 #define QTC_MO_ARROW(COL)          QTC_MO_ARROW_X(flags, COL)
 
 static const int constMenuPixmapWidth=22;

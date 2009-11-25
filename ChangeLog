@@ -13,12 +13,13 @@
  8. Remove support for QtCurve styles (these appear as unique KDE styles in the
     main KDE style selection dialog). Re-enable support by passing
     -DQTC_STYLE_SUPPORT=true to cmake.
- 9. Add option to specify appearance of dock-widget titlebars.
-10. When saving settings to $XDG_CONFIG_HOME/qtcurve/stylerc, remove the older
+ 9. Slightly lighter shade used for coloured mouse over of arrows.
+10. Add option to specify appearance of dock-widget titlebars.
+11. When saving settings to $XDG_CONFIG_HOME/qtcurve/stylerc, remove the older
     $XDG_CONFIG_HOME/qtcurvestylerc, and $XDG_CONFIG_HOME/qtcurve.gtk-icons if they
     exist.
-11. Use split gradient for dock-widget titlebars.
-12. Allow to compile style against just Qt3 - tarball includes a simplified copy
+12. Use split gradient for dock-widget titlebars.
+13. Allow to compile style against just Qt3 - tarball includes a simplified copy
     of KStyle. Need to pass -DQTC_QT_ONLY to cmake. NOTE: May also need to set QTDIR
     *before* calling cmake.
     
