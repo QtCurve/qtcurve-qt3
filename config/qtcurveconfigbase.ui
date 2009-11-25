@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>754</width>
+            <width>862</width>
             <height>638</height>
         </rect>
     </property>
@@ -475,11 +475,6 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QComboBox" row="0" column="1">
-                        <property name="name">
-                            <cstring>splitters</cstring>
-                        </property>
-                    </widget>
                     <widget class="QLabel" row="0" column="0">
                         <property name="name">
                             <cstring>textLabel4</cstring>
@@ -488,23 +483,6 @@
                             <string>Markings:</string>
                         </property>
                     </widget>
-                    <spacer row="0" column="2">
-                        <property name="name">
-                            <cstring>spacer11</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>406</width>
-                                <height>16</height>
-                            </size>
-                        </property>
-                    </spacer>
                     <spacer row="2" column="1">
                         <property name="name">
                             <cstring>spacer12_2</cstring>
@@ -522,12 +500,42 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                    <widget class="KIntNumInput" row="1" column="1">
                         <property name="name">
                             <cstring>splitterHighlight</cstring>
                         </property>
+                        <property name="suffix">
+                            <string>%</string>
+                        </property>
+                    </widget>
+                    <spacer row="0" column="2">
+                        <property name="name">
+                            <cstring>spacer11</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>461</width>
+                                <height>16</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QComboBox" row="0" column="1">
+                        <property name="name">
+                            <cstring>splitters</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_21</cstring>
+                        </property>
                         <property name="text">
-                            <string>Highlight background on mouse-over</string>
+                            <string>Background mouse-over highlight:</string>
                         </property>
                     </widget>
                 </grid>
@@ -1260,11 +1268,11 @@ None - no buttons, only the slider</string>
                         <property name="name">
                             <cstring>colorSelTab</cstring>
                         </property>
-                        <property name="prefix">
-                            <string>Tint by </string>
-                        </property>
                         <property name="suffix">
                             <string>%</string>
+                        </property>
+                        <property name="prefix">
+                            <string>Tint by </string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="2" column="0">
@@ -1429,14 +1437,6 @@ None - no buttons, only the slider</string>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="4">
-                        <property name="name">
-                            <cstring>crHighlight</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Highlight text background on mouse-over</string>
-                        </property>
-                    </widget>
                     <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>crButton</cstring>
@@ -1459,6 +1459,22 @@ None - no buttons, only the slider</string>
                         </property>
                         <property name="text">
                             <string>Color when selected</string>
+                        </property>
+                    </widget>
+                    <widget class="KIntNumInput" row="3" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>crHighlight</cstring>
+                        </property>
+                        <property name="suffix">
+                            <string>%</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel2_6</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Background mouse-over highlight:</string>
                         </property>
                     </widget>
                 </grid>
@@ -1948,7 +1964,7 @@ None - no buttons, only the slider</string>
                     </widget>
                 </grid>
             </widget>
-<widget class="QWidget">
+            <widget class="QWidget">
                 <property name="name">
                     <cstring>WStackPage</cstring>
                 </property>
@@ -2713,6 +2729,13 @@ None - no buttons, only the slider</string>
 <includehints>
     <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
@@ -2721,7 +2744,6 @@ None - no buttons, only the slider</string>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>

@@ -3351,7 +3351,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 p->save();
 
                 p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
-                               ? shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)) : cg.background());
+                               ? shade(cg.background(), QTC_TO_FACTOR(opts.crHighlight)) : cg.background());
 
                 if(doEtch && !glow && opts.crButton && !drawSunken && EFFECT_SHADOW==opts.buttonEffect)
                 {
@@ -3491,7 +3491,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 color=shade(color, QTC_TO_FACTOR(opts.tabBgnd));
                 
             p->fillRect(r, flags&Style_MouseOver && opts.splitterHighlight
-                            ? shade(color, QTC_TO_FACTOR(opts.highlightFactor))
+                            ? shade(color, QTC_TO_FACTOR(opts.splitterHighlight))
                             : color);
 
             switch(opts.splitters)
@@ -4962,7 +4962,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
                     r-=visualRect(subRect(SR_CheckBoxIndicator, widget), widget);
                     p->setClipRegion(r);
-                    p->fillRect(checkbox->rect(), shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)));
+                    p->fillRect(checkbox->rect(), shade(cg.background(), QTC_TO_FACTOR(opts.crHighlight)));
                     p->setClipping(false);
                 }
                 int alignment(QApplication::reverseLayout() ? AlignRight : AlignLeft);
@@ -5005,7 +5005,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
                     r-=visualRect(subRect(SR_RadioButtonIndicator, widget), widget);
                     p->setClipRegion(r);
-                    p->fillRect(radiobutton->rect(), shade(cg.background(), QTC_TO_FACTOR(opts.highlightFactor)));
+                    p->fillRect(radiobutton->rect(), shade(cg.background(), QTC_TO_FACTOR(opts.crHighlight)));
                     p->setClipping(false);
                 }
 

@@ -4,23 +4,25 @@
  2. Added option to use a smaller dot for radios.
  3. Added option to control whether the background of splitters should be
     highlighted on mouse over.
- 4. Added new splitter/handle/thumb style: single dot.
- 5. Don't do coloured mouse over for buttons of editable combos, spin buttons,
+ 4. Made check/radio and splitter highlight options a configurable % - i.e.
+    not based on standard hightlight %
+ 5. Added new splitter/handle/thumb style: single dot.
+ 6. Don't do coloured mouse over for buttons of editable combos, spin buttons,
     or scrollbar buttons.
- 6. Don't do regular coloured mouse over of sliders when these are set to be
+ 7. Don't do regular coloured mouse over of sliders when these are set to be
     coloured on mouse over.
- 7. Allow to specify strength when colouring selected tab.
- 8. Remove support for QtCurve styles (these appear as unique KDE styles in the
+ 8. Allow to specify strength when colouring selected tab.
+ 9. Remove support for QtCurve styles (these appear as unique KDE styles in the
     main KDE style selection dialog). Re-enable support by passing
     -DQTC_STYLE_SUPPORT=true to cmake.
- 9. Slightly lighter shade used for coloured mouse over of arrows.
-10. Add option to specify appearance of dock-widget titlebars.
-11. When saving settings to $XDG_CONFIG_HOME/qtcurve/stylerc, remove the older
+10. Slightly lighter shade used for coloured mouse over of arrows.
+11. Add option to specify appearance of dock-widget titlebars.
+12. When saving settings to $XDG_CONFIG_HOME/qtcurve/stylerc, remove the older
     $XDG_CONFIG_HOME/qtcurvestylerc, and $XDG_CONFIG_HOME/qtcurve.gtk-icons if they
     exist.
-12. Use split gradient for dock-widget titlebars.
-13. Reduce number of supplied presets.
-14. Allow to compile style against just Qt3 - tarball includes a simplified copy
+13. Use split gradient for dock-widget titlebars.
+14. Reduce number of supplied presets.
+15. Allow to compile style against just Qt3 - tarball includes a simplified copy
     of KStyle. Need to pass -DQTC_QT_ONLY to cmake. NOTE: May also need to set QTDIR
     *before* calling cmake.
     
