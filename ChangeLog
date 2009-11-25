@@ -19,7 +19,8 @@
     $XDG_CONFIG_HOME/qtcurvestylerc, and $XDG_CONFIG_HOME/qtcurve.gtk-icons if they
     exist.
 12. Use split gradient for dock-widget titlebars.
-13. Allow to compile style against just Qt3 - tarball includes a simplified copy
+13. Reduce number of supplied presets.
+14. Allow to compile style against just Qt3 - tarball includes a simplified copy
     of KStyle. Need to pass -DQTC_QT_ONLY to cmake. NOTE: May also need to set QTDIR
     *before* calling cmake.
     
