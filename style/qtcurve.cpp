@@ -3350,8 +3350,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 p->save();
 
-                p->fillRect(r, opts.crHighlight && sflags&Style_MouseOver
-                               ? shade(cg.background(), QTC_TO_FACTOR(opts.crHighlight)) : cg.background());
+                if(opts.crHighlight && sflags&Style_MouseOver)
+                    drawBevelGradient(shade(cg.background(), QTC_TO_FACTOR(opts.crHighlight)), p, r, true,
+                                      false, opts.selectionAppearance, WIDGET_SELECTION);
+                else
+                    p->fillRect(r, cg.background());
 
                 if(doEtch && !glow && opts.crButton && !drawSunken && EFFECT_SHADOW==opts.buttonEffect)
                 {
@@ -4962,7 +4965,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
                     r-=visualRect(subRect(SR_CheckBoxIndicator, widget), widget);
                     p->setClipRegion(r);
-                    p->fillRect(checkbox->rect(), shade(cg.background(), QTC_TO_FACTOR(opts.crHighlight)));
+                    drawBevelGradient(shade(cg.background(), QTC_TO_FACTOR(opts.crHighlight)), p, checkbox->rect(), true,
+                                      false, opts.selectionAppearance, WIDGET_SELECTION);
                     p->setClipping(false);
                 }
                 int alignment(QApplication::reverseLayout() ? AlignRight : AlignLeft);
@@ -5005,7 +5009,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
                     r-=visualRect(subRect(SR_RadioButtonIndicator, widget), widget);
                     p->setClipRegion(r);
-                    p->fillRect(radiobutton->rect(), shade(cg.background(), QTC_TO_FACTOR(opts.crHighlight)));
+                    drawBevelGradient(shade(cg.background(), QTC_TO_FACTOR(opts.crHighlight)), p, radiobutton->rect(), true,
+                                      false, opts.selectionAppearance, WIDGET_SELECTION);
                     p->setClipping(false);
                 }
 
