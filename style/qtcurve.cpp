@@ -3493,9 +3493,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             if(0!=opts.tabBgnd && p->device() && inStackWidget(dynamic_cast<const QWidget *>(p->device())))
                 color=shade(color, QTC_TO_FACTOR(opts.tabBgnd));
                 
-            p->fillRect(r, flags&Style_MouseOver && opts.splitterHighlight
-                            ? shade(color, QTC_TO_FACTOR(opts.splitterHighlight))
-                            : color);
+            if(flags&Style_MouseOver && opts.splitterHighlight)
+                drawBevelGradient(shade(cg.background(), QTC_TO_FACTOR(opts.splitterHighlight)), p, r, !(flags&Style_Horizontal),
+                                  false, opts.selectionAppearance, WIDGET_SELECTION);
+            else
+                p->fillRect(r, color);
 
             switch(opts.splitters)
             {
