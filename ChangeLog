@@ -23,8 +23,9 @@
 14. Use split gradient for dock-widget titlebars.
 15. Reduce number of supplied presets.
 16. Allow to compile style against just Qt3 - tarball includes a simplified copy
-    of KStyle. Need to pass -DQTC_QT_ONLY to cmake. NOTE: May also need to set QTDIR
+    of KStyle. Need to pass -DQTC_QT_ONLY=true to cmake. NOTE: May also need to set QTDIR
     *before* calling cmake.
+17. If KDE3 development files not found, then automatically set -DQTC_QT_ONLY=true
     
 0.69.1
 ------
