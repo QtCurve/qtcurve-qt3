@@ -1094,6 +1094,11 @@ void QtCurveStyle::polish(QApplication *app)
             opts.scrollbarType=SCROLLBAR_WINDOWS;
         setSbType();
     }
+
+    if(SHADE_NONE!=opts.menuStripe && opts.noMenuStripeApps.contains(appName))
+        opts.menuStripe=SHADE_NONE;
+    if(opts.fixParentlessDialogs && opts.noDlgFixApps.contains(appName))
+        opts.fixParentlessDialogs=false;
 }
 
 void QtCurveStyle::polish(QPalette &pal)
