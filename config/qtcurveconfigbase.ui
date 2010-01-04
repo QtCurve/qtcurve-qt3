@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>754</width>
+            <width>862</width>
             <height>638</height>
         </rect>
     </property>
@@ -475,17 +475,37 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QComboBox" row="0" column="1">
-                        <property name="name">
-                            <cstring>splitters</cstring>
-                        </property>
-                    </widget>
                     <widget class="QLabel" row="0" column="0">
                         <property name="name">
                             <cstring>textLabel4</cstring>
                         </property>
                         <property name="text">
                             <string>Markings:</string>
+                        </property>
+                    </widget>
+                    <spacer row="2" column="1">
+                        <property name="name">
+                            <cstring>spacer12_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>16</width>
+                                <height>482</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="KIntNumInput" row="1" column="1">
+                        <property name="name">
+                            <cstring>splitterHighlight</cstring>
+                        </property>
+                        <property name="suffix">
+                            <string>%</string>
                         </property>
                     </widget>
                     <spacer row="0" column="2">
@@ -500,28 +520,24 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>53</width>
-                                <height>7</height>
+                                <width>461</width>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
-                    <spacer row="1" column="1">
+                    <widget class="QComboBox" row="0" column="1">
                         <property name="name">
-                            <cstring>spacer12_2</cstring>
+                            <cstring>splitters</cstring>
                         </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_21</cstring>
                         </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
+                        <property name="text">
+                            <string>Background mouse-over highlight:</string>
                         </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>3</width>
-                                <height>19</height>
-                            </size>
-                        </property>
-                    </spacer>
+                    </widget>
                 </grid>
             </widget>
             <widget class="QWidget">
@@ -1248,20 +1264,15 @@ None - no buttons, only the slider</string>
                             <string>This will cause a coloured stripe to be drawn over the current tab.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="0" column="3">
+                    <widget class="KIntNumInput" row="0" column="3">
                         <property name="name">
                             <cstring>colorSelTab</cstring>
                         </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
+                        <property name="suffix">
+                            <string>%</string>
                         </property>
-                        <property name="text">
-                            <string>Color</string>
+                        <property name="prefix">
+                            <string>Tint by </string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="2" column="0">
@@ -1392,14 +1403,6 @@ None - no buttons, only the slider</string>
                             <string>'X' style checkmarks</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="4">
-                        <property name="name">
-                            <cstring>crHighlight</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Highlight text background</string>
-                        </property>
-                    </widget>
                     <spacer row="0" column="4">
                         <property name="name">
                             <cstring>spacer25</cstring>
@@ -1417,7 +1420,7 @@ None - no buttons, only the slider</string>
                             </size>
                         </property>
                     </spacer>
-                    <spacer row="4" column="2">
+                    <spacer row="6" column="2">
                         <property name="name">
                             <cstring>spacer26</cstring>
                         </property>
@@ -1430,16 +1433,48 @@ None - no buttons, only the slider</string>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>360</height>
+                                <height>364</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>crButton</cstring>
                         </property>
                         <property name="text">
                             <string>Button like</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>smallRadio</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Small radio 'dot'</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>crColor</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Color when selected</string>
+                        </property>
+                    </widget>
+                    <widget class="KIntNumInput" row="3" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>crHighlight</cstring>
+                        </property>
+                        <property name="suffix">
+                            <string>%</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel2_6</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Background mouse-over highlight:</string>
                         </property>
                     </widget>
                 </grid>
@@ -1940,6 +1975,66 @@ None - no buttons, only the slider</string>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_20</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Titlebar appearance:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="1" column="2">
+                        <property name="name">
+                            <cstring>dwtAppearance</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="0" column="3">
+                        <property name="name">
+                            <cstring>spacer28_4</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>18</width>
+                                <height>3</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="2" column="1">
+                        <property name="name">
+                            <cstring>spacer29</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>6</width>
+                                <height>85</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>WStackPage</cstring>
+                </property>
+                <attribute name="id">
+                    <number>15</number>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
                     <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>fixParentlessDialogs</cstring>
@@ -2027,7 +2122,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>15</number>
+                    <number>16</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -2293,7 +2388,7 @@ None - no buttons, only the slider</string>
                     <cstring>WStackPage</cstring>
                 </property>
                 <attribute name="id">
-                    <number>16</number>
+                    <number>17</number>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -2521,6 +2616,7 @@ None - no buttons, only the slider</string>
     <tabstop>unifySpinBtns</tabstop>
     <tabstop>unifySpin</tabstop>
     <tabstop>splitters</tabstop>
+    <tabstop>splitterHighlight</tabstop>
     <tabstop>sliderAppearance</tabstop>
     <tabstop>shadeSliders</tabstop>
     <tabstop>customSlidersColor</tabstop>
@@ -2568,8 +2664,10 @@ None - no buttons, only the slider</string>
     <tabstop>shadeCheckRadio</tabstop>
     <tabstop>customCheckRadioColor</tabstop>
     <tabstop>xCheck</tabstop>
+    <tabstop>smallRadio</tabstop>
     <tabstop>crHighlight</tabstop>
     <tabstop>crButton</tabstop>
+    <tabstop>crColor</tabstop>
     <tabstop>titlebarAppearance</tabstop>
     <tabstop>inactiveTitlebarAppearance</tabstop>
     <tabstop>titlebarButtonAppearance</tabstop>
@@ -2603,6 +2701,7 @@ None - no buttons, only the slider</string>
     <tabstop>popupBorder</tabstop>
     <tabstop>toolbarAppearance</tabstop>
     <tabstop>toolbarSeparators</tabstop>
+    <tabstop>dwtAppearance</tabstop>
     <tabstop>gtkButtonOrder</tabstop>
     <tabstop>mapKdeIcons</tabstop>
     <tabstop>fixParentlessDialogs</tabstop>
@@ -2630,6 +2729,13 @@ None - no buttons, only the slider</string>
 <includehints>
     <includehint>kpushbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
@@ -2638,7 +2744,6 @@ None - no buttons, only the slider</string>
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>

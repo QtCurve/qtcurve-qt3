@@ -5,6 +5,8 @@
 #define KDE3PREFIX  "@KDE3PREFIX@"
 #define KDE4PREFIX  "@KDE4PREFIX@"
 
+#cmakedefine QTC_QT_ONLY
 #cmakedefine QTC_DEFAULT_TO_KDE3
+#cmakedefine QTC_STYLE_SUPPORT
 
 #endif

@@ -1,5 +1,5 @@
 /*
-  QtCurve (C) Craig Drummond, 2003 - 2009 craig_p_drummond@yahoo.co.uk
+  QtCurve (C) Craig Drummond, 2003 - 2010 craig.p.drummond@googlemail.com
 
   ----
 
@@ -19,7 +19,9 @@
 */
 
 #include "qtcurveconfig.h"
+#ifdef QTC_STYLE_SUPPORT
 #include "exportthemedialog.h"
+#endif
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
@@ -404,14 +406,18 @@ static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=
     }
 }
 
-static void insertLineEntries(QComboBox *combo, bool dashes)
+static void insertLineEntries(QComboBox *combo, bool singleDot, bool dashes)
 {
     combo->insertItem(i18n("None"));
     combo->insertItem(i18n("Sunken lines"));
     combo->insertItem(i18n("Flat lines"));
     combo->insertItem(i18n("Dots"));
-    if(dashes)
-        combo->insertItem(i18n("Dashes"));
+    if(singleDot)
+    {
+        combo->insertItem(i18n("Single dot (KDE4 & Gtk2 Only)"));
+        if(dashes)
+            combo->insertItem(i18n("Dashes"));
+    }
 }
 
 static void insertDefBtnEntries(QComboBox *combo)
@@ -546,7 +552,9 @@ static void insertLvLinesEntries(QComboBox *combo)
 
 QtCurveConfig::QtCurveConfig(QWidget *parent)
              : QtCurveConfigBase(parent),
+#ifdef QTC_STYLE_SUPPORT
                exportDialog(NULL),
+#endif
                gradPreview(NULL),
                lastCategory(NULL)
 {
@@ -577,10 +585,11 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(sbarBgndAppearance);
     insertAppearanceEntries(sliderFill);
     insertAppearanceEntries(menuBgndAppearance);
-    insertLineEntries(handles, true);
-    insertLineEntries(sliderThumbs, false);
-    insertLineEntries(toolbarSeparators, false);
-    insertLineEntries(splitters, true);
+    insertAppearanceEntries(dwtAppearance);
+    insertLineEntries(handles, true, true);
+    insertLineEntries(sliderThumbs, true, false);
+    insertLineEntries(toolbarSeparators, false, false);
+    insertLineEntries(splitters, true, true);
     insertDefBtnEntries(defBtnIndicator);
     insertScrollbarEntries(scrollbarType);
     insertRoundEntries(round);
@@ -601,6 +610,12 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     highlightFactor->setRange(MIN_HIGHLIGHT_FACTOR, MAX_HIGHLIGHT_FACTOR);
     highlightFactor->setValue(DEFAULT_HIGHLIGHT_FACTOR);
 
+    crHighlight->setRange(MIN_HIGHLIGHT_FACTOR, MAX_HIGHLIGHT_FACTOR);
+    crHighlight->setValue(DEFAULT_CR_HIGHLIGHT_FACTOR);
+
+    splitterHighlight->setRange(MIN_HIGHLIGHT_FACTOR, MAX_HIGHLIGHT_FACTOR);
+    splitterHighlight->setValue(DEFAULT_SPLITTER_HIGHLIGHT_FACTOR);
+
     lighterPopupMenuBgnd->setRange(MIN_LIGHTER_POPUP_MENU, MAX_LIGHTER_POPUP_MENU, 1, false);
     lighterPopupMenuBgnd->setValue(DEF_POPUPMENU_LIGHT_FACTOR);
 
@@ -613,6 +628,9 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
 
     tabBgnd->setRange(MIN_TAB_BGND, MAX_TAB_BGND, 1, false);
     tabBgnd->setValue(DEF_TAB_BGND);
+
+    colorSelTab->setRange(MIN_COLOR_SEL_TAB_FACTOR, MAX_COLOR_SEL_TAB_FACTOR, 5, false);
+    colorSelTab->setValue(DEF_COLOR_SEL_TAB_FACTOR);
 
     connect(lighterPopupMenuBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(tabBgnd, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
@@ -658,9 +676,9 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(unifyCombo, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(vArrows, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(xCheck, SIGNAL(toggled(bool)), SLOT(updateChanged()));
-    connect(crHighlight, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(crHighlight, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(crButton, SIGNAL(toggled(bool)), SLOT(updateChanged()));
-    connect(colorSelTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(colorSelTab, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(roundAllTabs, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(borderTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(borderInactiveTab, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -712,6 +730,10 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     connect(titlebarBorder, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(sbarBgndAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
     connect(sliderFill, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(dwtAppearance, SIGNAL(activated(int)), SLOT(updateChanged()));
+    connect(crColor, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(smallRadio, SIGNAL(toggled(bool)), SLOT(updateChanged()));
+    connect(splitterHighlight, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
     connect(gtkComboMenus, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(gtkButtonOrder, SIGNAL(toggled(bool)), SLOT(updateChanged()));
     connect(mapKdeIcons, SIGNAL(toggled(bool)), SLOT(updateChanged()));
@@ -743,8 +765,10 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     menu->insertSeparator();
     menu->insertItem(i18n("Import..."), this, SLOT(importStyle()));
     menu->insertItem(i18n("Export..."), this, SLOT(exportStyle()));
+#ifdef QTC_STYLE_SUPPORT
     menu->insertSeparator();
     menu->insertItem(i18n("Export Theme..."), this, SLOT(exportTheme()));
+#endif
 
     loadStyles(subMenu);
     setupGradientsTab();
@@ -906,8 +930,8 @@ void QtCurveConfig::activeTabAppearanceChanged()
     int  current(activeTabAppearance->currentItem());
     bool disableCol(APPEARANCE_FLAT==current && APPEARANCE_RAISED==current);
 
-    if(colorSelTab->isChecked() && disableCol)
-        colorSelTab->setChecked(false);
+    if(colorSelTab->value() && disableCol)
+        colorSelTab->setValue(MIN_COLOR_SEL_TAB_FACTOR);
     colorSelTab->setEnabled(!disableCol);
     updateChanged();
 }
@@ -944,6 +968,7 @@ void QtCurveConfig::unifySpinBtnsToggled()
     if(unifySpinBtns->isChecked())
         unifySpin->setChecked(false);
     unifySpin->setDisabled(unifySpinBtns->isChecked());
+    updateChanged();
 }
 
 void QtCurveConfig::unifySpinToggled()
@@ -951,12 +976,14 @@ void QtCurveConfig::unifySpinToggled()
     if(unifySpin->isChecked())
         unifySpinBtns->setChecked(false);
     unifySpinBtns->setDisabled(unifySpin->isChecked());
+    updateChanged();
 }
 
 void QtCurveConfig::sliderThumbChanged()
 {
     if(LINE_NONE!=sliderThumbs->currentItem() && sliderWidth->value()<DEFAULT_SLIDER_WIDTH)
         sliderWidth->setValue(DEFAULT_SLIDER_WIDTH);
+    updateChanged();
 }
 
 void QtCurveConfig::sliderWidthChanged()
@@ -966,8 +993,9 @@ void QtCurveConfig::sliderWidthChanged()
 
     if(LINE_NONE!=sliderThumbs->currentItem() && sliderWidth->value()<DEFAULT_SLIDER_WIDTH)
         sliderThumbs->setCurrentItem(LINE_NONE);
+    updateChanged();
 }
-
+    
 void QtCurveConfig::setupStack()
 {
     int i=0;
@@ -985,6 +1013,7 @@ void QtCurveConfig::setupStack()
     new CStackItem(stackList, i18n("Checks and Radios"), i++);
     new CStackItem(stackList, i18n("Windows"), i++);
     new CStackItem(stackList, i18n("Menus and Toolbars"), i++);
+    new CStackItem(stackList, i18n("Dock windows"), i++);
     new CStackItem(stackList, i18n("Advanced Settings"), i++);
     new CStackItem(stackList, i18n("Custom Gradients"), i++);
     new CStackItem(stackList, i18n("Custom Shades"), i++);
@@ -1355,6 +1384,7 @@ void QtCurveConfig::exportStyle()
 
 void QtCurveConfig::exportTheme()
 {
+#ifdef QTC_STYLE_SUPPORT
     if(!exportDialog)
         exportDialog=new CExportThemeDialog(this);
 
@@ -1362,6 +1392,7 @@ void QtCurveConfig::exportTheme()
 
     setOptions(opts);
     exportDialog->run(opts);
+#endif
 }
 
 void QtCurveConfig::loadStyle(const QString &file)
@@ -1440,9 +1471,9 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.unifyCombo=unifyCombo->isChecked();
     opts.vArrows=vArrows->isChecked();
     opts.xCheck=xCheck->isChecked();
-    opts.crHighlight=crHighlight->isChecked();
+    opts.crHighlight=crHighlight->value();
     opts.crButton=crButton->isChecked();
-    opts.colorSelTab=colorSelTab->isChecked();
+    opts.colorSelTab=colorSelTab->value();
     opts.roundAllTabs=roundAllTabs->isChecked();
     opts.borderTab=borderTab->isChecked();
     opts.doubleGtkComboArrow=doubleGtkComboArrow->isChecked();
@@ -1476,6 +1507,10 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.titlebarBorder=titlebarBorder->isChecked();
     opts.sbarBgndAppearance=(EAppearance)sbarBgndAppearance->currentItem();
     opts.sliderFill=(EAppearance)sliderFill->currentItem();
+    opts.dwtAppearance=(EAppearance)dwtAppearance->currentItem();
+    opts.crColor=crColor->isChecked();
+    opts.smallRadio=smallRadio->isChecked();
+    opts.splitterHighlight=splitterHighlight->value();
     opts.gtkComboMenus=gtkComboMenus->isChecked();
     opts.gtkButtonOrder=gtkButtonOrder->isChecked();
     opts.mapKdeIcons=mapKdeIcons->isChecked();
@@ -1576,9 +1611,9 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     unifyCombo->setChecked(opts.unifyCombo);
     vArrows->setChecked(opts.vArrows);
     xCheck->setChecked(opts.xCheck);
-    crHighlight->setChecked(opts.crHighlight);
+    crHighlight->setValue(opts.crHighlight);
     crButton->setChecked(opts.crButton);
-    colorSelTab->setChecked(opts.colorSelTab);
+    colorSelTab->setValue(opts.colorSelTab);
     roundAllTabs->setChecked(opts.roundAllTabs);
     borderTab->setChecked(opts.borderTab);
     doubleGtkComboArrow->setChecked(opts.doubleGtkComboArrow);
@@ -1622,6 +1657,10 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     titlebarBorder->setChecked(opts.titlebarBorder);
     sbarBgndAppearance->setCurrentItem(opts.sbarBgndAppearance);
     sliderFill->setCurrentItem(opts.sliderFill);
+    dwtAppearance->setCurrentItem(opts.dwtAppearance);
+    crColor->setChecked(opts.crColor);
+    smallRadio->setChecked(opts.smallRadio);
+    splitterHighlight->setValue(opts.splitterHighlight);
     gtkComboMenus->setChecked(opts.gtkComboMenus);
     gtkButtonOrder->setChecked(opts.gtkButtonOrder);
     mapKdeIcons->setChecked(opts.mapKdeIcons);
@@ -1673,9 +1712,9 @@ bool QtCurveConfig::settingsChanged()
          unifyCombo->isChecked()!=currentStyle.unifyCombo ||
          vArrows->isChecked()!=currentStyle.vArrows ||
          xCheck->isChecked()!=currentStyle.xCheck ||
-         crHighlight->isChecked()!=currentStyle.crHighlight ||
+         crHighlight->value()!=currentStyle.crHighlight ||
          crButton->isChecked()!=currentStyle.crButton ||
-         colorSelTab->isChecked()!=currentStyle.colorSelTab ||
+         colorSelTab->value()!=currentStyle.colorSelTab ||
          roundAllTabs->isChecked()!=currentStyle.roundAllTabs ||
          borderTab->isChecked()!=currentStyle.borderTab ||
          doubleGtkComboArrow->isChecked()!=currentStyle.doubleGtkComboArrow ||
@@ -1733,6 +1772,10 @@ bool QtCurveConfig::settingsChanged()
          titlebarBorder->isChecked()!=currentStyle.titlebarBorder ||
          sbarBgndAppearance->currentItem()!=currentStyle.sbarBgndAppearance ||
          sliderFill->currentItem()!=currentStyle.sliderFill ||
+         dwtAppearance->currentItem()!=currentStyle.dwtAppearance ||
+         crColor->isChecked()!=currentStyle.crColor ||
+         smallRadio->isChecked()!=currentStyle.smallRadio ||
+         splitterHighlight->value()!=currentStyle.splitterHighlight ||
          gtkComboMenus->isChecked()!=currentStyle.gtkComboMenus ||
          gtkButtonOrder->isChecked()!=currentStyle.gtkButtonOrder ||
          mapKdeIcons->isChecked()!=currentStyle.mapKdeIcons ||

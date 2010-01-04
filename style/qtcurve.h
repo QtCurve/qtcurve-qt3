@@ -2,7 +2,7 @@
 #define __QTCURVE_H__
 
 /*
-  QtCurve (C) Craig Drummond, 2003 - 2009 craig_p_drummond@yahoo.co.uk
+  QtCurve (C) Craig Drummond, 2003 - 2010 craig.p.drummond@googlemail.com
 
   ----
 
@@ -51,8 +51,12 @@
 */
 
 #include "config.h"
+#ifdef QTC_QT_ONLY
+#include "qtc_kstyle.h"
+#else
 #include <kdeversion.h>
 #include <kstyle.h>
+#endif
 #include <qcolor.h>
 #include <qpoint.h>
 #include <qpalette.h>
@@ -64,7 +68,13 @@
 class QTimer;
 class QSlider;
 
-class QtCurveStyle : public KStyle
+#ifdef QTC_QT_ONLY
+#define QTC_BASE_STYLE QtCKStyle
+#else
+#define QTC_BASE_STYLE KStyle
+#endif
+
+class QtCurveStyle : public QTC_BASE_STYLE
 {
     Q_OBJECT
 
@@ -114,8 +124,13 @@ class QtCurveStyle : public KStyle
         ENTRY_MOUSE_OVER,
         ENTRY_NONE
     };
-    
+
+#ifdef QTC_STYLE_SUPPORT
     QtCurveStyle(const QString &name=QString());
+#else
+    QtCurveStyle();
+#endif
+
     virtual ~QtCurveStyle();
 
     void polish(QApplication *app);
@@ -198,6 +213,7 @@ class QtCurveStyle : public KStyle
 
     void           shadeColors(const QColor &base, QColor *vals) const;
     const QColor * buttonColors(const QColorGroup &cg) const;
+    const QColor * checkRadioColors(const QColorGroup &cg, SFlags flags) const;
     const QColor * sliderColors(/*const QColorGroup &cg, */SFlags flags) const;
     const QColor * backgroundColors(const QColor &c) const;
     const QColor * backgroundColors(const QColorGroup &cg) const
@@ -218,6 +234,7 @@ class QtCurveStyle : public KStyle
     const QColor & checkRadioCol(SFlags flags, const QColorGroup &cg) const;
     QColor         shade(const QColor &a, float k) const;
     void           shade(const color &ca, color *cb, double k) const;
+    void           drawDot(QPainter *p, const QRect &r, const QColor *cols) const;
     QPixmap *      getPixelPixmap(const QColor col) const;
     QPixmap *      getPixmap(const QColor col, EPixmap pix, double shade=1.0) const;
     void           setSbType();
@@ -243,6 +260,7 @@ class QtCurveStyle : public KStyle
                                *itsDefBtnCols,
                                *itsMouseOverCols,
                                *itsComboBtnCols,
+                               *itsCheckRadioSelCols,
                                *itsSortedLvColors,
                                itsButtonCols[TOTAL_SHADES+1],
                                itsLighterPopupMenuBgndCol,

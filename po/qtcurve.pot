@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?"
 "group_id=50231&atid=459007\n"
-"POT-Creation-Date: 2009-10-07 20:26+0100\n"
+"POT-Creation-Date: 2010-01-03 22:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,475 +51,483 @@ msgstr ""
 msgid "Failed to create file: %1"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:144
+#: config/qtcurveconfig.cpp:146
 msgid "Select Password Character"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:680
+#. i18n: file: config/qtcurveconfigbase.ui:696
 #. i18n: ectx: property (text), widget (QLabel)
-#: config/qtcurveconfig.cpp:356 po/rc.cpp:121 rc.cpp:121
+#: config/qtcurveconfig.cpp:358 po/rc.cpp:128 rc.cpp:128
 msgid "Background"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:360
+#: config/qtcurveconfig.cpp:362
 msgid "Button"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:363
+#: config/qtcurveconfig.cpp:365
 msgid "Text"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:367 config/qtcurveconfig.cpp:409
-#: config/qtcurveconfig.cpp:457 config/qtcurveconfig.cpp:542
+#: config/qtcurveconfig.cpp:369 config/qtcurveconfig.cpp:411
+#: config/qtcurveconfig.cpp:463 config/qtcurveconfig.cpp:548
 msgid "None"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:371
+#: config/qtcurveconfig.cpp:373
 msgid "Custom:"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:372
+#: config/qtcurveconfig.cpp:374
 msgid "Selected background"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:375
+#: config/qtcurveconfig.cpp:377
 msgid "Blended selected background"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:376
+#: config/qtcurveconfig.cpp:378
 msgid "Menu background"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:376 config/qtcurveconfig.cpp:424
+#: config/qtcurveconfig.cpp:378 config/qtcurveconfig.cpp:430
 msgid "Darken"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:383 config/qtcurveconfig.cpp:1201
+#: config/qtcurveconfig.cpp:385 config/qtcurveconfig.cpp:1230
 msgid "Custom gradient %1"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:696
+#. i18n: file: config/qtcurveconfigbase.ui:712
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: config/qtcurveconfig.cpp:385 po/rc.cpp:127 rc.cpp:127
+#: config/qtcurveconfig.cpp:387 po/rc.cpp:134 rc.cpp:134
 msgid "Flat"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:386
+#: config/qtcurveconfig.cpp:388
 msgid "Raised"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:387
+#: config/qtcurveconfig.cpp:389
 msgid "Dull glass"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:388
+#: config/qtcurveconfig.cpp:390
 msgid "Shiny glass"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:389
+#: config/qtcurveconfig.cpp:391
 msgid "Agua"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:390
+#: config/qtcurveconfig.cpp:392
 msgid "Soft gradient"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:391
+#: config/qtcurveconfig.cpp:393
 msgid "Standard gradient"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:392
+#: config/qtcurveconfig.cpp:394
 msgid "Harsh gradient"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:393
+#: config/qtcurveconfig.cpp:395
 msgid "Inverted gradient"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:394
+#: config/qtcurveconfig.cpp:396
 msgid "Dark inverted gradient"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:397
+#: config/qtcurveconfig.cpp:399
 msgid "Split gradient"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:400
+#: config/qtcurveconfig.cpp:402
 msgid "Bevelled"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:402
+#: config/qtcurveconfig.cpp:404
 msgid "Fade out (popup menuitems)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:410
+#: config/qtcurveconfig.cpp:412
 msgid "Sunken lines"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:411
+#: config/qtcurveconfig.cpp:413
 msgid "Flat lines"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:412
+#: config/qtcurveconfig.cpp:414
 msgid "Dots"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:414
-msgid "Dashes"
+#: config/qtcurveconfig.cpp:417
+msgid "Single dot (KDE4 & Gtk2 Only)"
 msgstr ""
 
 #: config/qtcurveconfig.cpp:419
-msgid "Corner indicator"
-msgstr ""
-
-#: config/qtcurveconfig.cpp:420
-msgid "Font color thin border"
-msgstr ""
-
-#: config/qtcurveconfig.cpp:421
-msgid "Selected background thick border"
-msgstr ""
-
-#: config/qtcurveconfig.cpp:422
-msgid "Selected background tinting"
-msgstr ""
-
-#: config/qtcurveconfig.cpp:423
-msgid "A slight glow"
+msgid "Dashes"
 msgstr ""
 
 #: config/qtcurveconfig.cpp:425
-msgid "No indicator"
+msgid "Corner indicator"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:430
-msgid "KDE"
+#: config/qtcurveconfig.cpp:426
+msgid "Font color thin border"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:427
+msgid "Selected background thick border"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:428
+msgid "Selected background tinting"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:429
+msgid "A slight glow"
 msgstr ""
 
 #: config/qtcurveconfig.cpp:431
+msgid "No indicator"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:436
+msgid "KDE"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:437
 msgid "MS Windows"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:432
+#: config/qtcurveconfig.cpp:438
 msgid "Platinum"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:433
+#: config/qtcurveconfig.cpp:439
 msgid "NeXT"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:434
+#: config/qtcurveconfig.cpp:440
 msgid "No buttons"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:439
+#: config/qtcurveconfig.cpp:445
 msgid "Square"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:440
+#: config/qtcurveconfig.cpp:446
 msgid "Slightly rounded"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:441
+#: config/qtcurveconfig.cpp:447
 msgid "Fully rounded"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:442
+#: config/qtcurveconfig.cpp:448
 msgid "Extra rounded (KDE4 & Gtk2)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:443
+#: config/qtcurveconfig.cpp:449
 msgid "Max rounded (KDE4 & Gtk2)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:448
+#: config/qtcurveconfig.cpp:454
 msgid "No coloration"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:449
+#: config/qtcurveconfig.cpp:455
 msgid "Color border"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:450
+#: config/qtcurveconfig.cpp:456
 msgid "Thick color border"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:451
+#: config/qtcurveconfig.cpp:457
 msgid "Plastik style"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:452
+#: config/qtcurveconfig.cpp:458
 msgid "Glow"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:458
+#: config/qtcurveconfig.cpp:464
 msgid "Light"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:459
+#: config/qtcurveconfig.cpp:465
 msgid "Dark"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:460
+#: config/qtcurveconfig.cpp:466
 msgid "Light (all sides)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:461
+#: config/qtcurveconfig.cpp:467
 msgid "Dark (all sides)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:466 config/qtcurveconfig.cpp:481
-#: config/qtcurveconfig.cpp:488
+#: config/qtcurveconfig.cpp:472 config/qtcurveconfig.cpp:487
+#: config/qtcurveconfig.cpp:494
 msgid "Plain"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:467
+#: config/qtcurveconfig.cpp:473
 msgid "Etched"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:468
+#: config/qtcurveconfig.cpp:474
 msgid "Shadowed"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:473
+#: config/qtcurveconfig.cpp:479
 msgid "Simple"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:474
+#: config/qtcurveconfig.cpp:480
 msgid "Use HSL color space"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:475
+#: config/qtcurveconfig.cpp:481
 msgid "Use HSV color space"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:476
+#: config/qtcurveconfig.cpp:482
 msgid "Use HCY color space"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:482
+#: config/qtcurveconfig.cpp:488
 msgid "Striped"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:483
+#: config/qtcurveconfig.cpp:489
 msgid "Diagonal stripes"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:489
+#: config/qtcurveconfig.cpp:495
 msgid "Round"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:490
+#: config/qtcurveconfig.cpp:496
 msgid "Plain - rotated"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:491
+#: config/qtcurveconfig.cpp:497
 msgid "Round - rotated"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:492
+#: config/qtcurveconfig.cpp:498
 msgid "Triangular"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:497
+#: config/qtcurveconfig.cpp:503
 msgid "Base color"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:498
+#: config/qtcurveconfig.cpp:504
 msgid "Background color"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:499
+#: config/qtcurveconfig.cpp:505
 msgid "Darkened background color"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:504
+#: config/qtcurveconfig.cpp:510
 msgid "Standard (dotted)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:505
+#: config/qtcurveconfig.cpp:511
 msgid "Highlight color"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:506
+#: config/qtcurveconfig.cpp:512
 msgid "Highlight color (full size)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:507
+#: config/qtcurveconfig.cpp:513
 msgid "Highlight color, full, and fill (Gtk2 & KDE4 only)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:508
+#: config/qtcurveconfig.cpp:514
 msgid "Line drawn with highlight color"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:861
+#. i18n: file: config/qtcurveconfigbase.ui:877
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: config/qtcurveconfig.cpp:513 po/rc.cpp:163 rc.cpp:163
+#: config/qtcurveconfig.cpp:519 po/rc.cpp:170 rc.cpp:170
 msgid "No border"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:514
+#: config/qtcurveconfig.cpp:520
 msgid "Light border"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:515
+#: config/qtcurveconfig.cpp:521
 msgid "3D border (light only)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:516
+#: config/qtcurveconfig.cpp:522
 msgid "3D border (dark and light)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:521
+#: config/qtcurveconfig.cpp:527
 msgid "Left"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:522
+#: config/qtcurveconfig.cpp:528
 msgid "Center (between controls)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:523
+#: config/qtcurveconfig.cpp:529
 msgid "Center (full width)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:524
+#: config/qtcurveconfig.cpp:530
 msgid "Right"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:529
+#: config/qtcurveconfig.cpp:535
 msgid "Highlight on top"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:530
+#: config/qtcurveconfig.cpp:536
 msgid "Highlight on bottom"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:531
+#: config/qtcurveconfig.cpp:537
 msgid "Add a slight glow"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:536
+#: config/qtcurveconfig.cpp:542
 msgid "Top to bottom"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:537
+#: config/qtcurveconfig.cpp:543
 msgid "Left to right"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:543
+#: config/qtcurveconfig.cpp:549
 msgid "New style (KDE and Gtk2 similar)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:544
+#: config/qtcurveconfig.cpp:550
 msgid "Old style (KDE and Gtk2 different)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:612
+#: config/qtcurveconfig.cpp:627
 msgid " pixels"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:742
+#: config/qtcurveconfig.cpp:764
 msgid "Predefined Style"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:744
+#: config/qtcurveconfig.cpp:766
 msgid "Import..."
 msgstr ""
 
-#: config/qtcurveconfig.cpp:745
+#: config/qtcurveconfig.cpp:767
 msgid "Export..."
 msgstr ""
 
-#: config/qtcurveconfig.cpp:747
+#: config/qtcurveconfig.cpp:770
 msgid "Export Theme..."
 msgstr ""
 
-#: config/qtcurveconfig.cpp:974
+#: config/qtcurveconfig.cpp:1002
 msgid "General"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:975
+#: config/qtcurveconfig.cpp:1003
 msgid "Combos"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:976
+#: config/qtcurveconfig.cpp:1004
 msgid "Spin Buttons"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:977
+#: config/qtcurveconfig.cpp:1005
 msgid "Splitters"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:978
+#: config/qtcurveconfig.cpp:1006
 msgid "Sliders and Scrollbars"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:979
+#: config/qtcurveconfig.cpp:1007
 msgid "Progressbars"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:980
+#: config/qtcurveconfig.cpp:1008
 msgid "Default Button"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:981
+#: config/qtcurveconfig.cpp:1009
 msgid "Mouse-over"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:982
+#: config/qtcurveconfig.cpp:1010
 msgid "Listviews"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:983
+#: config/qtcurveconfig.cpp:1011
 msgid "Scrollviews"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:984
+#: config/qtcurveconfig.cpp:1012
 msgid "Tabs"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:985
+#: config/qtcurveconfig.cpp:1013
 msgid "Checks and Radios"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:986
+#: config/qtcurveconfig.cpp:1014
 msgid "Windows"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:987
+#: config/qtcurveconfig.cpp:1015
 msgid "Menus and Toolbars"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:988
+#: config/qtcurveconfig.cpp:1016
+msgid "Dock windows"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:1017
 msgid "Advanced Settings"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:989
+#: config/qtcurveconfig.cpp:1018
 msgid "Custom Gradients"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:990
+#: config/qtcurveconfig.cpp:1019
 msgid "Custom Shades"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1214
+#: config/qtcurveconfig.cpp:1243
 msgid "Add"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1215
+#: config/qtcurveconfig.cpp:1244
 msgid "Remove"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1216
+#: config/qtcurveconfig.cpp:1245
 msgid "Update"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1326 config/qtcurveconfig.cpp:1336
+#: config/qtcurveconfig.cpp:1355 config/qtcurveconfig.cpp:1365
 msgid "*"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1352
+#: config/qtcurveconfig.cpp:1381
 msgid ""
 "Could not write to file:\n"
 "%1"
@@ -559,17 +567,17 @@ msgstr ""
 
 #. i18n: file: config/qtcurveconfigbase.ui:110
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:543
+#. i18n: file: config/qtcurveconfigbase.ui:559
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:1652
+#. i18n: file: config/qtcurveconfigbase.ui:1687
 #. i18n: ectx: property (text), widget (QLabel)
 #. i18n: file: config/qtcurveconfigbase.ui:110
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:543
+#. i18n: file: config/qtcurveconfigbase.ui:559
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:1652
+#. i18n: file: config/qtcurveconfigbase.ui:1687
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:18 po/rc.cpp:96 po/rc.cpp:297 rc.cpp:18 rc.cpp:96 rc.cpp:297
+#: po/rc.cpp:18 po/rc.cpp:103 po/rc.cpp:318 rc.cpp:18 rc.cpp:103 rc.cpp:318
 msgid "Appearance:"
 msgstr ""
 
@@ -718,105 +726,156 @@ msgstr ""
 msgid "Draw arrows within edit field"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:488
+#. i18n: file: config/qtcurveconfigbase.ui:483
 #. i18n: ectx: property (text), widget (QLabel)
 #: po/rc.cpp:93 rc.cpp:93
 msgid "Markings:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:551
+#. i18n: file: config/qtcurveconfigbase.ui:508
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:996
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:1272
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:1337
+#. i18n: ectx: property (prefix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:1469
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:1892
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:2286
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:2297
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:508
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:996
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:1272
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:1337
+#. i18n: ectx: property (prefix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:1469
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:1892
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:2286
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#. i18n: file: config/qtcurveconfigbase.ui:2297
+#. i18n: ectx: property (suffix), widget (KIntNumInput)
+#: po/rc.cpp:97 po/rc.cpp:193 po/rc.cpp:240 po/rc.cpp:259 po/rc.cpp:285
+#: po/rc.cpp:367 po/rc.cpp:433 po/rc.cpp:437 rc.cpp:97 rc.cpp:193 rc.cpp:240
+#: rc.cpp:259 rc.cpp:285 rc.cpp:367 rc.cpp:433 rc.cpp:437
+#, no-c-format
+msgid "%"
+msgstr ""
+
+#. i18n: file: config/qtcurveconfigbase.ui:538
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:972
+#. i18n: file: config/qtcurveconfigbase.ui:1477
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:1384
+#. i18n: file: config/qtcurveconfigbase.ui:538
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:1719
+#. i18n: file: config/qtcurveconfigbase.ui:1477
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:551
-#. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:972
-#. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:1384
-#. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:1719
-#. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:99 po/rc.cpp:182 po/rc.cpp:258 po/rc.cpp:309 rc.cpp:99 rc.cpp:182
-#: rc.cpp:258 rc.cpp:309
-msgid "Coloration:"
+#: po/rc.cpp:100 po/rc.cpp:288 rc.cpp:100 rc.cpp:288
+msgid "Background mouse-over highlight:"
 msgstr ""
 
 #. i18n: file: config/qtcurveconfigbase.ui:567
+#. i18n: ectx: property (text), widget (QLabel)
+#. i18n: file: config/qtcurveconfigbase.ui:988
+#. i18n: ectx: property (text), widget (QLabel)
+#. i18n: file: config/qtcurveconfigbase.ui:1395
+#. i18n: ectx: property (text), widget (QLabel)
+#. i18n: file: config/qtcurveconfigbase.ui:1754
+#. i18n: ectx: property (text), widget (QLabel)
+#. i18n: file: config/qtcurveconfigbase.ui:567
+#. i18n: ectx: property (text), widget (QLabel)
+#. i18n: file: config/qtcurveconfigbase.ui:988
+#. i18n: ectx: property (text), widget (QLabel)
+#. i18n: file: config/qtcurveconfigbase.ui:1395
+#. i18n: ectx: property (text), widget (QLabel)
+#. i18n: file: config/qtcurveconfigbase.ui:1754
+#. i18n: ectx: property (text), widget (QLabel)
+#: po/rc.cpp:106 po/rc.cpp:189 po/rc.cpp:269 po/rc.cpp:330 rc.cpp:106
+#: rc.cpp:189 rc.cpp:269 rc.cpp:330
+msgid "Coloration:"
+msgstr ""
+
+#. i18n: file: config/qtcurveconfigbase.ui:583
 #. i18n: ectx: property (whatsThis), widget (QComboBox)
-#: po/rc.cpp:102 rc.cpp:102
+#: po/rc.cpp:109 rc.cpp:109
 msgid "This color setting affects both scrollbar sliders, and other sliders."
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:600
+#. i18n: file: config/qtcurveconfigbase.ui:616
 #. i18n: ectx: property (whatsThis), widget (QComboBox)
-#. i18n: file: config/qtcurveconfigbase.ui:688
+#. i18n: file: config/qtcurveconfigbase.ui:704
 #. i18n: ectx: property (whatsThis), widget (QComboBox)
-#. i18n: file: config/qtcurveconfigbase.ui:600
+#. i18n: file: config/qtcurveconfigbase.ui:616
 #. i18n: ectx: property (whatsThis), widget (QComboBox)
-#. i18n: file: config/qtcurveconfigbase.ui:688
+#. i18n: file: config/qtcurveconfigbase.ui:704
 #. i18n: ectx: property (whatsThis), widget (QComboBox)
-#: po/rc.cpp:106 po/rc.cpp:124 rc.cpp:106 rc.cpp:124
+#: po/rc.cpp:113 po/rc.cpp:131 rc.cpp:113 rc.cpp:131
 msgid ""
 "This appearance setting affects both scrollbar sliders, and other sliders."
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:648
+#. i18n: file: config/qtcurveconfigbase.ui:664
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:109 rc.cpp:109
+#: po/rc.cpp:116 rc.cpp:116
 msgid "Style:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:656
+#. i18n: file: config/qtcurveconfigbase.ui:672
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:112 rc.cpp:112
+#: po/rc.cpp:119 rc.cpp:119
 msgid "Slider thumbs:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:664
+#. i18n: file: config/qtcurveconfigbase.ui:680
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:115 rc.cpp:115
+#: po/rc.cpp:122 rc.cpp:122
 msgid "Slider width:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:672
+#. i18n: file: config/qtcurveconfigbase.ui:688
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:118 rc.cpp:118
+#: po/rc.cpp:125 rc.cpp:125
 msgid "Fill used part of groove:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:704
+#. i18n: file: config/qtcurveconfigbase.ui:720
 #. i18n: ectx: property (whatsThis), widget (QComboBox)
-#: po/rc.cpp:130 rc.cpp:130
+#: po/rc.cpp:137 rc.cpp:137
 msgid ""
 "This setting only affects standard sliders - i.e. not scrollbar sliders. "
 "'Triangular' is a very similar style to plastik's sliders."
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:712
+#. i18n: file: config/qtcurveconfigbase.ui:728
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:133 rc.cpp:133
+#: po/rc.cpp:140 rc.cpp:140
 msgid "Groove appearance:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:720
+#. i18n: file: config/qtcurveconfigbase.ui:736
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:136 rc.cpp:136
+#: po/rc.cpp:143 rc.cpp:143
 msgid "Thin scrollbar groove"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:728
+#. i18n: file: config/qtcurveconfigbase.ui:744
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:139 rc.cpp:139
+#: po/rc.cpp:146 rc.cpp:146
 msgid "Scrollbar buttons:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:750
+#. i18n: file: config/qtcurveconfigbase.ui:766
 #. i18n: ectx: property (whatsThis), widget (QComboBox)
-#: po/rc.cpp:142 rc.cpp:142
+#: po/rc.cpp:149 rc.cpp:149
 msgid ""
 "This controls the position, and number, of buttons on a scrollbar.\n"
 "\n"
@@ -827,400 +886,386 @@ msgid ""
 "None - no buttons, only the slider"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:771
+#. i18n: file: config/qtcurveconfigbase.ui:787
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:151 rc.cpp:151
+#: po/rc.cpp:158 rc.cpp:158
 msgid "Color only on mouse-over"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:802
+#. i18n: file: config/qtcurveconfigbase.ui:818
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:154 rc.cpp:154
+#: po/rc.cpp:161 rc.cpp:161
 msgid "Animated"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:827
+#. i18n: file: config/qtcurveconfigbase.ui:843
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:157 rc.cpp:157
+#: po/rc.cpp:164 rc.cpp:164
 msgid "Groove:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:835
+#. i18n: file: config/qtcurveconfigbase.ui:851
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:160 rc.cpp:160
+#: po/rc.cpp:167 rc.cpp:167
 msgid "Bar:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:864
+#. i18n: file: config/qtcurveconfigbase.ui:880
 #. i18n: ectx: property (whatsThis), widget (QCheckBox)
-#: po/rc.cpp:166 rc.cpp:166
+#: po/rc.cpp:173 rc.cpp:173
 msgid ""
 "Enable this option to remove the 1 pixel border around the filled element."
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:898
+#. i18n: file: config/qtcurveconfigbase.ui:914
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:169 rc.cpp:169
+#: po/rc.cpp:176 rc.cpp:176
 msgid "Indicate with:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:906
+#. i18n: file: config/qtcurveconfigbase.ui:922
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:172 rc.cpp:172
+#: po/rc.cpp:179 rc.cpp:179
 msgid "Embolden text"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:961
+#. i18n: file: config/qtcurveconfigbase.ui:977
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:175 rc.cpp:175
+#: po/rc.cpp:182 rc.cpp:182
 msgid "Highlight by:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:964
+#. i18n: file: config/qtcurveconfigbase.ui:980
 #. i18n: ectx: property (whatsThis), widget (QLabel)
-#: po/rc.cpp:179 rc.cpp:179
+#: po/rc.cpp:186 rc.cpp:186
 #, no-c-format
 msgid ""
 "This controls the % that widgets will be highlighted by when the mouse "
 "hovers over them"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:980
-#. i18n: ectx: property (suffix), widget (KIntNumInput)
-#. i18n: file: config/qtcurveconfigbase.ui:1326
-#. i18n: ectx: property (prefix), widget (KIntNumInput)
-#. i18n: file: config/qtcurveconfigbase.ui:1857
-#. i18n: ectx: property (suffix), widget (KIntNumInput)
-#. i18n: file: config/qtcurveconfigbase.ui:2191
-#. i18n: ectx: property (suffix), widget (KIntNumInput)
-#. i18n: file: config/qtcurveconfigbase.ui:2202
-#. i18n: ectx: property (suffix), widget (KIntNumInput)
-#. i18n: file: config/qtcurveconfigbase.ui:980
-#. i18n: ectx: property (suffix), widget (KIntNumInput)
-#. i18n: file: config/qtcurveconfigbase.ui:1326
-#. i18n: ectx: property (prefix), widget (KIntNumInput)
-#. i18n: file: config/qtcurveconfigbase.ui:1857
-#. i18n: ectx: property (suffix), widget (KIntNumInput)
-#. i18n: file: config/qtcurveconfigbase.ui:2191
-#. i18n: ectx: property (suffix), widget (KIntNumInput)
-#. i18n: file: config/qtcurveconfigbase.ui:2202
-#. i18n: ectx: property (suffix), widget (KIntNumInput)
-#: po/rc.cpp:186 po/rc.cpp:248 po/rc.cpp:346 po/rc.cpp:409 po/rc.cpp:413
-#: rc.cpp:186 rc.cpp:248 rc.cpp:346 rc.cpp:409 rc.cpp:413
-#, no-c-format
-msgid "%"
-msgstr ""
-
-#. i18n: file: config/qtcurveconfigbase.ui:1048
+#. i18n: file: config/qtcurveconfigbase.ui:1064
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:189 rc.cpp:189
+#: po/rc.cpp:196 rc.cpp:196
 msgid "Button color"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1056
+#. i18n: file: config/qtcurveconfigbase.ui:1072
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:192 rc.cpp:192
+#: po/rc.cpp:199 rc.cpp:199
 msgid "Header appearance:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1069
+#. i18n: file: config/qtcurveconfigbase.ui:1085
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:195 rc.cpp:195
+#: po/rc.cpp:202 rc.cpp:202
 msgid "Shade header of sorted column:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1093
+#. i18n: file: config/qtcurveconfigbase.ui:1109
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:199 rc.cpp:199
+#: po/rc.cpp:206 rc.cpp:206
 msgid "Selection appearance (KDE4 && Gtk2):"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1123
+#. i18n: file: config/qtcurveconfigbase.ui:1139
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:202 rc.cpp:202
+#: po/rc.cpp:209 rc.cpp:209
 msgid "Force alternate colors"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1131
+#. i18n: file: config/qtcurveconfigbase.ui:1147
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:205 rc.cpp:205
+#: po/rc.cpp:212 rc.cpp:212
 msgid "Lines between items:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1144
+#. i18n: file: config/qtcurveconfigbase.ui:1160
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:208 rc.cpp:208
+#: po/rc.cpp:215 rc.cpp:215
 msgid "Square selection"
-msgstr ""
-
-#. i18n: file: config/qtcurveconfigbase.ui:1165
-#. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:211 rc.cpp:211
-msgid "Scrollbars on the outside"
-msgstr ""
-
-#. i18n: file: config/qtcurveconfigbase.ui:1173
-#. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:214 rc.cpp:214
-msgid "Highlight on focus (KDE)"
 msgstr ""
 
 #. i18n: file: config/qtcurveconfigbase.ui:1181
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:217 rc.cpp:217
+#: po/rc.cpp:218 rc.cpp:218
+msgid "Scrollbars on the outside"
+msgstr ""
+
+#. i18n: file: config/qtcurveconfigbase.ui:1189
+#. i18n: ectx: property (text), widget (QCheckBox)
+#: po/rc.cpp:221 rc.cpp:221
+msgid "Highlight on focus (KDE)"
+msgstr ""
+
+#. i18n: file: config/qtcurveconfigbase.ui:1197
+#. i18n: ectx: property (text), widget (QCheckBox)
+#: po/rc.cpp:224 rc.cpp:224
 msgid ""
 "Always draw with a square frame - regardless of the general round setting."
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1219
+#. i18n: file: config/qtcurveconfigbase.ui:1235
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:220 rc.cpp:220
+#: po/rc.cpp:227 rc.cpp:227
 msgid "Active tab appearance:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1227
+#. i18n: file: config/qtcurveconfigbase.ui:1243
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:223 rc.cpp:223
+#: po/rc.cpp:230 rc.cpp:230
 msgid "Inactive tab appearance:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1245
+#. i18n: file: config/qtcurveconfigbase.ui:1261
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:226 rc.cpp:226
+#: po/rc.cpp:233 rc.cpp:233
 msgid "Highlight"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1248
+#. i18n: file: config/qtcurveconfigbase.ui:1264
 #. i18n: ectx: property (whatsThis), widget (QCheckBox)
-#: po/rc.cpp:229 rc.cpp:229
+#: po/rc.cpp:236 rc.cpp:236
 msgid "This will cause a coloured stripe to be drawn over the current tab."
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1264
-#. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:232 rc.cpp:232
-msgid "Color"
+#. i18n: file: config/qtcurveconfigbase.ui:1275
+#. i18n: ectx: property (prefix), widget (KIntNumInput)
+#: po/rc.cpp:243 rc.cpp:243
+msgid "Tint by "
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1272
+#. i18n: file: config/qtcurveconfigbase.ui:1283
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:235 rc.cpp:235
+#: po/rc.cpp:246 rc.cpp:246
 msgid "Mouse-over:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1285
+#. i18n: file: config/qtcurveconfigbase.ui:1296
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:238 rc.cpp:238
+#: po/rc.cpp:249 rc.cpp:249
 msgid "Round all tabs"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1293
+#. i18n: file: config/qtcurveconfigbase.ui:1304
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:241 rc.cpp:241
+#: po/rc.cpp:252 rc.cpp:252
 msgid "Draw a light border around tab widget"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1301
+#. i18n: file: config/qtcurveconfigbase.ui:1312
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:244 rc.cpp:244
+#: po/rc.cpp:255 rc.cpp:255
 msgid "Draw inner border of inactive tabs"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1334
+#. i18n: file: config/qtcurveconfigbase.ui:1345
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:251 rc.cpp:251
+#: po/rc.cpp:262 rc.cpp:262
 msgid "Alter background by:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1342
+#. i18n: file: config/qtcurveconfigbase.ui:1353
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:254 rc.cpp:254
+#: po/rc.cpp:265 rc.cpp:265
 msgid "Invert shade of bottom tabs"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1392
+#. i18n: file: config/qtcurveconfigbase.ui:1403
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:261 rc.cpp:261
+#: po/rc.cpp:272 rc.cpp:272
 msgid "'X' style checkmarks"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1400
+#. i18n: file: config/qtcurveconfigbase.ui:1445
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:264 rc.cpp:264
-msgid "Highlight text background"
-msgstr ""
-
-#. i18n: file: config/qtcurveconfigbase.ui:1442
-#. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:267 rc.cpp:267
+#: po/rc.cpp:275 rc.cpp:275
 msgid "Button like"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1480
+#. i18n: file: config/qtcurveconfigbase.ui:1453
+#. i18n: ectx: property (text), widget (QCheckBox)
+#: po/rc.cpp:278 rc.cpp:278
+msgid "Small radio 'dot'"
+msgstr ""
+
+#. i18n: file: config/qtcurveconfigbase.ui:1461
+#. i18n: ectx: property (text), widget (QCheckBox)
+#: po/rc.cpp:281 rc.cpp:281
+msgid "Color when selected"
+msgstr ""
+
+#. i18n: file: config/qtcurveconfigbase.ui:1515
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:270 rc.cpp:270
+#: po/rc.cpp:291 rc.cpp:291
 msgid "Button Appearance:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1498
+#. i18n: file: config/qtcurveconfigbase.ui:1533
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:1506
+#. i18n: file: config/qtcurveconfigbase.ui:1541
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:1498
+#. i18n: file: config/qtcurveconfigbase.ui:1533
 #. i18n: ectx: property (text), widget (QLabel)
-#. i18n: file: config/qtcurveconfigbase.ui:1506
+#. i18n: file: config/qtcurveconfigbase.ui:1541
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:273 po/rc.cpp:276 rc.cpp:273 rc.cpp:276
+#: po/rc.cpp:294 po/rc.cpp:297 rc.cpp:294 rc.cpp:297
 msgid "Titlebar Appearance:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1519
+#. i18n: file: config/qtcurveconfigbase.ui:1554
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:279 rc.cpp:279
+#: po/rc.cpp:300 rc.cpp:300
 msgid "Text alignment:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1532
+#. i18n: file: config/qtcurveconfigbase.ui:1567
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:282 rc.cpp:282
+#: po/rc.cpp:303 rc.cpp:303
 msgid "Color titlebar only (KDE4)"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1557
+#. i18n: file: config/qtcurveconfigbase.ui:1592
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:285 rc.cpp:285
+#: po/rc.cpp:306 rc.cpp:306
 msgid "Light border (KDE4)"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1578
+#. i18n: file: config/qtcurveconfigbase.ui:1613
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:288 rc.cpp:288
+#: po/rc.cpp:309 rc.cpp:309
 msgid "Handles:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1586
+#. i18n: file: config/qtcurveconfigbase.ui:1621
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:291 rc.cpp:291
+#: po/rc.cpp:312 rc.cpp:312
 msgid "Border:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1638
+#. i18n: file: config/qtcurveconfigbase.ui:1673
 #. i18n: ectx: property (title), widget (QGroupBox)
-#: po/rc.cpp:294 rc.cpp:294
+#: po/rc.cpp:315 rc.cpp:315
 msgid "Toolbars"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1665
+#. i18n: file: config/qtcurveconfigbase.ui:1700
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:300 rc.cpp:300
+#: po/rc.cpp:321 rc.cpp:321
 msgid "Separators:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1697
+#. i18n: file: config/qtcurveconfigbase.ui:1732
 #. i18n: ectx: property (title), widget (QGroupBox)
-#: po/rc.cpp:303 rc.cpp:303
+#: po/rc.cpp:324 rc.cpp:324
 msgid "Menus"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1711
+#. i18n: file: config/qtcurveconfigbase.ui:1746
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:306 rc.cpp:306
+#: po/rc.cpp:327 rc.cpp:327
 msgid "Apply coloration to active window only"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1727
+#. i18n: file: config/qtcurveconfigbase.ui:1762
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:312 rc.cpp:312
+#: po/rc.cpp:333 rc.cpp:333
 msgid "Menubar appearance:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1735
+#. i18n: file: config/qtcurveconfigbase.ui:1770
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:315 rc.cpp:315
+#: po/rc.cpp:336 rc.cpp:336
 msgid "Menuitem appearance:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1743
+#. i18n: file: config/qtcurveconfigbase.ui:1778
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:318 rc.cpp:318
+#: po/rc.cpp:339 rc.cpp:339
 msgid "Use 'highlight' color for active menuitems"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1751
+#. i18n: file: config/qtcurveconfigbase.ui:1786
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:321 rc.cpp:321
+#: po/rc.cpp:342 rc.cpp:342
 msgid "Stripe (KDE):"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1759
+#. i18n: file: config/qtcurveconfigbase.ui:1794
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:324 rc.cpp:324
+#: po/rc.cpp:345 rc.cpp:345
 msgid "Border popupmenus"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1767
+#. i18n: file: config/qtcurveconfigbase.ui:1802
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:327 rc.cpp:327
+#: po/rc.cpp:348 rc.cpp:348
 msgid "Sub-menu delay:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1783
+#. i18n: file: config/qtcurveconfigbase.ui:1818
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:330 rc.cpp:330
+#: po/rc.cpp:351 rc.cpp:351
 msgid "Color menubar items on mouse-over"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1791
+#. i18n: file: config/qtcurveconfigbase.ui:1826
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:333 rc.cpp:333
+#: po/rc.cpp:354 rc.cpp:354
 msgid "Custom text colors (active/normal):"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1836
+#. i18n: file: config/qtcurveconfigbase.ui:1871
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:339 rc.cpp:339
+#: po/rc.cpp:360 rc.cpp:360
 msgid "Thinner menu items"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1844
+#. i18n: file: config/qtcurveconfigbase.ui:1879
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:342 rc.cpp:342
+#: po/rc.cpp:363 rc.cpp:363
 msgid "Popup-menu background:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1893
+#. i18n: file: config/qtcurveconfigbase.ui:1928
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:349 rc.cpp:349
+#: po/rc.cpp:370 rc.cpp:370
 msgid "Border menuitems"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1901
+#. i18n: file: config/qtcurveconfigbase.ui:1936
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:352 rc.cpp:352
+#: po/rc.cpp:373 rc.cpp:373
 msgid "Draw icons"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1909
+#. i18n: file: config/qtcurveconfigbase.ui:1944
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:355 rc.cpp:355
+#: po/rc.cpp:376 rc.cpp:376
 msgid "Round selected menubar items on top only"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1925
+#. i18n: file: config/qtcurveconfigbase.ui:1960
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:359 rc.cpp:359
+#: po/rc.cpp:380 rc.cpp:380
 msgid "Enable mouse-over for menubar items"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1948
+#. i18n: file: config/qtcurveconfigbase.ui:1983
+#. i18n: ectx: property (text), widget (QLabel)
+#: po/rc.cpp:383 rc.cpp:383
+msgid "Titlebar appearance:"
+msgstr ""
+
+#. i18n: file: config/qtcurveconfigbase.ui:2043
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:362 rc.cpp:362
+#: po/rc.cpp:386 rc.cpp:386
 msgid "'Fix' parentless dialogs"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1955
+#. i18n: file: config/qtcurveconfigbase.ui:2050
 #. i18n: ectx: property (whatsThis), widget (QCheckBox)
-#: po/rc.cpp:365 rc.cpp:365
+#: po/rc.cpp:389 rc.cpp:389
 msgid ""
 "<h2><font color=\"#ff0000\">Warning: Experimental!</font></h1><p><p>Some "
 "applications - such as Kate, Kaffeine, and GIMP - produce dialogs that have "
@@ -1236,71 +1281,71 @@ msgid ""
 "please use with care.</p>"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1963
+#. i18n: file: config/qtcurveconfigbase.ui:2058
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:372 rc.cpp:372
+#: po/rc.cpp:396 rc.cpp:396
 msgid "Map KDE icons (Gtk2)"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1971
+#. i18n: file: config/qtcurveconfigbase.ui:2066
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:375 rc.cpp:375
+#: po/rc.cpp:399 rc.cpp:399
 msgid "Gtk button order"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:1996
+#. i18n: file: config/qtcurveconfigbase.ui:2091
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:378 rc.cpp:378
+#: po/rc.cpp:402 rc.cpp:402
 msgid "Character to use for password entries:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2020
+#. i18n: file: config/qtcurveconfigbase.ui:2115
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: po/rc.cpp:382 rc.cpp:382
+#: po/rc.cpp:406 rc.cpp:406
 msgid "Don't make 'auto-default' buttons larger (KDE4)"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2046
+#. i18n: file: config/qtcurveconfigbase.ui:2141
 #. i18n: ectx: property (title), widget (QGroupBox)
-#: po/rc.cpp:385 rc.cpp:385
+#: po/rc.cpp:409 rc.cpp:409
 msgid "Settings"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2060
+#. i18n: file: config/qtcurveconfigbase.ui:2155
 #. i18n: ectx: property (text), widget (QListView)
-#: po/rc.cpp:389 rc.cpp:389
+#: po/rc.cpp:413 rc.cpp:413
 #, no-c-format
 msgid "Position (%)"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2071
+#. i18n: file: config/qtcurveconfigbase.ui:2166
 #. i18n: ectx: property (text), widget (QListView)
-#: po/rc.cpp:393 rc.cpp:393
+#: po/rc.cpp:417 rc.cpp:417
 #, no-c-format
 msgid "Value (%)"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2097
+#. i18n: file: config/qtcurveconfigbase.ui:2192
 #. i18n: ectx: property (title), widget (QGroupBox)
-#: po/rc.cpp:396 rc.cpp:396
+#: po/rc.cpp:420 rc.cpp:420
 msgid "Gradient Stop"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2164
+#. i18n: file: config/qtcurveconfigbase.ui:2259
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:402 rc.cpp:402
+#: po/rc.cpp:426 rc.cpp:426
 msgid "Value:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2180
+#. i18n: file: config/qtcurveconfigbase.ui:2275
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:405 rc.cpp:405
+#: po/rc.cpp:429 rc.cpp:429
 msgid "Position:"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2241
+#. i18n: file: config/qtcurveconfigbase.ui:2336
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:417 rc.cpp:417
+#: po/rc.cpp:441 rc.cpp:441
 #, no-c-format
 msgid ""
 "<i><b>NOTE: </b><br>\n"
@@ -1312,21 +1357,21 @@ msgid ""
 "by 20%, and a value of 80% implies darkening by 20%</i>"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2254
+#. i18n: file: config/qtcurveconfigbase.ui:2349
 #. i18n: ectx: property (title), widget (QGroupBox)
-#: po/rc.cpp:424 rc.cpp:424
+#: po/rc.cpp:448 rc.cpp:448
 msgid "Preview"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2320
+#. i18n: file: config/qtcurveconfigbase.ui:2415
 #. i18n: ectx: property (title), widget (QGroupBox)
-#: po/rc.cpp:428 rc.cpp:428
+#: po/rc.cpp:452 rc.cpp:452
 msgid "Use Custom Values"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2444
+#. i18n: file: config/qtcurveconfigbase.ui:2539
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:431 rc.cpp:431
+#: po/rc.cpp:455 rc.cpp:455
 msgid ""
 "<i>QtCurve uses various hard-coded shading values to draw elements such as "
 "button frames, the background for pressed buttons, etc. The following is a "
@@ -1345,18 +1390,18 @@ msgid ""
 "6 Is used as the border of most widgets.</i>"
 msgstr ""
 
-#. i18n: file: config/qtcurveconfigbase.ui:2465
+#. i18n: file: config/qtcurveconfigbase.ui:2560
 #. i18n: ectx: property (text), widget (QLabel)
-#: po/rc.cpp:441 rc.cpp:441
+#: po/rc.cpp:465 rc.cpp:465
 msgid "Shading routine:"
 msgstr ""
 
-#: po/rc.cpp:442 rc.cpp:442
+#: po/rc.cpp:466 rc.cpp:466
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
 msgstr ""
 
-#: po/rc.cpp:443 rc.cpp:443
+#: po/rc.cpp:467 rc.cpp:467
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
 msgstr ""
