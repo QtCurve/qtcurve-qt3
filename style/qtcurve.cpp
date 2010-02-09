@@ -4867,6 +4867,50 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             }
             break;
         }
+        case CE_ProgressBarLabel:
+        {
+            const QProgressBar* pb = (const QProgressBar*)widget;
+            QRect cr = subRect(SR_ProgressBarContents, widget);
+            double progress = pb->progress();
+            bool reverse = QApplication::reverseLayout();
+            int steps = pb->totalSteps();
+
+            if (!cr.isValid())
+                return;
+
+            if(opts.boldProgress) // This is the only change fro the KStyle code!
+            {
+                QFont font = p->font();
+                font.setBold(true);
+                p->setFont(font);
+            }
+
+            // Draw label
+            if (progress > 0 || steps == 0)
+            {
+                double pg = (steps == 0) ? 1.0 : progress / steps;
+                int width = QMIN(cr.width(), (int)(pg * cr.width()));
+                QRect crect;
+                if (reverse)
+                        crect.setRect(cr.x()+(cr.width()-width), cr.y(), cr.width(), cr.height());
+                else
+                        crect.setRect(cr.x()+width, cr.y(), cr.width(), cr.height());
+
+                p->save();
+                p->setPen(pb->isEnabled() ? (reverse ? cg.text() : cg.highlightedText()) : cg.text());
+                p->drawText(r, AlignCenter, pb->progressString());
+                p->setClipRect(crect);
+                p->setPen(reverse ? cg.highlightedText() : cg.text());
+                p->drawText(r, AlignCenter, pb->progressString());
+                p->restore();
+            }
+            else
+            {
+                p->setPen(cg.text());
+                p->drawText(r, AlignCenter, pb->progressString());
+            }
+            break;
+        }
         case CE_PushButton:
         {
             const QPushButton *button(static_cast<const QPushButton *>(widget));
