@@ -2205,9 +2205,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                                     WIDGET_SPIN!=w && WIDGET_COMBO_BUTTON!=w && WIDGET_SB_BUTTON!=w &&
                                     (WIDGET_SB_SLIDER!=w || !opts.colorSliderMouseOver) &&
                                     !(flags&QTC_DW_CLOSE_BUTTON) &&
-#ifdef QTC_DONT_COLOUR_MOUSEOVER_TBAR_BUTTONS
-                                    !(flags&QTC_STD_TOOLBUTTON) &&
-#endif
+                                    (opts.coloredTbarMo || !(flags&QTC_STD_TOOLBUTTON)) &&
                                     (flags&QTC_CHECK_BUTTON || flags&QTC_TOGGLE_BUTTON || !sunken)),
                  plastikMouseOver(doColouredMouseOver && MO_PLASTIK==opts.coloredMouseOver),
                  colouredMouseOver(doColouredMouseOver &&
