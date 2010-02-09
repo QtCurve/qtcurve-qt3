@@ -1,6 +1,9 @@
 1.1.0
 -----
 1. Add option to not embolden progressbar text.
+2. Config module is deprecated, and no longer updated - use KDE4 config module
+   to change settings. If KDE3 version is required, pass -DQTC_BUILD_CONFIG_MODULE=true
+   to cmake.
 
 1.0.1
 -----
