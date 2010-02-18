@@ -2205,9 +2205,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                                     WIDGET_SPIN!=w && WIDGET_COMBO_BUTTON!=w && WIDGET_SB_BUTTON!=w &&
                                     (WIDGET_SB_SLIDER!=w || !opts.colorSliderMouseOver) &&
                                     !(flags&QTC_DW_CLOSE_BUTTON) &&
-#ifdef QTC_DONT_COLOUR_MOUSEOVER_TBAR_BUTTONS
-                                    !(flags&QTC_STD_TOOLBUTTON) &&
-#endif
+                                    (opts.coloredTbarMo || !(flags&QTC_STD_TOOLBUTTON)) &&
                                     (flags&QTC_CHECK_BUTTON || flags&QTC_TOGGLE_BUTTON || !sunken)),
                  plastikMouseOver(doColouredMouseOver && MO_PLASTIK==opts.coloredMouseOver),
                  colouredMouseOver(doColouredMouseOver &&
@@ -4864,6 +4862,50 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                         drawProgress(p, QRect(cr.x(), cr.y(), width, cr.height()), cg, flags,
                                      width==cr.width() ?  ROUNDED_NONE : ROUNDED_RIGHT, widget);
                 }
+            }
+            break;
+        }
+        case CE_ProgressBarLabel:
+        {
+            const QProgressBar* pb = (const QProgressBar*)widget;
+            QRect cr = subRect(SR_ProgressBarContents, widget);
+            double progress = pb->progress();
+            bool reverse = QApplication::reverseLayout();
+            int steps = pb->totalSteps();
+
+            if (!cr.isValid())
+                return;
+
+            if(opts.boldProgress) // This is the only change fro the KStyle code!
+            {
+                QFont font = p->font();
+                font.setBold(true);
+                p->setFont(font);
+            }
+
+            // Draw label
+            if (progress > 0 || steps == 0)
+            {
+                double pg = (steps == 0) ? 1.0 : progress / steps;
+                int width = QMIN(cr.width(), (int)(pg * cr.width()));
+                QRect crect;
+                if (reverse)
+                        crect.setRect(cr.x()+(cr.width()-width), cr.y(), cr.width(), cr.height());
+                else
+                        crect.setRect(cr.x()+width, cr.y(), cr.width(), cr.height());
+
+                p->save();
+                p->setPen(pb->isEnabled() ? (reverse ? cg.text() : cg.highlightedText()) : cg.text());
+                p->drawText(r, AlignCenter, pb->progressString());
+                p->setClipRect(crect);
+                p->setPen(reverse ? cg.highlightedText() : cg.text());
+                p->drawText(r, AlignCenter, pb->progressString());
+                p->restore();
+            }
+            else
+            {
+                p->setPen(cg.text());
+                p->drawText(r, AlignCenter, pb->progressString());
             }
             break;
         }

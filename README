@@ -14,6 +14,9 @@ The following options may be supplied to cmake:
         Build style as a pure Qt3 style. NOTE: May also need to set QTDIR *before*
         calling cmake.
 
+    -DQTC_BUILD_CONFIG_MODULE=true
+        Build KDE3 config module - not this is no longer maintained.
+
     -DQTC_DEFAULT_TO_KDE3=true
        If the KDE_SESSION_VERSION is not set, then assume we are running
        under KDE3. If this cmake option is not set, then KDE4 is assumed.
