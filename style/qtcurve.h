@@ -274,7 +274,7 @@ class QtCurveStyle : public QTC_BASE_STYLE
     mutable QColor             itsColoredBackgroundCols[TOTAL_SHADES+1];
     EApp                       itsThemedApp;
     mutable QCache<QPixmap>    itsPixmapCache;
-#if KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
     bool                       itsIsTransKicker;
 #endif
     EHover                     itsHover;
