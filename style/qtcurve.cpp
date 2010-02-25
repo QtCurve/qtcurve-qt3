@@ -61,6 +61,7 @@ dimension, so as to draw the scrollbar at the correct size.
 */
 #include <qtable.h>
 
+#include "config.h"
 #ifndef QTC_QT_ONLY
 #include <kdeversion.h>
 #endif
@@ -318,7 +319,7 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 
 #define QTC_SKIP_TASKBAR (APP_SKIP_TASKBAR==itsThemedApp || APP_KPRINTER==itsThemedApp || APP_KDIALOG==itsThemedApp)
 
-#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
 #include <qfile.h>
 #endif
 
@@ -336,7 +337,7 @@ Q_EXPORT_PLUGIN(QtCurveStylePlugin)
 
 #define QTC_DW_BGND 105
 
-#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
 // Try to read $KDEHOME/share/config/kickerrc to find out if kicker is transparent...
 
 static bool kickerIsTrans()
@@ -762,7 +763,7 @@ QtCurveStyle::QtCurveStyle()
               itsMdiColors(0L),
               itsThemedApp(APP_OTHER),
               itsPixmapCache(150000, 499),
-#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
               itsIsTransKicker(false),
 #endif
               itsHover(HOVER_NONE),
@@ -1027,7 +1028,7 @@ void QtCurveStyle::polish(QApplication *app)
     if ("kicker"==appName || "appletproxy"==appName)
     {
         itsThemedApp=APP_KICKER;
-#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
         itsIsTransKicker=kickerIsTrans();
 #endif
     }
@@ -1061,7 +1062,7 @@ void QtCurveStyle::polish(QApplication *app)
     else if ("korn"==appName)
     {
         itsThemedApp=APP_KORN;
-#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
         itsIsTransKicker=kickerIsTrans();
 #endif
     }
@@ -2881,7 +2882,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(flags&Style_Down)
                     flags=((flags|Style_Down)^Style_Down)| Style_Sunken;
                 flags|=Style_Enabled;
-#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
 #if defined KDE_VERSION && KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
                 if(HOVER_KICKER==itsHover && itsHoverWidget) //  && itsHoverWidget==p->device())
                     flags|=Style_MouseOver;
@@ -2890,7 +2891,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 #endif
                 drawLightBevel(p, r, cg, flags|Style_Horizontal, ROUNDED_ALL,
                                getFill(flags, use), use, true, false);
-#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
                 itsFormMode=false;
 #endif
             }
@@ -3042,7 +3043,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                             ? cg.background().dark(QTC_DW_BGND)
                             : */cg.background(),
                            p, r, cg, glassMod ? flags : flags|Style_Horizontal,
-#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
                            (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe) ||
 #endif
                            operaMdi || mdi
@@ -3074,7 +3075,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 drawLightBevel(p, r, cg, glassMod ? flags : flags|Style_Horizontal,
                                flags&QTC_CHECK_BUTTON
-#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
                                  || (APP_KORN==itsThemedApp && itsIsTransKicker && PE_ButtonTool==pe)
 #endif
                                     ? ROUNDED_NONE : ROUNDED_ALL,
@@ -5240,7 +5241,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     bflags|=QTC_NO_ETCH_BUTTON;
 
                 // If we're pressed, on, or raised...
-#if !defined KDE_VERSION || KDE_VERSION >= 0x30200
+#if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
                 if(bflags &(Style_Down | Style_On | Style_Raised) || onControlButtons)
 #else
                 if(bflags &(Style_Down | Style_On | Style_Raised | Style_MouseOver) ||
@@ -7895,8 +7896,8 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
                     return HOVER_KICKER==itsHover;
                 }
                 else
-                {
 #endif
+                {
                     QHeader *hd(::qt_cast<QHeader *>(itsHoverWidget));
 
                     if(hd)
@@ -8012,12 +8013,8 @@ bool QtCurveStyle::redrawHoverWidget(const QPoint &pos)
 
                             }
                         }
-#if defined KDE_VERSION && KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
                     }
-#endif
-#if KDE_VERSION >= 0x30400
                 }
-#endif
             }
 #if QT_VERSION >= 0x030200
         }
