@@ -3567,7 +3567,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(square)
                 {
                     p->setPen(use[QT_STD_BORDER]);
-                    p->drawRect(r);
+                    p->drawLine(r.bottomLeft(), r.topLeft());
+                    p->drawLine(r.topLeft(), r.topRight());
+                    p->setPen(use[QT_STD_BORDER_BR]);
+                    p->drawLine(r.topRight(), r.bottomRight());
+                    p->drawLine(r.bottomRight(), r.bottomLeft());
                 }
                 else
                 {
@@ -3925,7 +3929,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 const QColor *use(backgroundColors(cg));
 
                 p->setPen(use[QT_STD_BORDER]);
-                p->drawRect(r);
+                p->drawLine(r.bottomLeft(), r.topLeft());
+                p->drawLine(r.topLeft(), r.topRight());
+                p->setPen(use[QT_STD_BORDER_BR]);
+                p->drawLine(r.topRight(), r.bottomRight());
+                p->drawLine(r.bottomRight(), r.bottomLeft());
                 break;
             }
 
@@ -6461,7 +6469,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
                 return 0;
 
             if (opts.squareScrollViews && widget && ::qt_cast<const QScrollView *>(widget))
-                return opts.gtkScrollViews ? 1 : 2;
+                return opts.gtkScrollViews || opts.thinSbarGroove ? 1 : 2;
 
             if(QTC_DO_EFFECT && opts.etchEntry && widget && !isFormWidget(widget) &&
                (::qt_cast<const QLineEdit *>(widget) || ::qt_cast<const QDateTimeEditBase*>(widget) ||

@@ -1,7 +1,10 @@
-1.1.2
+1.2.0
 -----
 1. Draw etch effect on radios if using a button effect, and not using button-like
    check/radios.
+2. If drawing square scrollviews, use a dark/light borders.
+3. If drawing square scrollviews, set frame width to 1 if using thin scrollbar
+   groove.
 
 1.1.1
 -----
