@@ -1,3 +1,8 @@
+1.1.2
+-----
+1. Draw etch effect on radios if using a button effect, and not using button-like
+   check/radios.
+
 1.1.1
 -----
 1. #include config.h before using QTC_QT_ONLY

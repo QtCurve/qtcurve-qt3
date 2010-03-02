@@ -3345,7 +3345,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                        sflags&Style_MouseOver && sflags&Style_Enabled);
                 EWidget      wid=opts.crButton ? WIDGET_STD_BUTTON : WIDGET_TROUGH;
                 EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_INVERTED;
-                bool         drawSunken=opts.crButton ? sunken : false,
+                bool         drawSunken=opts.crButton ? sunken : EFFECT_NONE!=opts.buttonEffect,
                              lightBorder=QTC_DRAW_LIGHT_BORDER(drawSunken, wid, app),
                              draw3d=!lightBorder &&
                                     (QTC_DRAW_3D_BORDER(drawSunken, app) || QTC_DRAW_3D_FULL_BORDER(drawSunken, app)),
