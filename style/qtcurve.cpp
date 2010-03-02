@@ -3569,7 +3569,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     p->setPen(use[QT_STD_BORDER]);
                     p->drawLine(r.bottomLeft(), r.topLeft());
                     p->drawLine(r.topLeft(), r.topRight());
-                    p->setPen(use[QT_STD_BORDER_BR]);
+                    if(!opts.gtkScrollViews)
+                        p->setPen(use[QT_STD_BORDER_BR]);
                     p->drawLine(r.topRight(), r.bottomRight());
                     p->drawLine(r.bottomRight(), r.bottomLeft());
                 }
@@ -3931,7 +3932,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 p->setPen(use[QT_STD_BORDER]);
                 p->drawLine(r.bottomLeft(), r.topLeft());
                 p->drawLine(r.topLeft(), r.topRight());
-                p->setPen(use[QT_STD_BORDER_BR]);
+                if(!opts.gtkScrollViews)
+                    p->setPen(use[QT_STD_BORDER_BR]);
                 p->drawLine(r.topRight(), r.bottomRight());
                 p->drawLine(r.bottomRight(), r.bottomLeft());
                 break;
