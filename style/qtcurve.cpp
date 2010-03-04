@@ -4815,7 +4815,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
         case CE_ProgressBarGroove:
         {
             QRect  rx(r);
-            bool   doEtch(QTC_DO_EFFECT);
+            bool   doEtch(QTC_DO_EFFECT && opts.borderProgress);
             QColor col;
 
             if(doEtch)
@@ -4837,11 +4837,14 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             drawBevelGradient(col, p, rx, true,
                                 false, opts.progressGrooveAppearance, WIDGET_PBAR_TROUGH);
 
-            const QColor *use(backgroundColors(cg));
+            if(opts.borderProgress)
+            {
+                const QColor *use(backgroundColors(cg));
 
-            drawBorder(cg.background(), p, rx, cg, (SFlags)(flags|Style_Horizontal),
-                       opts.squareProgress ? ROUNDED_NONE : ROUNDED_ALL, use, WIDGET_OTHER, true,
-                       IS_FLAT(opts.progressGrooveAppearance) && ECOLOR_DARK!=opts.progressGrooveColor ? BORDER_SUNKEN : BORDER_FLAT);
+                drawBorder(cg.background(), p, rx, cg, (SFlags)(flags|Style_Horizontal),
+                           opts.squareProgress ? ROUNDED_NONE : ROUNDED_ALL, use, WIDGET_OTHER, true,
+                           IS_FLAT(opts.progressGrooveAppearance) && ECOLOR_DARK!=opts.progressGrooveColor ? BORDER_SUNKEN : BORDER_FLAT);
+            }
 
             if(doEtch)
                 drawEtch(p, r, cg, false, opts.squareProgress);
@@ -5172,10 +5175,10 @@ QRect QtCurveStyle::subRect(SubRect subrect, const QWidget *widget)const
 
         case SR_ProgressBarContents:
             return opts.fillProgress
-                    ? QTC_DO_EFFECT
+                    ? QTC_DO_EFFECT && opts.borderProgress
                         ? wrect
                         : QRect(wrect.left()-1, wrect.top()-1, wrect.width()+2, wrect.height()+2)
-                    : QTC_DO_EFFECT
+                    : QTC_DO_EFFECT && opts.borderProgress
                         ? QRect(wrect.left()+2, wrect.top()+2, wrect.width()-4, wrect.height()-4)
                         : QRect(wrect.left()+1, wrect.top()+1, wrect.width()-2, wrect.height()-2);
         case SR_ProgressBarLabel:
@@ -6886,7 +6889,9 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup 
     if(rx.width()<1)
         return;
 
-    QRect   r(rx.x()+1, rx.y()+1, rx.width()-2, rx.height()-2);
+    QRect   r=opts.borderProgress
+                ? QRect(rx.x()+1, rx.y()+1, rx.width()-2, rx.height()-2)
+                : rx;
     int     minWidth(3);
     bool    drawFull(r.width()>minWidth),
             drawStripe(r.width()>(minWidth*1.5));
@@ -6956,29 +6961,33 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup 
         p->setClipping(false);
     }
 
-    drawBorder(cg.background(), p, r, cg, flags, !opts.squareProgress && opts.fillProgress ? ROUNDED_ALL : round, use, WIDGET_PROGRESSBAR, false, BORDER_FLAT, false, QT_PBAR_BORDER);
-
-    if(!opts.fillProgress && QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
+    if(opts.borderProgress)
     {
-        QRect rb(r);
+        drawBorder(cg.background(), p, r, cg, flags, !opts.squareProgress && opts.fillProgress ? ROUNDED_ALL : round,
+                   use, WIDGET_PROGRESSBAR, false, BORDER_FLAT, false, QT_PBAR_BORDER);
 
-        if(opts.fillProgress)
+        if(!opts.fillProgress && QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
         {
-            const QColor *use(backgroundColors(cg));
+            QRect rb(r);
 
-            p->setPen(use[QT_STD_BORDER]);
-            rb.addCoords(1, 1, -1, -1);
+            if(opts.fillProgress)
+            {
+                const QColor *use(backgroundColors(cg));
+
+                p->setPen(use[QT_STD_BORDER]);
+                rb.addCoords(1, 1, -1, -1);
+            }
+            else
+                p->setPen(midColor(cg.background(), use[QT_STD_BORDER]));
+            if(!(round&CORNER_TL) || !drawFull)
+                p->drawPoint(rb.x(), rb.y());
+            if(!(round&CORNER_BL) || !drawFull)
+                p->drawPoint(rb.x(), rb.y()+rb.height()-1);
+            if(!(round&CORNER_TR) || !drawFull)
+                p->drawPoint(rb.x()+rb.width()-1, rb.y());
+            if(!(round&CORNER_BR) || !drawFull)
+                p->drawPoint(rb.x()+rb.width()-1, rb.y()+rb.height()-1);
         }
-        else
-            p->setPen(midColor(cg.background(), use[QT_STD_BORDER]));
-        if(!(round&CORNER_TL) || !drawFull)
-            p->drawPoint(rb.x(), rb.y());
-        if(!(round&CORNER_BL) || !drawFull)
-            p->drawPoint(rb.x(), rb.y()+rb.height()-1);
-        if(!(round&CORNER_TR) || !drawFull)
-            p->drawPoint(rb.x()+rb.width()-1, rb.y());
-        if(!(round&CORNER_BR) || !drawFull)
-            p->drawPoint(rb.x()+rb.width()-1, rb.y()+rb.height()-1);
     }
 }
 
