@@ -5,6 +5,7 @@
 2. If drawing square non-gtk style scrollviews, use a dark/light borders.
 3. If drawing square scrollviews, set frame width to 1 if using thin scrollbar
    groove.
+4. Add options to draw square progress and entry fields when rounding.
 
 1.1.1
 -----

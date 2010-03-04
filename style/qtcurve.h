@@ -146,7 +146,7 @@ class QtCurveStyle : public QTC_BASE_STYLE
                         SFlags flags, int round, const QColor &fill, const QColor *custom=NULL,
                         bool doBorder=true, bool doCorners=true, EWidget w=WIDGET_OTHER) const;
     void drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, EWidget w) const;
-    void drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised=false) const;
+    void drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised=false, bool square=false) const;
     void drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, const QColorGroup &cg,
                     SFlags flags, int round, const QColor *custom=NULL, EWidget w=WIDGET_OTHER,
                     bool doCorners=true, EBorder borderProfile=BORDER_FLAT, bool blendBorderColors=true, int borderVal=QT_STD_BORDER) const;

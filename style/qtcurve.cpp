@@ -2430,30 +2430,38 @@ void QtCurveStyle::drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, 
     }
 }
 
-void QtCurveStyle::drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised) const
+void QtCurveStyle::drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised, bool square) const
 {
+    int mod(square ? 0 : 2);
+
     {
         QColor col(raised ? shade(cg.background(), QTC_ETCHED_DARK) : itsBackgroundCols[1]);
 
         p->setPen(col);
-        p->drawLine(r.x()+2, r.y()+r.height()-1, r.x()+r.width()-3, r.y()+r.height()-1);
-        p->drawLine(r.x()+r.width()-1, r.y()+2, r.x()+r.width()-1, r.y()+r.height()-3);
-        p->setPen(midColor(raised ? col : itsBackgroundCols[0], cg.background()));
-        p->drawLine(r.x()+r.width()-1, r.y()+r.height()-3, r.x()+r.width()-3, r.y()+r.height()-1);
-        p->drawLine(r.x()+1, r.y()+r.height()-2, r.x()+2, r.y()+r.height()-1);
-        p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-1, r.y()+2);
+        p->drawLine(r.x()+mod, r.y()+r.height()-1, r.x()+r.width()-(1+mod), r.y()+r.height()-1);
+        p->drawLine(r.x()+r.width()-1, r.y()+mod, r.x()+r.width()-1, r.y()+r.height()-(1+mod));
+        if(!square)
+        {
+            p->setPen(midColor(raised ? col : itsBackgroundCols[0], cg.background()));
+            p->drawLine(r.x()+r.width()-1, r.y()+r.height()-3, r.x()+r.width()-3, r.y()+r.height()-1);
+            p->drawLine(r.x()+1, r.y()+r.height()-2, r.x()+2, r.y()+r.height()-1);
+            p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-1, r.y()+2);
+        }
     }
     if(!raised)
     {
         QColor darkCol(shade(cg.background(), QTC_ETCHED_DARK));
 
         p->setPen(darkCol);
-        p->drawLine(r.x()+3, r.y(), r.x()+r.width()-4, r.y());
-        p->drawLine(r.x(), r.y()+3, r.x(), r.y()+r.height()-4);
-        p->setPen(midColor(darkCol, cg.background()));
-        p->drawLine(r.x(), r.y()+2, r.x()+2, r.y());
-        p->drawLine(r.x()+r.width()-3, r.y(), r.x()+r.width()-2, r.y()+1);
-        p->drawLine(r.x(), r.y()+r.height()-3, r.x()+1, r.y()+r.height()-2);
+        p->drawLine(r.x()+1+mod, r.y(), r.x()+r.width()-(2+mod), r.y());
+        p->drawLine(r.x(), r.y()+1+mod, r.x(), r.y()+r.height()-(2+mod));
+        if(!square)
+        {
+            p->setPen(midColor(darkCol, cg.background()));
+            p->drawLine(r.x(), r.y()+2, r.x()+2, r.y());
+            p->drawLine(r.x()+r.width()-3, r.y(), r.x()+r.width()-2, r.y()+1);
+            p->drawLine(r.x(), r.y()+r.height()-3, r.x()+1, r.y()+r.height()-2);
+        }
     }
 }
 
@@ -2810,6 +2818,9 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
                  doEtch(!itsFormMode && opts.etchEntry && (!isSpin || opts.unifySpin) && WIDGET_COMBO!=w && QTC_DO_EFFECT),
                  reverse(QApplication::reverseLayout());
 
+    if(WIDGET_SCROLLVIEW!=w && opts.squareEntry)
+        round=ROUNDED_NONE;
+
     QRect r(rx);
 
     if(doEtch)
@@ -2849,7 +2860,7 @@ void QtCurveStyle::drawEntryField(QPainter *p, const QRect &rx, const QColorGrou
         if(!(round&CORNER_TL) && !(round&CORNER_BL))
             r.addCoords(-2, 0, 0, 0);
         drawEtch(p, r, cg, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) &&
-                 !(flags &(Style_Down | Style_On | Style_Sunken)));
+                 !(flags &(Style_Down | Style_On | Style_Sunken)), ROUNDED_NONE==round);
         p->setClipping(false);
     }
 }
@@ -4829,11 +4840,11 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             const QColor *use(backgroundColors(cg));
 
             drawBorder(cg.background(), p, rx, cg, (SFlags)(flags|Style_Horizontal),
-                       ROUNDED_ALL, use, WIDGET_OTHER, true,
+                       opts.squareProgress ? ROUNDED_NONE : ROUNDED_ALL, use, WIDGET_OTHER, true,
                        IS_FLAT(opts.progressGrooveAppearance) && ECOLOR_DARK!=opts.progressGrooveColor ? BORDER_SUNKEN : BORDER_FLAT);
 
             if(doEtch)
-                drawEtch(p, r, cg, false);
+                drawEtch(p, r, cg, false, opts.squareProgress);
 
             break;
         }
@@ -4854,7 +4865,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     progress = (r.width()-barWidth)-(progress-(r.width()-barWidth));
 
                 drawProgress(p, QRect(r.x()+progress, r.y(), barWidth, r.height()), cg, flags,
-                             ROUNDED_ALL, widget);
+                             opts.squareProgress ? ROUNDED_NONE : ROUNDED_ALL, widget);
             }
             else
             {
@@ -4868,10 +4879,10 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     if(QApplication::reverseLayout())
                         drawProgress(p, QRect(cr.x()+(cr.width()-width), cr.y(), width,
                                      cr.height()), cg, flags,
-                                     width==cr.width() ? ROUNDED_NONE : ROUNDED_LEFT, widget);
+                                     width==cr.width() || opts.squareProgress ? ROUNDED_NONE : ROUNDED_LEFT, widget);
                     else
                         drawProgress(p, QRect(cr.x(), cr.y(), width, cr.height()), cg, flags,
-                                     width==cr.width() ?  ROUNDED_NONE : ROUNDED_RIGHT, widget);
+                                     width==cr.width() || opts.squareProgress ?  ROUNDED_NONE : ROUNDED_RIGHT, widget);
                 }
             }
             break;
@@ -5428,7 +5439,13 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                                                     ? ENTRY_FOCUS
                                                                     : ENTRY_NONE
                                                             : ENTRY_NONE, 
-                                   opts.unifyCombo ? ROUNDED_ALL : reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
+                                   opts.squareEntry
+                                    ? ROUNDED_NONE
+                                    : opts.unifyCombo
+                                        ? ROUNDED_ALL
+                                        : reverse
+                                            ? ROUNDED_RIGHT
+                                            : ROUNDED_LEFT,
                                    WIDGET_COMBO);
                 }
                 else if(opts.comboSplitter && !(SHADE_DARKEN==opts.comboBtn || itsComboBtnCols))
@@ -5510,7 +5527,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     drawGlow(p, widget ? widget->rect() : r, cg, WIDGET_COMBO);
                 else
                     drawEtch(p, widget ? widget->rect() : r, cg,
-                             !editable && EFFECT_SHADOW==opts.buttonEffect && !sunken);
+                             !editable && EFFECT_SHADOW==opts.buttonEffect && !sunken, editable && opts.squareEntry);
 
             p->setPen(cg.buttonText());
             itsFormMode = false;
@@ -5642,7 +5659,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 }
 
                 if(doEtch)
-                    drawEtch(p, spinwidget ? spinwidget->rect() : r, cg);
+                    drawEtch(p, spinwidget ? spinwidget->rect() : r, cg, false, opts.squareEntry);
             }
             itsFormMode=false;
             break;
@@ -6939,7 +6956,7 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup 
         p->setClipping(false);
     }
 
-    drawBorder(cg.background(), p, r, cg, flags, opts.fillProgress ? ROUNDED_ALL : round, use, WIDGET_PROGRESSBAR, false, BORDER_FLAT, false, QT_PBAR_BORDER);
+    drawBorder(cg.background(), p, r, cg, flags, !opts.squareProgress && opts.fillProgress ? ROUNDED_ALL : round, use, WIDGET_PROGRESSBAR, false, BORDER_FLAT, false, QT_PBAR_BORDER);
 
     if(!opts.fillProgress && QTC_ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
     {
