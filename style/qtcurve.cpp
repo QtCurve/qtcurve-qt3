@@ -2198,9 +2198,10 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                  br(r);
     bool         bevelledButton(WIDGET_BUTTON(w) && APPEARANCE_BEVELLED==app),
                  sunken(flags &(Style_Down|Style_On|Style_Sunken)),
-                 lightBorder(QTC_DRAW_LIGHT_BORDER(sunken , w, app)),
-                 draw3dfull(!lightBorder && QTC_DRAW_3D_FULL_BORDER(sunken, app)),
-                 draw3d(draw3dfull || (!lightBorder && QTC_DRAW_3D_BORDER(sunken, app))),
+                 flatWidget(WIDGET_PROGRESSBAR==w && !opts.borderProgress),
+                 lightBorder(!flatWidget && QTC_DRAW_LIGHT_BORDER(sunken , w, app)),
+                 draw3dfull(!flatWidget && !lightBorder && QTC_DRAW_3D_FULL_BORDER(sunken, app)),
+                 draw3d(!flatWidget && (draw3dfull || (!lightBorder && QTC_DRAW_3D_BORDER(sunken, app)))),
                  doColouredMouseOver(!sunken && doBorder &&
                                     opts.coloredMouseOver && flags&Style_MouseOver &&
                                     WIDGET_SPIN!=w && WIDGET_COMBO_BUTTON!=w && WIDGET_SB_BUTTON!=w &&
