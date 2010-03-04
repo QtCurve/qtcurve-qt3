@@ -3184,7 +3184,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     }
                 }
 
-                QRect checkRect(r.x()+1, r.y()+1, QTC_CHECK_SIZE, QTC_CHECK_SIZE);
+                QRect checkRect(r.x()+1, r.y()+1, opts.crSize, opts.crSize);
                 drawPrimitive(PE_Indicator, p, checkRect, cg, flags|QTC_LISTVIEW_ITEM);
             }
             break;
@@ -3375,7 +3375,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 {
                     p->setBrush(Qt::NoBrush);
                     p->setPen(shade(cg.background(), QTC_ETCHED_DARK));
-                    p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 225*16, 180*16);
+                    p->drawArc(QRect(r.x(), r.y(), opts.crSize+2, opts.crSize+2), 225*16, 180*16);
                     doneShadow=true;
                 }
 
@@ -3389,9 +3389,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(coloredMo)
                 {
                     p->setPen(use[QTC_CR_MO_FILL]);
-                    p->drawArc(QRect(x+1, y+1, QTC_RADIO_SIZE-2, QTC_RADIO_SIZE-2), 0, 360*16);
-//                     p->drawArc(QRect(x+2, y+2, QTC_RADIO_SIZE-4, QTC_RADIO_SIZE-4), 0, 360*16);
-//                     p->drawArc(QRect(x+3, y+3, QTC_RADIO_SIZE-6, QTC_RADIO_SIZE-6), 0, 360*16);
+                    p->drawArc(QRect(x+1, y+1, opts.crSize-2, opts.crSize-2), 0, 360*16);
+//                     p->drawArc(QRect(x+2, y+2, opts.crSize-4, opts.crSize-4), 0, 360*16);
+//                     p->drawArc(QRect(x+3, y+3, opts.crSize-6, opts.crSize-6), 0, 360*16);
                     p->drawPoint(x+2, y+4);
                     p->drawPoint(x+4, y+2);
                     p->drawPoint(x+8, y+2);
@@ -3417,10 +3417,10 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     p->setPen(topCol);
                     if(drawSunken || glow)
                     {
-                        p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 45*16, 180*16);
+                        p->drawArc(QRect(r.x(), r.y(), opts.crSize+2, opts.crSize+2), 45*16, 180*16);
                         p->setPen(botCol);
                     }
-                    p->drawArc(QRect(r.x(), r.y(), QTC_RADIO_SIZE+2, QTC_RADIO_SIZE+2), 225*16, 180*16);
+                    p->drawArc(QRect(r.x(), r.y(), opts.crSize+2, opts.crSize+2), 225*16, 180*16);
                 }
 
                 p->drawPixmap(rect.x(), rect.y(),
@@ -6500,10 +6500,10 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
             return QTC_DO_EFFECT && !isFormWidget(widget) ? 3 : 2;
         case PM_IndicatorWidth:
         case PM_IndicatorHeight:
-            return QTC_DO_EFFECT && widget && !isFormWidget(widget) ? QTC_CHECK_SIZE+2 : QTC_CHECK_SIZE;
+            return QTC_DO_EFFECT && widget && !isFormWidget(widget) ? opts.crSize+2 : opts.crSize;
         case PM_ExclusiveIndicatorWidth:
         case PM_ExclusiveIndicatorHeight:
-            return QTC_DO_EFFECT && widget && !isFormWidget(widget) ? QTC_RADIO_SIZE+2 : QTC_RADIO_SIZE;
+            return QTC_DO_EFFECT && widget && !isFormWidget(widget) ? opts.crSize+2 : opts.crSize;
         case PM_TabBarTabOverlap:
             return TAB_MO_GLOW==opts.tabMouseOver ? 0 : 1;
         case PM_ProgressBarChunkWidth:
