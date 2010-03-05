@@ -4838,15 +4838,19 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             drawBevelGradient(col, p, rx, true,
                                 false, opts.progressGrooveAppearance, WIDGET_PBAR_TROUGH);
 
-            if(opts.borderProgress)
-            {
-                const QColor *use(backgroundColors(cg));
+            const QColor *use(backgroundColors(cg));
 
+            if(opts.borderProgress)
                 drawBorder(cg.background(), p, rx, cg, (SFlags)(flags|Style_Horizontal),
                            opts.squareProgress ? ROUNDED_NONE : ROUNDED_ALL, use, WIDGET_OTHER, true,
                            IS_FLAT(opts.progressGrooveAppearance) && ECOLOR_DARK!=opts.progressGrooveColor ? BORDER_SUNKEN : BORDER_FLAT);
+            else
+            {
+                p->setPen(itsBackgroundCols[QT_STD_BORDER]);
+                p->drawLine(r.topLeft(), r.topRight());
+                p->drawLine(r.bottomLeft(), r.bottomRight());
             }
-
+            
             if(doEtch)
                 drawEtch(p, r, cg, false, opts.squareProgress);
 
@@ -6989,6 +6993,13 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup 
             if(!(round&CORNER_BR) || !drawFull)
                 p->drawPoint(rb.x()+rb.width()-1, rb.y()+rb.height()-1);
         }
+    }
+    else
+    {
+        r.addCoords(1, 1, -1, -1);
+        p->setPen(use[QT_PBAR_BORDER]);
+        p->drawLine(r.topLeft(), r.topRight());
+        p->drawLine(r.bottomLeft(), r.bottomRight());
     }
 }
 
