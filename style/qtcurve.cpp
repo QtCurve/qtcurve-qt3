@@ -3573,20 +3573,20 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                      (sv ||
                                       (widget && widget->parentWidget() && ::qt_cast<const QFrame *>(widget) &&
                                        widget->parentWidget()->inherits("KateView"))));
-                const QColor *use(opts.highlightScrollViews && !square && flags&Style_HasFocus ? itsHighlightCols :
+                const QColor *use(opts.highlightScrollViews && /*!square &&*/ flags&Style_HasFocus ? itsHighlightCols :
                                     backgroundColors(cg));
 
-                if(square)
-                {
-                    p->setPen(use[QT_STD_BORDER]);
-                    p->drawLine(r.bottomLeft(), r.topLeft());
-                    p->drawLine(r.topLeft(), r.topRight());
-                    if(!opts.gtkScrollViews)
-                        p->setPen(use[QT_STD_BORDER_BR]);
-                    p->drawLine(r.topRight(), r.bottomRight());
-                    p->drawLine(r.bottomRight(), r.bottomLeft());
-                }
-                else
+//                 if(square)
+//                 {
+//                     p->setPen(use[QT_STD_BORDER]);
+//                     p->drawLine(r.bottomLeft(), r.topLeft());
+//                     p->drawLine(r.topLeft(), r.topRight());
+//                     if(!opts.gtkScrollViews)
+//                         p->setPen(use[QT_STD_BORDER_BR]);
+//                     p->drawLine(r.topRight(), r.bottomRight());
+//                     p->drawLine(r.bottomRight(), r.bottomLeft());
+//                 }
+//                 else
                 {
                     itsFormMode=itsIsTransKicker;
                     if(sv && !opts.highlightScrollViews)
@@ -3599,12 +3599,12 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                                                 :*/ flags&Style_HasFocus
                                                                     ? ENTRY_FOCUS
                                                                     : ENTRY_NONE
-                                                            : ENTRY_NONE, ROUNDED_ALL, WIDGET_SCROLLVIEW);
+                                                            : ENTRY_NONE, square ? ROUNDED_NONE : ROUNDED_ALL, WIDGET_SCROLLVIEW);
                     }
                     else
                         drawBorder(cg.background(), p, r, cg,
                                    (SFlags)(flags|Style_Horizontal|Style_Enabled),
-                                   ROUNDED_ALL, use, sv ? WIDGET_SCROLLVIEW : WIDGET_OTHER, APP_KICKER!=itsThemedApp,
+                                   square ? ROUNDED_NONE : ROUNDED_ALL, use, sv ? WIDGET_SCROLLVIEW : WIDGET_OTHER, APP_KICKER!=itsThemedApp,
                                    itsIsTransKicker ? BORDER_FLAT : (flags&Style_Sunken ? BORDER_SUNKEN : BORDER_RAISED) );
                     itsFormMode=false;
                 }
@@ -3937,19 +3937,19 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             const QWidget *widget=p && p->device() ? dynamic_cast<const QWidget *>(p->device()) : 0L;
             bool          scrollView=widget && ::qt_cast<const QScrollView *>(widget);
 
-            if(opts.squareScrollViews && scrollView)
-            {
-                const QColor *use(backgroundColors(cg));
-
-                p->setPen(use[QT_STD_BORDER]);
-                p->drawLine(r.bottomLeft(), r.topLeft());
-                p->drawLine(r.topLeft(), r.topRight());
-                if(!opts.gtkScrollViews)
-                    p->setPen(use[QT_STD_BORDER_BR]);
-                p->drawLine(r.topRight(), r.bottomRight());
-                p->drawLine(r.bottomRight(), r.bottomLeft());
-                break;
-            }
+//             if(opts.squareScrollViews && scrollView)
+//             {
+//                 const QColor *use(backgroundColors(cg));
+// 
+//                 p->setPen(use[QT_STD_BORDER]);
+//                 p->drawLine(r.bottomLeft(), r.topLeft());
+//                 p->drawLine(r.topLeft(), r.topRight());
+//                 if(!opts.gtkScrollViews)
+//                     p->setPen(use[QT_STD_BORDER_BR]);
+//                 p->drawLine(r.topRight(), r.bottomRight());
+//                 p->drawLine(r.bottomRight(), r.bottomLeft());
+//                 break;
+//             }
 
             bool isReadOnly(false),
                  isEnabled(true);
@@ -3964,7 +3964,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(flags&Style_Enabled && isReadOnly)
                     flags-=Style_Enabled;
             }
-
+                
             // HACK!!  (From Plastik)
             //
             // In this place there is no reliable way to detect if we are in khtml; the
@@ -3987,7 +3987,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                                         ? ENTRY_FOCUS
                                                         : ENTRY_NONE
                                                 : ENTRY_NONE,
-                           ROUNDED_ALL, scrollView ? WIDGET_SCROLLVIEW : WIDGET_ENTRY);
+                           opts.squareScrollViews && scrollView ? ROUNDED_NONE : ROUNDED_ALL, 
+                           scrollView ? WIDGET_SCROLLVIEW : WIDGET_ENTRY);
             itsFormMode=false;
             break;
         }
@@ -6496,7 +6497,7 @@ int QtCurveStyle::pixelMetric(PixelMetric metric, const QWidget *widget) const
                 return 0;
 
             if (opts.squareScrollViews && widget && ::qt_cast<const QScrollView *>(widget))
-                return opts.gtkScrollViews || opts.thinSbarGroove ? 1 : 2;
+                return (opts.gtkScrollViews || opts.thinSbarGroove) && !opts.highlightScrollViews ? 1 : 2;
 
             if(QTC_DO_EFFECT && opts.etchEntry && widget && !isFormWidget(widget) &&
                (::qt_cast<const QLineEdit *>(widget) || ::qt_cast<const QDateTimeEditBase*>(widget) ||
