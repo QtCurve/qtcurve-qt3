@@ -839,6 +839,9 @@ QtCurveStyle::QtCurveStyle()
         case IND_GLOW:
             itsDefBtnCols=itsFocusCols;
             break;
+        case IND_SELECTED:
+            itsDefBtnCols=itsHighlightCols;
+            break;
         case IND_TINT:
             itsDefBtnCols=new QColor [TOTAL_SHADES+1];
             shadeColors(tint(itsButtonCols[ORIGINAL_SHADE],
@@ -994,7 +997,7 @@ QtCurveStyle::~QtCurveStyle()
     if(itsMouseOverCols && itsMouseOverCols!=itsDefBtnCols &&
        itsMouseOverCols!=itsSliderCols)
         delete [] itsMouseOverCols;
-    if(itsDefBtnCols && itsDefBtnCols!=itsSliderCols && itsDefBtnCols!=itsFocusCols)
+    if(itsDefBtnCols && itsDefBtnCols!=itsSliderCols && itsDefBtnCols!=itsFocusCols && itsDefBtnCols!=itsHighlightCols)
         delete [] itsDefBtnCols;
     if(itsSliderCols && itsSliderCols!=itsHighlightCols)
         delete [] itsSliderCols;
@@ -3017,7 +3020,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         case PE_ButtonTool:
         case PE_ButtonDropDown:
         {
-            const QColor *use(IND_TINT==opts.defBtnIndicator && flags&Style_Enabled && flags&Style_ButtonDefault
+            const QColor *use((IND_TINT==opts.defBtnIndicator || IND_SELECTED==opts.defBtnIndicator) && flags&Style_Enabled && flags&Style_ButtonDefault
                                 ? itsDefBtnCols : buttonColors(cg));
             bool         glassMod(PE_ButtonTool==pe && IS_GLASS(opts.appearance) &&
                                   IS_GLASS(opts.toolbarAppearance)),

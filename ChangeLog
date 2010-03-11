@@ -8,7 +8,8 @@
 4. Add options to draw square progress and entry fields when rounding.
 5. Add option to control whether progressbars have a border on all sides, or just
    top/bottom.
-6. Allow to draw focus highlight for square scrollviews.
+6. Add option to colour default buttons using highlight colour.
+7. Allow to draw focus highlight for square scrollviews.
 
 1.1.1
 -----
