@@ -934,7 +934,7 @@ QtCurveStyle::QtCurveStyle()
                         itsSortedLvColors);
     }
 
-    if(opts.crColor)
+    switch(opts.crColor)
     {
         default:
         case SHADE_NONE:
@@ -978,8 +978,6 @@ QtCurveStyle::QtCurveStyle()
                                 : opts.customSortedLvColor,
                             itsCheckRadioSelCols);
             }
-        default:
-            break;
     }
 
     setMenuColors(QApplication::palette().active());
