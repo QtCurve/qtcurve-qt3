@@ -9,7 +9,8 @@
 5. Add option to control whether progressbars have a border on all sides, or just
    top/bottom.
 6. Add option to colour default buttons using highlight colour.
-7. Allow to draw focus highlight for square scrollviews.
+7. Expand selected check/radio colour option so as to be able to specift colour.
+8. Allow to draw focus highlight for square scrollviews.
 
 1.1.1
 -----

@@ -935,20 +935,52 @@ QtCurveStyle::QtCurveStyle()
     }
 
     if(opts.crColor)
-        if(SHADE_BLEND_SELECTED==opts.shadeSliders)
-            itsCheckRadioSelCols=itsSliderCols;
-        else if(IND_COLORED==opts.defBtnIndicator)
-            itsCheckRadioSelCols=itsDefBtnCols;
-        else if(SHADE_BLEND_SELECTED==opts.comboBtn)
-            itsCheckRadioSelCols=itsComboBtnCols;
-        else if(SHADE_BLEND_SELECTED==opts.sortedLv && opts.lvButton)
-            itsCheckRadioSelCols=itsSortedLvColors;
-        else
-        {
-            itsCheckRadioSelCols=new QColor [TOTAL_SHADES+1];
-            shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
-                                 itsButtonCols[ORIGINAL_SHADE]), itsCheckRadioSelCols);
-        }
+    {
+        default:
+        case SHADE_NONE:
+            itsCheckRadioSelCols=itsButtonCols;
+            break;
+        case SHADE_DARKEN:
+            if(!itsCheckRadioSelCols)
+                itsCheckRadioSelCols=new QColor [TOTAL_SHADES+1];
+            shadeColors(shade(itsButtonCols[ORIGINAL_SHADE], LV_HEADER_DARK_FACTOR), itsCheckRadioSelCols);
+            break;
+        case SHADE_SELECTED:
+            itsCheckRadioSelCols=itsHighlightCols;
+            break;
+        case SHADE_CUSTOM:
+            if(SHADE_CUSTOM==opts.shadeSliders && opts.customSlidersColor==opts.customCrBgndColor)
+                itsCheckRadioSelCols=itsSliderCols;
+            else if(SHADE_CUSTOM==opts.comboBtn && opts.customComboBtnColor==opts.customCrBgndColor)
+                itsCheckRadioSelCols=itsComboBtnCols;
+            else if(SHADE_CUSTOM==opts.sortedLv && opts.customComboBtnColor==opts.customSortedLvColor)
+                itsCheckRadioSelCols=itsSortedLvColors;
+            else
+            {
+                if(!itsCheckRadioSelCols)
+                    itsCheckRadioSelCols=new QColor [TOTAL_SHADES+1];
+                shadeColors(opts.customCrBgndColor, itsCheckRadioSelCols);
+            }
+            break;
+        case SHADE_BLEND_SELECTED:
+            if(SHADE_BLEND_SELECTED==opts.shadeSliders)
+                itsCheckRadioSelCols=itsSliderCols;
+            else if(SHADE_BLEND_SELECTED==opts.comboBtn)
+                itsCheckRadioSelCols=itsComboBtnCols;
+            else if(SHADE_BLEND_SELECTED==opts.sortedLv)
+                itsCheckRadioSelCols=itsSortedLvColors;
+            else
+            {
+                if(!itsCheckRadioSelCols)
+                    itsCheckRadioSelCols=new QColor [TOTAL_SHADES+1];
+                shadeColors(SHADE_BLEND_SELECTED==opts.sortedLv
+                                ? midColor(itsHighlightCols[ORIGINAL_SHADE], itsButtonCols[ORIGINAL_SHADE])
+                                : opts.customSortedLvColor,
+                            itsCheckRadioSelCols);
+            }
+        default:
+            break;
+    }
 
     setMenuColors(QApplication::palette().active());
 
@@ -1007,7 +1039,8 @@ QtCurveStyle::~QtCurveStyle()
        itsSortedLvColors!=itsComboBtnCols)
         delete [] itsSortedLvColors;
     if(itsCheckRadioSelCols && itsCheckRadioSelCols!=itsDefBtnCols && itsCheckRadioSelCols!=itsSliderCols &&
-       itsCheckRadioSelCols!=itsComboBtnCols && itsCheckRadioSelCols!=itsSortedLvColors)
+       itsCheckRadioSelCols!=itsComboBtnCols && itsCheckRadioSelCols!=itsSortedLvColors && 
+       itsCheckRadioSelCols!=itsButtonCols && itsCheckRadioSelCols!=itsHighlightCols)
         delete [] itsCheckRadioSelCols;
     delete itsMactorPal;
 }
@@ -1179,10 +1212,11 @@ void QtCurveStyle::polish(QPalette &pal)
                                              itsComboBtnCols!=itsSortedLvColors) || 
                                              SHADE_DARKEN==opts.sortedLv) &&
                      (newContrast || (opts.lvButton ? newButton : newGray))),
-         newCheckRadioSelCols((newButton || newGray) &&
-                              itsCheckRadioSelCols && itsCheckRadioSelCols!=itsDefBtnCols &&
-                              itsCheckRadioSelCols!=itsSliderCols &&
-                              itsCheckRadioSelCols!=itsComboBtnCols && itsCheckRadioSelCols!=itsSortedLvColors);
+         newCheckRadioSelCols(itsCheckRadioSelCols && ( (SHADE_BLEND_SELECTED==opts.crColor && itsDefBtnCols!=itsCheckRadioSelCols &&
+                                                         itsSliderCols!=itsCheckRadioSelCols && itsComboBtnCols!=itsCheckRadioSelCols &&
+                                                         itsSortedLvColors!=itsCheckRadioSelCols) ||
+                                             SHADE_DARKEN==opts.crColor) &&
+                     (newContrast || newButton));
 
     if(newGray)
         shadeColors(QApplication::palette().active().background(), itsBackgroundCols);
@@ -1198,12 +1232,10 @@ void QtCurveStyle::polish(QPalette &pal)
     setMenuColors(QApplication::palette().active());
 
     if(newSlider)
-        shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
-                    itsButtonCols[ORIGINAL_SHADE]), itsSliderCols);
+        shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE], itsButtonCols[ORIGINAL_SHADE]), itsSliderCols);
 
     if(newComboBtn)
-        shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
-                    itsButtonCols[ORIGINAL_SHADE]), itsComboBtnCols);
+        shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE], itsButtonCols[ORIGINAL_SHADE]), itsComboBtnCols);
 
     if(newSortedLv)
         if(SHADE_BLEND_SELECTED==opts.sortedLv)
@@ -1230,8 +1262,10 @@ void QtCurveStyle::polish(QPalette &pal)
                                          QTC_TO_FACTOR(opts.lighterPopupMenuBgnd));
 
     if(newCheckRadioSelCols)
-        shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
-                             itsButtonCols[ORIGINAL_SHADE]), itsCheckRadioSelCols);
+        if(SHADE_BLEND_SELECTED==opts.crColor)
+            shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE], itsButtonCols[ORIGINAL_SHADE]), itsCheckRadioSelCols);
+        else
+            shadeColors(shade(itsButtonCols[ORIGINAL_SHADE], LV_HEADER_DARK_FACTOR), itsCheckRadioSelCols);
 
     pal.setActive(setColorGroup(pal.active(), pal.active()));
     pal.setInactive(setColorGroup(pal.inactive(), pal.active()));
