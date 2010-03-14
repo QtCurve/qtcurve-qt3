@@ -428,6 +428,7 @@ static void insertDefBtnEntries(QComboBox *combo)
     combo->insertItem(i18n("Selected background tinting"));
     combo->insertItem(i18n("A slight glow"));
     combo->insertItem(i18n("Darken"));
+    combo->insertItem(i18n("Use selected background color"));
     combo->insertItem(i18n("No indicator"));
 }
 
@@ -487,6 +488,7 @@ static void insertStripeEntries(QComboBox *combo)
     combo->insertItem(i18n("Plain"));
     combo->insertItem(i18n("Striped"));
     combo->insertItem(i18n("Diagonal stripes"));
+    combo->insertItem(i18n("Faded stripes"));
 }
 
 static void insertSliderStyleEntries(QComboBox *combo)
@@ -496,6 +498,7 @@ static void insertSliderStyleEntries(QComboBox *combo)
     combo->insertItem(i18n("Plain - rotated"));
     combo->insertItem(i18n("Round - rotated"));
     combo->insertItem(i18n("Triangular"));
+    combo->insertItem(i18n("Circular"));
 }
 
 static void insertEColorEntries(QComboBox *combo)
