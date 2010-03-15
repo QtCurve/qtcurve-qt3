@@ -523,6 +523,7 @@ static void insertGradBorderEntries(QComboBox *combo)
     combo->insertItem(i18n("Light border"));
     combo->insertItem(i18n("3D border (light only)"));
     combo->insertItem(i18n("3D border (dark and light)"));
+    combo->insertItem(i18n("Shine"));
 }
 
 static void insertAlignEntries(QComboBox *combo)
