@@ -486,7 +486,7 @@ static void insertShadingEntries(QComboBox *combo)
 static void insertStripeEntries(QComboBox *combo)
 {
     combo->insertItem(i18n("Plain"));
-    combo->insertItem(i18n("Striped"));
+    combo->insertItem(i18n("Stripes"));
     combo->insertItem(i18n("Diagonal stripes"));
     combo->insertItem(i18n("Faded stripes"));
 }
