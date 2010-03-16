@@ -923,8 +923,11 @@ void QtCurveConfig::sortedLvChanged()
 
 void QtCurveConfig::stripedProgressChanged()
 {
-    animatedProgress->setEnabled(STRIPE_NONE!=stripedProgress->currentItem());
-    if(animatedProgress->isChecked() && STRIPE_NONE==stripedProgress->currentItem())
+    bool allowAnimation=STRIPE_NONE!=stripedProgress->currentItem() &&
+                        STRIPE_FADE!=stripedProgress->currentItem();
+
+    animatedProgress->setEnabled(allowAnimation);
+    if(animatedProgress->isChecked() && !allowAnimation)
         animatedProgress->setChecked(false);
     updateChanged();
 }
@@ -1598,7 +1601,8 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     customMenuStripeColor->setEnabled(SHADE_CUSTOM==opts.menuStripe);
     menuStripeAppearance->setEnabled(SHADE_NONE!=opts.menuStripe);
 
-    animatedProgress->setEnabled(STRIPE_NONE!=stripedProgress->currentItem());
+    animatedProgress->setEnabled(STRIPE_NONE!=stripedProgress->currentItem() &&
+                                 STRIPE_FADE!=stripedProgress->currentItem());
 
     fillSlider->setChecked(opts.fillSlider);
     sliderStyle->setCurrentItem(opts.sliderStyle);
