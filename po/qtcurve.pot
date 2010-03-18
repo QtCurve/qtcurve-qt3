@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?"
 "group_id=50231&atid=459007\n"
-"POT-Creation-Date: 2010-01-03 22:33+0000\n"
+"POT-Creation-Date: 2010-03-18 20:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,7 +70,7 @@ msgid "Text"
 msgstr ""
 
 #: config/qtcurveconfig.cpp:369 config/qtcurveconfig.cpp:411
-#: config/qtcurveconfig.cpp:463 config/qtcurveconfig.cpp:548
+#: config/qtcurveconfig.cpp:464 config/qtcurveconfig.cpp:552
 msgid "None"
 msgstr ""
 
@@ -94,7 +94,7 @@ msgstr ""
 msgid "Darken"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:385 config/qtcurveconfig.cpp:1230
+#: config/qtcurveconfig.cpp:385 config/qtcurveconfig.cpp:1237
 msgid "Custom gradient %1"
 msgstr ""
 
@@ -193,341 +193,357 @@ msgid "A slight glow"
 msgstr ""
 
 #: config/qtcurveconfig.cpp:431
+msgid "Use selected background color"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:432
 msgid "No indicator"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:436
+#: config/qtcurveconfig.cpp:437
 msgid "KDE"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:437
+#: config/qtcurveconfig.cpp:438
 msgid "MS Windows"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:438
+#: config/qtcurveconfig.cpp:439
 msgid "Platinum"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:439
+#: config/qtcurveconfig.cpp:440
 msgid "NeXT"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:440
+#: config/qtcurveconfig.cpp:441
 msgid "No buttons"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:445
+#: config/qtcurveconfig.cpp:446
 msgid "Square"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:446
+#: config/qtcurveconfig.cpp:447
 msgid "Slightly rounded"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:447
+#: config/qtcurveconfig.cpp:448
 msgid "Fully rounded"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:448
+#: config/qtcurveconfig.cpp:449
 msgid "Extra rounded (KDE4 & Gtk2)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:449
+#: config/qtcurveconfig.cpp:450
 msgid "Max rounded (KDE4 & Gtk2)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:454
+#: config/qtcurveconfig.cpp:455
 msgid "No coloration"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:455
+#: config/qtcurveconfig.cpp:456
 msgid "Color border"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:456
+#: config/qtcurveconfig.cpp:457
 msgid "Thick color border"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:457
+#: config/qtcurveconfig.cpp:458
 msgid "Plastik style"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:458
+#: config/qtcurveconfig.cpp:459
 msgid "Glow"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:464
+#: config/qtcurveconfig.cpp:465
 msgid "Light"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:465
+#: config/qtcurveconfig.cpp:466
 msgid "Dark"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:466
+#: config/qtcurveconfig.cpp:467
 msgid "Light (all sides)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:467
+#: config/qtcurveconfig.cpp:468
 msgid "Dark (all sides)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:472 config/qtcurveconfig.cpp:487
-#: config/qtcurveconfig.cpp:494
+#: config/qtcurveconfig.cpp:473 config/qtcurveconfig.cpp:488
+#: config/qtcurveconfig.cpp:496
 msgid "Plain"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:473
+#: config/qtcurveconfig.cpp:474
 msgid "Etched"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:474
+#: config/qtcurveconfig.cpp:475
 msgid "Shadowed"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:479
+#: config/qtcurveconfig.cpp:480
 msgid "Simple"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:480
+#: config/qtcurveconfig.cpp:481
 msgid "Use HSL color space"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:481
+#: config/qtcurveconfig.cpp:482
 msgid "Use HSV color space"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:482
+#: config/qtcurveconfig.cpp:483
 msgid "Use HCY color space"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:488
-msgid "Striped"
+#: config/qtcurveconfig.cpp:489
+msgid "Stripes"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:489
+#: config/qtcurveconfig.cpp:490
 msgid "Diagonal stripes"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:495
-msgid "Round"
-msgstr ""
-
-#: config/qtcurveconfig.cpp:496
-msgid "Plain - rotated"
+#: config/qtcurveconfig.cpp:491
+msgid "Faded stripes"
 msgstr ""
 
 #: config/qtcurveconfig.cpp:497
-msgid "Round - rotated"
+msgid "Round"
 msgstr ""
 
 #: config/qtcurveconfig.cpp:498
+msgid "Plain - rotated"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:499
+msgid "Round - rotated"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:500
 msgid "Triangular"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:503
+#: config/qtcurveconfig.cpp:501
+msgid "Circular"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:506
 msgid "Base color"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:504
+#: config/qtcurveconfig.cpp:507
 msgid "Background color"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:505
+#: config/qtcurveconfig.cpp:508
 msgid "Darkened background color"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:510
+#: config/qtcurveconfig.cpp:513
 msgid "Standard (dotted)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:511
+#: config/qtcurveconfig.cpp:514
 msgid "Highlight color"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:512
+#: config/qtcurveconfig.cpp:515
 msgid "Highlight color (full size)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:513
+#: config/qtcurveconfig.cpp:516
 msgid "Highlight color, full, and fill (Gtk2 & KDE4 only)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:514
+#: config/qtcurveconfig.cpp:517
 msgid "Line drawn with highlight color"
 msgstr ""
 
 #. i18n: file: config/qtcurveconfigbase.ui:877
 #. i18n: ectx: property (text), widget (QCheckBox)
-#: config/qtcurveconfig.cpp:519 po/rc.cpp:170 rc.cpp:170
+#: config/qtcurveconfig.cpp:522 po/rc.cpp:170 rc.cpp:170
 msgid "No border"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:520
+#: config/qtcurveconfig.cpp:523
 msgid "Light border"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:521
+#: config/qtcurveconfig.cpp:524
 msgid "3D border (light only)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:522
+#: config/qtcurveconfig.cpp:525
 msgid "3D border (dark and light)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:527
+#: config/qtcurveconfig.cpp:526
+msgid "Shine"
+msgstr ""
+
+#: config/qtcurveconfig.cpp:531
 msgid "Left"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:528
+#: config/qtcurveconfig.cpp:532
 msgid "Center (between controls)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:529
+#: config/qtcurveconfig.cpp:533
 msgid "Center (full width)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:530
+#: config/qtcurveconfig.cpp:534
 msgid "Right"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:535
+#: config/qtcurveconfig.cpp:539
 msgid "Highlight on top"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:536
+#: config/qtcurveconfig.cpp:540
 msgid "Highlight on bottom"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:537
+#: config/qtcurveconfig.cpp:541
 msgid "Add a slight glow"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:542
+#: config/qtcurveconfig.cpp:546
 msgid "Top to bottom"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:543
+#: config/qtcurveconfig.cpp:547
 msgid "Left to right"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:549
+#: config/qtcurveconfig.cpp:553
 msgid "New style (KDE and Gtk2 similar)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:550
+#: config/qtcurveconfig.cpp:554
 msgid "Old style (KDE and Gtk2 different)"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:627
+#: config/qtcurveconfig.cpp:631
 msgid " pixels"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:764
+#: config/qtcurveconfig.cpp:768
 msgid "Predefined Style"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:766
+#: config/qtcurveconfig.cpp:770
 msgid "Import..."
 msgstr ""
 
-#: config/qtcurveconfig.cpp:767
+#: config/qtcurveconfig.cpp:771
 msgid "Export..."
 msgstr ""
 
-#: config/qtcurveconfig.cpp:770
+#: config/qtcurveconfig.cpp:774
 msgid "Export Theme..."
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1002
+#: config/qtcurveconfig.cpp:1009
 msgid "General"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1003
+#: config/qtcurveconfig.cpp:1010
 msgid "Combos"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1004
+#: config/qtcurveconfig.cpp:1011
 msgid "Spin Buttons"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1005
+#: config/qtcurveconfig.cpp:1012
 msgid "Splitters"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1006
+#: config/qtcurveconfig.cpp:1013
 msgid "Sliders and Scrollbars"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1007
+#: config/qtcurveconfig.cpp:1014
 msgid "Progressbars"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1008
+#: config/qtcurveconfig.cpp:1015
 msgid "Default Button"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1009
+#: config/qtcurveconfig.cpp:1016
 msgid "Mouse-over"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1010
+#: config/qtcurveconfig.cpp:1017
 msgid "Listviews"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1011
+#: config/qtcurveconfig.cpp:1018
 msgid "Scrollviews"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1012
+#: config/qtcurveconfig.cpp:1019
 msgid "Tabs"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1013
+#: config/qtcurveconfig.cpp:1020
 msgid "Checks and Radios"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1014
+#: config/qtcurveconfig.cpp:1021
 msgid "Windows"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1015
+#: config/qtcurveconfig.cpp:1022
 msgid "Menus and Toolbars"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1016
+#: config/qtcurveconfig.cpp:1023
 msgid "Dock windows"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1017
+#: config/qtcurveconfig.cpp:1024
 msgid "Advanced Settings"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1018
+#: config/qtcurveconfig.cpp:1025
 msgid "Custom Gradients"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1019
+#: config/qtcurveconfig.cpp:1026
 msgid "Custom Shades"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1243
+#: config/qtcurveconfig.cpp:1250
 msgid "Add"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1244
+#: config/qtcurveconfig.cpp:1251
 msgid "Remove"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1245
+#: config/qtcurveconfig.cpp:1252
 msgid "Update"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1355 config/qtcurveconfig.cpp:1365
+#: config/qtcurveconfig.cpp:1362 config/qtcurveconfig.cpp:1372
 msgid "*"
 msgstr ""
 
-#: config/qtcurveconfig.cpp:1381
+#: config/qtcurveconfig.cpp:1388
 msgid ""
 "Could not write to file:\n"
 "%1"
