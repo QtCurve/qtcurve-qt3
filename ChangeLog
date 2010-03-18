@@ -1,3 +1,17 @@
+1.2.0
+-----
+1. Draw etch effect on radios if using a button effect, and not using button-like
+   check/radios.
+2. If drawing square non-gtk style scrollviews, use a dark/light borders.
+3. If drawing square scrollviews, set frame width to 1 if using thin scrollbar
+   groove.
+4. Add options to draw square progress and entry fields when rounding.
+5. Add option to control whether progressbars have a border on all sides, or just
+   top/bottom.
+6. Add option to colour default buttons using highlight colour.
+7. Expand selected check/radio colour option so as to be able to specift colour.
+8. Allow to draw focus highlight for square scrollviews.
+
 1.1.1
 -----
 1. #include config.h before using QTC_QT_ONLY

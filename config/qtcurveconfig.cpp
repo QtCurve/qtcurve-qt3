@@ -428,6 +428,7 @@ static void insertDefBtnEntries(QComboBox *combo)
     combo->insertItem(i18n("Selected background tinting"));
     combo->insertItem(i18n("A slight glow"));
     combo->insertItem(i18n("Darken"));
+    combo->insertItem(i18n("Use selected background color"));
     combo->insertItem(i18n("No indicator"));
 }
 
@@ -485,8 +486,9 @@ static void insertShadingEntries(QComboBox *combo)
 static void insertStripeEntries(QComboBox *combo)
 {
     combo->insertItem(i18n("Plain"));
-    combo->insertItem(i18n("Striped"));
+    combo->insertItem(i18n("Stripes"));
     combo->insertItem(i18n("Diagonal stripes"));
+    combo->insertItem(i18n("Faded stripes"));
 }
 
 static void insertSliderStyleEntries(QComboBox *combo)
@@ -496,6 +498,7 @@ static void insertSliderStyleEntries(QComboBox *combo)
     combo->insertItem(i18n("Plain - rotated"));
     combo->insertItem(i18n("Round - rotated"));
     combo->insertItem(i18n("Triangular"));
+    combo->insertItem(i18n("Circular"));
 }
 
 static void insertEColorEntries(QComboBox *combo)
@@ -520,6 +523,7 @@ static void insertGradBorderEntries(QComboBox *combo)
     combo->insertItem(i18n("Light border"));
     combo->insertItem(i18n("3D border (light only)"));
     combo->insertItem(i18n("3D border (dark and light)"));
+    combo->insertItem(i18n("Shine"));
 }
 
 static void insertAlignEntries(QComboBox *combo)
@@ -919,8 +923,11 @@ void QtCurveConfig::sortedLvChanged()
 
 void QtCurveConfig::stripedProgressChanged()
 {
-    animatedProgress->setEnabled(STRIPE_NONE!=stripedProgress->currentItem());
-    if(animatedProgress->isChecked() && STRIPE_NONE==stripedProgress->currentItem())
+    bool allowAnimation=STRIPE_NONE!=stripedProgress->currentItem() &&
+                        STRIPE_FADE!=stripedProgress->currentItem();
+
+    animatedProgress->setEnabled(allowAnimation);
+    if(animatedProgress->isChecked() && !allowAnimation)
         animatedProgress->setChecked(false);
     updateChanged();
 }
@@ -1594,7 +1601,8 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     customMenuStripeColor->setEnabled(SHADE_CUSTOM==opts.menuStripe);
     menuStripeAppearance->setEnabled(SHADE_NONE!=opts.menuStripe);
 
-    animatedProgress->setEnabled(STRIPE_NONE!=stripedProgress->currentItem());
+    animatedProgress->setEnabled(STRIPE_NONE!=stripedProgress->currentItem() &&
+                                 STRIPE_FADE!=stripedProgress->currentItem());
 
     fillSlider->setChecked(opts.fillSlider);
     sliderStyle->setCurrentItem(opts.sliderStyle);
