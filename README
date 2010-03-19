@@ -13,9 +13,10 @@ The following options may be supplied to cmake:
     -DQTC_QT_ONLY=true
         Build style as a pure Qt3 style. NOTE: May also need to set QTDIR *before*
         calling cmake.
+        This is the default as from QtCurve 1.0.0
 
     -DQTC_BUILD_CONFIG_MODULE=true
-        Build KDE3 config module - not this is no longer maintained.
+        Build KDE3 config module. NOTE: This is no longer maintained.
 
     -DQTC_DEFAULT_TO_KDE3=true
        If the KDE_SESSION_VERSION is not set, then assume we are running
@@ -51,6 +52,9 @@ or copy to <kde install prefix>/share/apps/kstyle/themes/ (usually
 /usr/share/apps/kstyle/themes/)
 
 When KDE's style panel is restarted, your new theme should appear in the list.
+
+NOTE: As of QtCurve 1.0.0 style support has been disabled by default, and you will
+need to explicitly enable it via QTC_STYLE_SUPPORT
 
 
 Creating Distribution Packages
