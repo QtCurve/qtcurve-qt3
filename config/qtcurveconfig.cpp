@@ -1515,7 +1515,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.sbarBgndAppearance=(EAppearance)sbarBgndAppearance->currentItem();
     opts.sliderFill=(EAppearance)sliderFill->currentItem();
     opts.dwtAppearance=(EAppearance)dwtAppearance->currentItem();
-    opts.crColor=crColor->isChecked();
+    opts.crColor=crColor->isChecked() ? SHADE_BLEND_SELECTED : SHADE_NONE;
     opts.smallRadio=smallRadio->isChecked();
     opts.splitterHighlight=splitterHighlight->value();
     opts.gtkComboMenus=gtkComboMenus->isChecked();
@@ -1666,7 +1666,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     sbarBgndAppearance->setCurrentItem(opts.sbarBgndAppearance);
     sliderFill->setCurrentItem(opts.sliderFill);
     dwtAppearance->setCurrentItem(opts.dwtAppearance);
-    crColor->setChecked(opts.crColor);
+    crColor->setChecked(SHADE_BLEND_SELECTED==opts.crColor);
     smallRadio->setChecked(opts.smallRadio);
     splitterHighlight->setValue(opts.splitterHighlight);
     gtkComboMenus->setChecked(opts.gtkComboMenus);
@@ -1781,7 +1781,7 @@ bool QtCurveConfig::settingsChanged()
          sbarBgndAppearance->currentItem()!=currentStyle.sbarBgndAppearance ||
          sliderFill->currentItem()!=currentStyle.sliderFill ||
          dwtAppearance->currentItem()!=currentStyle.dwtAppearance ||
-         crColor->isChecked()!=currentStyle.crColor ||
+         crColor->isChecked()!=(SHADE_BLEND_SELECTED==currentStyle.crColor ? true : false)||
          smallRadio->isChecked()!=currentStyle.smallRadio ||
          splitterHighlight->value()!=currentStyle.splitterHighlight ||
          gtkComboMenus->isChecked()!=currentStyle.gtkComboMenus ||

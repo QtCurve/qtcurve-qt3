@@ -1,3 +1,7 @@
+1.2.1
+-----
+1. Fix(?) compilation of config module.
+
 1.2.0
 -----
 1. Draw etch effect on radios if using a button effect, and not using button-like
