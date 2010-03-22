@@ -77,11 +77,11 @@ endif(NOT KDE4PREFIX)
 
 configure_file (config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 if (NOT QTC_QT_ONLY)
-add_definitions(${QT_DEFINITIONS} ${KDE3_DEFINITIONS})
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE3_INCLUDES})
+    add_definitions(${QT_DEFINITIONS} ${KDE3_DEFINITIONS})
+    include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE3_INCLUDES})
 else (NOT QTC_QT_ONLY)
-add_definitions(${QT_DEFINITIONS})
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
+    add_definitions(${QT_DEFINITIONS})
+    include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 endif (NOT QTC_QT_ONLY)
 
 set(DATA_INSTALL_DIR ${KDE3PREFIX}/share/apps)
@@ -94,9 +94,16 @@ endif(QTC_DEFAULT_TO_KDE3)
 
 add_subdirectory(style)
 if (NOT QTC_QT_ONLY)
-add_subdirectory(config)
-add_subdirectory(themes)
-add_subdirectory(colors)
-add_subdirectory(po)
+    if (QTC_BUILD_CONFIG_MODULE)
+        message("\n**************************************************************\n"
+                "Warning: The KDE3 config module is deprecated, and is no longer\n"
+                "         actively maintained. This module may no longer work\n"
+                "         or even compile. It is recommended to use the KDE4 version\n"
+                "         instead.\n"
+                "**************************************************************\n")
+        add_subdirectory(config)
+        add_subdirectory(po)
+    endif (QTC_BUILD_CONFIG_MODULE)
+    add_subdirectory(themes)
+    add_subdirectory(colors)
 endif (NOT QTC_QT_ONLY)
-
