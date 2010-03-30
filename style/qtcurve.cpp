@@ -1132,7 +1132,7 @@ void QtCurveStyle::polish(QApplication *app)
 
     if(SHADE_NONE!=opts.menuStripe && opts.noMenuStripeApps.contains(appName))
         opts.menuStripe=SHADE_NONE;
-    if(opts.fixParentlessDialogs && opts.noDlgFixApps.contains(appName))
+    if(opts.fixParentlessDialogs && (opts.noDlgFixApps.contains(appName) || opts.noDlgFixApps.contains("kde")))
         opts.fixParentlessDialogs=false;
 }
 
