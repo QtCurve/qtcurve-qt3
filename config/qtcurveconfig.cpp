@@ -377,6 +377,9 @@ static void insertShadeEntries(QComboBox *combo, ShadeWidget sw)
         combo->insertItem(i18n("Blended selected background"));
         combo->insertItem(SW_MENU_STRIPE==sw ? i18n("Menu background") : i18n("Darken"));
     }
+
+    if(SW_MENUBAR==sw)
+        combo->insertItem(i18n("Titlebar border"));
 }
 
 static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true, bool fade=false)

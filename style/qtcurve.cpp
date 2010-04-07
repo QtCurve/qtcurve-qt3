@@ -1481,8 +1481,21 @@ void QtCurveStyle::polish(QWidget *widget)
         if(SHADE_NONE!=opts.shadeMenubars)
             widget->installEventFilter(this);
 
-        if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
-           (SHADE_CUSTOM==opts.shadeMenubars && TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
+        if(SHADE_WINDOW_BORDER==opts.shadeMenubars)
+        {
+            QPalette    pal(widget->palette());
+            QColorGroup act(pal.active());
+            QColorGroup inact(pal.inactive());
+
+            getMdiColors(act, true);
+            act.setColor(QColorGroup::Foreground, itsActiveMdiTextColor);
+            inact.setColor(QColorGroup::Foreground, itsMdiTextColor);
+            pal.setInactive(inact);
+            pal.setActive(act);
+            widget->setPalette(pal);
+        }
+        else if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
+                (SHADE_CUSTOM==opts.shadeMenubars && TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
         {
             QPalette    pal(widget->palette());
             QColorGroup act(pal.active());
@@ -1747,9 +1760,8 @@ void QtCurveStyle::unPolish(QWidget *widget)
            widget->setBackgroundMode(PaletteBackground);
         if(SHADE_NONE!=opts.shadeMenubars)
             widget->removeEventFilter(this);
-
-        if(opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
-           (SHADE_CUSTOM==opts.shadeMenubars &&TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
+        if(SHADE_WINDOW_BORDER==opts.shadeMenubars || opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars ||
+           SHADE_SELECTED==opts.shadeMenubars || (SHADE_CUSTOM==opts.shadeMenubars &&TOO_DARK(itsMenubarCols[ORIGINAL_SHADE])))
             widget->setPalette(QApplication::palette());
     }
     else if (widget->inherits("KToolBarSeparator"))
@@ -2025,7 +2037,9 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
 
     if(::qt_cast<QMenuBar *>(object))
     {
-        if( (opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
+        bool useWindowCols=SHADE_WINDOW_BORDER==opts.shadeMenubars;
+
+        if( (useWindowCols || opts.customMenuTextColor || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars ||
              SHADE_CUSTOM==opts.shadeMenubars) && QEvent::Paint==event->type())
         {
             const QColor &col(((QWidget *)object)->palette().active().color(QColorGroup::Foreground));
@@ -2040,14 +2054,16 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
                 QPalette    pal(((QWidget *)object)->palette());
                 QColorGroup act(pal.active());
 
-                act.setColor(QColorGroup::Foreground, opts.customMenuTextColor
-                                                    ? opts.customMenuNormTextColor
-                                                    : QApplication::palette().active().highlightedText());
+                act.setColor(QColorGroup::Foreground, useWindowCols
+                                                      ? itsActiveMdiTextColor
+                                                      : opts.customMenuTextColor
+                                                        ? opts.customMenuNormTextColor
+                                                        : QApplication::palette().active().highlightedText());
 
-                if(!opts.shadeMenubarOnlyWhenActive)
+                if(!opts.shadeMenubarOnlyWhenActive || useWindowCols)
                 {
                     QColorGroup inact(pal.inactive());
-                    inact.setColor(QColorGroup::Foreground, act.color(QColorGroup::Foreground));
+                    inact.setColor(QColorGroup::Foreground, useWindowCols ? itsMdiTextColor : act.color(QColorGroup::Foreground));
                     pal.setInactive(inact);
                 }
 
@@ -3729,8 +3745,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
             if(TB_NONE!=opts.toolbarBorders)
             {
-                const QColor *use=PE_PanelMenuBar==pe && itsActive
-                                      ? itsMenubarCols
+                const QColor *use=PE_PanelMenuBar==pe
+                                      ? menuColors(cg, itsActive)
                                       : backgroundColors(cg.background());
                 bool         dark(TB_DARK==opts.toolbarBorders || TB_DARK_ALL==opts.toolbarBorders);
 
@@ -7508,7 +7524,7 @@ void QtCurveStyle::drawMenuOrToolBarBackground(QPainter *p, const QRect &r, cons
                                                bool menu, bool horiz) const
 {
     EAppearance app(menu ? opts.menubarAppearance : opts.toolbarAppearance);
-    QColor      color(menu && itsActive ? itsMenubarCols[ORIGINAL_SHADE] : cg.background());
+    QColor      color(menu ? menuColors(cg, itsActive)[ORIGINAL_SHADE] : cg.background());
 
     drawBevelGradient(color, p, r, horiz, false, app);
 }
@@ -7677,7 +7693,19 @@ void QtCurveStyle::setMenuColors(const QColorGroup &cg)
             break;
         case SHADE_DARKEN:
             shadeColors(shade(cg.background(), MENUBAR_DARK_FACTOR), itsMenubarCols);
+            break;
+        case SHADE_WINDOW_BORDER:
+            break;
     }
+}
+
+const QColor * QtCurveStyle::menuColors(const QColorGroup &cg, bool active) const
+{
+    return SHADE_WINDOW_BORDER==opts.shadeMenubars
+            ? getMdiColors(cg, active)
+            : SHADE_NONE==opts.shadeMenubars || (opts.shadeMenubarOnlyWhenActive && !active)
+                ? backgroundColors(cg)
+                : itsMenubarCols;
 }
 
 void QtCurveStyle::setDecorationColors(bool init)

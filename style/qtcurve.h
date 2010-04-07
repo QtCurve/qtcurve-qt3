@@ -221,6 +221,7 @@ class QtCurveStyle : public QTC_BASE_STYLE
     const QColor * borderColors(SFlags flags, const QColor *use) const;
     const QColor * getSidebarButtons() const;
     void           setMenuColors(const QColorGroup &cg);
+    const QColor * menuColors(const QColorGroup &cg, bool active) const;
     void           setDecorationColors(bool init=false);
     const QColor * getMdiColors(const QColorGroup &cg, bool active) const;
 #ifdef SET_MDI_WINDOW_BUTTON_POSITIONS
