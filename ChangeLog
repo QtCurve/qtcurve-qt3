@@ -1,3 +1,10 @@
+1.3.0
+-----
+1. Add option to use kwin titlebar colours as menubar shade.
+2. Fix(?) compilation of config module.
+3. Dont use KStandardDirs to create config folder.
+4. Use 'kde' to disable parent-less dialog fix for all KDE applications.
+
 1.2.0
 -----
 1. Draw etch effect on radios if using a button effect, and not using button-like
@@ -9,7 +16,7 @@
 5. Add option to control whether progressbars have a border on all sides, or just
    top/bottom.
 6. Add option to colour default buttons using highlight colour.
-7. Expand selected check/radio colour option so as to be able to specift colour.
+7. Expand selected check/radio colour option so as to be able to specify colour.
 8. Allow to draw focus highlight for square scrollviews.
 
 1.1.1
@@ -553,7 +560,7 @@
  6. Optional diagonal progressbar sripes.
  7. Use alternating dark/light for dashed toolbar handles.
  8. New 'split' style gradient.
- 9. Option to specift slider style: plain, round (only when appearance=round),
+ 9. Option to specify slider style: plain, round (only when appearance=round),
     and triangular (plastik-ish)
 10. Modify default style: flat splitter lines, flat slider thumbs, no
     toolbar separators, triangular slider, diagonal progressbar stripes.
