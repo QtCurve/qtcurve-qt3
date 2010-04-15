@@ -49,6 +49,8 @@
 #include <kguiitem.h>
 #include <kinputdialog.h>
 #include <knuminput.h>
+#include <kglobal.h>
+#include <kstandarddirs.h>
 #include <unistd.h>
 #include <errno.h>
 #include "config.h"
