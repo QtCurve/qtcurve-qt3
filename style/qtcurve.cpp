@@ -635,11 +635,11 @@ static QString createKey(int size, QRgb color, bool horiz, int app, ECacheFlags 
     return key;
 }
 
-static QString createKey(QRgb color)
+static QString createKey(QRgb color, char type='p')
 {
     QString key;
 
-    QTextOStream(&key) << 'p' << color;
+    QTextOStream(&key) << type << color;
 
     return key;
 }
@@ -1288,6 +1288,9 @@ void QtCurveStyle::polish(QPalette &pal)
     // Force this to be re-generated!
     if(SHADE_BLEND_SELECTED==opts.menuStripe)
         opts.customMenuStripeColor=Qt::black;
+    
+    if(APPEARANCE_STRIPED==opts.bgndAppearance)
+        pal.setBrush(QColorGroup::Background, QBrush(pal.active().background(), *createStripePixmap(pal.active().background())));
 }
 
 static QColor disable(const QColor &col, const QColor &bgnd)
@@ -1386,7 +1389,7 @@ void QtCurveStyle::polish(QWidget *widget)
        0==qstrcmp(widget->parentWidget()->className(), "Kontact::MainWindow"))
         ((QHBox *)widget)->setLineWidth(0);
 
-    if(!IS_FLAT(opts.menuBgndAppearance) && ::qt_cast<const QPopupMenu *>(widget))
+    if(!IS_FLAT_BGND(opts.menuBgndAppearance) && ::qt_cast<const QPopupMenu *>(widget))
         widget->installEventFilter(this);
 
     #if 0
@@ -1405,7 +1408,7 @@ void QtCurveStyle::polish(QWidget *widget)
              (widget->parentWidget() && ::qt_cast<const QListBox *>(widget) &&
               ::qt_cast<const QComboBox *>(widget->parentWidget()))))
         ((QFrame *)widget)->setLineWidth(0);
-    else if ((USE_LIGHTER_POPUP_MENU || !IS_FLAT(opts.menuBgndAppearance)) && !opts.borderMenuitems &&
+    else if ((USE_LIGHTER_POPUP_MENU || !IS_FLAT_BGND(opts.menuBgndAppearance)) && !opts.borderMenuitems &&
         widget && ::qt_cast<const QPopupMenu *>(widget))
         ((QFrame *)widget)->setLineWidth(1);
 
@@ -1696,6 +1699,8 @@ void QtCurveStyle::polish(QWidget *widget)
         widget->setPalette(pal);
     }
 
+    if(APPEARANCE_STRIPED==opts.bgndAppearance)
+        widget->setBackgroundOrigin(QWidget::WindowOrigin);
     QTC_BASE_STYLE::polish(widget);
 }
 
@@ -1704,7 +1709,7 @@ void QtCurveStyle::unPolish(QWidget *widget)
     if(isFormWidget(widget))
         itsKhtmlWidgets.remove(widget);
 
-    if(!IS_FLAT(opts.menuBgndAppearance) && ::qt_cast<const QPopupMenu *>(widget))
+    if(!IS_FLAT_BGND(opts.menuBgndAppearance) && ::qt_cast<const QPopupMenu *>(widget))
         widget->removeEventFilter(this);
 
     #if 0
@@ -1929,14 +1934,17 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
     }
     else if (QEvent::Paint==event->type())
     {
-        if(!IS_FLAT(opts.menuBgndAppearance) && ::qt_cast<QPopupMenu *>(object))
+        if(!IS_FLAT_BGND(opts.menuBgndAppearance) && ::qt_cast<QPopupMenu *>(object))
         {
-            QWidget *widget=(QWidget*)object;
+            QWidget  *widget=(QWidget*)object;
             QPainter painter(widget);
+            QColor   col(USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : widget->palette().active().background());
 
-            drawBevelGradientReal(USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : widget->palette().active().background(),
-                                  &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
-                                  opts.menuBgndAppearance, WIDGET_OTHER);
+            if(APPEARANCE_STRIPED==opts.menuBgndAppearance)
+                painter.drawTiledPixmap(widget->rect(), *createStripePixmap(col));
+            else
+                drawBevelGradientReal(col, &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
+                                      opts.menuBgndAppearance, WIDGET_OTHER);
             return false;
         }
         else if (object->inherits("KToolBarSeparator"))
@@ -3679,7 +3687,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             p->setPen(use[QT_STD_BORDER]);
             p->setBrush(NoBrush);
             p->drawRect(r);
-            if(!IS_FLAT(opts.menuBgndAppearance))
+            if(!IS_FLAT_BGND(opts.menuBgndAppearance))
                 ;
             else if(USE_LIGHTER_POPUP_MENU)
             {
@@ -4102,9 +4110,12 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
     {
         case KPE_ToolBarHandle:
         {
-            QRect r2(r);
-            r2.addCoords(-1, -1, 2, 2);
-            drawMenuOrToolBarBackground(p, r2, cg, false, flags&Style_Horizontal);
+            if(APPEARANCE_STRIPED!=opts.bgndAppearance)
+            {
+                QRect r2(r);
+                r2.addCoords(-1, -1, 2, 2);
+                drawMenuOrToolBarBackground(p, r2, cg, false, flags&Style_Horizontal);
+            }
             drawHandleMarkers(p, r, flags, true, handles);
             break;
         }
@@ -4681,7 +4692,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 p->drawPixmap(x, y, *widget->erasePixmap(), x, y, w, h);
             else
             {
-                if(IS_FLAT(opts.menuBgndAppearance))
+                if(IS_FLAT_BGND(opts.menuBgndAppearance))
                     p->fillRect(r, USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol
                                                           : itsBackgroundCols[ORIGINAL_SHADE]);
 
@@ -7523,6 +7534,9 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
 void QtCurveStyle::drawMenuOrToolBarBackground(QPainter *p, const QRect &r, const QColorGroup &cg,
                                                bool menu, bool horiz) const
 {
+    if(menu && APPEARANCE_STRIPED==opts.bgndAppearance && IS_FLAT(opts.menubarAppearance) && SHADE_NONE==opts.shadeMenubars)
+        return;
+
     EAppearance app(menu ? opts.menubarAppearance : opts.toolbarAppearance);
     QColor      color(menu ? menuColors(cg, itsActive)[ORIGINAL_SHADE] : cg.background());
 
@@ -8230,6 +8244,42 @@ QPixmap * QtCurveStyle::getPixelPixmap(const QColor col) const
         img.setPixel(0, 0, qRgba(qRed(rgb), qGreen(rgb), qBlue(rgb), constAlpha));
         pix=new QPixmap(img);
         itsPixmapCache.insert(key, pix, pix->depth()/8);
+    }
+
+    return pix;
+}
+
+QPixmap * QtCurveStyle::createStripePixmap(const QColor &col) const
+{
+    QRgb    rgb(col.rgb());
+    QString key(createKey(rgb, 's'));
+
+    QPixmap *pix=itsPixmapCache.find(key);
+
+    if(!pix)
+    {
+        QColor col2(shade(col, QTC_BGND_STRIPE_SHADE));
+        int    i;
+
+        pix=new QPixmap(64, 64);
+
+        pix->fill(col.rgb());
+
+        QPainter p;
+        p.begin(pix);
+        p.setPen(QColor((3*col.red()+col2.red())/4,
+                        (3*col.green()+col2.green())/4,
+                        (3*col.blue()+col2.blue())/4));
+
+        for (i=1; i<64; i+=4)
+        {
+            p.drawLine(0, i, 63, i);
+            p.drawLine(0, i+2, 63, i+2);
+        }
+        p.setPen(col2);
+        for (i=2; i<63; i+=4)
+            p.drawLine(0, i, 63, i);
+        p.end();
     }
 
     return pix;
