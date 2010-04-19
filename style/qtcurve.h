@@ -238,7 +238,7 @@ class QtCurveStyle : public QTC_BASE_STYLE
     void           drawDot(QPainter *p, const QRect &r, const QColor *cols) const;
     QPixmap *      getPixelPixmap(const QColor col) const;
     QPixmap *      getPixmap(const QColor col, EPixmap pix, double shade=1.0) const;
-    QPixmap        createStripePixmap(const QColor &col) const;
+    QPixmap *      createStripePixmap(const QColor &col) const;
     void           setSbType();
     bool           isFormWidget(const QWidget *w) const { return itsKhtmlWidgets.contains(w); }
     void           resetHover();
