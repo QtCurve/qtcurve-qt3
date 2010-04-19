@@ -5852,10 +5852,13 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             }
 #endif
             p->save();
-            p->setClipRegion(QRegion(s2)+QRegion(addpage));
+            if(opts.flatSbarButtons)
+                p->setClipRegion(QRegion(s2)+QRegion(addpage)+QRegion(addline)+QRegion(subline)+QRegion(subline2));
+            else
+                p->setClipRegion(QRegion(s2)+QRegion(addpage));
 
             if(opts.flatSbarButtons && SCROLLBAR_NONE!=opts.scrollbarType && QTC_ROUNDED && !IS_FLAT(opts.sbarBgndAppearance))
-                drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, sbRect, flags&Style_Horizontal, false,
+                drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, r, flags&Style_Horizontal, false,
                                   opts.sbarBgndAppearance, WIDGET_SB_BGND);
             else if(opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons) && IS_FLAT(opts.sbarBgndAppearance))
             {
