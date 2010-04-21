@@ -384,7 +384,7 @@ static void insertShadeEntries(QComboBox *combo, ShadeWidget sw)
         combo->insertItem(i18n("Titlebar border"));
 }
 
-static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true, bool fade=false)
+static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true, bool fade=false, bool striped=false)
 {
     for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
         combo->insertItem(i18n("Custom gradient %1").arg((i-APPEARANCE_CUSTOM1)+1));
@@ -407,6 +407,8 @@ static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=
             combo->insertItem(i18n("Bevelled"));
             if(fade)
                 combo->insertItem(i18n("Fade out (popup menuitems)"));
+            else if(striped)
+                combo->insertItem(i18n("Striped"));
         }
     }
 }
@@ -593,7 +595,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(menuStripeAppearance, true, false);
     insertAppearanceEntries(sbarBgndAppearance);
     insertAppearanceEntries(sliderFill);
-    insertAppearanceEntries(menuBgndAppearance);
+    insertAppearanceEntries(menuBgndAppearance, true, true, false, true);
     insertAppearanceEntries(dwtAppearance);
     insertLineEntries(handles, true, true);
     insertLineEntries(sliderThumbs, true, false);
