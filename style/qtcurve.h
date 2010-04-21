@@ -69,12 +69,12 @@ class QTimer;
 class QSlider;
 
 #ifdef QTC_QT_ONLY
-#define QTC_BASE_STYLE QtCKStyle
+#define BASE_STYLE QtCKStyle
 #else
-#define QTC_BASE_STYLE KStyle
+#define BASE_STYLE KStyle
 #endif
 
-class QtCurveStyle : public QTC_BASE_STYLE
+class QtCurveStyle : public BASE_STYLE
 {
     Q_OBJECT
 
@@ -149,7 +149,7 @@ class QtCurveStyle : public QTC_BASE_STYLE
     void drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised=false, bool square=false) const;
     void drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, const QColorGroup &cg,
                     SFlags flags, int round, const QColor *custom=NULL, EWidget w=WIDGET_OTHER,
-                    bool doCorners=true, EBorder borderProfile=BORDER_FLAT, bool blendBorderColors=true, int borderVal=QT_STD_BORDER) const;
+                    bool doCorners=true, EBorder borderProfile=BORDER_FLAT, bool blendBorderColors=true, int borderVal=STD_BORDER) const;
     void drawMdiIcon(QPainter *painter, const QColor &color, const QColor &shadow, const QRect &r, bool sunken, int margin,
                      SubControl button) const;
     void drawWindowIcon(QPainter *painter, const QColor &color, const QRect &r, bool sunken, int margin, SubControl button) const;

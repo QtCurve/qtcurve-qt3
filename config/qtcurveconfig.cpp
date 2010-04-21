@@ -58,7 +58,7 @@
 #define CONFIG_WRITE
 #include "config_file.c"
 
-#define QTC_EXTENSION ".qtcurve"
+#define EXTENSION ".qtcurve"
 
 extern "C"
 {
@@ -386,7 +386,7 @@ static void insertShadeEntries(QComboBox *combo, ShadeWidget sw)
 
 static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true, bool fade=false, bool striped=false)
 {
-    for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
+    for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+NUM_CUSTOM_GRAD); ++i)
         combo->insertItem(i18n("Custom gradient %1").arg((i-APPEARANCE_CUSTOM1)+1));
 
     combo->insertItem(i18n("Flat"));
@@ -793,7 +793,7 @@ QtCurveConfig::~QtCurveConfig()
 
 void QtCurveConfig::loadStyles(QPopupMenu *menu)
 {
-    QStringList  files(KGlobal::dirs()->findAllResources("data", "QtCurve/*"QTC_EXTENSION, false, true));
+    QStringList  files(KGlobal::dirs()->findAllResources("data", "QtCurve/*"EXTENSION, false, true));
 
     files.sort();
 
@@ -803,7 +803,7 @@ void QtCurveConfig::loadStyles(QPopupMenu *menu)
 
     for(; it!=end; ++it)
         if(readConfig(*it, &opts, &defaultStyle))
-            styles[menu->insertItem(QFileInfo(*it).fileName().remove(QTC_EXTENSION).replace('_', ' '),
+            styles[menu->insertItem(QFileInfo(*it).fileName().remove(EXTENSION).replace('_', ' '),
                                     this, SLOT(setStyle(int)))]=*it;
 }
 
@@ -1082,7 +1082,7 @@ void QtCurveConfig::gradChanged(int i)
         gradBorder->setCurrentItem(GB_3D);
     }
 
-    gradBorder->setEnabled(QTC_NUM_CUSTOM_GRAD!=i);
+    gradBorder->setEnabled(NUM_CUSTOM_GRAD!=i);
 }
 
 void QtCurveConfig::itemChanged(QListViewItem *i, int col)
@@ -1240,7 +1240,7 @@ void QtCurveConfig::stopSelected()
 
 void QtCurveConfig::setupGradientsTab()
 {
-    for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
+    for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+NUM_CUSTOM_GRAD); ++i)
         gradCombo->insertItem(i18n("Custom gradient %1").arg((i-APPEARANCE_CUSTOM1)+1));
 
     gradCombo->setCurrentItem(APPEARANCE_CUSTOM1);
@@ -1297,16 +1297,16 @@ void QtCurveConfig::setupShade(KDoubleNumInput *w, int shade)
 
 void QtCurveConfig::populateShades(const Options &opts)
 {
-    QTC_SHADES
+    SHADES
     int contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
 
     if(contrast<0 || contrast>10)
         contrast=7;
 
-    customShading->setChecked(QTC_USE_CUSTOM_SHADES(opts));
+    customShading->setChecked(USE_CUSTOM_SHADES(opts));
 
     for(int i=0; i<NUM_STD_SHADES; ++i)
-        shadeVals[i]->setValue(QTC_USE_CUSTOM_SHADES(opts)
+        shadeVals[i]->setValue(USE_CUSTOM_SHADES(opts)
                                   ? opts.customShades[i]
                                   : shades[SHADING_SIMPLE==shading->currentItem()
                                             ? 1 : 0]
@@ -1316,8 +1316,8 @@ void QtCurveConfig::populateShades(const Options &opts)
 
 bool QtCurveConfig::diffShades(const Options &opts)
 {
-    if( (!QTC_USE_CUSTOM_SHADES(opts) && customShading->isChecked()) ||
-        (QTC_USE_CUSTOM_SHADES(opts) && !customShading->isChecked()) )
+    if( (!USE_CUSTOM_SHADES(opts) && customShading->isChecked()) ||
+        (USE_CUSTOM_SHADES(opts) && !customShading->isChecked()) )
         return true;
 
     if(customShading->isChecked())
@@ -1366,8 +1366,8 @@ void QtCurveConfig::roundChanged()
 void QtCurveConfig::importStyle()
 {
     QString file(KFileDialog::getOpenFileName(QString::null,
-                                              i18n("*"QTC_EXTENSION"|QtCurve Settings Files\n"
-                                                   QTC_THEME_PREFIX"*"QTC_THEME_SUFFIX"|QtCurve KDE Theme Files"),
+                                              i18n("*"EXTENSION"|QtCurve Settings Files\n"
+                                                   THEME_PREFIX"*"THEME_SUFFIX"|QtCurve KDE Theme Files"),
                                               this));
 
     if(!file.isEmpty())
@@ -1376,7 +1376,7 @@ void QtCurveConfig::importStyle()
 
 void QtCurveConfig::exportStyle()
 {
-    QString file(KFileDialog::getSaveFileName(QString::null, i18n("*"QTC_EXTENSION"|QtCurve Settings Files"), this));
+    QString file(KFileDialog::getSaveFileName(QString::null, i18n("*"EXTENSION"|QtCurve Settings Files"), this));
 
     if(!file.isEmpty())
     {
