@@ -1513,7 +1513,6 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.shading=(EShading)shading->currentItem();
     opts.gtkScrollViews=gtkScrollViews->isChecked();
     opts.highlightScrollViews=highlightScrollViews->isChecked();
-    opts.squareScrollViews=squareScrollViews->isChecked();
     opts.etchEntry=etchEntry->isChecked();
     opts.flatSbarButtons=flatSbarButtons->isChecked();
     opts.thinSbarGroove=thinSbarGroove->isChecked();
@@ -1538,8 +1537,8 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.menuIcons=menuIcons->isChecked();
     opts.stdBtnSizes=stdBtnSizes->isChecked();
     opts.forceAlternateLvCols=forceAlternateLvCols->isChecked();
-    opts.squareLvSelection=squareLvSelection->isChecked();
     opts.titlebarAlignment=(EAlign)titlebarAlignment->currentItem();
+    opts.square=getSquareFlags();
 
     if(customShading->isChecked())
     {
@@ -1658,13 +1657,13 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     menuIcons->setChecked(opts.menuIcons);
     stdBtnSizes->setChecked(opts.stdBtnSizes);
     forceAlternateLvCols->setChecked(opts.forceAlternateLvCols);
-    squareLvSelection->setChecked(opts.squareLvSelection);
+    squareLvSelection->setChecked(opts.square&SQUARE_LISTVIEW_SELECTION);
     titlebarAlignment->setCurrentItem(opts.titlebarAlignment);
 
     shading->setCurrentItem(opts.shading);
     gtkScrollViews->setChecked(opts.gtkScrollViews);
     highlightScrollViews->setChecked(opts.highlightScrollViews);
-    squareScrollViews->setChecked(opts.squareScrollViews);
+    squareScrollViews->setChecked(opts.square&SQUARE_SCROLLVIEW);
     etchEntry->setChecked(opts.etchEntry);
     flatSbarButtons->setChecked(opts.flatSbarButtons);
     thinSbarGroove->setChecked(opts.thinSbarGroove);
@@ -1685,6 +1684,22 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     gradCombo->setCurrentItem(APPEARANCE_CUSTOM1);
 
     populateShades(opts);
+}
+
+int QtCurveConfig::getSquareFlags()
+{
+    int square(0);
+/*
+    if(squareEntry->isChecked())
+        square|=SQUARE_ENTRY;
+    if(squareProgress->isChecked())
+        square|=SQUARE_PROGRESS;
+*/
+    if(squareScrollViews->isChecked())
+        square|=SQUARE_SCROLLVIEW;
+    if(squareLvSelection->isChecked())
+        square|=SQUARE_LISTVIEW_SELECTION;
+    return square;
 }
 
 bool QtCurveConfig::settingsChanged()
@@ -1773,13 +1788,11 @@ bool QtCurveConfig::settingsChanged()
          menuIcons->isChecked()!=currentStyle.menuIcons ||
          stdBtnSizes->isChecked()!=currentStyle.stdBtnSizes ||
          forceAlternateLvCols->isChecked()!=currentStyle.forceAlternateLvCols ||
-         squareLvSelection->isChecked()!=currentStyle.squareLvSelection ||
          titlebarAlignment->currentItem()!=currentStyle.titlebarAlignment ||
 
          shading->currentItem()!=(int)currentStyle.shading ||
          gtkScrollViews->isChecked()!=currentStyle.gtkScrollViews ||
          highlightScrollViews->isChecked()!=currentStyle.highlightScrollViews ||
-         squareScrollViews->isChecked()!=currentStyle.squareScrollViews ||
          etchEntry->isChecked()!=currentStyle.etchEntry ||
          flatSbarButtons->isChecked()!=currentStyle.flatSbarButtons ||
          thinSbarGroove->isChecked()!=currentStyle.thinSbarGroove ||
@@ -1795,6 +1808,8 @@ bool QtCurveConfig::settingsChanged()
          gtkButtonOrder->isChecked()!=currentStyle.gtkButtonOrder ||
          mapKdeIcons->isChecked()!=currentStyle.mapKdeIcons ||
          framelessGroupBoxes->isChecked()!=currentStyle.framelessGroupBoxes ||
+
+         getSquareFlags()!=opts.square ||
 
          toInt(passwordChar->text())!=currentStyle.passwordChar ||
 

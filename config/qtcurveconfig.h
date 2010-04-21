@@ -135,6 +135,7 @@ class QtCurveConfig : public QtCurveConfigBase
     void loadStyle(const QString &file);
     void setOptions(Options &opts);
     void setWidgetOptions(const Options &opts);
+    int  getSquareFlags();
     bool settingsChanged();
 
     private:
