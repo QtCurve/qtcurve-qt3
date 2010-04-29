@@ -242,6 +242,7 @@ class QtCurveStyle : public BASE_STYLE
     void           setSbType();
     bool           isFormWidget(const QWidget *w) const { return itsKhtmlWidgets.contains(w); }
     void           resetHover();
+    bool           isWindowDragWidget(QObject *o, const QPoint &pos=QPoint());
 
     private slots:
 
@@ -292,6 +293,8 @@ class QtCurveStyle : public BASE_STYLE
     mutable bool               itsActive,
                                itsIsSpecialHover;
     mutable QValueList<int>    itsMdiButtons[2]; // 0=left, 1=right
+    QWidget                    *itsDragWidget;
+    bool                       itsDragWidgetHadMouseTracking;
 };
 
 #endif

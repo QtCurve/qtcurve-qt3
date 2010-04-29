@@ -123,6 +123,28 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <X11/Xatom.h>
 #include "qtc_fixx11h.h"
 
+static const Atom constNetMoveResize = XInternAtom(qt_xdisplay(), "_NET_WM_MOVERESIZE", False);
+
+static void triggerWMMove(const QWidget *w, const QPoint &p)
+{
+    //...Taken from bespin...
+    // stolen... errr "adapted!" from QSizeGrip
+    XEvent xev;
+    xev.xclient.type = ClientMessage;
+    xev.xclient.message_type = constNetMoveResize;
+    xev.xclient.display = qt_xdisplay();
+    xev.xclient.window = w->parentWidget() ? w->parentWidget()->winId() : w->winId();
+    xev.xclient.format = 32;
+    xev.xclient.data.l[0] = p.x();
+    xev.xclient.data.l[1] = p.y();
+    xev.xclient.data.l[2] = 8; // NET::Move
+    xev.xclient.data.l[3] = Button1;
+    xev.xclient.data.l[4] = 0;
+    XUngrabPointer(qt_xdisplay(), CurrentTime);
+    XSendEvent(qt_xdisplay(), qt_xrootwin(), False,
+               SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+}
+
 #define MO_ARROW_X(FLAGS, COL) (MO_NONE!=opts.coloredMouseOver && FLAGS&Style_MouseOver && FLAGS&Style_Enabled ? itsMouseOverCols[ARROW_MO_SHADE] : COL)
 #define MO_ARROW(COL)          MO_ARROW_X(flags, COL)
 
@@ -774,7 +796,9 @@ QtCurveStyle::QtCurveStyle()
               itsHoverTab(0L),
               itsMactorPal(0L),
               itsActive(true),
-              itsIsSpecialHover(false)
+              itsIsSpecialHover(false),
+              itsDragWidget(0L),
+              itsDragWidgetHadMouseTracking(false)
 {
 #ifdef QTC_STYLE_SUPPORT
     QString rcFile;
@@ -1345,6 +1369,9 @@ void QtCurveStyle::polish(QWidget *widget)
     if(enableFilter && isSpecialHover(widget))
         connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(hoverWidgetDestroyed(QObject *)));
 
+    if(isWindowDragWidget(widget))
+        widget->installEventFilter(this);
+
     if(widget->parentWidget() && ::qt_cast<QScrollView *>(widget) && ::qt_cast<QComboBox *>(widget->parentWidget()))
     {
         QPalette    pal(widget->palette());
@@ -1716,6 +1743,9 @@ void QtCurveStyle::unPolish(QWidget *widget)
     if(opts.menubarHiding && ::qt_cast<QMainWindow *>(widget) && static_cast<QMainWindow *>(widget)->menuBar())
         widget->removeEventFilter(this);
     #endif
+
+    if(isWindowDragWidget(widget))
+        widget->removeEventFilter(this);
 
     if (::qt_cast<QRadioButton *>(widget) || ::qt_cast<QCheckBox *>(widget))
     {
@@ -2096,6 +2126,48 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
             }
     }
 
+    if(dynamic_cast<QMouseEvent*>(event))
+        switch(event->type())
+        {
+            case QEvent::MouseMove:  // Only occurs for widgets with mouse tracking enabled
+                if(itsDragWidget)
+                {
+                    itsDragWidget->setMouseTracking(itsDragWidgetHadMouseTracking);
+                    bool move=isWindowDragWidget(object);
+
+                    if(move)
+                        triggerWMMove(itsDragWidget, ((QMouseEvent *)event)->globalPos());
+                    itsDragWidget = 0L;
+                    return move;
+                }
+            case QEvent::MouseButtonPress:
+            {
+                QMouseEvent *mev = (QMouseEvent *)event;
+
+                if(isWindowDragWidget(object, mev->pos()))
+                {
+
+                    if(/*Qt::NoModifier==mev->modifiers() && */ Qt::LeftButton==mev->button())
+                    {
+                        QWidget *wid = static_cast<QWidget*>(object);
+                        itsDragWidget=wid;
+                        itsDragWidgetHadMouseTracking=itsDragWidget->hasMouseTracking();
+                        itsDragWidget->setMouseTracking(true);
+                        return false;
+                    }
+                }
+                break;
+            }
+            case QEvent::MouseButtonRelease:
+                if(itsDragWidget)
+                {
+                    itsDragWidget->setMouseTracking(itsDragWidgetHadMouseTracking);
+                    itsDragWidget = 0L;
+                    return false;
+                }
+            break;
+        }
+            
     if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(object))
     {
         QDialog *dlg=(QDialog *)object;
@@ -8405,6 +8477,32 @@ void QtCurveStyle::resetHover()
     itsHoverSect=NO_SECT;
     itsHover=HOVER_NONE;
     itsHoverTab=0L;
+}
+
+struct QtcMenuBar : public QMenuBar
+{
+    bool itemUnderPos(const QPoint &pos)
+    {
+        return -1!=itemAtPos(pos);
+    }
+};
+
+bool QtCurveStyle::isWindowDragWidget(QObject *o, const QPoint &pos)
+{
+   return  opts.windowDrag &&
+           (//qobject_cast<QDialog*>(o) ||
+           (::qt_cast<QMenuBar*>(o) && (pos.isNull() || !((QtcMenuBar *)o)->itemUnderPos(pos)))
+            //|| qobject_cast<QGroupBox*>(o)
+            //|| (o->inherits("QToolButton") && !static_cast<QWidget*>(o)->isEnabled())
+//             || qobject_cast<QToolBar*>(o)
+            //|| qobject_cast<QDockWidget*>(o)
+
+//            || ((*appType == Hacks::SMPlayer) && o->inherits(SMPlayerVideoWidget))
+//            || ((*appType == Hacks::Dragon) && o->inherits(DragonVideoWidget))
+
+//            || o->inherits("QStatusBar")
+//            || (o->inherits("QLabel") && o->parent() && o->parent()->inherits("QStatusBar"))
+           );
 }
 
 void QtCurveStyle::updateProgressPos()
