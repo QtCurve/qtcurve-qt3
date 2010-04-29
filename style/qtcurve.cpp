@@ -1530,10 +1530,7 @@ void QtCurveStyle::polish(QWidget *widget)
         if(SHADE_NONE!=opts.shadeMenubars)
             widget->installEventFilter(this);
         if(BLEND_TITLEBAR)
-        {
             emitMenuSize(widget, widget->rect().height());
-            QTimer::singleShot(0, widget, SLOT(repaint()));
-        }
         if(SHADE_WINDOW_BORDER==opts.shadeMenubars)
         {
             QPalette    pal(widget->palette());
@@ -2072,7 +2069,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
             r.setY(r.y()-y_offset);
             r.setHeight(parent->rect().height());
 
-            drawMenuOrToolBarBackground(&p, r, parent->colorGroup(), true, true, widget);
+            drawMenuOrToolBarBackground(&p, r, parent->colorGroup());
             return true;
         }
     }
@@ -3857,7 +3854,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             }
 
             drawMenuOrToolBarBackground(p, r, cg, PE_PanelMenuBar==pe,
-                                        PE_PanelMenuBar==pe || r.width()>r.height(), w);
+                                        PE_PanelMenuBar==pe || r.width()>r.height());
 
             if(TB_NONE!=opts.toolbarBorders)
             {
@@ -4938,7 +4935,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 r2.setY(mb->rect().y()+1);
                 r2.setHeight(mb->rect().height()-2);
 
-                drawMenuOrToolBarBackground(p, r2, cg, true, true, widget);
+                drawMenuOrToolBarBackground(p, r2, cg);
             }
 
             if(active)
@@ -4972,7 +4969,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             break;
         }
         case CE_MenuBarEmptyArea:
-            drawMenuOrToolBarBackground(p, r, cg, true, true, widget);
+            drawMenuOrToolBarBackground(p, r, cg);
             break;
         case CE_DockWindowEmptyArea:
             if(widget && widget->inherits("QToolBar"))
@@ -7644,7 +7641,7 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
 }
 
 void QtCurveStyle::drawMenuOrToolBarBackground(QPainter *p, const QRect &r, const QColorGroup &cg,
-                                               bool menu, bool horiz, const QWidget *widget) const
+                                               bool menu, bool horiz) const
 {
     if(menu && APPEARANCE_STRIPED==opts.bgndAppearance && IS_FLAT(opts.menubarAppearance) && SHADE_NONE==opts.shadeMenubars)
         return;
@@ -7653,20 +7650,8 @@ void QtCurveStyle::drawMenuOrToolBarBackground(QPainter *p, const QRect &r, cons
     EAppearance app(menu ? opts.menubarAppearance : opts.toolbarAppearance);
     QColor      color(menu ? menuColors(cg, itsActive)[ORIGINAL_SHADE] : cg.background());
 
-
     if(menu && BLEND_TITLEBAR)
-    {
-        const QWidget *w=getTopLevel(widget ? widget : (p && p->device() ? dynamic_cast<QWidget*>(p->device()) : 0L));
-
-        if(w)
-        {
-            int titlebarHeight=w->geometry().y()-w->frameGeometry().y();
-            rx.addCoords(0, -titlebarHeight, 0, 0);
-//                printf("Adjust:%d  %d %s  %d %d    %d %d\n", titlebarHeight, w->frameGeometry().height(), w->metaObject()->className(),
-//                       w->isWindow(), !(w->windowType() == Qt::Popup), w->geometry().y(), w->frameGeometry().y());
-
-        }
-    }
+        rx.addCoords(0, -qtcGetWindowBorderSize(), 0, 0);
 
     drawBevelGradient(color, p, rx, horiz, false, app);
 }
