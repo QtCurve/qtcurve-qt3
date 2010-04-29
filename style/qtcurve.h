@@ -200,7 +200,7 @@ class QtCurveStyle : public BASE_STYLE
     void drawSliderGroove(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
                           const QWidget *widget) const;
     void drawMenuOrToolBarBackground(QPainter *p, const QRect &r, const QColorGroup &cg, bool menu=true,
-                                     bool horiz=true) const;
+                                     bool horiz=true, const QWidget *widget=0) const;
     void drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, bool tb, ELine handles) const;
     void drawHighlight(QPainter *p, const QRect &r, const QColorGroup &cg, bool horiz, bool inc) const;
 

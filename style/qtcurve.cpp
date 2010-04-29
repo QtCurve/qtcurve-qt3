@@ -124,6 +124,25 @@ dimension, so as to draw the scrollbar at the correct size.
 #include "qtc_fixx11h.h"
 
 static const Atom constNetMoveResize = XInternAtom(qt_xdisplay(), "_NET_WM_MOVERESIZE", False);
+static const Atom constQtcMenuSize   = XInternAtom(qt_xdisplay(), MENU_SIZE_ATOM, False);
+
+static const QWidget * getTopLevel(const QWidget *widget)
+{
+    const QWidget *w=widget;
+
+    while(w && !w->isTopLevel())
+        w=w->parentWidget();
+    return w;
+}
+
+static void emitMenuSize(const QWidget *widget, unsigned short size)
+{
+    const QWidget *w=getTopLevel(widget);
+
+    if(w)
+        XChangeProperty(qt_xdisplay(), w->parentWidget() ? w->parentWidget()->winId() : w->winId(),
+                        constQtcMenuSize, XA_CARDINAL, 16, PropModeReplace, (unsigned char *)&size, 1);
+}
 
 static void triggerWMMove(const QWidget *w, const QPoint &p)
 {
@@ -1510,7 +1529,11 @@ void QtCurveStyle::polish(QWidget *widget)
             widget->setBackgroundMode(PaletteBackground);
         if(SHADE_NONE!=opts.shadeMenubars)
             widget->installEventFilter(this);
-
+        if(BLEND_TITLEBAR)
+        {
+            emitMenuSize(widget, widget->rect().height());
+            QTimer::singleShot(0, widget, SLOT(repaint()));
+        }
         if(SHADE_WINDOW_BORDER==opts.shadeMenubars)
         {
             QPalette    pal(widget->palette());
@@ -1519,7 +1542,7 @@ void QtCurveStyle::polish(QWidget *widget)
 
             getMdiColors(act, true);
             act.setColor(QColorGroup::Foreground, itsActiveMdiTextColor);
-            inact.setColor(QColorGroup::Foreground, itsMdiTextColor);
+            inact.setColor(QColorGroup::Foreground, opts.shadeMenubarOnlyWhenActive ? itsMdiTextColor : itsActiveMdiTextColor);
             pal.setInactive(inact);
             pal.setActive(act);
             widget->setPalette(pal);
@@ -2049,7 +2072,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
             r.setY(r.y()-y_offset);
             r.setHeight(parent->rect().height());
 
-            drawMenuOrToolBarBackground(&p, r, parent->colorGroup(), true, true);
+            drawMenuOrToolBarBackground(&p, r, parent->colorGroup(), true, true, widget);
             return true;
         }
     }
@@ -2123,6 +2146,18 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
                     return false;
                 default:
                     break;
+            }
+        if(BLEND_TITLEBAR)
+            switch(event->type())
+            {
+                case QEvent::Resize:
+                {
+                    QResizeEvent *re = static_cast<QResizeEvent *>(event);
+
+                    if (re->size().height() != re->oldSize().height())
+                        emitMenuSize((QMenuBar *)object, re->size().height());
+                    break;
+                }
             }
     }
 
@@ -3822,7 +3857,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             }
 
             drawMenuOrToolBarBackground(p, r, cg, PE_PanelMenuBar==pe,
-                                        PE_PanelMenuBar==pe || r.width()>r.height());
+                                        PE_PanelMenuBar==pe || r.width()>r.height(), w);
 
             if(TB_NONE!=opts.toolbarBorders)
             {
@@ -4903,7 +4938,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 r2.setY(mb->rect().y()+1);
                 r2.setHeight(mb->rect().height()-2);
 
-                drawMenuOrToolBarBackground(p, r2, cg);
+                drawMenuOrToolBarBackground(p, r2, cg, true, true, widget);
             }
 
             if(active)
@@ -4937,7 +4972,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             break;
         }
         case CE_MenuBarEmptyArea:
-            drawMenuOrToolBarBackground(p, r, cg);
+            drawMenuOrToolBarBackground(p, r, cg, true, true, widget);
             break;
         case CE_DockWindowEmptyArea:
             if(widget && widget->inherits("QToolBar"))
@@ -7183,6 +7218,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p, const QRec
             else
                 inCache=false;
         }
+
         p->drawTiledPixmap(origRect, *pix);
         if(!inCache)
             delete pix;
@@ -7608,15 +7644,31 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
 }
 
 void QtCurveStyle::drawMenuOrToolBarBackground(QPainter *p, const QRect &r, const QColorGroup &cg,
-                                               bool menu, bool horiz) const
+                                               bool menu, bool horiz, const QWidget *widget) const
 {
     if(menu && APPEARANCE_STRIPED==opts.bgndAppearance && IS_FLAT(opts.menubarAppearance) && SHADE_NONE==opts.shadeMenubars)
         return;
 
+    QRect       rx(r);
     EAppearance app(menu ? opts.menubarAppearance : opts.toolbarAppearance);
     QColor      color(menu ? menuColors(cg, itsActive)[ORIGINAL_SHADE] : cg.background());
 
-    drawBevelGradient(color, p, r, horiz, false, app);
+
+    if(menu && BLEND_TITLEBAR)
+    {
+        const QWidget *w=getTopLevel(widget ? widget : (p && p->device() ? dynamic_cast<QWidget*>(p->device()) : 0L));
+
+        if(w)
+        {
+            int titlebarHeight=w->geometry().y()-w->frameGeometry().y();
+            rx.addCoords(0, -titlebarHeight, 0, 0);
+//                printf("Adjust:%d  %d %s  %d %d    %d %d\n", titlebarHeight, w->frameGeometry().height(), w->metaObject()->className(),
+//                       w->isWindow(), !(w->windowType() == Qt::Popup), w->geometry().y(), w->frameGeometry().y());
+
+        }
+    }
+
+    drawBevelGradient(color, p, rx, horiz, false, app);
 }
 
 void QtCurveStyle::drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, bool tb,
@@ -7922,6 +7974,10 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
                 f.close();
             }
         }
+
+        if(opts.shadeMenubarOnlyWhenActive && SHADE_WINDOW_BORDER==opts.shadeMenubars &&
+           itsActiveMdiColors[ORIGINAL_SHADE]==itsMdiColors[ORIGINAL_SHADE])
+            opts.shadeMenubarOnlyWhenActive=false;
 
         if(!itsActiveMdiColors)
             itsActiveMdiColors=(QColor *)itsHighlightCols;
