@@ -7039,6 +7039,7 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QC
         int  flags(Style_Raised);
         bool stdColor(!mbi || (SHADE_BLEND_SELECTED!=opts.shadeMenubars && SHADE_SELECTED!=opts.shadeMenubars));
 
+        itsFormMode=true;
         flags|=Style_Horizontal;
 
         if(stdColor && opts.borderMenuitems)
@@ -7054,6 +7055,7 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QC
                 drawBevelGradient(cols[fill], p, fr, true, false, opts.menuitemAppearance, WIDGET_MENU_ITEM);
             drawBorder(bgnd, p, r, cg, flags, round, cols, WIDGET_OTHER, false, BORDER_FLAT, false, border);
         }
+        itsFormMode=false;
     }
     else
         drawBevelGradient(cols[fill], p, r, true, false, opts.menuitemAppearance, WIDGET_MENU_ITEM);
