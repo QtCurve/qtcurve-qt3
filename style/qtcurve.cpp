@@ -7855,7 +7855,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
 {
     if(!itsActiveMdiColors)
     {
-        itsActiveMdiTextColor=cg.highlightedText();
+        itsActiveMdiTextColor=cg.text();
         itsMdiTextColor=cg.text();
 
         // Try to read kwin's settings...
@@ -7880,7 +7880,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
 
                             setRgb(&col, line.mid(17).latin1());
 
-                            if(col!=itsHighlightCols[ORIGINAL_SHADE])
+                            if(col!=itsBackgroundCols[ORIGINAL_SHADE])
                             {
                                 itsActiveMdiColors=new QColor [TOTAL_SHADES+1]; 
                                 shadeColors(col, itsActiveMdiColors);
@@ -7891,7 +7891,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
                             QColor col;
 
                             setRgb(&col, line.mid(19).latin1());
-                            if(col!=itsButtonCols[ORIGINAL_SHADE])
+                            if(col!=itsBackgroundCols[ORIGINAL_SHADE])
                             {
                                 itsMdiColors=new QColor [TOTAL_SHADES+1];
                                 shadeColors(col, itsMdiColors);
@@ -7931,7 +7931,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
 
                             setRgb(&col, QStringList::split(",", line.mid(17)));
 
-                            if(col!=itsHighlightCols[ORIGINAL_SHADE])
+                            if(col!=itsBackgroundCols[ORIGINAL_SHADE])
                             {
                                 itsActiveMdiColors=new QColor [TOTAL_SHADES+1];
                                 shadeColors(col, itsActiveMdiColors);
@@ -7942,7 +7942,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
                             QColor col;
 
                             setRgb(&col, QStringList::split(",", line.mid(19)));
-                            if(col!=itsButtonCols[ORIGINAL_SHADE])
+                            if(col!=itsBackgroundCols[ORIGINAL_SHADE])
                             {
                                 itsMdiColors=new QColor [TOTAL_SHADES+1];
                                 shadeColors(col, itsMdiColors);
@@ -7967,7 +7967,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
             opts.shadeMenubarOnlyWhenActive=false;
 
         if(!itsActiveMdiColors)
-            itsActiveMdiColors=(QColor *)itsHighlightCols;
+            itsActiveMdiColors=(QColor *)itsBackgroundCols;
         if(!itsMdiColors)
             itsMdiColors=(QColor *)itsBackgroundCols;
     }

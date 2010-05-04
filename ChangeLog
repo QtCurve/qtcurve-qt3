@@ -8,7 +8,8 @@
          not blending titlebar gradient AND
          using window titlebar colour for menubar AND
          extending window drag into menubar
-5. Fix drawing of scrollbar background.
+5. Default titlebar colours to window colours - matches KDE4 default.
+6. Fix drawing of scrollbar background.
 
 1.3.1
 -----
