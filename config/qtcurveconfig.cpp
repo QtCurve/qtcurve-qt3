@@ -58,7 +58,7 @@
 #define CONFIG_WRITE
 #include "config_file.c"
 
-#define QTC_EXTENSION ".qtcurve"
+#define EXTENSION ".qtcurve"
 
 extern "C"
 {
@@ -384,9 +384,9 @@ static void insertShadeEntries(QComboBox *combo, ShadeWidget sw)
         combo->insertItem(i18n("Titlebar border"));
 }
 
-static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true, bool fade=false)
+static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=true, bool fade=false, bool striped=false)
 {
-    for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
+    for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+NUM_CUSTOM_GRAD); ++i)
         combo->insertItem(i18n("Custom gradient %1").arg((i-APPEARANCE_CUSTOM1)+1));
 
     combo->insertItem(i18n("Flat"));
@@ -407,6 +407,8 @@ static void insertAppearanceEntries(QComboBox *combo, bool split=true, bool bev=
             combo->insertItem(i18n("Bevelled"));
             if(fade)
                 combo->insertItem(i18n("Fade out (popup menuitems)"));
+            else if(striped)
+                combo->insertItem(i18n("Striped"));
         }
     }
 }
@@ -593,7 +595,7 @@ QtCurveConfig::QtCurveConfig(QWidget *parent)
     insertAppearanceEntries(menuStripeAppearance, true, false);
     insertAppearanceEntries(sbarBgndAppearance);
     insertAppearanceEntries(sliderFill);
-    insertAppearanceEntries(menuBgndAppearance);
+    insertAppearanceEntries(menuBgndAppearance, true, true, false, true);
     insertAppearanceEntries(dwtAppearance);
     insertLineEntries(handles, true, true);
     insertLineEntries(sliderThumbs, true, false);
@@ -791,7 +793,7 @@ QtCurveConfig::~QtCurveConfig()
 
 void QtCurveConfig::loadStyles(QPopupMenu *menu)
 {
-    QStringList  files(KGlobal::dirs()->findAllResources("data", "QtCurve/*"QTC_EXTENSION, false, true));
+    QStringList  files(KGlobal::dirs()->findAllResources("data", "QtCurve/*"EXTENSION, false, true));
 
     files.sort();
 
@@ -801,7 +803,7 @@ void QtCurveConfig::loadStyles(QPopupMenu *menu)
 
     for(; it!=end; ++it)
         if(readConfig(*it, &opts, &defaultStyle))
-            styles[menu->insertItem(QFileInfo(*it).fileName().remove(QTC_EXTENSION).replace('_', ' '),
+            styles[menu->insertItem(QFileInfo(*it).fileName().remove(EXTENSION).replace('_', ' '),
                                     this, SLOT(setStyle(int)))]=*it;
 }
 
@@ -1080,7 +1082,7 @@ void QtCurveConfig::gradChanged(int i)
         gradBorder->setCurrentItem(GB_3D);
     }
 
-    gradBorder->setEnabled(QTC_NUM_CUSTOM_GRAD!=i);
+    gradBorder->setEnabled(NUM_CUSTOM_GRAD!=i);
 }
 
 void QtCurveConfig::itemChanged(QListViewItem *i, int col)
@@ -1238,7 +1240,7 @@ void QtCurveConfig::stopSelected()
 
 void QtCurveConfig::setupGradientsTab()
 {
-    for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+QTC_NUM_CUSTOM_GRAD); ++i)
+    for(int i=APPEARANCE_CUSTOM1; i<(APPEARANCE_CUSTOM1+NUM_CUSTOM_GRAD); ++i)
         gradCombo->insertItem(i18n("Custom gradient %1").arg((i-APPEARANCE_CUSTOM1)+1));
 
     gradCombo->setCurrentItem(APPEARANCE_CUSTOM1);
@@ -1295,16 +1297,16 @@ void QtCurveConfig::setupShade(KDoubleNumInput *w, int shade)
 
 void QtCurveConfig::populateShades(const Options &opts)
 {
-    QTC_SHADES
+    SHADES
     int contrast=QSettings().readNumEntry("/Qt/KDE/contrast", 7);
 
     if(contrast<0 || contrast>10)
         contrast=7;
 
-    customShading->setChecked(QTC_USE_CUSTOM_SHADES(opts));
+    customShading->setChecked(USE_CUSTOM_SHADES(opts));
 
     for(int i=0; i<NUM_STD_SHADES; ++i)
-        shadeVals[i]->setValue(QTC_USE_CUSTOM_SHADES(opts)
+        shadeVals[i]->setValue(USE_CUSTOM_SHADES(opts)
                                   ? opts.customShades[i]
                                   : shades[SHADING_SIMPLE==shading->currentItem()
                                             ? 1 : 0]
@@ -1314,8 +1316,8 @@ void QtCurveConfig::populateShades(const Options &opts)
 
 bool QtCurveConfig::diffShades(const Options &opts)
 {
-    if( (!QTC_USE_CUSTOM_SHADES(opts) && customShading->isChecked()) ||
-        (QTC_USE_CUSTOM_SHADES(opts) && !customShading->isChecked()) )
+    if( (!USE_CUSTOM_SHADES(opts) && customShading->isChecked()) ||
+        (USE_CUSTOM_SHADES(opts) && !customShading->isChecked()) )
         return true;
 
     if(customShading->isChecked())
@@ -1364,8 +1366,8 @@ void QtCurveConfig::roundChanged()
 void QtCurveConfig::importStyle()
 {
     QString file(KFileDialog::getOpenFileName(QString::null,
-                                              i18n("*"QTC_EXTENSION"|QtCurve Settings Files\n"
-                                                   QTC_THEME_PREFIX"*"QTC_THEME_SUFFIX"|QtCurve KDE Theme Files"),
+                                              i18n("*"EXTENSION"|QtCurve Settings Files\n"
+                                                   THEME_PREFIX"*"THEME_SUFFIX"|QtCurve KDE Theme Files"),
                                               this));
 
     if(!file.isEmpty())
@@ -1374,7 +1376,7 @@ void QtCurveConfig::importStyle()
 
 void QtCurveConfig::exportStyle()
 {
-    QString file(KFileDialog::getSaveFileName(QString::null, i18n("*"QTC_EXTENSION"|QtCurve Settings Files"), this));
+    QString file(KFileDialog::getSaveFileName(QString::null, i18n("*"EXTENSION"|QtCurve Settings Files"), this));
 
     if(!file.isEmpty())
     {
@@ -1511,7 +1513,6 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.shading=(EShading)shading->currentItem();
     opts.gtkScrollViews=gtkScrollViews->isChecked();
     opts.highlightScrollViews=highlightScrollViews->isChecked();
-    opts.squareScrollViews=squareScrollViews->isChecked();
     opts.etchEntry=etchEntry->isChecked();
     opts.flatSbarButtons=flatSbarButtons->isChecked();
     opts.thinSbarGroove=thinSbarGroove->isChecked();
@@ -1536,8 +1537,8 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.menuIcons=menuIcons->isChecked();
     opts.stdBtnSizes=stdBtnSizes->isChecked();
     opts.forceAlternateLvCols=forceAlternateLvCols->isChecked();
-    opts.squareLvSelection=squareLvSelection->isChecked();
     opts.titlebarAlignment=(EAlign)titlebarAlignment->currentItem();
+    opts.square=getSquareFlags();
 
     if(customShading->isChecked())
     {
@@ -1656,13 +1657,13 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     menuIcons->setChecked(opts.menuIcons);
     stdBtnSizes->setChecked(opts.stdBtnSizes);
     forceAlternateLvCols->setChecked(opts.forceAlternateLvCols);
-    squareLvSelection->setChecked(opts.squareLvSelection);
+    squareLvSelection->setChecked(opts.square&SQUARE_LISTVIEW_SELECTION);
     titlebarAlignment->setCurrentItem(opts.titlebarAlignment);
 
     shading->setCurrentItem(opts.shading);
     gtkScrollViews->setChecked(opts.gtkScrollViews);
     highlightScrollViews->setChecked(opts.highlightScrollViews);
-    squareScrollViews->setChecked(opts.squareScrollViews);
+    squareScrollViews->setChecked(opts.square&SQUARE_SCROLLVIEW);
     etchEntry->setChecked(opts.etchEntry);
     flatSbarButtons->setChecked(opts.flatSbarButtons);
     thinSbarGroove->setChecked(opts.thinSbarGroove);
@@ -1683,6 +1684,22 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     gradCombo->setCurrentItem(APPEARANCE_CUSTOM1);
 
     populateShades(opts);
+}
+
+int QtCurveConfig::getSquareFlags()
+{
+    int square(0);
+/*
+    if(squareEntry->isChecked())
+        square|=SQUARE_ENTRY;
+    if(squareProgress->isChecked())
+        square|=SQUARE_PROGRESS;
+*/
+    if(squareScrollViews->isChecked())
+        square|=SQUARE_SCROLLVIEW;
+    if(squareLvSelection->isChecked())
+        square|=SQUARE_LISTVIEW_SELECTION;
+    return square;
 }
 
 bool QtCurveConfig::settingsChanged()
@@ -1771,13 +1788,11 @@ bool QtCurveConfig::settingsChanged()
          menuIcons->isChecked()!=currentStyle.menuIcons ||
          stdBtnSizes->isChecked()!=currentStyle.stdBtnSizes ||
          forceAlternateLvCols->isChecked()!=currentStyle.forceAlternateLvCols ||
-         squareLvSelection->isChecked()!=currentStyle.squareLvSelection ||
          titlebarAlignment->currentItem()!=currentStyle.titlebarAlignment ||
 
          shading->currentItem()!=(int)currentStyle.shading ||
          gtkScrollViews->isChecked()!=currentStyle.gtkScrollViews ||
          highlightScrollViews->isChecked()!=currentStyle.highlightScrollViews ||
-         squareScrollViews->isChecked()!=currentStyle.squareScrollViews ||
          etchEntry->isChecked()!=currentStyle.etchEntry ||
          flatSbarButtons->isChecked()!=currentStyle.flatSbarButtons ||
          thinSbarGroove->isChecked()!=currentStyle.thinSbarGroove ||
@@ -1793,6 +1808,8 @@ bool QtCurveConfig::settingsChanged()
          gtkButtonOrder->isChecked()!=currentStyle.gtkButtonOrder ||
          mapKdeIcons->isChecked()!=currentStyle.mapKdeIcons ||
          framelessGroupBoxes->isChecked()!=currentStyle.framelessGroupBoxes ||
+
+         getSquareFlags()!=opts.square ||
 
          toInt(passwordChar->text())!=currentStyle.passwordChar ||
 

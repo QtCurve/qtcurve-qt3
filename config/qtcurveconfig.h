@@ -21,8 +21,8 @@
   Boston, MA 02110-1301, USA.
 */
 
-#define QTC_COMMON_FUNCTIONS
-#define QTC_CONFIG_DIALOG
+#define COMMON_FUNCTIONS
+#define CONFIG_DIALOG
 
 #include <qtcurveconfigbase.h>
 #include <qcombobox.h>
@@ -135,6 +135,7 @@ class QtCurveConfig : public QtCurveConfigBase
     void loadStyle(const QString &file);
     void setOptions(Options &opts);
     void setWidgetOptions(const Options &opts);
+    int  getSquareFlags();
     bool settingsChanged();
 
     private:

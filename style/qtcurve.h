@@ -69,12 +69,12 @@ class QTimer;
 class QSlider;
 
 #ifdef QTC_QT_ONLY
-#define QTC_BASE_STYLE QtCKStyle
+#define BASE_STYLE QtCKStyle
 #else
-#define QTC_BASE_STYLE KStyle
+#define BASE_STYLE KStyle
 #endif
 
-class QtCurveStyle : public QTC_BASE_STYLE
+class QtCurveStyle : public BASE_STYLE
 {
     Q_OBJECT
 
@@ -149,7 +149,7 @@ class QtCurveStyle : public QTC_BASE_STYLE
     void drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised=false, bool square=false) const;
     void drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, const QColorGroup &cg,
                     SFlags flags, int round, const QColor *custom=NULL, EWidget w=WIDGET_OTHER,
-                    bool doCorners=true, EBorder borderProfile=BORDER_FLAT, bool blendBorderColors=true, int borderVal=QT_STD_BORDER) const;
+                    bool doCorners=true, EBorder borderProfile=BORDER_FLAT, bool blendBorderColors=true, int borderVal=STD_BORDER) const;
     void drawMdiIcon(QPainter *painter, const QColor &color, const QColor &shadow, const QRect &r, bool sunken, int margin,
                      SubControl button) const;
     void drawWindowIcon(QPainter *painter, const QColor &color, const QRect &r, bool sunken, int margin, SubControl button) const;
@@ -199,8 +199,7 @@ class QtCurveStyle : public QTC_BASE_STYLE
     void drawSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, QSlider *slider, bool tb=false) const;
     void drawSliderGroove(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
                           const QWidget *widget) const;
-    void drawMenuOrToolBarBackground(QPainter *p, const QRect &r, const QColorGroup &cg, bool menu=true,
-                                     bool horiz=true) const;
+    void drawMenuOrToolBarBackground(QPainter *p, const QRect &r, const QColorGroup &cg, bool menu=true, bool horiz=true) const;
     void drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, bool tb, ELine handles) const;
     void drawHighlight(QPainter *p, const QRect &r, const QColorGroup &cg, bool horiz, bool inc) const;
 
@@ -238,9 +237,11 @@ class QtCurveStyle : public QTC_BASE_STYLE
     void           drawDot(QPainter *p, const QRect &r, const QColor *cols) const;
     QPixmap *      getPixelPixmap(const QColor col) const;
     QPixmap *      getPixmap(const QColor col, EPixmap pix, double shade=1.0) const;
+    QPixmap *      createStripePixmap(const QColor &col) const;
     void           setSbType();
     bool           isFormWidget(const QWidget *w) const { return itsKhtmlWidgets.contains(w); }
     void           resetHover();
+    bool           isWindowDragWidget(QObject *o, const QPoint &pos=QPoint());
 
     private slots:
 
@@ -291,6 +292,8 @@ class QtCurveStyle : public QTC_BASE_STYLE
     mutable bool               itsActive,
                                itsIsSpecialHover;
     mutable QValueList<int>    itsMdiButtons[2]; // 0=left, 1=right
+    QWidget                    *itsDragWidget;
+    bool                       itsDragWidgetHadMouseTracking;
 };
 
 #endif
