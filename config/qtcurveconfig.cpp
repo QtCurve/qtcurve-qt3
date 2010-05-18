@@ -1809,7 +1809,7 @@ bool QtCurveConfig::settingsChanged()
          mapKdeIcons->isChecked()!=currentStyle.mapKdeIcons ||
          framelessGroupBoxes->isChecked()!=currentStyle.framelessGroupBoxes ||
 
-         getSquareFlags()!=opts.square ||
+         getSquareFlags()!=currentStyle.square ||
 
          toInt(passwordChar->text())!=currentStyle.passwordChar ||
 
