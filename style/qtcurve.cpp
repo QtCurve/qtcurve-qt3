@@ -2560,7 +2560,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
               (flags&Style_HasFocus && FOCUS_FULL==opts.focus)*/ ))
             drawGlow(p, rOrig, cg, WIDGET_DEF_BUTTON==w && flags&Style_MouseOver ? WIDGET_STD_BUTTON : w);
         else
-            drawEtch(p, rOrig, cg, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) && !sunken);
+            drawEtch(p, rOrig, cg, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) && !sunken, ROUNDED_NONE==round);
 
     p->restore();
 }
@@ -5984,7 +5984,8 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
             drawLightBevel(p, sbRect, cg, sflags/*|Style_Down*/,
 #ifndef SIMPLE_SCROLLBARS
-                           SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons ? ROUNDED_ALL :
+                           !(opts.square&SQUARE_SB_SLIDER) && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons)
+                                ? ROUNDED_ALL :
 #endif
                            ROUNDED_NONE,
                            trough[2], trough, true, true,
@@ -7357,9 +7358,9 @@ void QtCurveStyle::drawSbSliderHandle(QPainter *p, const QRect &orig, const QCol
         flags|=Style_Horizontal;
     flags|=Style_Raised;
 
-    drawLightBevel(p, r, cg, flags, slider
+    drawLightBevel(p, r, cg, flags, (slider && !(opts.square&SQUARE_SLIDER))
 #ifndef SIMPLE_SCROLLBARS
-                        || SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons
+                        || (!slider && !(opts.square&SQUARE_SB_SLIDER) && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons))
 #endif
                         ? ROUNDED_ALL : ROUNDED_NONE,
                    getFill(flags, use, false, SHADE_DARKEN==opts.shadeSliders), use, true, false, WIDGET_SB_SLIDER);
@@ -7609,7 +7610,8 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
             groove.addCoords(-1, 0, 1, 0);
     }
 
-    drawLightBevel(p, groove, cg, flags, ROUNDED_ALL, itsBackgroundCols[flags&Style_Enabled ? 2 : ORIGINAL_SHADE],
+    drawLightBevel(p, groove, cg, flags, opts.square&SQUARE_SLIDER ? ROUNDED_NONE : ROUNDED_ALL,
+                   itsBackgroundCols[flags&Style_Enabled ? 2 : ORIGINAL_SHADE],
                    itsBackgroundCols, true, true, WIDGET_SLIDER_TROUGH);
 
     if(opts.fillSlider && (horiz ? sliderWidget->value()>0 : sliderWidget->value()<sliderWidget->maxValue()) && 
@@ -7637,7 +7639,8 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
                 used.addCoords(0, pos, 0, 0);
             }
             if(used.height()>0 && used.width()>0)
-                drawLightBevel(p, used, cg, flags, ROUNDED_ALL, usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_FILLED_SLIDER_TROUGH);
+                drawLightBevel(p, used, cg, flags, opts.square&SQUARE_SLIDER ? ROUNDED_NONE : ROUNDED_ALL,
+                               usedCols[ORIGINAL_SHADE], usedCols, true, true, WIDGET_FILLED_SLIDER_TROUGH);
         }
     }
 }
