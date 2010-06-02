@@ -1,6 +1,8 @@
 1.5.0
 -----
 1. Add option to set progressbar colour.
+2. Add options to have squared sliders and/or scrollbar sliders even when
+   general setting set to round.
 
 1.4.1
 -----
