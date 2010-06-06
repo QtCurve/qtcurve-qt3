@@ -1575,7 +1575,7 @@ void QtCurveStyle::polish(QWidget *widget)
             widget->setBackgroundMode(PaletteBackground);
         if(SHADE_NONE!=opts.shadeMenubars)
             widget->installEventFilter(this);
-        if(BLEND_TITLEBAR)
+        if(BLEND_TITLEBAR || opts.titlebarMenuColor)
             emitMenuSize(widget, widget->rect().height());
         if(SHADE_WINDOW_BORDER==opts.shadeMenubars)
         {
@@ -2190,7 +2190,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
                 default:
                     break;
             }
-        if(BLEND_TITLEBAR)
+        if(BLEND_TITLEBAR || opts.titlebarMenuColor)
             switch(event->type())
             {
                 case QEvent::Resize:
