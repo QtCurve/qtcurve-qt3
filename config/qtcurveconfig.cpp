@@ -1506,7 +1506,6 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.titlebarAppearance=(EAppearance)titlebarAppearance->currentItem();
     opts.inactiveTitlebarAppearance=(EAppearance)inactiveTitlebarAppearance->currentItem();
     opts.titlebarButtonAppearance=(EAppearance)titlebarButtonAppearance->currentItem();
-    opts.colorTitlebarOnly=colorTitlebarOnly->isChecked();
     opts.selectionAppearance=(EAppearance)selectionAppearance->currentItem();
     opts.shadeCheckRadio=(EShade)shadeCheckRadio->currentItem();
     opts.customCheckRadioColor=customCheckRadioColor->color();
@@ -1517,7 +1516,6 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.flatSbarButtons=flatSbarButtons->isChecked();
     opts.thinSbarGroove=thinSbarGroove->isChecked();
     opts.colorSliderMouseOver=colorSliderMouseOver->isChecked();
-    opts.titlebarBorder=titlebarBorder->isChecked();
     opts.sbarBgndAppearance=(EAppearance)sbarBgndAppearance->currentItem();
     opts.sliderFill=(EAppearance)sliderFill->currentItem();
     opts.dwtAppearance=(EAppearance)dwtAppearance->currentItem();
@@ -1539,6 +1537,7 @@ void QtCurveConfig::setOptions(Options &opts)
     opts.forceAlternateLvCols=forceAlternateLvCols->isChecked();
     opts.titlebarAlignment=(EAlign)titlebarAlignment->currentItem();
     opts.square=getSquareFlags();
+    opts.windowBorder=getWindowBorderFlags();
 
     if(customShading->isChecked())
     {
@@ -1646,7 +1645,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     titlebarAppearance->setCurrentItem(opts.titlebarAppearance);
     inactiveTitlebarAppearance->setCurrentItem(opts.inactiveTitlebarAppearance);
     titlebarButtonAppearance->setCurrentItem(opts.titlebarButtonAppearance);
-    colorTitlebarOnly->setChecked(opts.colorTitlebarOnly);
+    colorTitlebarOnly->setChecked(opts.windowBorder&WINDOW_BORDER_COLOR_TITLEBAR_ONLY);
     selectionAppearance->setCurrentItem(opts.selectionAppearance);
     shadeCheckRadio->setCurrentItem(opts.shadeCheckRadio);
     customCheckRadioColor->setColor(opts.customCheckRadioColor);
@@ -1668,7 +1667,7 @@ void QtCurveConfig::setWidgetOptions(const Options &opts)
     flatSbarButtons->setChecked(opts.flatSbarButtons);
     thinSbarGroove->setChecked(opts.thinSbarGroove);
     colorSliderMouseOver->setChecked(opts.colorSliderMouseOver);
-    titlebarBorder->setChecked(opts.titlebarBorder);
+    titlebarBorder->setChecked(opts.windowBorder&WINDOW_BORDER_ADD_LIGHT_BORDER);
     sbarBgndAppearance->setCurrentItem(opts.sbarBgndAppearance);
     sliderFill->setCurrentItem(opts.sliderFill);
     dwtAppearance->setCurrentItem(opts.dwtAppearance);
@@ -1700,6 +1699,21 @@ int QtCurveConfig::getSquareFlags()
     if(squareLvSelection->isChecked())
         square|=SQUARE_LISTVIEW_SELECTION;
     return square;
+}
+
+int QtCurveConfig::getWindowBorderFlags()
+{
+    int flags(0);
+
+    if(colorTitlebarOnly->isChecked())
+        flags|=WINDOW_BORDER_COLOR_TITLEBAR_ONLY;
+//     if(windowBorder_menuColor->isChecked())
+//         flags|=WINDOW_BORDER_USE_MENUBAR_COLOR_FOR_TITLEBAR;
+    if(titlebarBorder->isChecked())
+        flags|=WINDOW_BORDER_ADD_LIGHT_BORDER;
+//     if(windowBorder_blend->isChecked())
+//         flags|=WINDOW_BORDER_BLEND_TITLEBAR;
+    return flags;
 }
 
 bool QtCurveConfig::settingsChanged()
@@ -1777,7 +1791,6 @@ bool QtCurveConfig::settingsChanged()
          titlebarAppearance->currentItem()!=currentStyle.titlebarAppearance ||
          inactiveTitlebarAppearance->currentItem()!=currentStyle.inactiveTitlebarAppearance ||
          titlebarButtonAppearance->currentItem()!=currentStyle.titlebarButtonAppearance ||
-         colorTitlebarOnly->isChecked()!=currentStyle.colorTitlebarOnly ||
          selectionAppearance->currentItem()!=currentStyle.selectionAppearance ||
          toolbarSeparators->currentItem()!=currentStyle.toolbarSeparators ||
          splitters->currentItem()!=currentStyle.splitters ||
@@ -1797,7 +1810,6 @@ bool QtCurveConfig::settingsChanged()
          flatSbarButtons->isChecked()!=currentStyle.flatSbarButtons ||
          thinSbarGroove->isChecked()!=currentStyle.thinSbarGroove ||
          colorSliderMouseOver->isChecked()!=currentStyle.colorSliderMouseOver ||
-         titlebarBorder->isChecked()!=currentStyle.titlebarBorder ||
          sbarBgndAppearance->currentItem()!=currentStyle.sbarBgndAppearance ||
          sliderFill->currentItem()!=currentStyle.sliderFill ||
          dwtAppearance->currentItem()!=currentStyle.dwtAppearance ||
@@ -1810,6 +1822,7 @@ bool QtCurveConfig::settingsChanged()
          framelessGroupBoxes->isChecked()!=currentStyle.framelessGroupBoxes ||
 
          getSquareFlags()!=currentStyle.square ||
+         getWindowBorderFlags()!=currentStyle.windowBorder||
 
          toInt(passwordChar->text())!=currentStyle.passwordChar ||
 

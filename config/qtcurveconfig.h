@@ -136,6 +136,7 @@ class QtCurveConfig : public QtCurveConfigBase
     void setOptions(Options &opts);
     void setWidgetOptions(const Options &opts);
     int  getSquareFlags();
+    int  getWindowBorderFlags();
     bool settingsChanged();
 
     private:
