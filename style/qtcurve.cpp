@@ -2424,6 +2424,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                                         (MO_GLOW==opts.coloredMouseOver && itsFormMode))),
                  doEtch(!itsFormMode && doBorder && ETCH_WIDGET(w) && !(flags&CHECK_BUTTON) &&
                         DO_EFFECT),
+                 glowFocus(doEtch && USE_GLOW_FOCUS(flags&Style_MouseOver) && flags&Style_HasFocus && flags&Style_Enabled),
                  horiz(flags&Style_Horizontal);
     const QColor *cols(custom ? custom : itsBackgroundCols),
                  *border(colouredMouseOver ? borderColors(flags, cols) : cols);
@@ -2579,13 +2580,16 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
 
     if(doBorder)
     {
-        const QColor *borderCols=(WIDGET_COMBO==w || WIDGET_COMBO_BUTTON==w) && cols==itsComboBtnCols
-                        ? flags&Style_MouseOver && MO_GLOW==opts.coloredMouseOver && !sunken
-                            ? itsMouseOverCols
-                            : itsButtonCols
-                        : cols;
+        const QColor *borderCols=glowFocus ||
+                                 (WIDGET_COMBO==w && USE_GLOW_FOCUS(flags&Style_MouseOver) && flags&Style_HasFocus && flags&Style_Enabled)
+                        ? itsFocusCols
+                        : (WIDGET_COMBO==w || WIDGET_COMBO_BUTTON==w) && cols==itsComboBtnCols
+                            ? flags&Style_MouseOver && MO_GLOW==opts.coloredMouseOver && !sunken
+                                ? itsMouseOverCols
+                                : itsButtonCols
+                            : cols;
                             
-        if(!sunken && flags&Style_Enabled &&
+        if(!sunken && flags&Style_Enabled && !glowFocus &&
             ((((doEtch && WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w) || WIDGET_COMBO==w || WIDGET_SB_SLIDER==w) &&
              MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
              (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator)))
@@ -2599,27 +2603,30 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                        w, doCorners);
     }
 
-    if(doEtch)
-        if( !sunken &&
+    if(doEtch || glowFocus)
+        if( !sunken && 
             ((WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w && MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
+             glowFocus ||
              (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator)/* ||
               (flags&Style_HasFocus && FOCUS_FULL==opts.focus)*/ ))
-            drawGlow(p, rOrig, cg, WIDGET_DEF_BUTTON==w && flags&Style_MouseOver ? WIDGET_STD_BUTTON : w);
+            drawGlow(p, rOrig, cg, WIDGET_DEF_BUTTON==w && flags&Style_MouseOver ? WIDGET_STD_BUTTON : w,
+                     glowFocus ? itsFocusCols : 0);
         else
             drawEtch(p, rOrig, cg, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) && !sunken, ROUNDED_NONE==round);
 
     p->restore();
 }
 
-void QtCurveStyle::drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, EWidget w) const
+void QtCurveStyle::drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, EWidget w, const QColor *cols) const
 {
-    if(itsMouseOverCols || itsDefBtnCols)
+    if(itsMouseOverCols || itsDefBtnCols || cols)
     {
         bool   def(WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator),
                defShade=def && (!itsDefBtnCols ||
                                 (itsMouseOverCols && itsDefBtnCols[ORIGINAL_SHADE]==itsMouseOverCols[ORIGINAL_SHADE]));
-        QColor col((def && itsDefBtnCols) || !itsMouseOverCols
-                        ? itsDefBtnCols[GLOW_DEFBTN] : itsMouseOverCols[GLOW_MO]);
+        QColor col(cols ? cols[GLOW_MO]
+                        : (def && itsDefBtnCols) || !itsMouseOverCols
+                            ? itsDefBtnCols[GLOW_DEFBTN] : itsMouseOverCols[GLOW_MO]);
 
         col=midColorF(cg.background(), col, 1.5-GLOW_ALPHA(defShade));
         p->setPen(col);
@@ -3422,8 +3429,9 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             if(sunken || (!itsFormMode && HOVER_NONE==itsHover))
                 sflags&=~Style_MouseOver;
 
-            bool  glow(doEtch && MO_GLOW==opts.coloredMouseOver && sflags&Style_MouseOver && sflags&Style_Enabled);
-            const QColor *bc(borderColors(sflags, 0L)),
+            bool  glowFocus(USE_GLOW_FOCUS(flags&Style_MouseOver) && sflags&Style_Enabled && sflags&Style_HasFocus),
+                  glow(doEtch && sflags&Style_Enabled && ((MO_GLOW==opts.coloredMouseOver && sflags&Style_MouseOver) || glowFocus));
+            const QColor *bc(glowFocus ? itsFocusCols : borderColors(sflags, 0L)),
                          *btn(checkRadioColors(cg, sflags)),
                          *use(bc ? bc : btn),
                          &bgnd(opts.crButton
@@ -3481,7 +3489,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             if(doEtch)
             {
                 QColor topCol(glow
-                                ? itsMouseOverCols[GLOW_MO]
+                                ? glowFocus ? itsFocusCols[GLOW_MO] : itsMouseOverCols[GLOW_MO]
                                 : shade(cg.background(), ETCHED_DARK)),
                        botCol(glow
                                 ? topCol
@@ -3549,7 +3557,13 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(sunken || (!itsFormMode && HOVER_NONE==itsHover))
                     sflags&=~Style_MouseOver;
 
-                const QColor *bc(borderColors(sflags, 0L)),
+                bool         glowFocus(USE_GLOW_FOCUS(flags&Style_MouseOver) && sflags&Style_Enabled && sflags&Style_HasFocus),
+                             glow(doEtch && sflags&Style_Enabled && ((MO_GLOW==opts.coloredMouseOver && sflags&Style_MouseOver) ||
+                                                                     glowFocus)),
+                             set(sflags&Style_On),
+                             coloredMo(MO_NONE!=opts.coloredMouseOver && !glow &&
+                                       sflags&Style_MouseOver && sflags&Style_Enabled);
+                const QColor *bc(glowFocus ? itsFocusCols : borderColors(sflags, 0L)),
                              *btn(checkRadioColors(cg, sflags)),
                              *use(bc ? bc : btn);
                 const QColor &on(checkRadioCol(flags, cg)),
@@ -3560,10 +3574,6 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                             ? use[CR_MO_FILL]
                                             : cg.base()
                                         : cg.background());
-                bool         glow(doEtch && MO_GLOW==opts.coloredMouseOver && sflags&Style_MouseOver && sflags&Style_Enabled),
-                             set(sflags&Style_On),
-                             coloredMo(MO_NONE!=opts.coloredMouseOver && !glow &&
-                                       sflags&Style_MouseOver && sflags&Style_Enabled);
                 EWidget      wid=opts.crButton ? WIDGET_STD_BUTTON : WIDGET_TROUGH;
                 EAppearance  app=opts.crButton ? opts.appearance : APPEARANCE_INVERTED;
                 bool         drawSunken=opts.crButton ? sunken : EFFECT_NONE!=opts.buttonEffect,
@@ -3617,7 +3627,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(doEtch && !doneShadow)
                 {
                     QColor topCol(glow
-                                    ? itsMouseOverCols[GLOW_MO]
+                                    ? glowFocus ? itsFocusCols[GLOW_MO] : itsMouseOverCols[GLOW_MO]
                                     : shade(cg.background(), ETCHED_DARK)),
                            botCol(glow
                                     ? topCol
@@ -4061,7 +4071,11 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 bool    view(widget && (dynamic_cast<QScrollView*>(widget->parent()) ||
                                         dynamic_cast<QListBox*>(widget->parent())));
 
-                if(FOCUS_LINE==opts.focus)
+                if(widget && FOCUS_GLOW==opts.focus &&
+                    (dynamic_cast<const QButton *>(widget) || dynamic_cast<const QComboBox *>(widget)))
+                    return;
+
+                if(FOCUS_LINE==opts.focus || FOCUS_GLOW==opts.focus)
                 {
                     p->setPen(view && flags&Style_Selected
                                     ? cg.highlightedText()
@@ -4818,7 +4832,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                          button->pixmap(), button->text(), -1, &textCol);
 
             // Draw a focus rect if the button has focus
-            if (flags&Style_HasFocus &&
+            if (flags&Style_HasFocus && FOCUS_GLOW!=opts.focus &&
                 !(flags&Style_MouseOver && FOCUS_FULL==opts.focus && MO_NONE!=opts.coloredMouseOver))
                drawPrimitive(PE_FocusRect, p, visualRect(subRect(SR_PushButtonFocusRect,
                              widget), widget), cg, flags);
@@ -5236,11 +5250,11 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             itsFormMode = false;
             break;
         case CE_CheckBoxLabel:
-            if(opts.crHighlight)
+            if(opts.crHighlight || FOCUS_GLOW==opts.focus)
             {
                 const QCheckBox *checkbox((const QCheckBox *)widget);
 
-                if(flags&Style_MouseOver &&
+                if(flags&Style_MouseOver && opts.crHighlight &&
 #if QT_VERSION >= 0x030200
                    HOVER_CHECK==itsHover && itsHoverWidget && itsHoverWidget==widget &&
 #endif
@@ -5267,7 +5281,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 drawItem(p, r, alignment | AlignVCenter | ShowPrefix, cg,
                          flags & Style_Enabled, checkbox->pixmap(),  checkbox->text());
 
-                if(checkbox->hasFocus())
+                if(checkbox->hasFocus() && FOCUS_GLOW!=opts.focus)
                     drawPrimitive(PE_FocusRect, p, visualRect(subRect(SR_CheckBoxFocusRect, widget),
                                   widget), cg, flags);
             }
@@ -5280,11 +5294,11 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             itsFormMode=false;
             break;
         case CE_RadioButtonLabel:
-            if(opts.crHighlight)
+            if(opts.crHighlight || FOCUS_GLOW==opts.focus)
             {
                 const QRadioButton *radiobutton((const QRadioButton *)widget);
 
-                if(flags&Style_MouseOver &&
+                if(flags&Style_MouseOver  && opts.crHighlight &&
 #if QT_VERSION >= 0x030200
                    HOVER_RADIO==itsHover && itsHoverWidget && itsHoverWidget==widget &&
 #endif
@@ -5312,7 +5326,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 drawItem(p, r, alignment | AlignVCenter | ShowPrefix, cg, flags & Style_Enabled,
                          radiobutton->pixmap(), radiobutton->text());
 
-                if(radiobutton->hasFocus())
+                if(radiobutton->hasFocus() && FOCUS_GLOW!=opts.focus)
                     drawPrimitive(PE_FocusRect, p, visualRect(subRect(SR_RadioButtonFocusRect,
                                   widget), widget), cg, flags);
                 break;
@@ -5684,7 +5698,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     }
                 }
 
-                if(flags&Style_HasFocus && !editable)
+                if(flags&Style_HasFocus && !editable && FOCUS_GLOW!=opts.focus)
                 {
                     QRect fr;
 
@@ -5743,13 +5757,17 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             }
 
             if(doEtch)
-                if(!sunken && !editable &&
+            {
+                bool glowFocus(USE_GLOW_FOCUS(flags&Style_MouseOver) && flags&Style_HasFocus && flags&Style_Enabled);
+
+                if(!sunken && !editable && 
                     ((MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver)/* ||
-                     (FOCUS_FULL==opts.focus && flags&Style_HasFocus)*/))
-                    drawGlow(p, widget ? widget->rect() : r, cg, WIDGET_COMBO);
+                     (FOCUS_FULL==opts.focus && flags&Style_HasFocus)*/ || glowFocus))
+                    drawGlow(p, widget ? widget->rect() : r, cg, WIDGET_COMBO, glowFocus ? itsFocusCols : NULL);
                 else
                     drawEtch(p, widget ? widget->rect() : r, cg,
                              !editable && EFFECT_SHADOW==opts.buttonEffect && !sunken, editable && (opts.square&SQUARE_ENTRY));
+            }
 
             p->setPen(cg.buttonText());
             itsFormMode = false;
@@ -6236,7 +6254,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 QCommonStyle::drawComplexControl(control, paint, widget, r, cg, flags, SC_SliderTickmarks,
                                                  active, data);
 
-            if(flags & Style_HasFocus)
+            if(flags&Style_HasFocus && FOCUS_GLOW!=opts.focus)
                 drawPrimitive(PE_FocusRect, paint, groove, cg);
 
             if(!tb)

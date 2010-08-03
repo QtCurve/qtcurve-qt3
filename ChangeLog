@@ -1,6 +1,7 @@
-1.5.1
+1.6.0
 -----
-1. Fix potential crash in rgbToHsv
+1. Add 'glow' focus option.
+2. Fix potential crash in rgbToHsv
 
 1.5.0
 -----
