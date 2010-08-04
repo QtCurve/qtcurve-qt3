@@ -1,6 +1,6 @@
 1.6.0
 -----
-1. Add 'glow' focus option.
+1. Add 'glow' focus option - this is now the default.
 2. Fix potential crash in rgbToHsv
 
 1.5.0
