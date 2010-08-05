@@ -2630,25 +2630,32 @@ void QtCurveStyle::drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, 
 
         col=midColorF(cg.background(), col, 1.5-GLOW_ALPHA(defShade));
         p->setPen(col);
-        p->drawLine(r.x()+2, r.y()+r.height()-1, r.x()+r.width()-3, r.y()+r.height()-1);
-        p->drawLine(r.x()+r.width()-1, r.y()+2, r.x()+r.width()-1, r.y()+r.height()-3);
-        p->drawLine(r.x()+3, r.y(), r.x()+r.width()-4, r.y());
-        p->drawLine(r.x(), r.y()+3, r.x(), r.y()+r.height()-4);
-        //p->setPen(midColor(col, cg.background()));
-        p->drawLine(r.x()+r.width()-1, r.y()+r.height()-3, r.x()+r.width()-3, r.y()+r.height()-1);
-        p->drawLine(r.x(), r.y()+r.height()-3, r.x()+2, r.y()+r.height()-1);
-        p->drawLine(r.x(), r.y()+2, r.x()+2, r.y());
-        p->drawLine(r.x()+r.width()-3, r.y(), r.x()+r.width()-1, r.y()+2);
-        p->setPen(midColor(col, cg.background()));
-        p->drawLine(r.x()+r.width()-1, r.y()+r.height()-2, r.x()+r.width()-2, r.y()+r.height()-1);
-        p->drawLine(r.x(), r.y()+r.height()-2, r.x()+1, r.y()+r.height()-1);
-        p->drawLine(r.x(), r.y()+1, r.x()+1, r.y());
-        p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-1, r.y()+1);
+        if(ROUND_NONE==opts.round)
+            p->drawRect(r);
+        else
+        {
+            p->drawLine(r.x()+2, r.y()+r.height()-1, r.x()+r.width()-3, r.y()+r.height()-1);
+            p->drawLine(r.x()+r.width()-1, r.y()+2, r.x()+r.width()-1, r.y()+r.height()-3);
+            p->drawLine(r.x()+3, r.y(), r.x()+r.width()-4, r.y());
+            p->drawLine(r.x(), r.y()+3, r.x(), r.y()+r.height()-4);
+            //p->setPen(midColor(col, cg.background()));
+            p->drawLine(r.x()+r.width()-1, r.y()+r.height()-3, r.x()+r.width()-3, r.y()+r.height()-1);
+            p->drawLine(r.x(), r.y()+r.height()-3, r.x()+2, r.y()+r.height()-1);
+            p->drawLine(r.x(), r.y()+2, r.x()+2, r.y());
+            p->drawLine(r.x()+r.width()-3, r.y(), r.x()+r.width()-1, r.y()+2);
+            p->setPen(midColor(col, cg.background()));
+            p->drawLine(r.x()+r.width()-1, r.y()+r.height()-2, r.x()+r.width()-2, r.y()+r.height()-1);
+            p->drawLine(r.x(), r.y()+r.height()-2, r.x()+1, r.y()+r.height()-1);
+            p->drawLine(r.x(), r.y()+1, r.x()+1, r.y());
+            p->drawLine(r.x()+r.width()-2, r.y(), r.x()+r.width()-1, r.y()+1);
+        }
     }
 }
 
 void QtCurveStyle::drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised, bool square) const
 {
+    square=square || ROUND_NONE==opts.round;
+
     int mod(square ? 0 : 2);
 
     {
