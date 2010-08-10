@@ -843,12 +843,12 @@ QtCurveStyle::QtCurveStyle()
     readConfig(QString(), &opts);
 #endif
 
+    if(FRAME_LINE==opts.groupBox)
+        opts.groupBox=FRAME_NONE;
+
     opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", DEFAULT_CONTRAST);
     if(opts.contrast<0 || opts.contrast>10)
         opts.contrast=DEFAULT_CONTRAST;
-
-    /* Doesn't seem to work well for KDE3 apps :-( */
-    opts.groupBoxLine=false;
 
     itsPixmapCache.setAutoDelete(true);
 
@@ -1160,7 +1160,8 @@ void QtCurveStyle::polish(QApplication *app)
     else if ("soffice.bin"==appName)
     {
         itsThemedApp=APP_OPENOFFICE;
-        opts.framelessGroupBoxes=false;
+        opts.groupBox=FRAME_PLAIN;
+        opts.boldGroupBox=false;
     }
     else if ("kdefilepicker"==appName)
         itsThemedApp=APP_SKIP_TASKBAR;
@@ -1506,7 +1507,7 @@ void QtCurveStyle::polish(QWidget *widget)
 
     if (::qt_cast<QRadioButton *>(widget) || ::qt_cast<QCheckBox *>(widget))
     {
-        bool framelessGroupBoxCheckBox=(opts.framelessGroupBoxes && isCheckBoxOfGroupBox(widget));
+        bool framelessGroupBoxCheckBox=(NO_FRAME(opts.groupBox) && isCheckBoxOfGroupBox(widget));
 
         if(framelessGroupBoxCheckBox || enableFilter)
         {
@@ -1730,13 +1731,10 @@ void QtCurveStyle::polish(QWidget *widget)
     }
     else if(widget->inherits("KTabCtl"))
         widget->installEventFilter(this);
-    else if(opts.framelessGroupBoxes && ::qt_cast<QGroupBox *>(widget))
+    else if(NO_FRAME(opts.groupBox) && ::qt_cast<QGroupBox *>(widget))
     {
-        // Sometimes get drawing errors with framless flat groupboxes - so make them all non-flat!
         ((QGroupBox *)widget)->setFlat(false);
-        // Also, to fix krusader's config dialog, set all groupboxes to have no frame.
-        if(!opts.groupBoxLine)
-            ((QGroupBox *)widget)->setFrameShape(QFrame::NoFrame);
+        ((QGroupBox *)widget)->setFrameShape(QFrame::NoFrame);
     }
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
     {
@@ -2014,7 +2012,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
                 return false;   // Now draw the contents
         }
     }
-    else if (opts.framelessGroupBoxes && QEvent::Move==event->type() && isCheckBoxOfGroupBox(object))
+    else if (NO_FRAME(opts.groupBox) && QEvent::Move==event->type() && isCheckBoxOfGroupBox(object))
     {
         QCheckBox *cb=static_cast<QCheckBox *>(object);
         QRect     r(cb->geometry());
@@ -3761,7 +3759,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         }
         case PE_GroupBoxFrame:
         case PE_PanelGroupBox:
-            if(opts.framelessGroupBoxes && opts.groupBoxLine)
+            if(FRAME_LINE==opts.groupBox)
             {
                 QRect r2(r);
                 if(p && p->device() && dynamic_cast<QGroupBox *>(p->device()) &&
@@ -3770,7 +3768,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 p->setPen(backgroundColors(cg)[STD_BORDER]);
                 p->drawLine(r2.x(), r2.y(), r2.x()+r2.width()-1,  r2.y());                    
             }
-            else if (!opts.framelessGroupBoxes)
+            else if (FRAME_NONE!=opts.groupBox)
                 if(APP_OPENOFFICE==itsThemedApp || data.lineWidth()>0 || data.isDefault())
                 {
                     const QColor *use(backgroundColors(cg));
@@ -6967,7 +6965,7 @@ void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColor
 {
     QRect r2(r);
 
-    if(opts.framelessGroupBoxes && text.length() && p->device() && dynamic_cast<QGroupBox *>(p->device()))
+    if(opts.boldGroupBox && text.length() && p->device() && dynamic_cast<QGroupBox *>(p->device()))
     {
         QGroupBox *box=static_cast<QGroupBox*>(p->device());
 
