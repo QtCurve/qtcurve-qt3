@@ -1161,7 +1161,7 @@ void QtCurveStyle::polish(QApplication *app)
     {
         itsThemedApp=APP_OPENOFFICE;
         opts.groupBox=FRAME_PLAIN;
-        opts.boldGroupBox=false;
+        opts.gbLabel=0;
     }
     else if ("kdefilepicker"==appName)
         itsThemedApp=APP_SKIP_TASKBAR;
@@ -6965,7 +6965,7 @@ void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColor
 {
     QRect r2(r);
 
-    if(opts.boldGroupBox && text.length() && p->device() && dynamic_cast<QGroupBox *>(p->device()))
+    if((opts.gbLabel&GB_LBL_BOLD) && text.length() && p->device() && dynamic_cast<QGroupBox *>(p->device()))
     {
         QGroupBox *box=static_cast<QGroupBox*>(p->device());
 
