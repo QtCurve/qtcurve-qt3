@@ -843,7 +843,7 @@ QtCurveStyle::QtCurveStyle()
     readConfig(QString(), &opts);
 #endif
 
-    if(FRAME_LINE==opts.groupBox)
+    if(FRAME_LINE==opts.groupBox || opts.gbLabel&GB_LBL_BOLD)
         opts.groupBox=FRAME_NONE;
 
     opts.contrast=QSettings().readNumEntry("/Qt/KDE/contrast", DEFAULT_CONTRAST);
