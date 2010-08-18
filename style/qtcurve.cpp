@@ -2423,6 +2423,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                  doEtch(!itsFormMode && doBorder && ETCH_WIDGET(w) && !(flags&CHECK_BUTTON) &&
                         DO_EFFECT),
                  glowFocus(doEtch && USE_GLOW_FOCUS(flags&Style_MouseOver) && flags&Style_HasFocus && flags&Style_Enabled),
+                 sunkenToggleMo(sunken && !(flags&Style_Down) && flags&(Style_MouseOver|TOGGLE_BUTTON)),
                  horiz(flags&Style_Horizontal);
     const QColor *cols(custom ? custom : itsBackgroundCols),
                  *border(colouredMouseOver ? borderColors(flags, cols) : cols);
@@ -2505,7 +2506,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     }
 
     // fill
-    if(br.width()>0 && br.height()>0 && !sunken)
+    if(br.width()>0 && br.height()>0 && (!sunken || sunkenToggleMo))
         if(plastikMouseOver)
         {
             if(WIDGET_SB_SLIDER==w)
@@ -2587,7 +2588,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
                                 : itsButtonCols
                             : cols;
                             
-        if(!sunken && flags&Style_Enabled && !glowFocus &&
+        if((!sunken || sunkenToggleMo) && flags&Style_Enabled && !glowFocus &&
             ((((doEtch && WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w) || WIDGET_COMBO==w || WIDGET_SB_SLIDER==w) &&
              MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
              (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator)))
@@ -2602,7 +2603,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     }
 
     if(doEtch || glowFocus)
-        if( !sunken && 
+        if( (!sunken  || sunkenToggleMo) && 
             ((WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w && MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
              glowFocus ||
              (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator)/* ||
