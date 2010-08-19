@@ -881,8 +881,6 @@ QtCurveStyle::QtCurveStyle()
     switch(opts.defBtnIndicator)
     {
         case IND_GLOW:
-            itsDefBtnCols=itsFocusCols;
-            break;
         case IND_SELECTED:
             itsDefBtnCols=itsHighlightCols;
             break;
@@ -1286,6 +1284,7 @@ void QtCurveStyle::polish(QPalette &pal)
          newDefBtn(itsDefBtnCols && /*( (IND_COLORED==opts.defBtnIndicator &&*/
                                        SHADE_BLEND_SELECTED!=opts.shadeSliders/*) ||*/
                                       /*(IND_TINT==opts.defBtnIndicator) )*/ &&
+                   IND_SELECTED!=opts.defBtnIndicator && IND_GLOW!=opts.defBtnIndicator &&
                    (newContrast || newButton || newMenu)),
          newComboBtn(itsComboBtnCols && itsHighlightCols!=itsComboBtnCols && itsSliderCols!=itsComboBtnCols &&
                      SHADE_BLEND_SELECTED==opts.comboBtn &&

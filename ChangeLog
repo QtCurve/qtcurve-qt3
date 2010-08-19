@@ -4,6 +4,7 @@
 2. Fix potential crash in rgbToHsv
 3. Enable glow/shadow/etch for square and slight round settings.
 4. Draw coloured mouse over for 'checked' toggle buttons.
+5. Use Highlight colour for default button glow.
 
 1.5.0
 -----
