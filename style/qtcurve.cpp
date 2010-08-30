@@ -106,6 +106,7 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <iostream>
 #define COMMON_FUNCTIONS
 #include "qtcurve.h"
 #define CONFIG_READ
@@ -1139,6 +1140,9 @@ static QString getFile(const QString &f)
 void QtCurveStyle::polish(QApplication *app)
 {
     QString appName(getFile(app->argv()[0]));
+
+    if(NULL!=getenv("QTCURVE_DEBUG"))
+        std::cout << "QtCurve: Application name: \"" << appName.latin1() << "\"\n";
 
     if ("kicker"==appName || "appletproxy"==appName)
     {
