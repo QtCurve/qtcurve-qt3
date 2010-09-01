@@ -1383,7 +1383,7 @@ void QtCurveStyle::polish(QPalette &pal)
         opts.customMenuStripeColor=Qt::black;
     
     if(APPEARANCE_STRIPED==opts.bgndAppearance)
-        pal.setBrush(QColorGroup::Background, QBrush(pal.active().background(), *createStripePixmap(pal.active().background())));
+        pal.setBrush(QColorGroup::Background, QBrush(pal.active().background(), *createStripePixmap(pal.active().background(), true)));
 }
 
 static QColor disable(const QColor &col, const QColor &bgnd)
@@ -2038,7 +2038,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
             QColor   col(USE_LIGHTER_POPUP_MENU ? itsLighterPopupMenuBgndCol : widget->palette().active().background());
 
             if(APPEARANCE_STRIPED==opts.menuBgndAppearance)
-                painter.drawTiledPixmap(widget->rect(), *createStripePixmap(col));
+                painter.drawTiledPixmap(widget->rect(), *createStripePixmap(col, false));
             else
                 drawBevelGradientReal(col, &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
                                       opts.menuBgndAppearance, WIDGET_OTHER);
@@ -7733,7 +7733,7 @@ void QtCurveStyle::drawMenuOrToolBarBackground(QPainter *p, const QRect &r, cons
     QColor      color(menu ? menuColors(cg, itsActive)[ORIGINAL_SHADE] : cg.background());
 
     if(menu && BLEND_TITLEBAR)
-        rx.addCoords(0, -qtcGetWindowBorderSize(), 0, 0);
+        rx.addCoords(0, -qtcGetWindowBorderSize().titleHeight, 0, 0);
 
     drawBevelGradient(color, p, rx, horiz, false, app);
 }
@@ -8448,36 +8448,36 @@ QPixmap * QtCurveStyle::getPixelPixmap(const QColor col) const
     return pix;
 }
 
-QPixmap * QtCurveStyle::createStripePixmap(const QColor &col) const
+QPixmap * QtCurveStyle::createStripePixmap(const QColor &col, bool forWindow) const
 {
     QRgb    rgb(col.rgb());
-    QString key(createKey(rgb, 's'));
+    QString key(createKey(rgb, forWindow ? 'S' : 's'));
 
     QPixmap *pix=itsPixmapCache.find(key);
 
     if(!pix)
     {
         QColor col2(shade(col, BGND_STRIPE_SHADE));
-        int    i;
+        int    i,
+               adjust=forWindow ? qtcGetWindowBorderSize().titleHeight%4 : 0;
 
         pix=new QPixmap(64, 64);
-
         pix->fill(col.rgb());
-
+        
         QPainter p;
         p.begin(pix);
         p.setPen(QColor((3*col.red()+col2.red())/4,
                         (3*col.green()+col2.green())/4,
                         (3*col.blue()+col2.blue())/4));
 
-        for (i=1; i<64; i+=4)
+        for (i=1; i<68; i+=4)
         {
-            p.drawLine(0, i, 63, i);
-            p.drawLine(0, i+2, 63, i+2);
+            p.drawLine(0, i-adjust, 63, i-adjust);
+            p.drawLine(0, i+2-adjust, 63, i+2-adjust);
         }
         p.setPen(col2);
-        for (i=2; i<63; i+=4)
-            p.drawLine(0, i, 63, i);
+        for (i=2; i<67; i+=4)
+            p.drawLine(0, i-adjust, 63, i-adjust);
         p.end();
     }
 
