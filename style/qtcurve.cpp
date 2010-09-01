@@ -125,8 +125,6 @@ dimension, so as to draw the scrollbar at the correct size.
 #include "qtc_fixx11h.h"
 
 static const Atom constNetMoveResize = XInternAtom(qt_xdisplay(), "_NET_WM_MOVERESIZE", False);
-static const Atom constQtcMenuSize   = XInternAtom(qt_xdisplay(), MENU_SIZE_ATOM, False);
-
 static const QWidget * getTopLevel(const QWidget *widget)
 {
     const QWidget *w=widget;
@@ -141,8 +139,23 @@ static void emitMenuSize(const QWidget *widget, unsigned short size)
     const QWidget *w=getTopLevel(widget);
 
     if(w)
+    {
+        static const Atom constAtom  = XInternAtom(qt_xdisplay(), MENU_SIZE_ATOM, False);
         XChangeProperty(qt_xdisplay(), w->parentWidget() ? w->parentWidget()->winId() : w->winId(),
-                        constQtcMenuSize, XA_CARDINAL, 16, PropModeReplace, (unsigned char *)&size, 1);
+                        constAtom, XA_CARDINAL, 16, PropModeReplace, (unsigned char *)&size, 1);
+    }
+}
+
+void setBgndProp(QWidget *widget, unsigned short app)
+{
+    const QWidget *w=getTopLevel(widget);
+
+    if(w)
+    {
+        static const Atom constAtom  = XInternAtom(qt_xdisplay(), BGND_ATOM, False);
+        XChangeProperty(qt_xdisplay(), w->parentWidget() ? w->parentWidget()->winId() : w->winId(),
+                        constAtom, XA_CARDINAL, 16, PropModeReplace, (unsigned char *)&app, 1);
+    }
 }
 
 static void triggerWMMove(const QWidget *w, const QPoint &p)
@@ -1440,6 +1453,9 @@ void QtCurveStyle::polish(QWidget *widget)
 
     if(isWindowDragWidget(widget))
         widget->installEventFilter(this);
+
+    if(APPEARANCE_STRIPED==opts.bgndAppearance && (::qt_cast<QDialog *>(widget) || ::qt_cast<QMainWindow *>(widget)))
+        setBgndProp(widget, APPEARANCE_STRIPED);
 
     if(widget->parentWidget() && ::qt_cast<QScrollView *>(widget) && ::qt_cast<QComboBox *>(widget->parentWidget()))
     {
