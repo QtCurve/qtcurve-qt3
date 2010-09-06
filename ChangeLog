@@ -6,6 +6,7 @@
 4. Draw coloured mouse over for 'checked' toggle buttons.
 5. Use Highlight colour for default button glow.
 6. Default sub-menu popup delay to 225 - matches Gtk2 standard default.
+7. Fix glow-mouse over for radio buttons.
 
 1.5.0
 -----

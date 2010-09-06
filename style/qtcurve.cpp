@@ -3620,7 +3620,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 {
                     p->setBrush(Qt::NoBrush);
                     p->setPen(shade(cg.background(), ETCHED_DARK));
-                    p->drawArc(QRect(r.x(), r.y(), opts.crSize+2, opts.crSize+2), 225*16, 180*16);
+                    p->drawArc(QRect(r.x(), r.y(), opts.crSize, opts.crSize), 225*16, 180*16);
                     doneShadow=true;
                 }
 
@@ -3662,10 +3662,10 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     p->setPen(topCol);
                     if(drawSunken || glow)
                     {
-                        p->drawArc(QRect(r.x(), r.y(), opts.crSize+2, opts.crSize+2), 45*16, 180*16);
+                        p->drawArc(QRect(r.x(), r.y(), opts.crSize, opts.crSize), 45*16, 180*16);
                         p->setPen(botCol);
                     }
-                    p->drawArc(QRect(r.x(), r.y(), opts.crSize+2, opts.crSize+2), 225*16, 180*16);
+                    p->drawArc(QRect(r.x(), r.y(), opts.crSize, opts.crSize), 225*16, 180*16);
                 }
 
                 p->drawPixmap(rect.x(), rect.y(),
