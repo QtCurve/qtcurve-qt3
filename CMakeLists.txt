@@ -95,7 +95,7 @@ endif(QTC_DEFAULT_TO_KDE3)
 add_subdirectory(style)
 if (NOT QTC_QT_ONLY)
     if (QTC_BUILD_CONFIG_MODULE)
-        message("\n**************************************************************\n"
+        message("**************************************************************\n"
                 "Warning: The KDE3 config module is deprecated, and is no longer\n"
                 "         actively maintained. This module NO LONGER COMPILES!\n"
                 "         It is recommended to use the KDE4 version instead.\n"
