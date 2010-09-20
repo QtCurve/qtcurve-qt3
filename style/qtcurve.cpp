@@ -2769,7 +2769,7 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
     {
         bool largeArc(WIDGET_FOCUS!=w && FULLLY_ROUNDED && !(flags&CHECK_BUTTON) &&
                       r.width()>=MIN_ROUND_FULL_SIZE && r.height()>=MIN_ROUND_FULL_SIZE &&
-                      !(flags&DW_CLOSE_BUTTON));
+                      !(flags&DW_CLOSE_BUTTON) && (WIDGET_PROGRESSBAR!=w || opts.fillProgress));
 
         p->setPen(border);
         if(itsFormMode)
@@ -5140,10 +5140,10 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     if(QApplication::reverseLayout())
                         drawProgress(p, QRect(cr.x()+(cr.width()-width), cr.y(), width,
                                      cr.height()), cg, flags,
-                                     width==cr.width() || (opts.square&SQUARE_PROGRESS) ? ROUNDED_NONE : ROUNDED_LEFT, widget);
+                                     width==cr.width() || (opts.square&SQUARE_PROGRESS) ? ROUNDED_NONE : ROUNDED_ALL, widget);
                     else
                         drawProgress(p, QRect(cr.x(), cr.y(), width, cr.height()), cg, flags,
-                                     width==cr.width() || (opts.square&SQUARE_PROGRESS) ?  ROUNDED_NONE : ROUNDED_RIGHT, widget);
+                                     width==cr.width() || (opts.square&SQUARE_PROGRESS) ?  ROUNDED_NONE : ROUNDED_ALL, widget);
                 }
             }
             break;
@@ -7234,33 +7234,8 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup 
     }
 
     if(opts.borderProgress)
-    {
         drawBorder(cg.background(), p, r, cg, flags, !(opts.square&SQUARE_PROGRESS) && opts.fillProgress ? ROUNDED_ALL : round,
                    use, WIDGET_PROGRESSBAR, false, BORDER_FLAT, false, PBAR_BORDER);
-
-        if(!opts.fillProgress && ROUNDED && r.width()>2 && ROUNDED_ALL!=round)
-        {
-            QRect rb(r);
-
-            if(opts.fillProgress)
-            {
-                const QColor *use(backgroundColors(cg));
-
-                p->setPen(use[STD_BORDER]);
-                rb.addCoords(1, 1, -1, -1);
-            }
-            else
-                p->setPen(midColor(cg.background(), use[STD_BORDER]));
-            if(!(round&CORNER_TL) || !drawFull)
-                p->drawPoint(rb.x(), rb.y());
-            if(!(round&CORNER_BL) || !drawFull)
-                p->drawPoint(rb.x(), rb.y()+rb.height()-1);
-            if(!(round&CORNER_TR) || !drawFull)
-                p->drawPoint(rb.x()+rb.width()-1, rb.y());
-            if(!(round&CORNER_BR) || !drawFull)
-                p->drawPoint(rb.x()+rb.width()-1, rb.y()+rb.height()-1);
-        }
-    }
     else
     {
         r.addCoords(1, 1, -1, -1);
