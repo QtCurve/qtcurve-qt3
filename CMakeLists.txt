@@ -106,3 +106,12 @@ if (NOT QTC_QT_ONLY)
     add_subdirectory(themes)
     add_subdirectory(colors)
 endif (NOT QTC_QT_ONLY)
+
+if (QTC_ENABLE_PARENTLESS_DIALOG_FIX_SUPPORT)
+    message("**************************************************************\n"
+            "Warning: You have enabled support for the 'fix parentless dialogs'\n"
+            "         option. This is known to BREAK some applications. Please\n"
+            "         DO NOT report errors to application authors when you have\n"
+            "         this enabled. Please reconsider DISABLING this option.\n"
+            "**************************************************************\n")
+endif (QTC_ENABLE_PARENTLESS_DIALOG_FIX_SUPPORT)

@@ -1231,8 +1231,10 @@ void QtCurveStyle::polish(QApplication *app)
 
     if(SHADE_NONE!=opts.menuStripe && opts.noMenuStripeApps.contains(appName))
         opts.menuStripe=SHADE_NONE;
+#ifdef QTC_ENABLE_PARENTLESS_DIALOG_FIX_SUPPORT
     if(opts.fixParentlessDialogs && (opts.noDlgFixApps.contains(appName) || opts.noDlgFixApps.contains("kde")))
         opts.fixParentlessDialogs=false;
+#endif
 }
 
 void QtCurveStyle::polish(QPalette &pal)
@@ -1755,6 +1757,7 @@ void QtCurveStyle::polish(QWidget *widget)
         ((QGroupBox *)widget)->setFlat(false);
         ((QGroupBox *)widget)->setFrameShape(QFrame::NoFrame);
     }
+#ifdef QTC_ENABLE_PARENTLESS_DIALOG_FIX_SUPPORT
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
     {
         QDialog *dlg=(QDialog *)widget;
@@ -1783,6 +1786,7 @@ void QtCurveStyle::polish(QWidget *widget)
                (index+17)==(int)cap.length())) )
             widget->QWidget::setCaption(cap.left(index));
     }
+#endif
 
     if(APP_SYSTEMSETTINGS==itsThemedApp)
     {
@@ -1922,8 +1926,10 @@ void QtCurveStyle::unPolish(QWidget *widget)
     }
     else if(widget->inherits("KTabCtl"))
         widget->removeEventFilter(this);
+#ifdef QTC_ENABLE_PARENTLESS_DIALOG_FIX_SUPPORT
     else if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(widget))
         widget->removeEventFilter(this);
+#endif
 
     BASE_STYLE::unPolish(widget);
 }
@@ -2262,7 +2268,8 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
                 }
             break;
         }
-            
+
+#ifdef QTC_ENABLE_PARENTLESS_DIALOG_FIX_SUPPORT
     if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(object))
     {
         QDialog *dlg=(QDialog *)object;
@@ -2335,6 +2342,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
         }
         return false;
     }
+#endif
 
     // Track show events for progress bars
     if (opts.animatedProgress && ::qt_cast<QProgressBar*>(object))

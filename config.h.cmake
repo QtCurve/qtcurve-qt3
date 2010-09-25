@@ -8,5 +8,6 @@
 #cmakedefine QTC_QT_ONLY
 #cmakedefine QTC_DEFAULT_TO_KDE3
 #cmakedefine QTC_STYLE_SUPPORT
+#cmakedefine QTC_ENABLE_PARENTLESS_DIALOG_FIX_SUPPORT
 
 #endif

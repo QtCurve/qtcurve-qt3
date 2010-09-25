@@ -1,3 +1,9 @@
+1.6.2
+-----
+1. Disable the support for 'fix parent-less dialog' option - this causes too many
+   issues with applications to be worth the fuss. If you really want this enabled,
+   use the -DQTC_ENABLE_PARENTLESS_DIALOG_FIX_SUPPORT=true cmake option.
+
 1.6.1
 -----
 1. Use same radius for all corners of progressbar.
