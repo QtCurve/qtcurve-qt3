@@ -1,3 +1,7 @@
+1.7.0
+-----
+1. Add option to use tiled pixmap as background for windows and menus.
+
 1.6.2
 -----
 1. Disable the support for 'fix parent-less dialog' option - this causes too many

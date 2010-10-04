@@ -1399,6 +1399,8 @@ void QtCurveStyle::polish(QPalette &pal)
     
     if(APPEARANCE_STRIPED==opts.bgndAppearance)
         pal.setBrush(QColorGroup::Background, QBrush(pal.active().background(), *createStripePixmap(pal.active().background(), true)));
+    else if(APPEARANCE_FILE==opts.bgndAppearance)
+        pal.setBrush(QColorGroup::Background, QBrush(pal.active().background(), opts.bgndPixmap.img));
 }
 
 static QColor disable(const QColor &col, const QColor &bgnd)
@@ -1456,8 +1458,9 @@ void QtCurveStyle::polish(QWidget *widget)
     if(isWindowDragWidget(widget))
         widget->installEventFilter(this);
 
-    if(APPEARANCE_STRIPED==opts.bgndAppearance && (::qt_cast<QDialog *>(widget) || ::qt_cast<QMainWindow *>(widget)))
-        setBgndProp(widget, APPEARANCE_STRIPED);
+    if((APPEARANCE_STRIPED==opts.bgndAppearance || APPEARANCE_FILE==opts.bgndAppearance) &&
+       (::qt_cast<QDialog *>(widget) || ::qt_cast<QMainWindow *>(widget)))
+        setBgndProp(widget, opts.bgndAppearance);
 
     if(widget->parentWidget() && ::qt_cast<QScrollView *>(widget) && ::qt_cast<QComboBox *>(widget->parentWidget()))
     {
@@ -1813,7 +1816,7 @@ void QtCurveStyle::polish(QWidget *widget)
         widget->setPalette(pal);
     }
 
-    if(APPEARANCE_STRIPED==opts.bgndAppearance)
+    if(APPEARANCE_STRIPED==opts.bgndAppearance || APPEARANCE_FILE==opts.bgndAppearance)
         widget->setBackgroundOrigin(QWidget::WindowOrigin);
     BASE_STYLE::polish(widget);
 }
@@ -2061,6 +2064,8 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
 
             if(APPEARANCE_STRIPED==opts.menuBgndAppearance)
                 painter.drawTiledPixmap(widget->rect(), *createStripePixmap(col, false));
+            else if(APPEARANCE_FILE==opts.menuBgndAppearance)
+                painter.drawTiledPixmap(widget->rect(), opts.menuBgndPixmap.img);
             else
                 drawBevelGradientReal(col, &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
                                       opts.menuBgndAppearance, WIDGET_OTHER);
@@ -4308,7 +4313,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
     {
         case KPE_ToolBarHandle:
         {
-            if(APPEARANCE_STRIPED!=opts.bgndAppearance)
+            if(APPEARANCE_STRIPED!=opts.bgndAppearance && APPEARANCE_FILE!=opts.bgndAppearance)
             {
                 QRect r2(r);
                 r2.addCoords(-1, -1, 2, 2);
@@ -7724,7 +7729,8 @@ void QtCurveStyle::drawSliderGroove(QPainter *p, const QRect &r, const QColorGro
 void QtCurveStyle::drawMenuOrToolBarBackground(QPainter *p, const QRect &r, const QColorGroup &cg,
                                                bool menu, bool horiz) const
 {
-    if(menu && APPEARANCE_STRIPED==opts.bgndAppearance && IS_FLAT(opts.menubarAppearance) && SHADE_NONE==opts.shadeMenubars)
+    if(menu && (APPEARANCE_STRIPED==opts.bgndAppearance || APPEARANCE_FILE==opts.bgndAppearance) &&
+       IS_FLAT(opts.menubarAppearance) && SHADE_NONE==opts.shadeMenubars)
         return;
 
     QRect       rx(r);
