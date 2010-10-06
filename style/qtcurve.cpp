@@ -1400,7 +1400,34 @@ void QtCurveStyle::polish(QPalette &pal)
     if(APPEARANCE_STRIPED==opts.bgndAppearance)
         pal.setBrush(QColorGroup::Background, QBrush(pal.active().background(), *createStripePixmap(pal.active().background(), true)));
     else if(APPEARANCE_FILE==opts.bgndAppearance)
-        pal.setBrush(QColorGroup::Background, QBrush(pal.active().background(), opts.bgndPixmap.img));
+    {
+        QPixmap       pix(opts.bgndPixmap.img.width(), opts.bgndPixmap.img.height());
+        QPainter      p(&pix);
+        WindowBorders borders=qtcGetWindowBorderSize();
+        int           xadjust=borders.sides>0 && borders.sides!=opts.bgndPixmap.img.width()
+                        ? borders.sides>opts.bgndPixmap.img.width()
+                            ? borders.sides%opts.bgndPixmap.img.width()
+                            : borders.sides
+                        :0,
+                      yadjust=borders.titleHeight>0 && borders.titleHeight!=opts.bgndPixmap.img.height()
+                        ? borders.titleHeight>opts.bgndPixmap.img.height()
+                            ? borders.titleHeight%opts.bgndPixmap.img.height()
+                            : borders.titleHeight
+                        :0;
+
+        p.fillRect(0, 0, opts.bgndPixmap.img.width(), opts.bgndPixmap.img.height(), pal.active().background());
+
+        p.drawPixmap(-xadjust, -yadjust, opts.bgndPixmap.img);
+        if(xadjust>0)
+            p.drawPixmap(opts.bgndPixmap.img.width()-xadjust, -yadjust, opts.bgndPixmap.img);
+        if(yadjust>0)
+            p.drawPixmap(-xadjust, opts.bgndPixmap.img.height()-yadjust, opts.bgndPixmap.img);
+        if(xadjust>0 && yadjust>0)
+            p.drawPixmap(opts.bgndPixmap.img.width()-xadjust,  opts.bgndPixmap.img.height()-yadjust, opts.bgndPixmap.img);
+
+        p.end();
+        pal.setBrush(QColorGroup::Background, QBrush(pal.active().background(), pix));
+    }
 }
 
 static QColor disable(const QColor &col, const QColor &bgnd)
@@ -2065,7 +2092,10 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
             if(APPEARANCE_STRIPED==opts.menuBgndAppearance)
                 painter.drawTiledPixmap(widget->rect(), *createStripePixmap(col, false));
             else if(APPEARANCE_FILE==opts.menuBgndAppearance)
+            {
+                painter.fillRect(widget->rect(), col);
                 painter.drawTiledPixmap(widget->rect(), opts.menuBgndPixmap.img);
+            }
             else
                 drawBevelGradientReal(col, &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
                                       opts.menuBgndAppearance, WIDGET_OTHER);
