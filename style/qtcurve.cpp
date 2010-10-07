@@ -1552,8 +1552,7 @@ void QtCurveStyle::polish(QWidget *widget)
              (widget->parentWidget() && ::qt_cast<const QListBox *>(widget) &&
               ::qt_cast<const QComboBox *>(widget->parentWidget()))))
         ((QFrame *)widget)->setLineWidth(0);
-    else if ((USE_LIGHTER_POPUP_MENU || !IS_FLAT_BGND(opts.menuBgndAppearance)) && !opts.borderMenuitems &&
-        widget && ::qt_cast<const QPopupMenu *>(widget))
+    else if (!DRAW_MENU_BORDER && !opts.borderMenuitems && widget && ::qt_cast<const QPopupMenu *>(widget))
         ((QFrame *)widget)->setLineWidth(1);
 
     if (::qt_cast<QRadioButton *>(widget) || ::qt_cast<QCheckBox *>(widget))
@@ -3911,26 +3910,33 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         }
         case PE_PanelPopup:
         {
-            const QColor *use(backgroundColors(cg));
+            const QColor    *use(backgroundColors(cg));
+            EGradientBorder border=getGradient(opts.menuBgndAppearance, &opts)->border;
 
             p->setPen(use[STD_BORDER]);
             p->setBrush(NoBrush);
             p->drawRect(r);
-            if(!IS_FLAT_BGND(opts.menuBgndAppearance))
-                ;
-            else if(USE_LIGHTER_POPUP_MENU)
+
+            if(USE_BORDER(border) && APPEARANCE_FLAT!=opts.menuBgndAppearance)
+            {
+                p->setPen(use[0]);
+                if(GB_LIGHT==border)
+                    p->drawRect(QRect(r.x()+1, r.y()+1, r.width()-2, r.height()-2));
+                else
+                {
+                    if(GB_3D==border)
+                        p->setPen(itsLighterPopupMenuBgndCol);
+                    p->drawLine(r.x()+1, r.y()+1, r.x()+r.width()-2,  r.y()+1);
+                    p->drawLine(r.x()+1, r.y()+1, r.x()+1,  r.y()+r.height()-2);
+                    p->setPen(use[FRAME_DARK_SHADOW]);
+                    p->drawLine(r.x()+1, r.y()+r.height()-2, r.x()+r.width()-2,  r.y()+r.height()-2);
+                    p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-2,  r.y()+r.height()-2);
+                }
+            }
+            else if(IS_FLAT_BGND(opts.menuBgndAppearance))
             {
                 p->setPen(/*USE_LIGHTER_POPUP_MENU ? */itsLighterPopupMenuBgndCol/* : cg.background()*/);
                 p->drawRect(QRect(r.x()+1, r.y()+1, r.width()-2, r.height()-2));
-            }
-            else
-            {
-                p->setPen(use[0]);
-                p->drawLine(r.x()+1, r.y()+1, r.x()+r.width()-2,  r.y()+1);
-                p->drawLine(r.x()+1, r.y()+1, r.x()+1,  r.y()+r.height()-2);
-                p->setPen(use[FRAME_DARK_SHADOW]);
-                p->drawLine(r.x()+1, r.y()+r.height()-2, r.x()+r.width()-2,  r.y()+r.height()-2);
-                p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-2,  r.y()+r.height()-2);
             }
             break;
         }
