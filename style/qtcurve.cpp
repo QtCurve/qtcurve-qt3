@@ -4143,7 +4143,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                     (dynamic_cast<const QButton *>(widget) || dynamic_cast<const QComboBox *>(widget)))
                     return;
 
-                if(FOCUS_LINE==opts.focus)
+                if(FOCUS_LINE==opts.focus || FOCUS_GLOW==opts.focus)
                 {
                     p->setPen(view && flags&Style_Selected
                                     ? cg.highlightedText()
