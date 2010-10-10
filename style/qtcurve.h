@@ -212,6 +212,8 @@ class QtCurveStyle : public BASE_STYLE
 
     void           shadeColors(const QColor &base, QColor *vals) const;
     const QColor * buttonColors(const QColorGroup &cg) const;
+    const QColor * popupMenuCols(const QColorGroup &cg) const;
+    const QColor & popupMenuCol(const QColorGroup &cg, int shade=ORIGINAL_SHADE) const;
     const QColor * checkRadioColors(const QColorGroup &cg, SFlags flags) const;
     const QColor * sliderColors(/*const QColorGroup &cg, */SFlags flags) const;
     const QColor * backgroundColors(const QColor &c) const;
@@ -220,6 +222,7 @@ class QtCurveStyle : public BASE_STYLE
     const QColor * borderColors(SFlags flags, const QColor *use) const;
     const QColor * getSidebarButtons() const;
     void           setMenuColors(const QColorGroup &cg);
+    void           setMenuTextColors(QWidget *widget, bool isMenuBar) const;
     const QColor * menuColors(const QColorGroup &cg, bool active) const;
     void           setDecorationColors(bool init=false);
     const QColor * getMdiColors(const QColorGroup &cg, bool active) const;
@@ -230,7 +233,7 @@ class QtCurveStyle : public BASE_STYLE
     const QColor & getFill(SFlags flags, const QColor *use, bool cr=false, bool darker=false) const;
     const QColor & getListViewFill(SFlags flags, const QColor *use) const;
     const QColor & getTabFill(bool current,  bool highlight, const QColor *use) const;
-    const QColor & menuStripeCol() const;
+    const QColor & menuStripeCol(const QColorGroup &cg) const;
     const QColor & checkRadioCol(SFlags flags, const QColorGroup &cg) const;
     QColor         shade(const QColor &a, float k) const;
     void           shade(const color &ca, color *cb, double k) const;
