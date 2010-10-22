@@ -181,6 +181,39 @@ static void triggerWMMove(const QWidget *w, const QPoint &p)
 #define MO_ARROW_X(FLAGS, COL) (MO_NONE!=opts.coloredMouseOver && FLAGS&Style_MouseOver && FLAGS&Style_Enabled ? itsMouseOverCols[ARROW_MO_SHADE] : COL)
 #define MO_ARROW(COL)          MO_ARROW_X(flags, COL)
 
+static void adjustToolbarButtons(const QWidget *widget, const QToolBar *toolbar, int &leftAdjust, int &topAdjust,
+                                 int &rightAdjust, int &bottomAdjust, int &round)
+{
+    const int constAdjust=4;
+    const int d = 1;
+    QRect geo(widget->geometry());
+
+    if (Qt::Horizontal==toolbar->orientation())
+    {
+        bool haveLeft=::qt_cast<QToolButton*>(toolbar->childAt(geo.x()-d, geo.y())),
+             haveRight=::qt_cast<QToolButton*>(toolbar->childAt(geo.right()+d, geo.y()));
+
+        if(haveLeft && haveRight)
+            leftAdjust=-constAdjust, rightAdjust=constAdjust, round=ROUNDED_NONE;
+        else if(haveLeft)
+            leftAdjust=-constAdjust, round=ROUNDED_RIGHT;
+        else if(haveRight)
+            rightAdjust=constAdjust, round=ROUNDED_LEFT;
+    }
+    else
+    {
+        bool haveTop=::qt_cast<QToolButton*>(toolbar->childAt(geo.x(), geo.y()-d)),
+             haveBot=::qt_cast<QToolButton*>(toolbar->childAt(geo.x(), geo.bottom()+d));
+
+        if(haveTop && haveBot)
+            topAdjust=-constAdjust, bottomAdjust=constAdjust, round=ROUNDED_NONE;
+        else if(haveTop)
+            topAdjust=-constAdjust, round=ROUNDED_BOTTOM;
+        else if(haveBot)
+            bottomAdjust=constAdjust, round=ROUNDED_TOP;
+    }
+}
+
 static const int constMenuPixmapWidth=22;
 
 static bool useQt3Settings()
@@ -5521,10 +5554,28 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     break;
                 bflags|=DW_CLOSE_BUTTON;
             }
-
+                
             if (!tb && !onExtender && widget->parentWidget() &&
                 !qstrcmp(widget->parentWidget()->name(), "qt_maxcontrols"))
                 onControlButtons = true;
+
+            int  round(ROUNDED_ALL), leftAdjust(0), topAdjust(0), rightAdjust(0), bottomAdjust(0);
+            bool horizTBar(true),
+                 raised(!onControlButtons && (TBTN_RAISED==opts.tbarBtns || TBTN_JOINED==opts.tbarBtns));
+
+            if(raised)
+            {
+                if(tb)
+                {
+                    if(TBTN_JOINED==opts.tbarBtns)
+                    {
+                        horizTBar=Qt::Horizontal==tb->orientation();
+                        adjustToolbarButtons(widget, tb, leftAdjust, topAdjust, rightAdjust, bottomAdjust, round);
+                    }
+                }
+                else
+                    raised=false;
+            }
 
             if(active & SC_ToolButton)
                 bflags |=Style_Down;
@@ -5542,10 +5593,9 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
                 // If we're pressed, on, or raised...
 #if defined QTC_QT_ONLY || !defined KDE_VERSION || KDE_VERSION >= 0x30200
-                if(bflags &(Style_Down | Style_On | Style_Raised) || onControlButtons)
+                if(bflags &(Style_Down | Style_On | Style_Raised) || onControlButtons || raised)
 #else
-                if(bflags &(Style_Down | Style_On | Style_Raised | Style_MouseOver) ||
-                   onControlButtons)
+                if(bflags &(Style_Down | Style_On | Style_Raised | Style_MouseOver) || onControlButtons || raised)
 #endif
                 {
                     //Make sure the standalone toolbuttons have a gradient in the right direction
@@ -5558,10 +5608,35 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                         else
                             bflags|=Style_Horizontal;
 
+                    if(raised && TBTN_JOINED==opts.tbarBtns && !horizTBar)
+                        bflags &= ~Style_Horizontal;
+
                     if(toolbutton->isToggleButton())
                         bflags|=TOGGLE_BUTTON;
 
-                    drawPrimitive(PE_ButtonTool, p, button, cg, bflags, data);
+                    const QColor *use(buttonColors(cg));
+
+                    QRect btnRect(r);
+
+                    btnRect.addCoords(leftAdjust, topAdjust, rightAdjust, bottomAdjust);
+                    drawLightBevel(cg.background(), p, btnRect, cg, bflags, round, getFill(bflags, use), use, true, true, WIDGET_STD_BUTTON);
+
+                    if(raised && TBTN_JOINED==opts.tbarBtns)
+                    {
+                        const int constSpace=opts.fadeLines ? 7 : 4;
+
+                        p->setPen(use[0]);
+                        if(leftAdjust)
+                            p->drawLine(r.x(), r.y()+constSpace, r.x(), r.height()-(constSpace+1));
+                        if(topAdjust)
+                            p->drawLine(r.x()+constSpace, r.y(), r.width()-(constSpace+1), r.y());
+                        p->setPen(use[STD_BORDER]);
+                        if(rightAdjust)
+                            p->drawLine(r.x()+r.width()-1, r.y()+constSpace, r.x()+r.width()-1, r.height()-(constSpace+1));
+                        if(bottomAdjust)
+                            p->drawLine(r.x()+constSpace, r.y()+r.height()-1, r.width()-(constSpace+1), r.y()+r.height()-1);
+                    }
+                    //drawPrimitive(PE_ButtonTool, p, button, cg, bflags, data);
                 }
 
                 // Check whether to draw a background pixmap
