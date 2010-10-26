@@ -2669,7 +2669,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
     }
 
     if(doEtch || glowFocus)
-        if( (!sunken  || sunkenToggleMo) && 
+        if( (!sunken  || sunkenToggleMo) && !(opts.thin&THIN_FRAMES) &&
             ((WIDGET_OTHER!=w && WIDGET_SLIDER_TROUGH!=w && MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver) ||
              glowFocus ||
              (WIDGET_DEF_BUTTON==w && IND_GLOW==opts.defBtnIndicator)/* ||
@@ -2777,40 +2777,41 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
     if(WIDGET_TAB_BOT==w || WIDGET_TAB_TOP==w)
         cols=itsBackgroundCols;
 
-    switch(borderProfile)
-    {
-        case BORDER_FLAT:
-            break;
-        case BORDER_RAISED:
-        case BORDER_SUNKEN:
-        case BORDER_LIGHT:
-            if(flags&Style_Enabled && (hasMouseOver || hasFocus) && (WIDGET_ENTRY==w || WIDGET_SCROLLVIEW==w || WIDGET_COMBO==w || WIDGET_SPIN==w))
-                p->setPen(midColorF(cg.background(), cols[BORDER_RAISED==borderProfile || BORDER_LIGHT==borderProfile
-                                                            ? 0 : FRAME_DARK_SHADOW], 1.5-ENTRY_INNER_ALPHA));
-            else
-                p->setPen(flags&Style_Enabled && (BORDER_RAISED==borderProfile || BORDER_LIGHT==borderProfile || APPEARANCE_FLAT!=app)
-                            ? blendBorderColors
-                                ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
-                                                                   ? 0 : FRAME_DARK_SHADOW]) // Was base???
-                                : cols[BORDER_RAISED==borderProfile || BORDER_LIGHT==borderProfile ? 0 : FRAME_DARK_SHADOW]
-                            : cg.background());
-            p->drawLine(r.x()+1, r.y()+1, r.x()+1, r.y()+r.height()-2);
-            p->drawLine(r.x()+1, r.y()+1, r.x()+r.width()-2, r.y()+1);
-            if(!hasFocus && !hasMouseOver && BORDER_LIGHT!=borderProfile)
-                p->setPen(WIDGET_SCROLLVIEW==w
-                            ? cg.background()
-                            : WIDGET_ENTRY==w
-                                ? cg.base()
-                                : flags&Style_Enabled && (BORDER_SUNKEN==borderProfile || APPEARANCE_FLAT!=app ||
-                                                        WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w)
-                                    ? blendBorderColors
-                                        ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
-                                                                            ? FRAME_DARK_SHADOW : 0]) // Was base???
-                                        : cols[BORDER_RAISED==borderProfile ? FRAME_DARK_SHADOW : 0]
-                                    : cg.background());
-            p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-2, r.y()+r.height()-2);
-            p->drawLine(r.x()+1, r.y()+r.height()-2, r.x()+r.width()-2, r.y()+r.height()-2);
-    }
+    if(!(opts.thin&THIN_FRAMES))
+        switch(borderProfile)
+        {
+            case BORDER_FLAT:
+                break;
+            case BORDER_RAISED:
+            case BORDER_SUNKEN:
+            case BORDER_LIGHT:
+                if(flags&Style_Enabled && (hasMouseOver || hasFocus) && (WIDGET_ENTRY==w || WIDGET_SCROLLVIEW==w || WIDGET_COMBO==w || WIDGET_SPIN==w))
+                    p->setPen(midColorF(cg.background(), cols[BORDER_RAISED==borderProfile || BORDER_LIGHT==borderProfile
+                                                                ? 0 : FRAME_DARK_SHADOW], 1.5-ENTRY_INNER_ALPHA));
+                else
+                    p->setPen(flags&Style_Enabled && (BORDER_RAISED==borderProfile || BORDER_LIGHT==borderProfile || APPEARANCE_FLAT!=app)
+                                ? blendBorderColors
+                                    ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
+                                                                    ? 0 : FRAME_DARK_SHADOW]) // Was base???
+                                    : cols[BORDER_RAISED==borderProfile || BORDER_LIGHT==borderProfile ? 0 : FRAME_DARK_SHADOW]
+                                : cg.background());
+                p->drawLine(r.x()+1, r.y()+1, r.x()+1, r.y()+r.height()-2);
+                p->drawLine(r.x()+1, r.y()+1, r.x()+r.width()-2, r.y()+1);
+                if(!hasFocus && !hasMouseOver && BORDER_LIGHT!=borderProfile)
+                    p->setPen(WIDGET_SCROLLVIEW==w
+                                ? cg.background()
+                                : WIDGET_ENTRY==w
+                                    ? cg.base()
+                                    : flags&Style_Enabled && (BORDER_SUNKEN==borderProfile || APPEARANCE_FLAT!=app ||
+                                                            WIDGET_TAB_TOP==w || WIDGET_TAB_BOT==w)
+                                        ? blendBorderColors
+                                            ? midColor(cg.background(), cols[BORDER_RAISED==borderProfile
+                                                                                ? FRAME_DARK_SHADOW : 0]) // Was base???
+                                            : cols[BORDER_RAISED==borderProfile ? FRAME_DARK_SHADOW : 0]
+                                        : cg.background());
+                p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-2, r.y()+r.height()-2);
+                p->drawLine(r.x()+1, r.y()+r.height()-2, r.x()+r.width()-2, r.y()+r.height()-2);
+        }
 
     if(ROUNDED && ROUNDED_NONE!=round)
     {
@@ -4524,7 +4525,9 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                           itsHover(itsHoverTab && itsHoverTab->isEnabled() && data.tab()==itsHoverTab &&
                                           !(flags&Style_Selected) &&
                                           tb->currentTab()!=tabIndex),
-                          glowMo(!active && itsHover && opts.coloredMouseOver && TAB_MO_GLOW==opts.tabMouseOver);
+                          glowMo(!active && itsHover && opts.coloredMouseOver && TAB_MO_GLOW==opts.tabMouseOver),
+                          thin(opts.thin&THIN_FRAMES),
+                          drawOuterGlow(glowMo && !thin);
             int           sizeAdjust(!active && TAB_MO_GLOW==opts.tabMouseOver ? 1 : 0);
             const QColor  &fill(getTabFill(flags&Style_Selected, itsHover, itsBackgroundCols));
             EBorder       borderProfile(active || opts.borderInactiveTab
@@ -4607,7 +4610,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                     ? (top ? ROUNDED_TOPRIGHT : ROUNDED_BOTTOMRIGHT)
                                     : ROUNDED_NONE, glowMo ? itsMouseOverCols : 0L, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT, true,
                        borderProfile, false);
-            if(glowMo)
+            if(drawOuterGlow)
             {
                 glowTr.addCoords(-1, -1, 1, 1);
                 drawGlow(p, glowTr, cg, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT);
@@ -4621,16 +4624,22 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->setPen(itsBackgroundCols[STD_BORDER]);
                     p->drawPoint(r.x(), r.y()+r.height()-2);
                     p->drawPoint(r.x()+r.width()-1, r.y()+r.height()-2);
-                    p->setPen(itsBackgroundCols[0]);
-                    p->drawLine(r.x()+1, r.y()+r.height()-3, r.x()+1, r.y()+r.height()-1);
-                    //p->drawPoint(r.x()+r.width()-2, r.y()+r.height()-1);
-                    p->setPen(itsBackgroundCols[opts.borderTab ? 0 : FRAME_DARK_SHADOW]);
-                    p->drawPoint(r.x()+r.width()-2, r.y()+r.height()-2);
+                    if(!thin)
+                    {
+                        p->setPen(itsBackgroundCols[0]);
+                        p->drawLine(r.x()+1, r.y()+r.height()-3, r.x()+1, r.y()+r.height()-1);
+                        //p->drawPoint(r.x()+r.width()-2, r.y()+r.height()-1);
+                        p->setPen(itsBackgroundCols[opts.borderTab ? 0 : FRAME_DARK_SHADOW]);
+                        p->drawPoint(r.x()+r.width()-2, r.y()+r.height()-2);
+                    }
                 }
                 else
                 {
-                    p->setPen(itsBackgroundCols[0]);
-                    p->drawLine(r.x(), r.y()+r.height()-1, r.x()+r.width()-1, r.y()+r.height()-1);
+                    if(!thin)
+                    {
+                        p->setPen(itsBackgroundCols[0]);
+                        p->drawLine(r.x(), r.y()+r.height()-1, r.x()+r.width()-1, r.y()+r.height()-1);
+                    }
                     p->setPen(itsBackgroundCols[STD_BORDER]);
                     p->drawLine(r.x(), r.y()+r.height()-2, r.x()+r.width()-1, r.y()+r.height()-2);
 
@@ -4649,7 +4658,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->setPen(itsBackgroundCols[!active && TAB_MO_GLOW==opts.tabMouseOver && opts.round>ROUND_SLIGHT && !(opts.square&SQUARE_TAB_FRAME)
                                                     ? ORIGINAL_SHADE : STD_BORDER]);
                     p->drawLine(x, r.y()+r.height()-1, x, r.height()-2);
-                    if(active)
+                    if(active && !thin)
                     {
                         p->setPen(itsBackgroundCols[reverse ? dark : 0]);
                         p->drawLine(x2, r.y()+r.height()-1, x2, r.y()+r.height()-2);
@@ -4688,16 +4697,22 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->setPen(itsBackgroundCols[STD_BORDER]);
                     p->drawPoint(r.x(), r.y()+1);
                     p->drawPoint(r.x()+r.width()-1, r.y()+1);
-                    p->setPen(itsBackgroundCols[0]);
-                    p->drawLine(r.x()+1, r.y()+2, r.x()+1, r.y());
-                    p->setPen(itsBackgroundCols[opts.borderTab ? 0 : FRAME_DARK_SHADOW]);
-                    p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-2, r.y());
-                    p->drawPoint(r.x()+r.width()-1, r.y());
+                    if(!thin)
+                    {
+                        p->setPen(itsBackgroundCols[0]);
+                        p->drawLine(r.x()+1, r.y()+2, r.x()+1, r.y());
+                        p->setPen(itsBackgroundCols[opts.borderTab ? 0 : FRAME_DARK_SHADOW]);
+                        p->drawLine(r.x()+r.width()-2, r.y()+1, r.x()+r.width()-2, r.y());
+                        p->drawPoint(r.x()+r.width()-1, r.y());
+                    }
                 }
                 else
                 {
-                    p->setPen(itsBackgroundCols[opts.borderTab ? 0 : dark]);
-                    p->drawLine(r.x(), r.y(), r.x()+r.width()-1, r.y());
+                    if(!thin)
+                    {
+                        p->setPen(itsBackgroundCols[opts.borderTab ? 0 : dark]);
+                        p->drawLine(r.x(), r.y(), r.x()+r.width()-1, r.y());
+                    }
                     p->setPen(itsBackgroundCols[STD_BORDER]);
                     p->drawLine(r.x(), r.y()+1, r.x()+r.width()-1, r.y()+1);
                     
@@ -5878,7 +5893,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
             {
                 bool glowFocus(USE_GLOW_FOCUS(flags&Style_MouseOver) && flags&Style_HasFocus && flags&Style_Enabled);
 
-                if(!sunken && !editable && 
+                if(!sunken && !editable && !(opts.thin&THIN_FRAMES) &&
                     ((MO_GLOW==opts.coloredMouseOver && flags&Style_MouseOver)/* ||
                      (FOCUS_FULL==opts.focus && flags&Style_HasFocus)*/ || glowFocus))
                     drawGlow(p, widget ? widget->rect() : r, cg, WIDGET_COMBO, glowFocus ? itsFocusCols : NULL);
@@ -6942,22 +6957,21 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
                         w=constMinW;
                 }
 
-                return QSize(w, contentsSize.height() + margin+(DO_EFFECT && !isFormWidget(widget) && !opts.thinnerBtns
-                                                                    ? 6 : 4));
+                return QSize(w, contentsSize.height() + margin+(DO_EFFECT && !isFormWidget(widget) && !(opts.thin&THIN_BUTTONS) ? 6 : 4));
             }
             break;
         }
         case CT_ComboBox:
         {
             QSize sz(BASE_STYLE::sizeFromContents(contents, widget, contentsSize, data));
-            return QSize(sz.width(), sz.height()+(DO_EFFECT && !isFormWidget(widget) && !opts.thinnerBtns ? 4 : 2));
+            return QSize(sz.width(), sz.height()+(DO_EFFECT && !isFormWidget(widget) && !(opts.thin&THIN_BUTTONS) ? 4 : 2));
         }
         case CT_PopupMenuItem:
         {
             if (!widget || data.isDefault())
                 break;
 
-            const int        constMinH(opts.thinnerMenuItems ? 25 : 27);
+            const int        constMinH((opts.thin&THIN_MENU_ITEMS) ? 25 : 27);
 
             QMenuItem        *mi(data.menuItem());
             const QPopupMenu *popupmenu(static_cast<const QPopupMenu *>(widget));
@@ -6990,7 +7004,7 @@ QSize QtCurveStyle::sizeFromContents(ContentsType contents, const QWidget *widge
                     h = QMAX(h, popupmenu->fontMetrics().height() + 2);
                 if (mi->iconSet()!= 0)
                     h = QMAX(h, mi->iconSet()->pixmap(QIconSet::Small, QIconSet::Normal).height());
-                h+=(opts.thinnerMenuItems ? 2 : 4);
+                h+=((opts.thin&THIN_MENU_ITEMS) ? 2 : 4);
             }
 
             // check | 4 pixels | item | 8 pixels | accel | 4 pixels | check
