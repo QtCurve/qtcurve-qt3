@@ -6,6 +6,7 @@
 4. Add option to draw standard, raised, or joined toolbar buttons.
 5. Add option to use thinner frames, focus, etc.
 6. Implement shading popup menus as per memubar settings.
+7. Fix segfault when obtaining MDI colours.
 
 1.6.2
 -----

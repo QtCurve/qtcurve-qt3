@@ -8207,7 +8207,7 @@ const QColor * QtCurveStyle::getMdiColors(const QColorGroup &cg, bool active) co
         }
 
         if(opts.shadeMenubarOnlyWhenActive && SHADE_WINDOW_BORDER==opts.shadeMenubars &&
-           itsActiveMdiColors[ORIGINAL_SHADE]==itsMdiColors[ORIGINAL_SHADE])
+           itsActiveMdiColors && itsMdiColors && itsActiveMdiColors[ORIGINAL_SHADE]==itsMdiColors[ORIGINAL_SHADE])
             opts.shadeMenubarOnlyWhenActive=false;
 
         if(!itsActiveMdiColors)
