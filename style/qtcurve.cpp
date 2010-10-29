@@ -140,7 +140,7 @@ static void emitMenuSize(const QWidget *widget, unsigned short size)
 
     if(w)
     {
-        static const Atom constAtom  = XInternAtom(qt_xdisplay(), MENU_SIZE_ATOM, False);
+        static const Atom constAtom = XInternAtom(qt_xdisplay(), MENU_SIZE_ATOM, False);
         XChangeProperty(qt_xdisplay(), w->parentWidget() ? w->parentWidget()->winId() : w->winId(),
                         constAtom, XA_CARDINAL, 16, PropModeReplace, (unsigned char *)&size, 1);
     }
@@ -152,9 +152,12 @@ void setBgndProp(QWidget *widget, unsigned short app)
 
     if(w)
     {
-        static const Atom constAtom  = XInternAtom(qt_xdisplay(), BGND_ATOM, False);
+        static const Atom constAtom = XInternAtom(qt_xdisplay(), BGND_ATOM, False);
+        unsigned long prop=((APPEARANCE_STRIPED==app || APPEARANCE_FILE==app ? app : APPEARANCE_FLAT)&0xFF) |
+                           (widget->palette().active().background().rgb()&0x00FFFFFF)<<8;
+
         XChangeProperty(qt_xdisplay(), w->parentWidget() ? w->parentWidget()->winId() : w->winId(),
-                        constAtom, XA_CARDINAL, 16, PropModeReplace, (unsigned char *)&app, 1);
+                        constAtom, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)&prop, 1);
     }
 }
 
@@ -1502,6 +1505,12 @@ QColorGroup QtCurveStyle::setColorGroup(const QColorGroup &old, const QColorGrou
 
 static const char * kdeToolbarWidget="kde toolbar widget";
 
+inline void addEventFilter(QObject *object, QObject *filter)
+{
+    object->removeEventFilter(filter);
+    object->installEventFilter(filter);
+}
+
 void QtCurveStyle::polish(QWidget *widget)
 {
     bool enableFilter(opts.highlightFactor || opts.coloredMouseOver);
@@ -1516,11 +1525,13 @@ void QtCurveStyle::polish(QWidget *widget)
         connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(hoverWidgetDestroyed(QObject *)));
 
     if(isWindowDragWidget(widget))
-        widget->installEventFilter(this);
+        addEventFilter(widget, this);
 
-    if((APPEARANCE_STRIPED==opts.bgndAppearance || APPEARANCE_FILE==opts.bgndAppearance) &&
-       (::qt_cast<QDialog *>(widget) || ::qt_cast<QMainWindow *>(widget)))
+    if(::qt_cast<QDialog *>(widget) || ::qt_cast<QMainWindow *>(widget))
+    {
         setBgndProp(widget, opts.bgndAppearance);
+        addEventFilter(widget, this); // To trap palette change
+    }
 
     if(widget->parentWidget() && ::qt_cast<QScrollView *>(widget) && ::qt_cast<QComboBox *>(widget->parentWidget()))
     {
@@ -1567,11 +1578,11 @@ void QtCurveStyle::polish(QWidget *widget)
         ((QHBox *)widget)->setLineWidth(0);
 
     if(!IS_FLAT_BGND(opts.menuBgndAppearance) && ::qt_cast<const QPopupMenu *>(widget))
-        widget->installEventFilter(this);
+        addEventFilter(widget, this);
 
     #if 0
     if(opts.menubarHiding && ::qt_cast<QMainWindow *>(widget) && static_cast<QMainWindow *>(widget)->menuBar())
-        widget->installEventFilter(this);
+        addEventFilter(widget, this);
     #endif
 
     if ((opts.square&SQUARE_SCROLLVIEW) && widget &&
@@ -1605,7 +1616,7 @@ void QtCurveStyle::polish(QWidget *widget)
                 fnt.setBold(true);
                 widget->setFont(fnt);
             }
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
         }
     }
     else if (::qt_cast<QHeader *>(widget) || ::qt_cast<QTabBar *>(widget) || ::qt_cast<QSpinWidget *>(widget)/* ||
@@ -1614,7 +1625,7 @@ void QtCurveStyle::polish(QWidget *widget)
         if(enableFilter)
         {
             widget->setMouseTracking(true);
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
         }
     }
     else if (::qt_cast<QToolButton *>(widget))
@@ -1623,7 +1634,7 @@ void QtCurveStyle::polish(QWidget *widget)
             widget->setBackgroundMode(PaletteBackground);
         if(enableFilter)
         {
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
 #if defined KDE_VERSION && KDE_VERSION >= 0x30400 && KDE_VERSION < 0x30500
             widget->setMouseTracking(true);
 #endif
@@ -1636,13 +1647,13 @@ void QtCurveStyle::polish(QWidget *widget)
         else*/ if(NoBackground!=widget->backgroundMode()) //  && onToolBar(widget))
             widget->setBackgroundMode(PaletteBackground);
         if(enableFilter)
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
     }
     else if (::qt_cast<QComboBox *>(widget))
     {
         if(NoBackground!=widget->backgroundMode()) //  && onToolBar(widget))
             widget->setBackgroundMode(PaletteBackground);
-        widget->installEventFilter(this);
+        addEventFilter(widget, this);
 
         if(DO_EFFECT && onToolBar(widget))
             widget->setName(kdeToolbarWidget);
@@ -1651,14 +1662,14 @@ void QtCurveStyle::polish(QWidget *widget)
             widget->setMouseTracking(true);
 
         if(((QComboBox *)widget)->listBox())
-            ((QComboBox *)widget)->listBox()->installEventFilter(this);
+            addEventFilter(((QComboBox *)widget)->listBox(), this);
     }
     else if(::qt_cast<QMenuBar *>(widget))
     {
         if(NoBackground!=widget->backgroundMode())
             widget->setBackgroundMode(PaletteBackground);
         if(SHADE_NONE!=opts.shadeMenubars)
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
         if(BLEND_TITLEBAR || opts.windowBorder&WINDOW_BORDER_USE_MENUBAR_COLOR_FOR_TITLEBAR)
             emitMenuSize(widget, widget->rect().height());
 
@@ -1680,28 +1691,28 @@ void QtCurveStyle::polish(QWidget *widget)
     {
         widget->setName(kdeToolbarWidget);
         widget->setBackgroundMode(NoBackground);
-        widget->installEventFilter(this);
+        addEventFilter(widget, this);
     }
     else if (::qt_cast<QScrollBar *>(widget))
     {
         if(enableFilter)
         {
             widget->setMouseTracking(true);
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
         }
         //widget->setBackgroundMode(NoBackground);
     }
     else if (::qt_cast<QSlider *>(widget))
     {
         if(enableFilter)
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
         if(widget->parent() && ::qt_cast<QToolBar *>(widget->parent()))
         {
             widget->setName(kdeToolbarWidget);
             widget->setBackgroundMode(NoBackground);  // We paint whole background.
 
             if(!enableFilter)
-                widget->installEventFilter(this);
+                addEventFilter(widget, this);
         }
 
         // This bit stolen form polyester...
@@ -1710,7 +1721,7 @@ void QtCurveStyle::polish(QWidget *widget)
     }
     else if (::qt_cast<QLineEdit*>(widget) || ::qt_cast<QTextEdit*>(widget))
     {
-        widget->installEventFilter(this);
+        addEventFilter(widget, this);
         if(onToolBar(widget))
             widget->setName(kdeToolbarWidget);
         if(widget && widget->parentWidget() &&
@@ -1721,7 +1732,7 @@ void QtCurveStyle::polish(QWidget *widget)
     else if (widget->inherits("QSplitterHandle") || widget->inherits("QDockWindowHandle") || widget->inherits("QDockWindowResizeHandle"))
     {
         if(enableFilter)
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
     }
     else if (0==qstrcmp(widget->name(), kdeToolbarWidget))
     {
@@ -1730,14 +1741,14 @@ void QtCurveStyle::polish(QWidget *widget)
                                              "KListViewSearchLineWidget") ||
            onToolBar(widget))
         {
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
             widget->setBackgroundMode(NoBackground);  // We paint whole background.
         }
     }
 
     if (widget->parentWidget() && ::qt_cast<QMenuBar *>(widget->parentWidget()) && !qstrcmp(widget->className(), "QFrame"))
     {
-        widget->installEventFilter(this);
+        addEventFilter(widget, this);
         widget->setBackgroundMode(NoBackground);  // We paint whole background.
     }
     else if (Qt::X11ParentRelative!=widget->backgroundMode() &&
@@ -1748,7 +1759,7 @@ void QtCurveStyle::polish(QWidget *widget)
                            "MainWindow") || onToolBar(widget)))
     {
         widget->setName(kdeToolbarWidget);
-        widget->installEventFilter(this);
+        addEventFilter(widget, this);
         widget->setBackgroundMode(NoBackground);  // We paint the whole background.
     }
     else if(::qt_cast<QProgressBar *>(widget))
@@ -1762,7 +1773,7 @@ void QtCurveStyle::polish(QWidget *widget)
 
         if(opts.animatedProgress)
         {
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
             itsProgAnimWidgets[widget] = 0;
             connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(progressBarDestroyed(QObject *)));
             if (!itsAnimationTimer->isActive())
@@ -1770,7 +1781,7 @@ void QtCurveStyle::polish(QWidget *widget)
         }
     }
     else if(opts.highlightScrollViews && ::qt_cast<QScrollView*>(widget))
-        widget->installEventFilter(this);
+        addEventFilter(widget, this);
     else if(!qstrcmp(widget->className(), "KonqFrameStatusBar"))
     {
         // This disables the white background of the KonquerorFrameStatusBar.
@@ -1785,7 +1796,7 @@ void QtCurveStyle::polish(QWidget *widget)
         QApplication::setPalette(pal);
     }
     else if(widget->inherits("KTabCtl"))
-        widget->installEventFilter(this);
+        addEventFilter(widget, this);
     else if(NO_FRAME(opts.groupBox) && ::qt_cast<QGroupBox *>(widget))
     {
         ((QGroupBox *)widget)->setFlat(false);
@@ -1801,7 +1812,7 @@ void QtCurveStyle::polish(QWidget *widget)
         if( (SKIP_TASKBAR && !dlg->parentWidget()) ||
             ( (!dlg->parentWidget() || !dlg->parentWidget()->isShown())// &&
               /*(dlg->isModal() || ::qt_cast<QProgressDialog *>(widget))*/) )
-            widget->installEventFilter(this);
+            addEventFilter(widget, this);
     }
 
     if(opts.fixParentlessDialogs && (APP_KPRINTER==itsThemedApp || APP_KDIALOG==itsThemedApp ||
@@ -2082,7 +2093,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
         else
             r.setX(0);
         cb->setGeometry(r);
-        cb->installEventFilter(this);
+        addEventFilter(cb, this);
         return false;
     }
     else if (QEvent::Paint==event->type())
@@ -2307,6 +2318,9 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
                 }
             break;
         }
+
+    if(QEvent::PaletteChange==event->type() && (::qt_cast<QDialog *>(object) || ::qt_cast<QMainWindow *>(object)))
+        setBgndProp(static_cast<QWidget *>(object), opts.bgndAppearance);
 
 #ifdef QTC_ENABLE_PARENTLESS_DIALOG_FIX_SUPPORT
     if(opts.fixParentlessDialogs && ::qt_cast<QDialog *>(object))
