@@ -1,5 +1,5 @@
 project(QtCurve-KDE3)
-cmake_minimum_required(VERSION 2.4.0)
+cmake_minimum_required(VERSION 2.4.4)
 
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
 set(CPACK_GENERATOR "DEB;RPM;TGZ")
@@ -45,11 +45,11 @@ else (NOT QTC_QT_ONLY)
 endif (NOT QTC_QT_ONLY)
 
 if (NOT QTC_QT_ONLY)
-    if(NOT DEFINED CMAKE_INSTALL_PREFIX)
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
         exec_program(kde-config
                      ARGS --prefix --expandvars
                      OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX)
-    endif(NOT DEFINED CMAKE_INSTALL_PREFIX)
+    endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif (NOT QTC_QT_ONLY)
 
 exec_program(kde-config
@@ -87,6 +87,8 @@ else (NOT QTC_QT_ONLY)
 endif (NOT QTC_QT_ONLY)
 
 set(DATA_INSTALL_DIR ${KDE3PREFIX}/share/apps)
+
+message("** PREFIX=${CMAKE_INSTALL_PREFIX}\n")
 
 if(QTC_DEFAULT_TO_KDE3)
     message("INFO: Defaulting to reading KDE3 settings if KDE_SESSION_VERSION is not set")
