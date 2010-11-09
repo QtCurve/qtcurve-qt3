@@ -45,9 +45,11 @@ else (NOT QTC_QT_ONLY)
 endif (NOT QTC_QT_ONLY)
 
 if (NOT QTC_QT_ONLY)
-exec_program(kde-config
-             ARGS --prefix --expandvars
-             OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX)
+    if(NOT DEFINED CMAKE_INSTALL_PREFIX)
+        exec_program(kde-config
+                     ARGS --prefix --expandvars
+                     OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX)
+    endif(NOT DEFINED CMAKE_INSTALL_PREFIX)
 endif (NOT QTC_QT_ONLY)
 
 exec_program(kde-config

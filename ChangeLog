@@ -1,15 +1,16 @@
 1.7.0
 -----
-1. Add option to use tiled pixmap as background for windows and menus.
-2. Draw line focus for items that cannot use glow focus.
-3. Use popup menu gradient's border setting to determine border type of menus.
-4. Add option to draw standard, raised, or joined toolbar buttons.
-5. Add option to use thinner frames, focus, etc.
-6. If not rounding, enable all 'square' options.
-7. Store background colour setting in XProperty - so that this can be used by
-   QtCurve kwin decoration.
-8. Implement shading popup menus as per memubar settings.
-9. Fix segfault when obtaining MDI colours.
+ 1. Add option to use tiled pixmap as background for windows and menus.
+ 2. Draw line focus for items that cannot use glow focus.
+ 3. Use popup menu gradient's border setting to determine border type of menus.
+ 4. Add option to draw standard, raised, or joined toolbar buttons.
+ 5. Add option to use thinner frames, focus, etc.
+ 6. If not rounding, enable all 'square' options.
+ 7. Store background colour setting in XProperty - so that this can be used by
+    QtCurve kwin decoration.
+ 8. Implement shading popup menus as per memubar settings.
+ 9. Fix segfault when obtaining MDI colours.
+10. Dont overwrite user supplied CMAKE_INSTALL_PREFIX
 
 1.6.2
 -----
