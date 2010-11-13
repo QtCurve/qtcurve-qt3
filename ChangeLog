@@ -1,3 +1,7 @@
+1.7.1
+-----
+1. Remove box around arrow in listview lines - to match Gtk better.
+
 1.7.0
 -----
  1. Add option to use tiled pixmap as background for windows and menus.

@@ -4458,7 +4458,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
         {
             QRect ar(r.x()+((r.width()-(LV_SIZE+4))>>1), r.y()+((r.height()-(LV_SIZE+4))>>1), LV_SIZE+4,
                      LV_SIZE+4);
-
+#if 0
             if(LV_OLD==opts.lvLines)
             {
                 int lo(ROUNDED ? 2 : 0);
@@ -4485,7 +4485,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
                                 ar.y()+ar.height()-2);
                 }
             }
-
+#endif
             ::drawArrow(p, ar, flags&Style_Enabled ? cg.mid() : cg.text(), flags&Style_On // Collapsed = On
                                             ?  QApplication::reverseLayout()
                                                  ? PE_ArrowLeft
