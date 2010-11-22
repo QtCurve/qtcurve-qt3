@@ -2435,12 +2435,13 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
                         itsHoverTab=0L;
                         itsHoverWidget->repaint(false);
                     }
-                    else if(!itsHoverWidget->hasMouseTracking() ||
-                            (itsFormMode=isFormWidget(itsHoverWidget)))
+                    else if(!itsHoverWidget->hasMouseTracking() || (itsFormMode=isFormWidget(itsHoverWidget)))
                     {
                         itsHoverWidget->repaint(false);
                         itsFormMode=false;
                     }
+                    else if(opts.highlightScrollViews && ::qt_cast<QScrollView *>(itsHoverWidget))
+                        itsHoverWidget->repaint(false);
                 }
                 else
                     itsHoverWidget=0L;
@@ -3879,8 +3880,6 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                                      (sv ||
                                       (widget && widget->parentWidget() && ::qt_cast<const QFrame *>(widget) &&
                                        widget->parentWidget()->inherits("KateView"))));
-                const QColor *use(opts.highlightScrollViews && /*!square &&*/ flags&Style_HasFocus ? itsHighlightCols :
-                                    backgroundColors(cg));
 
 //                 if(square)
 //                 {
@@ -3899,19 +3898,29 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                         flags&=~Style_HasFocus;
                     if(sv && opts.etchEntry && ((QFrame *)widget)->lineWidth()>2)
                     {
-                        drawEntryField(p, r, cg, flags, flags&Style_Enabled
-                                                            ? /*flags&Style_MouseOver
+                        drawEntryField(p, r, cg, flags, flags&Style_Enabled && opts.highlightScrollViews
+                                                            ? flags&Style_MouseOver
                                                                 ? ENTRY_MOUSE_OVER
-                                                                :*/ flags&Style_HasFocus
+                                                                : flags&Style_HasFocus
                                                                     ? ENTRY_FOCUS
                                                                     : ENTRY_NONE
                                                             : ENTRY_NONE, square ? ROUNDED_NONE : ROUNDED_ALL, WIDGET_SCROLLVIEW);
                     }
                     else
+                    {
+                        const QColor *use(sv && opts.highlightScrollViews
+                                            ? widget==itsHoverWidget
+                                                ? itsMouseOverCols
+                                                : flags&Style_HasFocus
+                                                    ? itsFocusCols 
+                                                    : backgroundColors(cg)
+                                            : backgroundColors(cg));
+
                         drawBorder(cg.background(), p, r, cg,
                                    (SFlags)(flags|Style_Horizontal|Style_Enabled),
                                    square ? ROUNDED_NONE : ROUNDED_ALL, use, sv ? WIDGET_SCROLLVIEW : WIDGET_OTHER, APP_KICKER!=itsThemedApp,
                                    itsIsTransKicker ? BORDER_FLAT : (flags&Style_Sunken ? BORDER_SUNKEN : BORDER_RAISED) );
+                    }
                     itsFormMode=false;
                 }
             }
@@ -4298,8 +4307,8 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             QRect r2(r);
             r2.addCoords(1, 1, -1, -1);
 //             p->fillRect(r2, flags&Style_Enabled ? cg.base() : cg.background());
-            drawEntryField(p, r, cg, flags, !isReadOnly && isEnabled
-                                                ? flags&Style_MouseOver && !scrollView
+            drawEntryField(p, r, cg, flags, !isReadOnly && isEnabled && (!scrollView || opts.highlightScrollViews)
+                                                ? flags&Style_MouseOver
                                                     ? ENTRY_MOUSE_OVER
                                                     : flags&Style_HasFocus
                                                         ? ENTRY_FOCUS

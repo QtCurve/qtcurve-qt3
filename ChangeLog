@@ -1,3 +1,8 @@
+1.7.2
+-----
+1. If highlighting scrollviews, and allow mouse-over for entries, also allow
+   mouse-over for scrollviews.
+
 1.7.1
 -----
 1. Remove box around arrow in listview lines - to match Gtk better.
