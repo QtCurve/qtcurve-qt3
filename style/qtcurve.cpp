@@ -2750,6 +2750,9 @@ void QtCurveStyle::drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, 
 
     int mod(square ? 0 : 2);
 
+    if(WIDGET_TOOLBAR_BUTTON==w && EFFECT_ETCH==opts.tbarBtnEffect)
+        raised=false;
+
     {
         QColor col(raised ? shade(cg.background(), ETCHED_DARK) : itsBackgroundCols[1]);
 

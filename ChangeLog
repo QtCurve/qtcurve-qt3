@@ -2,7 +2,7 @@
 -----
 1. Add option to not display keyboard shortcurt underline until 'Alt' is
    pressed.
-2. Add option to specify appearance of toolbar buttons.
+2. Add options to specify appearance of toolbar buttons.
 3. If highlighting scrollviews, and allow mouse-over for entries, also allow
    mouse-over for scrollviews.
 
