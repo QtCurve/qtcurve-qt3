@@ -109,6 +109,7 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <iostream>
 #define COMMON_FUNCTIONS
 #include "qtcurve.h"
+#include "shortcuthandler.h"
 #define CONFIG_READ
 #include "config_file.c"
 #include "pixmaps.h"
@@ -868,7 +869,8 @@ QtCurveStyle::QtCurveStyle()
               itsActive(true),
               itsIsSpecialHover(false),
               itsDragWidget(0L),
-              itsDragWidgetHadMouseTracking(false)
+              itsDragWidgetHadMouseTracking(false),
+              itsShortcutHandler(new ShortcutHandler(this))
 {
 #ifdef QTC_STYLE_SUPPORT
     QString rcFile;
@@ -1186,6 +1188,12 @@ static QString getFile(const QString &f)
     return d;
 }
 
+inline void addEventFilter(QObject *object, QObject *filter)
+{
+    object->removeEventFilter(filter);
+    object->installEventFilter(filter);
+}
+
 void QtCurveStyle::polish(QApplication *app)
 {
     QString appName(getFile(app->argv()[0]));
@@ -1271,6 +1279,16 @@ void QtCurveStyle::polish(QApplication *app)
     if(opts.fixParentlessDialogs && (opts.noDlgFixApps.contains(appName) || opts.noDlgFixApps.contains("kde")))
         opts.fixParentlessDialogs=false;
 #endif
+//     BASE_STYLE::polish(app);
+    if(opts.hideShortcutUnderline)
+        addEventFilter(app, itsShortcutHandler);
+}
+
+void QtCurveStyle::unPolish(QApplication *app)
+{
+    if(opts.hideShortcutUnderline)
+        app->removeEventFilter(itsShortcutHandler);
+//     BASE_STYLE::unPolish(app);
 }
 
 void QtCurveStyle::polish(QPalette &pal)
@@ -1504,12 +1522,6 @@ QColorGroup QtCurveStyle::setColorGroup(const QColorGroup &old, const QColorGrou
 }
 
 static const char * kdeToolbarWidget="kde toolbar widget";
-
-inline void addEventFilter(QObject *object, QObject *filter)
-{
-    object->removeEventFilter(filter);
-    object->installEventFilter(filter);
-}
 
 void QtCurveStyle::polish(QWidget *widget)
 {
@@ -4827,7 +4839,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 }
             }
 
-            drawItem(p, tr, AlignCenter | ShowPrefix, cg, flags & Style_Enabled, 0, t->text());
+            drawItem(p, tr, AlignCenter|ShowPrefix|(styleHint(SH_UnderlineAccelerator, widget) ? 0 : NoAccel), cg, flags & Style_Enabled, 0, t->text());
 
             if ((flags & Style_HasFocus) && !t->text().isEmpty())
             {
@@ -4934,7 +4946,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
             // Make the label indicate if the button is a default button or not
             int          i,
-                         j(opts.embolden && button->isDefault() ? 2 : 1);
+                         j(opts.embolden && button->isDefault() ? 2 : 1),
+                         textFlags(AlignCenter|ShowPrefix|(styleHint(SH_UnderlineAccelerator, widget) ? 0 : NoAccel));
             bool         sidebar(!opts.stdSidebarButtons &&
                                  ((button->isFlat() && button->inherits("KMultiTabBarTab")) ||
                                   (button->parentWidget() && button->inherits("Ideal::Button") &&
@@ -4944,7 +4957,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                     : button->colorGroup().buttonText());
 
             for(i=0; i<j; i++)
-                drawItem(p, QRect(x+i, y, w, h), AlignCenter|ShowPrefix, button->colorGroup(),
+                drawItem(p, QRect(x+i, y, w, h), textFlags, button->colorGroup(),
                          button->isEnabled(),
                          button->pixmap(), button->text(), -1, &textCol);
 
@@ -5069,14 +5082,17 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
             if(!text.isNull())
             {
-                int t(text.find('\t'));
+                int t(text.find('\t')),
+                    textFlags=AlignVCenter|ShowPrefix|DontClip|SingleLine;
+
+                if (!styleHint(SH_UnderlineAccelerator, widget))
+                    textFlags |= NoAccel;
 
                 // draw accelerator/tab-text
                 if(t>=0)
-                    p->drawText(tr, AlignVCenter|ShowPrefix|DontClip|SingleLine|(reverse ? AlignLeft : AlignRight),
-                                text.mid(t+1));
+                    p->drawText(tr, textFlags|(reverse ? AlignLeft : AlignRight), text.mid(t+1));
 
-                p->drawText(ir, AlignVCenter|ShowPrefix|DontClip|SingleLine|(reverse ? AlignRight : AlignLeft), text, t);
+                p->drawText(ir, textFlags|(reverse ? AlignRight : AlignLeft), text, t);
             } 
             else if(mi->pixmap())
             {
@@ -5124,8 +5140,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             QMenuItem *mi(data.menuItem());
 
             if(mi->text().isEmpty()) // Draw pixmap...
-                drawItem(p, r, AlignCenter|ShowPrefix|DontClip|SingleLine, cg, flags&Style_Enabled,
-                     mi->pixmap(), QString::null);
+                drawItem(p, r, AlignCenter|ShowPrefix|DontClip|SingleLine, cg, flags&Style_Enabled, mi->pixmap(), QString::null);
             else
             {
                 const QColor *col=((opts.colorMenubarMouseOver && active) || (!opts.colorMenubarMouseOver && down))
@@ -5137,7 +5152,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                                     : &cg.foreground();
 
                 p->setPen(*col);
-                p->drawText(r, AlignCenter|ShowPrefix|DontClip|SingleLine, mi->text());
+                p->drawText(r, AlignCenter|ShowPrefix|DontClip|SingleLine|(styleHint(SH_UnderlineAccelerator, widget) ? 0 : NoAccel), mi->text());
             }
 
             break;
@@ -5392,7 +5407,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                 }
                 int alignment(QApplication::reverseLayout() ? AlignRight : AlignLeft);
 
-                drawItem(p, r, alignment | AlignVCenter | ShowPrefix, cg,
+                drawItem(p, r, alignment|AlignVCenter|ShowPrefix|(styleHint(SH_UnderlineAccelerator, widget) ? 0 : NoAccel), cg,
                          flags & Style_Enabled, checkbox->pixmap(),  checkbox->text());
 
                 if(checkbox->hasFocus() && FOCUS_GLOW!=opts.focus)
@@ -5437,8 +5452,8 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 
                 int alignment(QApplication::reverseLayout() ? AlignRight : AlignLeft);
 
-                drawItem(p, r, alignment | AlignVCenter | ShowPrefix, cg, flags & Style_Enabled,
-                         radiobutton->pixmap(), radiobutton->text());
+                drawItem(p, r, alignment|AlignVCenter|ShowPrefix|(styleHint(SH_UnderlineAccelerator, widget) ? 0 : NoAccel),
+                         cg, flags & Style_Enabled, radiobutton->pixmap(), radiobutton->text());
 
                 if(radiobutton->hasFocus() && FOCUS_GLOW!=opts.focus)
                     drawPrimitive(PE_FocusRect, p, visualRect(subRect(SR_RadioButtonFocusRect,
@@ -7068,6 +7083,8 @@ int QtCurveStyle::styleHint(StyleHint stylehint, const QWidget *widget, const QS
 {
     switch(stylehint)
     {
+        case SH_UnderlineAccelerator:
+            return widget && opts.hideShortcutUnderline ? itsShortcutHandler->showShortcut(widget) : true;
         case SH_PopupMenu_SubMenuPopupDelay:
             return opts.menuDelay;
         case SH_ScrollView_FrameOnlyAroundContents:
@@ -7135,9 +7152,8 @@ void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColor
             f.setBold(true);
             p->setPen(box->colorGroup().foreground());
             p->setFont(f);
-            p->drawText(QRect(left, top, width, th), (QApplication::reverseLayout()
-                                                        ? AlignRight
-                                                        : AlignLeft)|AlignVCenter|ShowPrefix|SingleLine,
+            p->drawText(QRect(left, top, width, th), (QApplication::reverseLayout() ? AlignRight : AlignLeft)|
+                                                     AlignVCenter|ShowPrefix|SingleLine,
                         text);
             return;
         }

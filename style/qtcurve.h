@@ -74,6 +74,8 @@ class QSlider;
 #define BASE_STYLE KStyle
 #endif
 
+class ShortcutHandler;
+
 class QtCurveStyle : public BASE_STYLE
 {
     Q_OBJECT
@@ -134,6 +136,7 @@ class QtCurveStyle : public BASE_STYLE
     virtual ~QtCurveStyle();
 
     void polish(QApplication *app);
+    void unPolish(QApplication *app);
     void polish(QPalette &pal);
     QColorGroup setColorGroup(const QColorGroup &old, const QColorGroup &act, bool dis=false);
     void polish(QWidget *widget);
@@ -298,6 +301,7 @@ class QtCurveStyle : public BASE_STYLE
     mutable QValueList<int>    itsMdiButtons[2]; // 0=left, 1=right
     QWidget                    *itsDragWidget;
     bool                       itsDragWidgetHadMouseTracking;
+    ShortcutHandler            *itsShortcutHandler;
 };
 
 #endif
