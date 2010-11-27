@@ -2704,7 +2704,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
             drawGlow(p, rOrig, cg, WIDGET_DEF_BUTTON==w && flags&Style_MouseOver ? WIDGET_STD_BUTTON : w,
                      glowFocus ? itsFocusCols : 0);
         else
-            drawEtch(p, rOrig, cg, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) && !sunken, ROUNDED_NONE==round);
+            drawEtch(p, rOrig, cg, EFFECT_SHADOW==opts.buttonEffect && WIDGET_BUTTON(w) && !sunken, ROUNDED_NONE==round, w);
 
     p->restore();
 }
@@ -2744,7 +2744,7 @@ void QtCurveStyle::drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, 
     }
 }
 
-void QtCurveStyle::drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised, bool square) const
+void QtCurveStyle::drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised, bool square, EWidget w) const
 {
     square=square || ROUND_NONE==opts.round;
 
