@@ -99,6 +99,7 @@ class QtCurveStyle : public BASE_STYLE
         APP_OPERA,
         APP_SYSTEMSETTINGS,
         APP_KATE,
+        APP_KWIN,
         APP_OTHER
     };
 

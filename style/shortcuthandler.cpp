@@ -28,6 +28,8 @@
 
 ShortcutHandler::ShortcutHandler(QObject *parent)
                : QObject(parent)
+               , itsAltDown(false)
+               , itsHandlePopupsOnly(false)
 {
 }
 
@@ -48,7 +50,8 @@ bool ShortcutHandler::hasSeenAlt(const QWidget *widget) const
             w=w->parentWidget();
         }
     }
-
+    if(itsHandlePopupsOnly)
+        return false;
     widget = widget->topLevelWidget();
     return itsSeenAlt.contains((QWidget *)widget);
 }
@@ -102,27 +105,30 @@ bool ShortcutHandler::eventFilter(QObject *o, QEvent *e)
                         updateWidget(w);
                         w=w->parentWidget();
                     }
-                    if(!widget->parentWidget())
+                    if(!itsHandlePopupsOnly && !widget->parentWidget())
                     {
                         setSeenAlt(qApp->activeWindow());
                         updateWidget(qApp->activeWindow());
                     }
                 }
                 
-                widget = widget->topLevelWidget();
-                setSeenAlt(widget);
-
-                // Alt has been pressed - find all widgets that care
-                QObjectList *l = widget->queryList("QWidget");
-                QObjectListIt it( *l );
-                QWidget *w;
-                while ((w = (QWidget *)it.current()) != 0)
+                if(!itsHandlePopupsOnly)
                 {
-                    ++it;
-                    if (!(w->isTopLevel() || !w->isVisible())) // || w->style().styleHint(QStyle::SH_UnderlineAccelerator, w)))
-                        updateWidget(w);
+                    widget = widget->topLevelWidget();
+                    setSeenAlt(widget);
+
+                    // Alt has been pressed - find all widgets that care
+                    QObjectList *l = widget->queryList("QWidget");
+                    QObjectListIt it( *l );
+                    QWidget *w;
+                    while ((w = (QWidget *)it.current()) != 0)
+                    {
+                        ++it;
+                        if (!(w->isTopLevel() || !w->isVisible())) // || w->style().styleHint(QStyle::SH_UnderlineAccelerator, w)))
+                            updateWidget(w);
+                    }
+                    delete l;
                 }
-                delete l;
             }
             break;
         case QEvent::KeyRelease:
