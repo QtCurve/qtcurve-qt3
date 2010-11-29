@@ -844,6 +844,7 @@ QtCurveStyle::QtCurveStyle(const QString &name)
 QtCurveStyle::QtCurveStyle()
 #endif
             : BASE_STYLE(AllowMenuTransparency, WindowsStyleScrollBar),
+              itsPopupMenuCols(0L),
               itsSliderCols(0L),
               itsDefBtnCols(0L),
               itsMouseOverCols(0L),
@@ -1112,10 +1113,6 @@ QtCurveStyle::QtCurveStyle()
 
     setMenuColors(QApplication::palette().active());
 
-    if(USE_LIGHTER_POPUP_MENU)
-        itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
-                                         TO_FACTOR(opts.lighterPopupMenuBgnd));
-
     if ((SHADE_CUSTOM==opts.shadeMenubars || SHADE_BLEND_SELECTED==opts.shadeMenubars || SHADE_SELECTED==opts.shadeMenubars) &&
         "soffice.bin"==QString(qApp->argv()[0]) && TOO_DARK(SHADE_CUSTOM==opts.shadeMenubars
                                                        ? opts.customMenubarsColor
@@ -1147,9 +1144,10 @@ QtCurveStyle::QtCurveStyle()
 
 QtCurveStyle::~QtCurveStyle()
 {
-    if(itsSidebarButtonsCols!=itsSliderCols &&
-       itsSidebarButtonsCols!=itsDefBtnCols)
+    if(itsSidebarButtonsCols!=itsSliderCols && itsSidebarButtonsCols!=itsDefBtnCols)
         delete [] itsSidebarButtonsCols;
+    if(itsPopupMenuCols && itsPopupMenuCols!=itsMenubarCols && itsPopupMenuCols!=itsBackgroundCols && itsProgressCols!=itsActiveMdiColors)
+        delete [] itsPopupMenuCols;
     if(itsActiveMdiColors && itsActiveMdiColors!=itsHighlightCols)
         delete [] itsActiveMdiColors;
     if(itsMdiColors && itsMdiColors!=itsBackgroundCols)
@@ -1419,10 +1417,6 @@ void QtCurveStyle::polish(QPalette &pal)
        IND_COLORED!=opts.defBtnIndicator)
         shadeColors(midColor(itsHighlightCols[ORIGINAL_SHADE],
                    itsButtonCols[ORIGINAL_SHADE]), itsSidebarButtonsCols);
-
-    if(USE_LIGHTER_POPUP_MENU && newGray)
-        itsLighterPopupMenuBgndCol=shade(itsBackgroundCols[ORIGINAL_SHADE],
-                                         TO_FACTOR(opts.lighterPopupMenuBgnd));
 
     if(newCheckRadioSelCols)
         if(SHADE_BLEND_SELECTED==opts.crColor)
@@ -2120,7 +2114,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
         {
             QWidget  *widget=(QWidget*)object;
             QPainter painter(widget);
-            QColor   col(popupMenuCol(widget->palette().active()));
+            QColor   col(popupMenuCols(widget->palette().active())[ORIGINAL_SHADE]);
 
             if(APPEARANCE_STRIPED==opts.menuBgndAppearance)
                 painter.drawTiledPixmap(widget->rect(), *createStripePixmap(col, false));
@@ -3975,7 +3969,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 else
                 {
                     if(GB_3D==border)
-                        p->setPen(popupMenuCol(cg));
+                        p->setPen(use[ORIGINAL_SHADE]);
                     p->drawLine(r.x()+1, r.y()+1, r.x()+r.width()-2,  r.y()+1);
                     p->drawLine(r.x()+1, r.y()+1, r.x()+1,  r.y()+r.height()-2);
                     p->setPen(use[FRAME_DARK_SHADOW]);
@@ -3985,7 +3979,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             }
             else if(IS_FLAT_BGND(opts.menuBgndAppearance))
             {
-                p->setPen(/*USE_LIGHTER_POPUP_MENU ? */popupMenuCol(cg)/* : cg.background()*/);
+                p->setPen(/*USE_LIGHTER_POPUP_MENU ? */use[ORIGINAL_SHADE]/* : cg.background()*/);
                 p->drawRect(QRect(r.x()+1, r.y()+1, r.width()-2, r.height()-2));
             }
             break;
@@ -4988,6 +4982,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                              maxpmw(data.maxIconWidth()),
                              x, y, w, h;
             bool             reverse(QApplication::reverseLayout());
+            const QColor     *use(popupMenuCols(cg));
 
             maxpmw=QMAX(maxpmw, constMenuPixmapWidth);
             r.rect(&x, &y, &w, &h);
@@ -4997,7 +4992,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             else
             {
                 if(IS_FLAT_BGND(opts.menuBgndAppearance))
-                    p->fillRect(r, popupMenuCol(cg));
+                    p->fillRect(r, use[ORIGINAL_SHADE]);
 
                 if(opts.menuStripe)
                     drawBevelGradient(menuStripeCol(cg), p,
@@ -5007,7 +5002,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             }
 
             if((flags&Style_Active) && (flags&Style_Enabled))
-                drawMenuItem(p, r, flags, cg, false, ROUNDED_ALL, popupMenuCol(cg),
+                drawMenuItem(p, r, flags, cg, false, ROUNDED_ALL,use[ORIGINAL_SHADE],
                              opts.useHighlightForMenu ? itsHighlightCols : itsBackgroundCols);
 
             if(!mi)
@@ -7261,22 +7256,22 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QC
                
     if(!mbi && APPEARANCE_FADE==opts.menuitemAppearance)
     {
-        bool  reverse=QApplication::reverseLayout();
-        int   roundOffet=ROUNDED ? 1 : 0;
-        QRect main(r.x()+(reverse ? 1+MENUITEM_FADE_SIZE : roundOffet+1), r.y()+roundOffet+1,
-                   r.width()-(1+MENUITEM_FADE_SIZE), r.height()-(2+(roundOffet*2))),
-              fade(reverse ? r.x()+1 : r.width()-MENUITEM_FADE_SIZE, r.y()+1, MENUITEM_FADE_SIZE, r.height()-2);
+        bool         reverse=QApplication::reverseLayout();
+        int          roundOffet=ROUNDED ? 1 : 0;
+        QRect        main(r.x()+(reverse ? 1+MENUITEM_FADE_SIZE : roundOffet+1), r.y()+roundOffet+1,
+                          r.width()-(1+MENUITEM_FADE_SIZE), r.height()-(2+(roundOffet*2))),
+                     fade(reverse ? r.x()+1 : r.width()-MENUITEM_FADE_SIZE, r.y()+1, MENUITEM_FADE_SIZE, r.height()-2);
+        const QColor *pc(popupMenuCols(cg));
 
         p->fillRect(main, cols[fill]);
         if(ROUNDED)
         {
             main.addCoords(-1, -1, 1, 1);
-            drawBorder(popupMenuCol(cg), p, main, cg, Style_Horizontal|Style_Raised, reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
-                       cols, WIDGET_MENU_ITEM, false, BORDER_FLAT, false, fill);
+            drawBorder(pc[ORIGINAL_SHADE], p, main, cg, Style_Horizontal|Style_Raised, reverse ? ROUNDED_RIGHT : ROUNDED_LEFT,
+                       pc, WIDGET_MENU_ITEM, false, BORDER_FLAT, false, fill);
         }
 
-        QColor bgnd(popupMenuCol(cg));
-        drawGradient(reverse ? bgnd : cols[fill], reverse ? cols[fill] : bgnd, p, fade, false);
+        drawGradient(reverse ? pc[ORIGINAL_SHADE] : cols[fill], reverse ? cols[fill] : pc[ORIGINAL_SHADE], p, fade, false);
     }
     else if(mbi || opts.borderMenuitems)
     {
@@ -7977,16 +7972,7 @@ const QColor * QtCurveStyle::buttonColors(const QColorGroup &cg) const
 
 const QColor * QtCurveStyle::popupMenuCols(const QColorGroup &cg) const
 {
-    return opts.shadePopupMenu ? menuColors(cg, true) : backgroundColors(cg);
-}
-
-const QColor & QtCurveStyle::popupMenuCol(const QColorGroup &cg, int shade) const
-{
-    return opts.shadePopupMenu
-        ? menuColors(cg, true)[ORIGINAL_SHADE]
-        : USE_LIGHTER_POPUP_MENU
-            ? itsLighterPopupMenuBgndCol
-            : itsBackgroundCols[shade];
+    return USE_LIGHTER_POPUP_MENU || opts.shadePopupMenu ? itsPopupMenuCols : backgroundColors(cg);
 }
 
 const QColor * QtCurveStyle::checkRadioColors(const QColorGroup &cg, SFlags flags) const
@@ -8066,6 +8052,21 @@ void QtCurveStyle::setMenuColors(const QColorGroup &cg)
         case SHADE_WINDOW_BORDER:
             break;
     }
+
+    QColor *base=opts.shadePopupMenu
+                    ? SHADE_WINDOW_BORDER==opts.shadeMenubars
+                        ? (QColor *)getMdiColors(cg, true)
+                        : itsMenubarCols
+                    : itsBackgroundCols;
+
+    if(USE_LIGHTER_POPUP_MENU)
+    {
+        if(!itsPopupMenuCols)
+            itsPopupMenuCols=new QColor [TOTAL_SHADES+1];
+        shadeColors(shade(base[ORIGINAL_SHADE], TO_FACTOR(opts.lighterPopupMenuBgnd)), itsPopupMenuCols);
+    }
+    else
+        itsPopupMenuCols=base;
 }
 
 void QtCurveStyle::setMenuTextColors(QWidget *widget, bool isMenuBar) const
@@ -8086,7 +8087,8 @@ void QtCurveStyle::setMenuTextColors(QWidget *widget, bool isMenuBar) const
         }
         else if(opts.shadePopupMenu)
         {
-            pal.setBrush(QPalette::Disabled, QColorGroup::Foreground, midColor(itsActiveMdiTextColor, popupMenuCol(pal.active())));
+            pal.setBrush(QPalette::Disabled, QColorGroup::Foreground, midColor(itsActiveMdiTextColor,
+                                                                               popupMenuCols(pal.active())[ORIGINAL_SHADE]));
             pal.setBrush(QPalette::Disabled, QColorGroup::Text, pal.brush(QPalette::Disabled, QColorGroup::Foreground));
         }
 
@@ -8113,7 +8115,7 @@ void QtCurveStyle::setMenuTextColors(QWidget *widget, bool isMenuBar) const
         else if(!isMenuBar && opts.shadePopupMenu)
         {
             pal.setBrush(QPalette::Disabled, QColorGroup::Foreground,
-                         midColor(pal.brush(QPalette::Active, QColorGroup::Foreground).color(), popupMenuCol(pal.active())));
+                         midColor(pal.brush(QPalette::Active, QColorGroup::Foreground).color(), popupMenuCols(pal.active())[ORIGINAL_SHADE]));
             pal.setBrush(QPalette::Disabled, QColorGroup::Text, pal.brush(QPalette::Disabled, QColorGroup::Foreground));
         }
         widget->setPalette(pal);
@@ -8597,12 +8599,12 @@ const QColor & QtCurveStyle::menuStripeCol(const QColorGroup &cg) const
         case SHADE_BLEND_SELECTED:
             // Hack! Use opts.customMenuStripeColor to store this setting!
             if(IS_BLACK(opts.customMenuStripeColor))
-                opts.customMenuStripeColor=midColor(itsHighlightCols[ORIGINAL_SHADE], popupMenuCol(cg));
+                opts.customMenuStripeColor=midColor(itsHighlightCols[ORIGINAL_SHADE], popupMenuCols(cg)[ORIGINAL_SHADE]);
             return opts.customMenuStripeColor;
         case SHADE_SELECTED:
             return itsHighlightCols[MENU_STRIPE_SHADE];
         case SHADE_DARKEN:
-            return popupMenuCol(cg);
+            return popupMenuCols(cg)[MENU_STRIPE_SHADE];
     }
 }
 

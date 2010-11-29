@@ -3,7 +3,8 @@
 1. Add option to not display keyboard shortcurt underline until 'Alt' is
    pressed.
 2. Add options to specify appearance of toolbar buttons.
-3. If highlighting scrollviews, and allow mouse-over for entries, also allow
+3. Allow to use popup menu shade factor when colouring as per menubar.
+4. If highlighting scrollviews, and allow mouse-over for entries, also allow
    mouse-over for scrollviews.
 
 1.7.1

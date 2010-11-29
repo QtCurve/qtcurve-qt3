@@ -265,6 +265,7 @@ class QtCurveStyle : public BASE_STYLE
                                itsBackgroundCols[TOTAL_SHADES+1],
                                itsMenubarCols[TOTAL_SHADES+1],
                                itsFocusCols[TOTAL_SHADES+1],
+                               *itsPopupMenuCols,
                                *itsSliderCols,
                                *itsDefBtnCols,
                                *itsMouseOverCols,
@@ -273,7 +274,6 @@ class QtCurveStyle : public BASE_STYLE
                                *itsSortedLvColors,
                                *itsProgressCols,
                                itsButtonCols[TOTAL_SHADES+1],
-                               itsLighterPopupMenuBgndCol,
                                itsCheckRadioCol;
     mutable QColor             *itsSidebarButtonsCols;
     mutable QColor             *itsActiveMdiColors;
