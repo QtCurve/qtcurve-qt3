@@ -144,11 +144,11 @@ class QtCurveStyle : public BASE_STYLE
     void unPolish(QWidget *widget);
     void drawLightBevel(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags,
                         int round, const QColor &fill, const QColor *custom=NULL,
-                        bool doBorder=true, bool doCorners=true, EWidget w=WIDGET_OTHER) const
-    { drawLightBevel(cg.background(), p, r, cg, flags, round, fill, custom, doBorder, doCorners, w); }
+                        bool doBorder=true, bool doCorners=true, EWidget w=WIDGET_OTHER, const QWidget *widget=0L) const
+    { drawLightBevel(cg.background(), p, r, cg, flags, round, fill, custom, doBorder, doCorners, w, widget); }
     void drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &r, const QColorGroup &cg,
                         SFlags flags, int round, const QColor &fill, const QColor *custom=NULL,
-                        bool doBorder=true, bool doCorners=true, EWidget w=WIDGET_OTHER) const;
+                        bool doBorder=true, bool doCorners=true, EWidget w=WIDGET_OTHER, const QWidget *widget=0L) const;
     void drawGlow(QPainter *p, const QRect &r, const QColorGroup &cg, EWidget w, const QColor *cols=0) const;
     void drawEtch(QPainter *p, const QRect &r, const QColorGroup &cg, bool raised=false, bool square=false, EWidget w=WIDGET_OTHER) const;
     void drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, const QColorGroup &cg,

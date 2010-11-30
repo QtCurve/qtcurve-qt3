@@ -517,6 +517,20 @@ static bool inStackWidget(const QWidget *w)
     return false;
 }
 
+static bool isOnToolbar(const QWidget *widget, QPainter *p)
+{
+    const QWidget *wid=widget ? widget->parentWidget() : (p && p->device() ? dynamic_cast<QWidget *>(p->device()) : 0L);
+
+    while(wid)
+    {
+        if(::qt_cast<const QToolBar *>(wid))
+            return true;
+        wid=wid->parentWidget();
+    }
+
+    return false;
+}
+
 static void setRgb(QColor *col, const QStringList &rgb)
 {
     if(3==rgb.size())
@@ -2488,12 +2502,12 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
     return BASE_STYLE::eventFilter(object, event);
 }
 
-void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &rOrig,
-                                  const QColorGroup &cg, SFlags flags,
-                                  int round, const QColor &fill, const QColor *custom,
-                                  bool doBorder, bool doCorners, EWidget w) const
+void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &rOrig, const QColorGroup &cg, SFlags flags, int round,
+                                  const QColor &fill, const QColor *custom, bool doBorder, bool doCorners, EWidget w, const QWidget *widget) const
 {
-    EAppearance  app(widgetApp(w, &opts));
+    EAppearance  app(widgetApp(APPEARANCE_NONE!=opts.tbarBtnAppearance &&
+                               (WIDGET_TOOLBAR_BUTTON==w || (WIDGET_BUTTON(w) && isOnToolbar(widget, p)))
+                                ? WIDGET_TOOLBAR_BUTTON : w, &opts));
     QRect        r(rOrig),
                  br(r);
     bool         bevelledButton(WIDGET_BUTTON(w) && APPEARANCE_BEVELLED==app),
@@ -5820,7 +5834,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                                 getFill(fillFlags, cols, false, (SHADE_DARKEN==opts.comboBtn ||
                                                                     (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))) &&
                                                                     editable),
-                                cols, true, true, editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO);
+                                cols, true, true, editable ? WIDGET_COMBO_BUTTON : WIDGET_COMBO, widget);
                 }
             }
 
@@ -5919,7 +5933,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     drawLightBevel(p, btn, cg, btnFlags|Style_Horizontal, reverse ? ROUNDED_LEFT : ROUNDED_RIGHT,
                                    getFill(btnFlags, cols, false, SHADE_DARKEN==opts.comboBtn ||
                                                                   (SHADE_NONE!=opts.comboBtn && !(flags&Style_Enabled))),
-                                   cols, true, true, WIDGET_COMBO);
+                                   cols, true, true, WIDGET_COMBO, widget);
                     p->restore();
                 }
 
@@ -6009,14 +6023,14 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                     btnFlags|=Style_Horizontal;
 
                     drawLightBevel(p, btns, cg, btnFlags, reverse ?  ROUNDED_LEFT : ROUNDED_RIGHT, getFill(btnFlags, use),
-                                   use, true, true, WIDGET_SPIN);
+                                   use, true, true, WIDGET_SPIN, widget);
                     if(hw && (HOVER_SW_DOWN==itsHover || HOVER_SW_UP==itsHover) && flags&Style_Enabled && !(flags&Style_Sunken))
                     {
                         btnFlags|=Style_MouseOver;
                         p->save();
                         p->setClipRect(HOVER_SW_UP==itsHover ? up : down);
                         drawLightBevel(p, btns, cg, btnFlags, reverse ?  ROUNDED_LEFT : ROUNDED_RIGHT, getFill(btnFlags, use),
-                                       use, true, true, WIDGET_SPIN);
+                                       use, true, true, WIDGET_SPIN, widget);
                         p->restore();
                     }
                     p->setPen(use[BORDER_VAL(style&Style_Enabled)]);
