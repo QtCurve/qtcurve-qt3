@@ -99,6 +99,8 @@ bool ShortcutHandler::eventFilter(QObject *o, QEvent *e)
                 {
                     setSeenAlt(widget);
                     updateWidget(widget);
+                    if(widget->parentWidget() && widget->parentWidget()->topLevelWidget())
+                        itsSeenAlt.append(widget->parentWidget()->topLevelWidget());
                 }
                 else
                 {
@@ -133,7 +135,6 @@ bool ShortcutHandler::eventFilter(QObject *o, QEvent *e)
                     widget->repaint(TRUE);
                 itsSeenAlt.clear();
                 itsUpdated.clear();
-                // TODO: If menu is popuped up, it doesn't clear underlines...
             }
             break;
         case QEvent::Show:
@@ -147,6 +148,20 @@ bool ShortcutHandler::eventFilter(QObject *o, QEvent *e)
             }
             break;
         case QEvent::Hide:
+            if(::qt_cast<QPopupMenu *>(widget))
+            {
+                itsSeenAlt.remove(widget);
+                itsUpdated.remove(widget);
+                itsOpenMenus.remove(widget);
+                if(itsAltDown)
+                {
+                    if(itsOpenMenus.count())
+                        itsOpenMenus.last()->repaint(TRUE);
+                    else if(widget->parentWidget() && widget->parentWidget()->topLevelWidget())
+                        widget->parentWidget()->topLevelWidget()->repaint(TRUE);
+                }
+            }
+            break;
         case QEvent::Close:
             // Reset widget when closing
             itsSeenAlt.remove(widget);
