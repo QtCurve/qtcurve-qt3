@@ -39,18 +39,19 @@ ShortcutHandler::~ShortcutHandler()
 bool ShortcutHandler::hasSeenAlt(const QWidget *widget) const
 {
     if(::qt_cast<const QPopupMenu *>(widget))
-    {
-        const QWidget *w=widget;
-        
-        while(w)
-        {
-            if(itsSeenAlt.contains((QWidget *)w))
-                return true;
-            w=w->parentWidget();
-        }
-    }
+        return itsOpenMenus.count() && itsOpenMenus.last()==widget;
+//     {
+//         const QWidget *w=widget;
+//         
+//         while(w)
+//         {
+//             if(itsSeenAlt.contains((QWidget *)w))
+//                 return true;
+//             w=w->parentWidget();
+//         }
+//     }
     else
-        return itsSeenAlt.contains((QWidget *)(widget->topLevelWidget()));
+        return itsOpenMenus.isEmpty() &&  itsSeenAlt.contains((QWidget *)(widget->topLevelWidget()));
     return false;
 }
 
@@ -62,6 +63,7 @@ bool ShortcutHandler::showShortcut(const QWidget *widget) const
 void ShortcutHandler::widgetDestroyed(QObject *o)
 {
     itsUpdated.remove(static_cast<QWidget *>(o));
+    itsOpenMenus.remove(static_cast<QWidget *>(o));
 }
 
 void ShortcutHandler::updateWidget(QWidget *w)
@@ -134,11 +136,25 @@ bool ShortcutHandler::eventFilter(QObject *o, QEvent *e)
                 // TODO: If menu is popuped up, it doesn't clear underlines...
             }
             break;
+        case QEvent::Show:
+            if(::qt_cast<QPopupMenu *>(widget))
+            {
+                QWidget *prev=itsOpenMenus.count() ? itsOpenMenus.last() : 0L;
+                itsOpenMenus.append(widget);
+                if(itsAltDown && prev)
+                    prev->repaint(TRUE);
+                connect(widget, SIGNAL(destroyed(QObject *)), this, SLOT(widgetDestroyed(QObject *)));
+            }
+            break;
+        case QEvent::Hide:
         case QEvent::Close:
             // Reset widget when closing
             itsSeenAlt.remove(widget);
             itsUpdated.remove(widget);
             itsSeenAlt.remove(widget->topLevelWidget());
+            itsOpenMenus.remove(widget);
+            if(itsAltDown && itsOpenMenus.count())
+                itsOpenMenus.last()->repaint(TRUE);
             break;
         default:
             break;

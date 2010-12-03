@@ -54,7 +54,9 @@ class ShortcutHandler : public QObject
 
     bool                  itsAltDown;
     QValueList<QWidget *> itsSeenAlt,
-                          itsUpdated;
+                          itsUpdated,
+                          itsOpenMenus;
+
 };
 
 #endif

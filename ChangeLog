@@ -2,6 +2,8 @@
 -----
 1. Safer handling of hidden shortcut underscore in popup menus. Only keep
    track of menu widget, not its ancestors.
+2. If hiding keyboard shortcut underlines: Keep track of open popup menus,
+   and only show keyboard short cut for the current one.
 
 1.8.0
 -----
