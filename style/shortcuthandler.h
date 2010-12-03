@@ -38,7 +38,6 @@ class ShortcutHandler : public QObject
 
     bool hasSeenAlt(const QWidget *widget) const; 
     bool isAltDown() const { return itsAltDown; }
-    void setHandlePopupsOnly(bool h) { itsHandlePopupsOnly=h; }
     bool showShortcut(const QWidget *widget) const;
 
     private slots:
@@ -53,8 +52,7 @@ class ShortcutHandler : public QObject
 
     private:
 
-    bool                  itsAltDown,
-                          itsHandlePopupsOnly;
+    bool                  itsAltDown;
     QValueList<QWidget *> itsSeenAlt,
                           itsUpdated;
 };

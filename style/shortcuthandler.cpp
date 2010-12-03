@@ -29,7 +29,6 @@
 ShortcutHandler::ShortcutHandler(QObject *parent)
                : QObject(parent)
                , itsAltDown(false)
-               , itsHandlePopupsOnly(false)
 {
 }
 
@@ -50,10 +49,9 @@ bool ShortcutHandler::hasSeenAlt(const QWidget *widget) const
             w=w->parentWidget();
         }
     }
-    if(itsHandlePopupsOnly)
-        return false;
-    widget = widget->topLevelWidget();
-    return itsSeenAlt.contains((QWidget *)widget);
+    else
+        return itsSeenAlt.contains((QWidget *)(widget->topLevelWidget()));
+    return false;
 }
 
 bool ShortcutHandler::showShortcut(const QWidget *widget) const
@@ -97,22 +95,10 @@ bool ShortcutHandler::eventFilter(QObject *o, QEvent *e)
 
                 if(::qt_cast<QPopupMenu *>(widget))
                 {
-                    QWidget *w=widget;
-
-                    while(w)
-                    {
-                        setSeenAlt(w);
-                        updateWidget(w);
-                        w=w->parentWidget();
-                    }
-                    if(!itsHandlePopupsOnly && !widget->parentWidget())
-                    {
-                        setSeenAlt(qApp->activeWindow());
-                        updateWidget(qApp->activeWindow());
-                    }
+                    setSeenAlt(widget);
+                    updateWidget(widget);
                 }
-                
-                if(!itsHandlePopupsOnly)
+                else
                 {
                     widget = widget->topLevelWidget();
                     setSeenAlt(widget);
@@ -140,7 +126,9 @@ bool ShortcutHandler::eventFilter(QObject *o, QEvent *e)
                                                       end(itsUpdated.end());
                                            
                 for (; it!=end; ++it)
-                    (*it)->update();
+                    (*it)->repaint(TRUE);
+                if(!itsUpdated.contains(widget))
+                    widget->repaint(TRUE);
                 itsSeenAlt.clear();
                 itsUpdated.clear();
                 // TODO: If menu is popuped up, it doesn't clear underlines...

@@ -1261,8 +1261,6 @@ void QtCurveStyle::polish(QApplication *app)
             itsMactorPal=new QPalette(QApplication::palette());
         itsThemedApp=APP_MACTOR;
     }
-    else if("kwin"==appName)
-        itsThemedApp=APP_KWIN;
     else
         itsThemedApp=APP_OTHER;
 
@@ -1295,11 +1293,7 @@ void QtCurveStyle::polish(QApplication *app)
 #endif
 //     BASE_STYLE::polish(app);
     if(opts.hideShortcutUnderline)
-    {
-        if(APP_KWIN==itsThemedApp)
-            itsShortcutHandler->setHandlePopupsOnly(true);
         addEventFilter(app, itsShortcutHandler);
-    }
 }
 
 void QtCurveStyle::unPolish(QApplication *app)
