@@ -107,11 +107,10 @@ dimension, so as to draw the scrollbar at the correct size.
 #include <unistd.h>
 #include <sys/types.h>
 #include <iostream>
-#define COMMON_FUNCTIONS
 #include "qtcurve.h"
 #include "shortcuthandler.h"
-#define CONFIG_READ
-#include "config_file.c"
+#include "config_file.h"
+#include "colorutils.h"
 #include "pixmaps.h"
 #include <qdialog.h>
 #include <qprogressdialog.h>
@@ -905,9 +904,9 @@ QtCurveStyle::QtCurveStyle()
         }
     }
 
-    readConfig(rcFile, &opts);
+    qtcReadConfig(rcFile, &opts);
 #else
-    readConfig(QString(), &opts);
+    qtcReadConfig(QString(), &opts);
 #endif
 
     if(FRAME_LINE==opts.groupBox || opts.gbLabel&GB_LBL_BOLD)
@@ -2499,7 +2498,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
 void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &rOrig, const QColorGroup &cg, SFlags flags, int round,
                                   const QColor &fill, const QColor *custom, bool doBorder, bool doCorners, EWidget w, const QWidget *widget) const
 {
-    EAppearance  app(widgetApp(APPEARANCE_NONE!=opts.tbarBtnAppearance &&
+    EAppearance  app(qtcWidgetApp(APPEARANCE_NONE!=opts.tbarBtnAppearance &&
                                (WIDGET_TOOLBAR_BUTTON==w || (WIDGET_BUTTON(w) && isOnToolbar(widget, p)))
                                 ? WIDGET_TOOLBAR_BUTTON : w, &opts));
     QRect        r(rOrig),
@@ -2796,7 +2795,7 @@ void QtCurveStyle::drawBorder(const QColor &bgnd, QPainter *p, const QRect &r, c
                               SFlags flags, int round, const QColor *custom, EWidget w, bool doCorners,
                               EBorder borderProfile, bool blendBorderColors, int borderVal) const
 {
-    EAppearance  app(widgetApp(w, &opts));
+    EAppearance  app(qtcWidgetApp(w, &opts));
     const QColor *cols(custom ? custom : itsBackgroundCols);
     QColor       border(flags&Style_ButtonDefault && IND_FONT_COLOR==opts.defBtnIndicator &&
                         flags&Style_Enabled
@@ -3963,7 +3962,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
         case PE_PanelPopup:
         {
             const QColor    *use(popupMenuCols(cg));
-            EGradientBorder border=getGradient(opts.menuBgndAppearance, &opts)->border;
+            EGradientBorder border=qtcGetGradient(opts.menuBgndAppearance, &opts)->border;
 
             p->setPen(use[STD_BORDER]);
             p->setBrush(NoBrush);
@@ -7453,7 +7452,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p, const QRec
 void QtCurveStyle::drawBevelGradientReal(const QColor &base, QPainter *p, const QRect &r, bool horiz, bool sel, EAppearance app, EWidget w) const
 {
 
-    const Gradient *grad=getGradient(app, &opts);
+    const Gradient *grad=qtcGetGradient(app, &opts);
     int            numStops(grad->stops.size()),
                    lastPos(0),
                    size(horiz ? r.height() : r.width());
@@ -8634,13 +8633,13 @@ QColor QtCurveStyle::shade(const QColor &a, float k) const
 {
     QColor mod;
 
-    ::shade(&opts, a, &mod, k);
+    ::qtcShade(&opts, a, &mod, k);
     return mod;
 }
 
 void QtCurveStyle::shade(const color &ca, color *cb, double k) const
 {
-    ::shade(&opts, ca, cb, k);
+    ::qtcShade(&opts, ca, cb, k);
 }
 
 QPixmap * QtCurveStyle::getPixelPixmap(const QColor col) const
@@ -8718,7 +8717,7 @@ static void recolour(QImage &img, const QColor &col, double shade)
     if (img.depth()<32)
         img=img.convertDepth(32);
 
-    adjustPix(img.bits(), 4, img.width(), img.height(), img.bytesPerLine(), col.red(), col.green(), col.blue(), shade);
+    qtcAdjustPix(img.bits(), 4, img.width(), img.height(), img.bytesPerLine(), col.red(), col.green(), col.blue(), shade);
 }
 
 void QtCurveStyle::drawDot(QPainter *p, const QRect &r, const QColor *cols) const
@@ -8780,7 +8779,7 @@ QPixmap * QtCurveStyle::getPixmap(const QColor col, EPixmap p, double shade) con
         if (img.depth()<32)
             img=img.convertDepth(32);
 
-        adjustPix(img.bits(), 4, img.width(), img.height(), img.bytesPerLine(), col.red(), col.green(), col.blue(), shade);
+        qtcAdjustPix(img.bits(), 4, img.width(), img.height(), img.bytesPerLine(), col.red(), col.green(), col.blue(), shade);
         pix->convertFromImage(img);
         itsPixmapCache.insert(key, pix, pix->depth()/8);
     }
