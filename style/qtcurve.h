@@ -193,9 +193,9 @@ class QtCurveStyle : public BASE_STYLE
                       bool mbi, int round, const QColor &bgnd, const QColor *cols) const;
     void drawProgress(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, int round,
                       const QWidget *widget) const;
-    void drawBevelGradient(const QColor &base, QPainter *p, QRect const &r,
+    void drawBevelGradient(const QColor &base, const QColor &bgnd, QPainter *p, QRect const &r,
                            bool horiz, bool sel, EAppearance bevApp, EWidget w=WIDGET_OTHER) const;
-    void drawBevelGradientReal(const QColor &base, QPainter *p, QRect const &r,
+    void drawBevelGradientReal(const QColor &base, const QColor &bgnd, QPainter *p, QRect const &r,
                                bool horiz, bool sel, EAppearance bevApp, EWidget w=WIDGET_OTHER) const;
     void drawGradient(const QColor &top, const QColor &bot, QPainter *p, const QRect &r, bool horiz=true) const;
     void drawSbSliderHandle(QPainter *p, const QRect &r, const QColorGroup &cg, SFlags flags, bool slider=false) const;

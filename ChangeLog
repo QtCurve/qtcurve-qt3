@@ -1,3 +1,8 @@
+1.8.3
+-----
+1. If a gradient uses alpha, then blen gradient colour with background
+   colour - as Qt3 does not support painting with an alpha channel.
+
 1.8.2
 -----
 1. When hiding shortcuts, only show these if widget is enabled.

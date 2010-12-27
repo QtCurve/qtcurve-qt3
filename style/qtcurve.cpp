@@ -731,11 +731,11 @@ enum ECacheFlags
     CACHE_COL_SEL_TAB
 };
 
-static QString createKey(int size, QRgb color, bool horiz, int app, ECacheFlags flags)
+static QString createKey(int size, QRgb color, QRgb bgnd, bool horiz, int app, ECacheFlags flags)
 {
     QString key;
 
-    QTextOStream(&key) << size << '-' << color << '-' << horiz << '-' << app << '-' << flags;
+    QTextOStream(&key) << size << '-' << color << '-' << bgnd << '-' << horiz << '-' << app << '-' << flags;
 
     return key;
 }
@@ -2131,7 +2131,7 @@ bool QtCurveStyle::eventFilter(QObject *object, QEvent *event)
                 painter.drawTiledPixmap(widget->rect(), opts.menuBgndPixmap.img);
             }
             else
-                drawBevelGradientReal(col, &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
+                drawBevelGradientReal(col, col, &painter, widget->rect(), GT_HORIZ==opts.menuBgndGrad, false,
                                       opts.menuBgndAppearance, WIDGET_OTHER);
             return false;
         }
@@ -2546,7 +2546,7 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
             p->setClipRegion(p->clipRegion().eor(QRegion(br)));
         }
         br.addCoords(1, 1,-1,-1);
-        drawBevelGradient(fill, p, br, horiz, sunken, app, w);
+        drawBevelGradient(fill, bgnd, p, br, horiz, sunken, app, w);
         br.addCoords(-1, -1, 1, 1);
         if(WIDGET_PROGRESSBAR==w && opts.stripedProgress)
             p->restore();
@@ -2618,16 +2618,16 @@ void QtCurveStyle::drawLightBevel(const QColor &bgnd, QPainter *p, const QRect &
 
                 if(horiz)
                 {
-                    drawBevelGradient(itsMouseOverCols[col], p, QRect(r.x()+so, r.y(), len, r.height()),
+                    drawBevelGradient(itsMouseOverCols[col], bgnd, p, QRect(r.x()+so, r.y(), len, r.height()),
                                       horiz, sunken, app, w);
-                    drawBevelGradient(itsMouseOverCols[col], p, QRect(r.x()+r.width()-eo, r.y(), len, r.height()),
+                    drawBevelGradient(itsMouseOverCols[col], bgnd, p, QRect(r.x()+r.width()-eo, r.y(), len, r.height()),
                                       horiz, sunken, app, w);
                 }
                 else
                 {
-                    drawBevelGradient(itsMouseOverCols[col], p, QRect(r.x(), r.y()+so, r.width(), len),
+                    drawBevelGradient(itsMouseOverCols[col], bgnd, p, QRect(r.x(), r.y()+so, r.width(), len),
                                       horiz, sunken, app, w);
-                    drawBevelGradient(itsMouseOverCols[col], p, QRect(r.x(), r.y()+r.height()-eo, r.width(), len),
+                    drawBevelGradient(itsMouseOverCols[col], bgnd, p, QRect(r.x(), r.y()+r.height()-eo, r.width(), len),
                                       horiz, sunken, app, w);
                 }
             }
@@ -3285,7 +3285,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
 
                 bool sunken(flags &(Style_Down | Style_On | Style_Sunken));
 
-                drawBevelGradient(getFill(flags, use), p, r, flags&Style_Horizontal,
+                drawBevelGradient(getFill(flags, use), cg.background(), p, r, flags&Style_Horizontal,
                                   sunken, opts.lvAppearance, WIDGET_LISTVIEW_HEADER);
 
                 if(APPEARANCE_RAISED==opts.lvAppearance)
@@ -3563,7 +3563,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
             if(IS_FLAT(opts.appearance))
                 p->fillRect(QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), bgnd);
             else
-                drawBevelGradient(bgnd, p, QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), true,
+                drawBevelGradient(bgnd, bgnd, p, QRect(rect.x()+1, rect.y()+1, rect.width()-2, rect.height()-2), true,
                                   drawSunken, app, wid);
 
             if(MO_NONE!=opts.coloredMouseOver && !glow && sflags&Style_MouseOver && sflags&Style_Enabled)
@@ -3696,7 +3696,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 p->save();
 
                 if(opts.crHighlight && sflags&Style_MouseOver)
-                    drawBevelGradient(shade(cg.background(), TO_FACTOR(opts.crHighlight)), p, r, true,
+                    drawBevelGradient(shade(cg.background(), TO_FACTOR(opts.crHighlight)), cg.background(), p, r, true,
                                       false, opts.selectionAppearance, WIDGET_SELECTION);
                 else
                     p->fillRect(r, cg.background());
@@ -3713,7 +3713,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 if(IS_FLAT(opts.appearance))
                     p->fillRect(QRect(x+1, y+1, rect.width()-2, rect.height()-2), bgnd);
                 else
-                    drawBevelGradient(bgnd, p, QRect(x+1, y+1, rect.width()-2, rect.height()-2), true,
+                    drawBevelGradient(bgnd, bgnd, p, QRect(x+1, y+1, rect.width()-2, rect.height()-2), true,
                                       drawSunken, app, wid);
 
                 if(coloredMo)
@@ -3839,7 +3839,7 @@ void QtCurveStyle::drawPrimitive(PrimitiveElement pe, QPainter *p, const QRect &
                 color=shade(color, TO_FACTOR(opts.tabBgnd));
                 
             if(flags&Style_MouseOver && opts.splitterHighlight)
-                drawBevelGradient(shade(cg.background(), TO_FACTOR(opts.splitterHighlight)), p, r, !(flags&Style_Horizontal),
+                drawBevelGradient(shade(cg.background(), TO_FACTOR(opts.splitterHighlight)), cg.background(), p, r, !(flags&Style_Horizontal),
                                   false, opts.selectionAppearance, WIDGET_SELECTION);
             else
                 p->fillRect(r, color);
@@ -4417,7 +4417,7 @@ void QtCurveStyle::drawKStylePrimitive(KStylePrimitive kpe, QPainter *p, const Q
             r.rect(&x, &y, &w, &h);
 
             if(!IS_FLAT(opts.dwtAppearance))
-                drawBevelGradient(cg.background(), p, r, horizontal, false, opts.dwtAppearance, WIDGET_DOCK_WIDGET_TITLE);
+                drawBevelGradient(cg.background(), cg.background(), p, r, horizontal, false, opts.dwtAppearance, WIDGET_DOCK_WIDGET_TITLE);
             else
                 p->fillRect(r, cg.background()); // .dark(DW_BGND));
 //             p->setPen(itsBackgroundCols[STD_BORDER]);
@@ -4643,7 +4643,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
             if(invertedSel)
                 p->fillRect(glowTr, col);
             else
-                drawBevelGradient(col, p, glowTr, true,
+                drawBevelGradient(col, cg.background(), p, glowTr, true,
                                   active, active ? SEL_TAB_APP : NORM_TAB_APP, top ? WIDGET_TAB_TOP : WIDGET_TAB_BOT);
 
             drawBorder(cg.background(), p, glowTr, cg, flags|Style_Horizontal|Style_Enabled,
@@ -5002,7 +5002,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     p->fillRect(r, use[ORIGINAL_SHADE]);
 
                 if(opts.menuStripe)
-                    drawBevelGradient(menuStripeCol(cg), p,
+                    drawBevelGradient(menuStripeCol(cg), use[ORIGINAL_SHADE], p,
                                       QRect(reverse ? r.right()-maxpmw : r.x(),
                                             r.y(), maxpmw, r.height()), false,
                                       false, opts.menuStripeAppearance, WIDGET_OTHER);
@@ -5203,8 +5203,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
                     col=itsBackgroundCols[2];
             }
 
-            drawBevelGradient(col, p, rx, true,
-                                false, opts.progressGrooveAppearance, WIDGET_PBAR_TROUGH);
+            drawBevelGradient(col, cg.background(), p, rx, true, false, opts.progressGrooveAppearance, WIDGET_PBAR_TROUGH);
 
             const QColor *use(backgroundColors(cg));
 
@@ -5412,7 +5411,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
                     r-=visualRect(subRect(SR_CheckBoxIndicator, widget), widget);
                     p->setClipRegion(r);
-                    drawBevelGradient(shade(cg.background(), TO_FACTOR(opts.crHighlight)), p, checkbox->rect(), true,
+                    drawBevelGradient(shade(cg.background(), TO_FACTOR(opts.crHighlight)), cg.background(), p, checkbox->rect(), true,
                                       false, opts.selectionAppearance, WIDGET_SELECTION);
                     p->setClipping(false);
                 }
@@ -5456,7 +5455,7 @@ void QtCurveStyle::drawControl(ControlElement control, QPainter *p, const QWidge
 #endif
                     r-=visualRect(subRect(SR_RadioButtonIndicator, widget), widget);
                     p->setClipRegion(r);
-                    drawBevelGradient(shade(cg.background(), TO_FACTOR(opts.crHighlight)), p, radiobutton->rect(), true,
+                    drawBevelGradient(shade(cg.background(), TO_FACTOR(opts.crHighlight)), cg.background(), p, radiobutton->rect(), true,
                                       false, opts.selectionAppearance, WIDGET_SELECTION);
                     p->setClipping(false);
                 }
@@ -6209,7 +6208,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                 p->setClipRegion(QRegion(s2)+QRegion(addpage));
 
             if(opts.flatSbarButtons && SCROLLBAR_NONE!=opts.scrollbarType && ROUNDED && !IS_FLAT(opts.sbarBgndAppearance))
-                drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, r, flags&Style_Horizontal, false,
+                drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], itsBackgroundCols[ORIGINAL_SHADE], p, r, flags&Style_Horizontal, false,
                                   opts.sbarBgndAppearance, WIDGET_SB_BGND);
             else if(opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons) && IS_FLAT(opts.sbarBgndAppearance))
             {
@@ -6335,7 +6334,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
 
                 if(opts.thinSbarGroove)
                     if(opts.flatSbarButtons && SCROLLBAR_NONE!=opts.scrollbarType && ROUNDED)
-                        drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], p, slider, flags&Style_Horizontal, false,
+                        drawBevelGradient(itsBackgroundCols[ORIGINAL_SHADE], itsBackgroundCols[ORIGINAL_SHADE], p, slider, flags&Style_Horizontal, false,
                                           opts.sbarBgndAppearance, WIDGET_SB_BGND);
                     else if(opts.thinSbarGroove && (SCROLLBAR_NONE==opts.scrollbarType || opts.flatSbarButtons) &&
                             IS_FLAT(opts.sbarBgndAppearance))
@@ -6486,7 +6485,7 @@ void QtCurveStyle::drawComplexControl(ComplexControl control, QPainter *p, const
                             textRect(full ? tb->rect().x() : ir.x(), ir.y(), full ? tb->rect().width() : ir.width(), ir.height());
                 EAppearance app=isActive ? opts.titlebarAppearance : opts.inactiveTitlebarAppearance;
 
-                drawBevelGradient(cols[ORIGINAL_SHADE], p, r, true, false, app, WIDGET_MDI_WINDOW);
+                drawBevelGradient(cols[ORIGINAL_SHADE], cg.background(), p, r, true, false, app, WIDGET_MDI_WINDOW);
                 ir.addCoords(2, 0, -4, 0);
 
                 QFontMetrics fm(QFontMetrics(widget->font()));
@@ -7251,8 +7250,7 @@ void QtCurveStyle::drawItem(QPainter *p, const QRect &r, int flags, const QColor
     }
 }
 
-void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QColorGroup &cg,
-                                bool mbi, int round, const QColor &bgnd, const QColor *cols) const
+void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QColorGroup &cg, bool mbi, int round, const QColor &bgnd, const QColor *cols) const
 {
     int fill=opts.useHighlightForMenu && (!mbi || itsHighlightCols==cols) ? ORIGINAL_SHADE : 4,
         border=opts.borderMenuitems ? 0 : fill;
@@ -7298,13 +7296,13 @@ void QtCurveStyle::drawMenuItem(QPainter *p, const QRect &r, int flags, const QC
             fr.addCoords(1, 1, -1, -1);
 
             if(fr.width()>0 && fr.height()>0)
-                drawBevelGradient(cols[fill], p, fr, true, false, opts.menuitemAppearance, WIDGET_MENU_ITEM);
+                drawBevelGradient(cols[fill], cg.background(), p, fr, true, false, opts.menuitemAppearance, WIDGET_MENU_ITEM);
             drawBorder(bgnd, p, r, cg, flags, round, cols, WIDGET_OTHER, false, BORDER_FLAT, false, border);
         }
         itsFormMode=false;
     }
     else
-        drawBevelGradient(cols[fill], p, r, true, false, opts.menuitemAppearance, WIDGET_MENU_ITEM);
+        drawBevelGradient(cols[fill], cg.background(), p, r, true, false, opts.menuitemAppearance, WIDGET_MENU_ITEM);
 }
 
 void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup &cg, SFlags flags,
@@ -7401,7 +7399,7 @@ void QtCurveStyle::drawProgress(QPainter *p, const QRect &rx, const QColorGroup 
     }
 }
 
-void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p, const QRect &origRect, bool horiz, bool sel, EAppearance bevApp, EWidget w) const
+void QtCurveStyle::drawBevelGradient(const QColor &base, const QColor &bgnd, QPainter *p, const QRect &origRect, bool horiz, bool sel, EAppearance bevApp, EWidget w) const
 {
     if(IS_FLAT(bevApp) && opts.colorSelTab && sel)
         bevApp=APPEARANCE_GRADIENT;
@@ -7422,7 +7420,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p, const QRec
                                     : APPEARANCE_GRADIENT);
         QRect       r(0, 0, horiz ? PIXMAP_DIMENSION : origRect.width(),
                       horiz ? origRect.height() : PIXMAP_DIMENSION);
-        QString     key(createKey(horiz ? r.height() : r.width(), base.rgb(), horiz, app,
+        QString     key(createKey(horiz ? r.height() : r.width(), base.rgb(), bgnd.rgb(), horiz, app,
                                   tab && sel && opts.colorSelTab ? CACHE_COL_SEL_TAB : CACHE_STD));
         QPixmap     *pix(itsPixmapCache.find(key));
         bool        inCache(true);
@@ -7431,9 +7429,9 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p, const QRec
         {
             pix=new QPixmap(r.width(), r.height());
 
-            QPainter       pixPainter(pix);
+            QPainter pixPainter(pix);
 
-            drawBevelGradientReal(base, &pixPainter, r, horiz, sel, app, w);
+            drawBevelGradientReal(base, bgnd, &pixPainter, r, horiz, sel, app, w);
             pixPainter.end();
             int cost(pix->width()*pix->height()*(pix->depth()/8));
 
@@ -7449,7 +7447,7 @@ void QtCurveStyle::drawBevelGradient(const QColor &base, QPainter *p, const QRec
     }
 }
 
-void QtCurveStyle::drawBevelGradientReal(const QColor &base, QPainter *p, const QRect &r, bool horiz, bool sel, EAppearance app, EWidget w) const
+void QtCurveStyle::drawBevelGradientReal(const QColor &base, const QColor &bgnd, QPainter *p, const QRect &r, bool horiz, bool sel, EAppearance app, EWidget w) const
 {
 
     const Gradient *grad=qtcGetGradient(app, &opts);
@@ -7477,7 +7475,8 @@ void QtCurveStyle::drawBevelGradientReal(const QColor &base, QPainter *p, const 
 
             if(/*sel && */opts.colorSelTab && i>0)
                 col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*(0.2+TO_ALPHA(opts.colorSelTab)));
-
+            if((*it).alpha<0.9999)
+                col=tint(bgnd, col, (*it).alpha);
             if(i)
                 drawGradient(prev, col, p,
                              horiz
@@ -7505,7 +7504,8 @@ void QtCurveStyle::drawBevelGradientReal(const QColor &base, QPainter *p, const 
 
             if(sel && opts.colorSelTab && topTab && i<numStops-1)
                 col=tint(col, itsHighlightCols[0], (1.0-(*it).pos)*(0.2+TO_ALPHA(opts.colorSelTab)));
-
+            if((*it).alpha<0.9999)
+                col=tint(bgnd, col, (*it).alpha);
             if(i)
                 drawGradient(prev, col, p,
                              horiz
@@ -7518,8 +7518,7 @@ void QtCurveStyle::drawBevelGradientReal(const QColor &base, QPainter *p, const 
     }
 }
 
-void QtCurveStyle::drawGradient(const QColor &top, const QColor &bot,
-                                QPainter *p, QRect const &r, bool horiz) const
+void QtCurveStyle::drawGradient(const QColor &top, const QColor &bot, QPainter *p, QRect const &r, bool horiz) const
 {
     if(r.width()>0 && r.height()>0)
     {
@@ -7717,7 +7716,7 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
         }
         else
         {
-            drawBevelGradient(fill, p, QRect(x, y, horiz ? r.width()-1 : size, horiz ? size : r.height()-1),
+            drawBevelGradient(fill, cg.background(), p, QRect(x, y, horiz ? r.width()-1 : size, horiz ? size : r.height()-1),
                               horiz, false, opts.sliderAppearance);
 
             if(MO_PLASTIK==opts.coloredMouseOver && flags&Style_MouseOver && !opts.colorSliderMouseOver)
@@ -7727,18 +7726,18 @@ void QtCurveStyle::drawSliderHandle(QPainter *p, const QRect &r, const QColorGro
 
                 if(horiz)
                 {
-                    drawBevelGradient(itsMouseOverCols[col], p, QRect(x+1, y+1, len, size-2),
+                    drawBevelGradient(itsMouseOverCols[col], cg.background(), p, QRect(x+1, y+1, len, size-2),
                                       horiz, false, opts.sliderAppearance);
-                    drawBevelGradient(itsMouseOverCols[col], p,
+                    drawBevelGradient(itsMouseOverCols[col], cg.background(), p,
                                       QRect(x+r.width()-((SLIDER_ROUND_ROTATED==opts.sliderStyle ? 3 : 1)+len),
                                             y+1, len, size-2),
                                       horiz, false, opts.sliderAppearance);
                 }
                 else
                 {
-                    drawBevelGradient(itsMouseOverCols[col], p, QRect(x+1, y+1, size-2, len),
+                    drawBevelGradient(itsMouseOverCols[col], cg.background(), p, QRect(x+1, y+1, size-2, len),
                                       horiz, false, opts.sliderAppearance);
-                    drawBevelGradient(itsMouseOverCols[col], p,
+                    drawBevelGradient(itsMouseOverCols[col], cg.background(), p,
                                       QRect(x+1, y+r.height()-((SLIDER_ROUND_ROTATED==opts.sliderStyle ? 3 : 1)+len),
                                             size-2, len),
                                       horiz, false, opts.sliderAppearance);
@@ -7883,7 +7882,7 @@ void QtCurveStyle::drawMenuOrToolBarBackground(QPainter *p, const QRect &r, cons
     if(menu && BLEND_TITLEBAR)
         rx.addCoords(0, -qtcGetWindowBorderSize().titleHeight, 0, 0);
 
-    drawBevelGradient(color, p, rx, horiz, false, app);
+    drawBevelGradient(color, cg.background(), p, rx, horiz, false, app);
 }
 
 void QtCurveStyle::drawHandleMarkers(QPainter *p, const QRect &r, SFlags flags, bool tb,
