@@ -1,3 +1,7 @@
+1.8.4
+-----
+1. Fix crash upon exit - due to double free.
+
 1.8.3
 -----
 1. If a gradient uses alpha, then blen gradient colour with background

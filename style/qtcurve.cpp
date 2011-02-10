@@ -1159,9 +1159,9 @@ QtCurveStyle::~QtCurveStyle()
 {
     if(itsSidebarButtonsCols!=itsSliderCols && itsSidebarButtonsCols!=itsDefBtnCols)
         delete [] itsSidebarButtonsCols;
-    if(itsPopupMenuCols && itsPopupMenuCols!=itsMenubarCols && itsPopupMenuCols!=itsBackgroundCols && itsProgressCols!=itsActiveMdiColors)
+    if(itsPopupMenuCols && itsPopupMenuCols!=itsMenubarCols && itsPopupMenuCols!=itsBackgroundCols && itsPopupMenuCols!=itsActiveMdiColors)
         delete [] itsPopupMenuCols;
-    if(itsActiveMdiColors && itsActiveMdiColors!=itsHighlightCols)
+    if(itsActiveMdiColors && itsActiveMdiColors!=itsHighlightCols && itsActiveMdiColors!=itsBackgroundCols)
         delete [] itsActiveMdiColors;
     if(itsMdiColors && itsMdiColors!=itsBackgroundCols)
         delete [] itsMdiColors;
