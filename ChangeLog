@@ -1,3 +1,8 @@
+1.8.4
+-----
+1. Allow scrollbar sliders to be as thin as 5 pixels. At this setting, sliders
+   will be squared.
+
 1.8.3
 -----
 1. Fix crash upon exit - due to double free.
