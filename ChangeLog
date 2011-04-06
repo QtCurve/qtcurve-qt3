@@ -1,11 +1,16 @@
-1.8.4
+1.8.5
 -----
 1. Allow scrollbar sliders to be as thin as 5 pixels. At this setting, sliders
    will be squared.
 
-1.8.3
+1.8.4
 -----
 1. Fix crash upon exit - due to double free.
+
+1.8.3
+-----
+1. If a gradient uses alpha, then blen gradient colour with background
+   colour - as Qt3 does not support painting with an alpha channel.
 
 1.8.2
 -----
